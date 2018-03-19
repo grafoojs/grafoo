@@ -1,4 +1,5 @@
 const expect = require("expect");
+const snapshot = require("snap-shot");
 const babel = require("babel-core");
 
 const plugin = require(".");
@@ -92,7 +93,7 @@ describe("@grafoo/loader", () => {
       \`;
     `;
 
-    expect(transform(program, { fields: ["id"] }).code).toMatchSnapshot();
+    snapshot(transform(program, { fields: ["id"] }).code);
   });
 
   it("should compress query in production", () => {
@@ -115,6 +116,6 @@ describe("@grafoo/loader", () => {
 
     process.env.NODE_ENV = "production";
 
-    expect(transform(program, { fields: ["id"] }).code).toMatchSnapshot();
+    snapshot(transform(program, { fields: ["id"] }).code);
   });
 });

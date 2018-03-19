@@ -11,9 +11,11 @@
     "babel-core": "^6.26.0",
     "eslint": "^4.19.0",
     "eslint-plugin-import": "^2.9.0",
-    "jest-cli": "^23.0.0-alpha.0",
+    "expect": "^23.0.0-alpha.0",
     "lerna": "^3.0.0-alpha.1",
-    "rimraf": "^2.6.2"
+    "mocha": "^5.0.4",
+    "rimraf": "^2.6.2",
+    "snap-shot": "^2.17.0"
   },
   "workspaces": [
     "packages/*"

@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "echo ok",
-    "test": "jest",
+    "test": "mocha",
     "lint": "eslint \"**/*.js\""
   },
   "dependencies": {
