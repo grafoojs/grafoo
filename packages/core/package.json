@@ -1,0 +1,11 @@
+{
+  "name": "@grafoo/core",
+  "version": "0.0.0",
+  "description": "the grafoo client core",
+  "main": "index.js",
+  "author": "malbernaz<albernazmiguel@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "prepare": "echo ok"
+  }
+}

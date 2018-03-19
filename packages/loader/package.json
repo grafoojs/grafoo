@@ -1,0 +1,19 @@
+{
+  "name": "@grafoo/loader",
+  "version": "0.0.0",
+  "description": "a babel plugin for the grafoo client",
+  "main": "index.js",
+  "author": "malbernaz<albernazmiguel@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "prepare": "echo ok",
+    "test": "jest",
+    "lint": "eslint \"**/*.js\""
+  },
+  "dependencies": {
+    "babel-literal-to-ast": "^2.0.0",
+    "babel-types": "^6.26.0",
+    "graphql": "^0.13.1",
+    "graphql-query-compress": "^0.9.10"
+  }
+}

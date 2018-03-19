@@ -1,0 +1,21 @@
+{
+  "private": true,
+  "name": "grafoo",
+  "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "test": "lerna run test",
+    "prepare": "lerna run prepare",
+    "clean": "rimraf packages/**/dist"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "eslint": "^4.19.0",
+    "eslint-plugin-import": "^2.9.0",
+    "jest-cli": "^23.0.0-alpha.0",
+    "lerna": "^3.0.0-alpha.1",
+    "rimraf": "^2.6.2"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
