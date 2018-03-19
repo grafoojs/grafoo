@@ -6,6 +6,7 @@
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "echo ok"
+    "prepare": "echo ok",
+    "test": "mocha --require babel-register \"**/*.js\""
   }
 }
