@@ -2,7 +2,7 @@ import expect from "expect";
 
 import { buildQueryTree } from ".";
 
-let tree = {
+const tree = {
   posts: [
     {
       title: "foo",
@@ -29,7 +29,7 @@ let tree = {
   ]
 };
 
-let objects = {
+const objects = {
   "1": { title: "foo", id: "1", content: "nice post" },
   "2": { name: "miguel", id: "2", lastName: "albernaz" },
   "3": { title: "bar", id: "3" },
@@ -39,14 +39,14 @@ let objects = {
 };
 
 describe("buildQueryTree", () => {
-  let map = buildQueryTree(tree, objects);
+  const map = buildQueryTree(tree, objects);
 
   it("should produce a resulting query tree", () => {
     expect(map).toEqual(tree);
   });
 
   it("should update values of a resulting query tree", () => {
-    let objects = {
+    const objects = {
       "1": { title: "not foo", id: "1", content: "nice post" },
       "2": { name: "miguel", id: "2", lastName: "albernaz" },
       "3": { title: "bar", id: "3" },
@@ -55,7 +55,7 @@ describe("buildQueryTree", () => {
       "6": { name: "laura", id: "6" }
     };
 
-    let expected = {
+    const expected = {
       posts: [
         {
           author: {

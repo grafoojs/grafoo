@@ -16,7 +16,7 @@ describe("insertFields", () => {
   });
 
   it("should insert more then a field if specified", () => {
-    const query = `{ user { name } } `;
+    const query = `{ user { name } }`;
 
     const expected = `{ user { name username email id } }`;
 
