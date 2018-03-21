@@ -6,49 +6,51 @@ function getType(type) {
   return currentType;
 }
 
-module.exports = function insertFields(schema, queryAst, fields) {
-  const parsedSchema = buildASTSchema(parse(schema));
-  const queryAstClone = JSON.parse(JSON.stringify(queryAst));
-  const [{ selectionSet: { selections }, operation }] = queryAstClone.definitions;
-  const stack = [];
+function capitalize(str) {
+  const [first, ...rest] = str;
+  return [first.toUpperCase(), ...rest].join("");
+}
 
-  for (const i in selections) {
-    stack.push([
-      selections[i],
-      getType(parsedSchema[`_${operation}Type`]._fields[selections[i].name.value].type)._fields
-    ]);
-  }
+module.exports = function insertFields(schemaStr, documentAst, fieldsToInsert) {
+  const parsedSchema = buildASTSchema(parse(schemaStr));
+  const documentAstClone = JSON.parse(JSON.stringify(documentAst));
 
-  while (stack.length) {
-    const [currentSelection, currentType] = stack.pop();
+  for (const { selectionSet: { selections }, operation } of documentAstClone.definitions) {
+    const type = parsedSchema.getType(capitalize(operation));
+    const stack = [];
 
-    if (currentType) {
-      const nextSelections = currentSelection.selectionSet.selections;
+    for (const selection of selections) {
+      stack.push([selection, getType(type.getFields()[selection.name.value].type).getFields()]);
+    }
 
-      for (const i in nextSelections) {
-        stack.push([
-          nextSelections[i],
-          getType(currentType[nextSelections[i].name.value].type)._fields
-        ]);
-      }
+    while (stack.length) {
+      const [currentSelection, currentType] = stack.pop();
 
-      for (const i in fields) {
-        const isFieldDeclared = currentSelection.selectionSet.selections.some(
-          s => s.name.value === fields[i]
-        );
+      if (currentType) {
+        const nextSelections = currentSelection.selectionSet.selections;
 
-        if ((!isFieldDeclared && !!currentType[fields[i]]) || fields[i] === "__typename") {
-          currentSelection.selectionSet.selections.push({
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: fields[i]
-            }
-          });
+        for (const nextSelection of nextSelections) {
+          stack.push([nextSelection, getType(currentType[nextSelection.name.value].type)._fields]);
+        }
+
+        for (const field of fieldsToInsert) {
+          const isFieldDeclared = currentSelection.selectionSet.selections.some(
+            s => s.name.value === field
+          );
+
+          if ((!isFieldDeclared && !!currentType[field]) || field === "__typename") {
+            currentSelection.selectionSet.selections.push({
+              kind: "Field",
+              name: {
+                kind: "Name",
+                value: field
+              }
+            });
+          }
         }
       }
     }
   }
 
-  return queryAstClone;
+  return documentAstClone;
 };
