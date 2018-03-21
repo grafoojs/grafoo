@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "echo ok",
-    "test": "ava",
+    "test": "ava --verbose",
     "lint": "eslint \"**/*.js\""
   },
   "dependencies": {

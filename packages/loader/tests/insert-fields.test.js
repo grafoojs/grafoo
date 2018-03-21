@@ -1,10 +1,11 @@
 const fs = require("fs");
+const path = require("path");
 const test = require("ava");
 const { parse, print } = require("graphql");
 
-const insertFields = require("./insert-fields");
+const insertFields = require("../insert-fields");
 
-const schema = fs.readFileSync("./schema.graphql", "utf-8");
+const schema = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "utf-8");
 
 test("should insert a field", t => {
   const query = `{ user { name } }`;

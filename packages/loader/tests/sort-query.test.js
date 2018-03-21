@@ -1,7 +1,7 @@
 const test = require("ava");
 const { parse, print } = require("graphql");
 
-const sortQuery = require("./sort-query");
+const sortQuery = require("../sort-query");
 
 test("sorts fields, variable declarations and arguments", t => {
   const query = `

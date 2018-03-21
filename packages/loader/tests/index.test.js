@@ -1,7 +1,7 @@
 const test = require("ava");
 const babel = require("babel-core");
 
-const plugin = require(".");
+const plugin = require("..");
 
 const transform = (program, opts) =>
   babel.transform(program, {
