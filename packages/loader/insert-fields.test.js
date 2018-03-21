@@ -1,35 +1,31 @@
 const fs = require("fs");
-const expect = require("expect");
+const test = require("ava");
 const { parse, print } = require("graphql");
 
 const insertFields = require("./insert-fields");
 
 const schema = fs.readFileSync("./schema.graphql", "utf-8");
 
-describe("insertFields", () => {
-  it("should insert a field", () => {
-    const query = `{ user { name } }`;
+test("should insert a field", t => {
+  const query = `{ user { name } }`;
+  const expected = `{ user { name id } }`;
 
-    const expected = `{ user { name id } }`;
+  t.is(print(insertFields(schema, parse(query), ["id"])), print(parse(expected)));
+});
 
-    expect(print(insertFields(schema, parse(query), ["id"]))).toBe(print(parse(expected)));
-  });
+test("should insert more then a field if specified", t => {
+  const query = `{ user { name } }`;
+  const expected = `{ user { name username email id } }`;
 
-  it("should insert more then a field if specified", () => {
-    const query = `{ user { name } }`;
+  t.is(
+    print(insertFields(schema, parse(query), ["username", "email", "id"])),
+    print(parse(expected))
+  );
+});
 
-    const expected = `{ user { name username email id } }`;
+test("should insert `__typename` if specified", t => {
+  const query = `{ user { name } } `;
+  const expected = `{ user { name __typename } }`;
 
-    expect(print(insertFields(schema, parse(query), ["username", "email", "id"]))).toBe(
-      print(parse(expected))
-    );
-  });
-
-  it("should insert `__typename` if specified", () => {
-    const query = `{ user { name } } `;
-
-    const expected = `{ user { name __typename } }`;
-
-    expect(print(insertFields(schema, parse(query), ["__typename"]))).toBe(print(parse(expected)));
-  });
+  t.is(print(insertFields(schema, parse(query), ["__typename"])), print(parse(expected)));
 });

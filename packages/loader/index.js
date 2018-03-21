@@ -17,13 +17,13 @@ module.exports = function transform() {
               );
 
               if (!defaultSpecifier) {
-                throw new Error("@grafoo/loader is a default import!");
+                throw path.buildCodeFrameError("@grafoo/loader is a default import!");
               }
 
               const importToken = defaultSpecifier.local.name;
 
               if (importToken !== "gql" && importToken !== "graphql") {
-                throw new Error(
+                throw path.buildCodeFrameError(
                   "@grafoo/loader should be imported as `gql` or `graphql`, instead got: `" +
                     importToken +
                     "`!"
@@ -39,7 +39,7 @@ module.exports = function transform() {
             if (tagNames.some(name => isIdentifier(path.node.tag, { name }))) {
               try {
                 if (path.get("quasi").get("expressions").length) {
-                  throw new Error(
+                  throw path.buildCodeFrameError(
                     "@grafoo/loader does not support interpolation in a graphql template string!"
                   );
                 }

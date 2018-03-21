@@ -15,6 +15,7 @@
     "clean": "rimraf packages/**/dist"
   },
   "devDependencies": {
+    "ava": "^0.25.0",
     "babel-core": "^6.26.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-register": "^6.26.0",
@@ -27,5 +28,7 @@
     "rimraf": "^2.6.2",
     "snap-shot": "^2.17.0"
   },
-  "workspaces": ["packages/*"]
+  "workspaces": [
+    "packages/*"
+  ]
 }
