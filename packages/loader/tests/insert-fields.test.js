@@ -3,7 +3,7 @@ import path from "path";
 import test from "ava";
 import { parse, print } from "graphql";
 
-import insertFields from "../insert-fields";
+import insertFields from "../src/insert-fields";
 
 const schema = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "utf-8");
 

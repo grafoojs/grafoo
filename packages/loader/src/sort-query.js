@@ -1,4 +1,4 @@
-const { visit } = require("graphql");
+import { visit } from "graphql";
 
 const sort = (array, fn = _ => _.name.value) =>
   array &&
@@ -42,6 +42,6 @@ const visitor = {
   }
 };
 
-module.exports = function sortQuery(document) {
+export default function sortQuery(document) {
   return visit(document, visitor);
-};
+}

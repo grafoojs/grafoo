@@ -1,7 +1,7 @@
 import test from "ava";
 import { parse, print } from "graphql";
 
-import sortQuery from "../sort-query";
+import sortQuery from "../src/sort-query";
 
 test("sorts fields, variable declarations and arguments", t => {
   const query = `

@@ -1,10 +1,10 @@
-const fs = require("fs");
-const path = require("path");
-const compress = require("graphql-query-compress");
-const { print, parse } = require("graphql");
+import fs from "fs";
+import path from "path";
+import compress from "graphql-query-compress";
+import { print, parse } from "graphql";
 
-const insertFields = require("./insert-fields");
-const sortDocument = require("./sort-query");
+import insertFields from "./insert-fields";
+import sortDocument from "./sort-query";
 
 function getSchema(schemaPath) {
   try {
@@ -33,7 +33,7 @@ function getPaths(ast) {
   );
 }
 
-module.exports = function compileQuery(source, opts) {
+export default function compileQuery(source, opts) {
   if (!opts.schema) {
     throw new Error("@grafoo/loader needs a schema!");
   }
@@ -48,4 +48,4 @@ module.exports = function compileQuery(source, opts) {
     query: process.env.NODE_ENV !== "production" ? print(document) : compress(print(document)),
     paths: getPaths(document)
   };
-};
+}

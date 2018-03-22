@@ -1,4 +1,4 @@
-const { parse, visit } = require("graphql");
+import { parse, visit } from "graphql";
 
 function getTypeName(type) {
   let currentType = type;
@@ -6,16 +6,16 @@ function getTypeName(type) {
   return currentType.name.value;
 }
 
+function getDefinition(ast, name) {
+  return (ast.definitions || ast.fields).find(field => field.name.value === name);
+}
+
 function capitalize(str) {
   const [first, ...rest] = str;
   return [first.toUpperCase(), ...rest].join("");
 }
 
-function getDefinition(ast, name) {
-  return (ast.definitions || ast.fields).find(field => field.name.value === name);
-}
-
-module.exports = function insertFields(schemaStr, documentAst, fieldsToInsert) {
+export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
   const parsedSchema = parse(schemaStr);
   const types = [];
 
@@ -30,9 +30,7 @@ module.exports = function insertFields(schemaStr, documentAst, fieldsToInsert) {
       types.push(getDefinition(parsedSchema, typeCondition.name.value));
     },
     Field: {
-      enter(node) {
-        const { selectionSet, name } = node;
-
+      enter({ selectionSet, name }) {
         if (!selectionSet) return;
 
         const currentType = getDefinition(
@@ -56,8 +54,6 @@ module.exports = function insertFields(schemaStr, documentAst, fieldsToInsert) {
             });
           }
         }
-
-        return node;
       },
       leave(node) {
         if (node.selectionSet) types.pop();
@@ -66,4 +62,4 @@ module.exports = function insertFields(schemaStr, documentAst, fieldsToInsert) {
   };
 
   return visit(documentAst, visitor);
-};
+}

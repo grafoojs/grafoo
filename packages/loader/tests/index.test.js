@@ -1,7 +1,7 @@
 import test from "ava";
 import * as babel from "@babel/core";
 
-import plugin from "..";
+import plugin from "../src";
 
 const transform = (program, opts) =>
   babel.transform(program, {
