@@ -1,11 +1,10 @@
 import test from "ava";
-import dedent from "dedent";
 import { parse, print } from "graphql";
 
 import sortQuery from "../sort-query";
 
 test("sorts fields, variable declarations and arguments", t => {
-  const query = dedent(`
+  const query = `
     query ($f: ID $e: ID $d: ID $c: ID $b: ID $a: ID) {
       f
       e
@@ -28,9 +27,9 @@ test("sorts fields, variable declarations and arguments", t => {
         }
       }
     }
-  `);
+  `;
 
-  const expected = dedent(`
+  const expected = `
     query ($a: ID, $b: ID, $c: ID, $d: ID, $e: ID, $f: ID) {
       a(a: $a, b: $b, c: $c, d: $d, e: $e, f: $f) {
         a(a: $a, b: $b, c: $c, d: $d, e: $e, f: $f) {
@@ -53,7 +52,7 @@ test("sorts fields, variable declarations and arguments", t => {
       e
       f
     }
-  `);
+  `;
 
   t.is(print(sortQuery(parse(query))), print(parse(expected)));
 });

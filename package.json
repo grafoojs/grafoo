@@ -19,7 +19,6 @@
     "@babel/plugin-transform-modules-commonjs": "^7.0.0-beta.42",
     "@babel/register": "^7.0.0-beta.42",
     "ava": "^0.25.0",
-    "dedent": "^0.7.0",
     "eslint": "^4.19.0",
     "eslint-plugin-import": "^2.9.0",
     "lerna": "^3.0.0-alpha.1",
