@@ -1,7 +1,8 @@
-const test = require("ava");
-const babel = require("@babel/core");
+import test from "ava";
+import dedent from "dedent";
+import * as babel from "@babel/core";
 
-const plugin = require("..");
+import plugin from "..";
 
 const transform = (program, opts) =>
   babel.transform(program, {
@@ -63,7 +64,7 @@ test("should throw if a tagged template string literal has expressions in it", t
 });
 
 test("should replace a tagged template literal with the compiled grafoo object", t => {
-  const program = `
+  const program = dedent(`
     import gql from "@grafoo/loader";
     const query = gql\`
       query($start: Int!, $offset: Int!, $id: ID!) {
@@ -77,13 +78,13 @@ test("should replace a tagged template literal with the compiled grafoo object",
         user(id: $id) { name username }
       }
     \`;
-  `;
+  `);
 
   t.snapshot(transform(program, { fields: ["id"] }).code);
 });
 
 test("should compress query in production", t => {
-  const program = `
+  const program = dedent(`
     import gql from "@grafoo/loader";
     const query = gql\`
       query($start: Int!, $offset: Int!, $id: ID!) {
@@ -97,7 +98,7 @@ test("should compress query in production", t => {
         user(id: $id) { name username }
       }
     \`;
-  `;
+  `);
 
   process.env.NODE_ENV = "production";
 

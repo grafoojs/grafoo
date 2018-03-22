@@ -1,9 +1,9 @@
-const fs = require("fs");
-const path = require("path");
-const test = require("ava");
-const { parse, print } = require("graphql");
+import fs from "fs";
+import path from "path";
+import test from "ava";
+import { parse, print } from "graphql";
 
-const insertFields = require("../insert-fields");
+import insertFields from "../insert-fields";
 
 const schema = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "utf-8");
 
