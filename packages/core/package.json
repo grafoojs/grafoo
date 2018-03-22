@@ -7,9 +7,9 @@
   "license": "MIT",
   "scripts": {
     "prepare": "echo ok",
-    "test": "ava"
+    "test": "ava --verbose"
   },
   "ava": {
-    "require": ["babel-register"]
+    "require": ["@babel/register"]
   }
 }

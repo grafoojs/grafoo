@@ -35,14 +35,12 @@ module.exports = function insertFields(schemaStr, documentAst, fieldsToInsert) {
 
         if (!selectionSet) return;
 
-        types.push(
-          getDefinition(
-            parsedSchema,
-            getTypeName(getDefinition(types[types.length - 1], name.value))
-          )
+        const currentType = getDefinition(
+          parsedSchema,
+          getTypeName(getDefinition(types[types.length - 1], name.value))
         );
 
-        const currentType = types[types.length - 1];
+        types.push(currentType);
 
         for (const field of fieldsToInsert) {
           const fieldIsNotDeclared = selectionSet.selections.some(s => s.name.value !== field);

@@ -1,6 +1,6 @@
 {
   "plugins": [
-    "transform-es2015-modules-commonjs",
-    ["@grafoo/loader", { "schema": "schema.graphql", "fields": ["id"] }]
+    "@babel/plugin-transform-modules-commonjs",
+    ["module:@grafoo/loader", { "schema": "schema.graphql", "fields": ["id"] }]
   ]
 }
