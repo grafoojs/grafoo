@@ -4,7 +4,7 @@ const compress = require("graphql-query-compress");
 const { print, parse } = require("graphql");
 
 const insertFields = require("./insert-fields");
-const sortQuery = require("./sort-query");
+const sortDocument = require("./sort-query");
 
 function getSchema(schemaPath) {
   try {
@@ -40,12 +40,12 @@ module.exports = function compileQuery(source, opts) {
 
   if (!opts.fields) opts.fields = [];
 
-  const document = parse(source);
+  const schema = getSchema(opts.schema);
 
-  const query = sortQuery(insertFields(getSchema(opts.schema), document, opts.fields));
+  const document = sortDocument(insertFields(schema, parse(source), opts.fields));
 
   return {
-    query: process.env.NODE_ENV !== "production" ? print(query) : compress(print(query)),
-    paths: getPaths(query)
+    query: process.env.NODE_ENV !== "production" ? print(document) : compress(print(document)),
+    paths: getPaths(document)
   };
 };

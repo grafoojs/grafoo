@@ -1,9 +1,9 @@
-const { parse, buildASTSchema } = require("graphql");
+const { parse, visit } = require("graphql");
 
-function getType(type) {
+function getTypeName(type) {
   let currentType = type;
-  while (currentType.ofType) currentType = currentType.ofType;
-  return currentType;
+  while (currentType.type) currentType = currentType.type;
+  return currentType.name.value;
 }
 
 function capitalize(str) {
@@ -11,35 +11,45 @@ function capitalize(str) {
   return [first.toUpperCase(), ...rest].join("");
 }
 
+function getDefinition(ast, name) {
+  return (ast.definitions || ast.fields).find(field => field.name.value === name);
+}
+
 module.exports = function insertFields(schemaStr, documentAst, fieldsToInsert) {
-  const parsedSchema = buildASTSchema(parse(schemaStr));
-  const documentAstClone = JSON.parse(JSON.stringify(documentAst));
+  const parsedSchema = parse(schemaStr);
+  const types = [];
 
-  for (const { selectionSet: { selections }, operation } of documentAstClone.definitions) {
-    const type = parsedSchema.getType(capitalize(operation));
-    const stack = [];
+  const visitor = {
+    OperationDefinition({ operation }) {
+      types.push(getDefinition(parsedSchema, capitalize(operation)));
+    },
+    FragmentDefinition({ typeCondition }) {
+      types.push(getDefinition(parsedSchema, typeCondition.name.value));
+    },
+    InlineFragment({ typeCondition }) {
+      types.push(getDefinition(parsedSchema, typeCondition.name.value));
+    },
+    Field: {
+      enter(node) {
+        const { selectionSet, name } = node;
 
-    for (const selection of selections) {
-      stack.push([selection, getType(type.getFields()[selection.name.value].type).getFields()]);
-    }
+        if (!selectionSet) return;
 
-    while (stack.length) {
-      const [currentSelection, currentType] = stack.pop();
+        types.push(
+          getDefinition(
+            parsedSchema,
+            getTypeName(getDefinition(types[types.length - 1], name.value))
+          )
+        );
 
-      if (currentType) {
-        const nextSelections = currentSelection.selectionSet.selections;
-
-        for (const nextSelection of nextSelections) {
-          stack.push([nextSelection, getType(currentType[nextSelection.name.value].type)._fields]);
-        }
+        const currentType = types[types.length - 1];
 
         for (const field of fieldsToInsert) {
-          const isFieldDeclared = currentSelection.selectionSet.selections.some(
-            s => s.name.value === field
-          );
+          const fieldIsNotDeclared = selectionSet.selections.some(s => s.name.value !== field);
+          const typeHasField = currentType.fields.some(f => f.name.value === field);
 
-          if ((!isFieldDeclared && !!currentType[field]) || field === "__typename") {
-            currentSelection.selectionSet.selections.push({
+          if ((fieldIsNotDeclared && typeHasField) || field === "__typename") {
+            selectionSet.selections.push({
               kind: "Field",
               name: {
                 kind: "Name",
@@ -48,9 +58,14 @@ module.exports = function insertFields(schemaStr, documentAst, fieldsToInsert) {
             });
           }
         }
+
+        return node;
+      },
+      leave(node) {
+        if (node.selectionSet) types.pop();
       }
     }
-  }
+  };
 
-  return documentAstClone;
+  return visit(documentAst, visitor);
 };
