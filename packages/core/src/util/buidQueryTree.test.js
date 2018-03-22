@@ -1,4 +1,4 @@
-import expect from "expect";
+import test from "ava";
 
 import { buildQueryTree } from ".";
 
@@ -38,46 +38,44 @@ const objects = {
   "6": { name: "laura", id: "6" }
 };
 
-describe("buildQueryTree", () => {
-  const map = buildQueryTree(tree, objects);
+const map = buildQueryTree(tree, objects);
 
-  it("should produce a resulting query tree", () => {
-    expect(map).toEqual(tree);
-  });
+test("should produce a resulting query tree", t => {
+  t.deepEqual(map, tree);
+});
 
-  it("should update values of a resulting query tree", () => {
-    const objects = {
-      "1": { title: "not foo", id: "1", content: "nice post" },
-      "2": { name: "miguel", id: "2", lastName: "albernaz" },
-      "3": { title: "bar", id: "3" },
-      "4": { name: "vicente", id: "4" },
-      "5": { title: "baz", id: "5" },
-      "6": { name: "laura", id: "6" }
-    };
+test("should update values of a resulting query tree", t => {
+  const objects = {
+    "1": { title: "not foo", id: "1", content: "nice post" },
+    "2": { name: "miguel", id: "2", lastName: "albernaz" },
+    "3": { title: "bar", id: "3" },
+    "4": { name: "vicente", id: "4" },
+    "5": { title: "baz", id: "5" },
+    "6": { name: "laura", id: "6" }
+  };
 
-    const expected = {
-      posts: [
-        {
-          author: {
-            id: "2",
-            name: "miguel",
-            posts: [
-              {
-                author: { id: "2", lastName: "albernaz", name: "miguel" },
-                content: "nice post",
-                id: "1",
-                title: "not foo"
-              }
-            ]
-          },
-          id: "1",
-          title: "not foo"
+  const expected = {
+    posts: [
+      {
+        author: {
+          id: "2",
+          name: "miguel",
+          posts: [
+            {
+              author: { id: "2", lastName: "albernaz", name: "miguel" },
+              content: "nice post",
+              id: "1",
+              title: "not foo"
+            }
+          ]
         },
-        { author: { id: "4", name: "vicente" }, id: "3", title: "bar" },
-        { author: { id: "6", name: "laura" }, id: "5", title: "baz" }
-      ]
-    };
+        id: "1",
+        title: "not foo"
+      },
+      { author: { id: "4", name: "vicente" }, id: "3", title: "bar" },
+      { author: { id: "6", name: "laura" }, id: "5", title: "baz" }
+    ]
+  };
 
-    expect(buildQueryTree(tree, objects)).toEqual(expected);
-  });
+  t.deepEqual(buildQueryTree(tree, objects), expected);
 });

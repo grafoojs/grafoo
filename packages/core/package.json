@@ -7,6 +7,9 @@
   "license": "MIT",
   "scripts": {
     "prepare": "echo ok",
-    "test": "mocha --require babel-register \"**/*.js\""
+    "test": "ava"
+  },
+  "ava": {
+    "require": ["babel-register"]
   }
 }

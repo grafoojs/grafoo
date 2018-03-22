@@ -1,4 +1,4 @@
-import expect from "expect";
+import test from "ava";
 
 import { mapObjects } from ".";
 
@@ -29,35 +29,33 @@ const data = {
   ]
 };
 
-describe("mapObjects", () => {
-  const map = mapObjects(data);
+const map = mapObjects(data);
 
-  it("should return a map of objects", () => {
-    const expected = {
-      "1": { title: "foo", id: "1", content: "nice post" },
-      "2": { name: "miguel", id: "2", lastName: "albernaz" },
-      "3": { title: "bar", id: "3" },
-      "4": { name: "vicente", id: "4" },
-      "5": { title: "baz", id: "5" },
-      "6": { name: "laura", id: "6" }
-    };
+test("should return a map of objects", t => {
+  const expected = {
+    "1": { title: "foo", id: "1", content: "nice post" },
+    "2": { name: "miguel", id: "2", lastName: "albernaz" },
+    "3": { title: "bar", id: "3" },
+    "4": { name: "vicente", id: "4" },
+    "5": { title: "baz", id: "5" },
+    "6": { name: "laura", id: "6" }
+  };
 
-    expect(map).toEqual(expected);
-  });
+  t.deepEqual(map, expected);
+});
 
-  it("should accept null values", () => {
-    const result = {
-      data: {
-        me: {
-          id: "5a3ab7e93f662a108d978a6e",
-          username: "malbernaz",
-          email: "albernazmiguel@gmail.com",
-          name: null,
-          bio: null
-        }
+test("should accept null values", t => {
+  const result = {
+    data: {
+      me: {
+        id: "5a3ab7e93f662a108d978a6e",
+        username: "malbernaz",
+        email: "albernazmiguel@gmail.com",
+        name: null,
+        bio: null
       }
-    };
+    }
+  };
 
-    expect(() => mapObjects(result)).not.toThrow();
-  });
+  t.notThrows(() => mapObjects(result));
 });
