@@ -1,9 +1,9 @@
 import { buildQueryTree, mapObjects, mergeObjects } from "./util";
 
-export default function createCache(initialState = {}) {
-  let objectsMap = initialState.objectsMap || {};
-  const pathsMap = initialState.pathsMap || {};
-  const listeners = [];
+export default function createCache(initialState = {}, idFromProps = _ => _.id) {
+  var objectsMap = initialState.objectsMap || {},
+    pathsMap = initialState.pathsMap || {},
+    listeners = [];
 
   return {
     watch(listener) {
@@ -14,22 +14,25 @@ export default function createCache(initialState = {}) {
       };
     },
     write(query, data) {
-      const objects = mapObjects(data);
+      var objects = mapObjects(data, idFromProps);
 
       objectsMap = mergeObjects(objectsMap, objects);
 
       pathsMap[query] = { data, objects };
 
-      for (let i = 0; i < listeners.length; i++) listeners[i](objects);
+      for (var i = 0; i < listeners.length; i++) listeners[i](objects);
     },
     read(query) {
-      const operation = pathsMap[query];
+      var operation = pathsMap[query];
 
       if (!operation) return null;
 
-      const { data, objects } = operation;
+      var { data, objects } = operation;
 
-      return { data: buildQueryTree(data, objectsMap), objects };
+      return {
+        data: buildQueryTree(data, objectsMap, idFromProps),
+        objects
+      };
     }
   };
 }
