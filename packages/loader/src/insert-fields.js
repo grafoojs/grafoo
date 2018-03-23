@@ -33,10 +33,8 @@ export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
       enter({ selectionSet, name }) {
         if (!selectionSet) return;
 
-        const currentType = getDefinition(
-          parsedSchema,
-          getTypeName(getDefinition(types[types.length - 1], name.value))
-        );
+        const currentField = getDefinition(types[types.length - 1], name.value);
+        const currentType = getDefinition(parsedSchema, getTypeName(currentField, name.value));
 
         types.push(currentType);
 

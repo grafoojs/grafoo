@@ -6,7 +6,7 @@
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "yarn test && yarn build",
+    "prepare": "yarn build",
     "test": "ava --verbose",
     "build": "babel src --out-dir dist"
   },

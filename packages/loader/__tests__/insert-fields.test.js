@@ -9,40 +9,40 @@ const schema = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "ut
 
 const cases = [
   {
-    name: "should insert a field",
-    query: "{ user { name } }",
-    expected: "{ user { name id } }",
-    fields: ["id"]
+    title: "should insert a field",
+    input: "{ user { name } }",
+    expectedOutput: "{ user { name id } }",
+    fieldsToInsert: ["id"]
   },
   {
-    name: "should insert more then a field if specified",
-    query: "{ user { name } }",
-    expected: "{ user { name username email id } }",
-    fields: ["username", "email", "id"]
+    title: "should insert more then a field if specified",
+    input: "{ user { name } }",
+    expectedOutput: "{ user { name username email id } }",
+    fieldsToInsert: ["username", "email", "id"]
   },
   {
-    name: "should insert `__typename` if specified",
-    query: "{ user { name } }",
-    expected: "{ user { name __typename } }",
-    fields: ["__typename"]
+    title: "should insert `__typename` if specified",
+    input: "{ user { name } }",
+    expectedOutput: "{ user { name __typename } }",
+    fieldsToInsert: ["__typename"]
   },
   {
-    name: "should insert props in queries with fragments",
-    query: `
+    title: "should insert props in queries with fragments",
+    input: `
       {
         user {
           ...UserFrag
         }
       }
 
-      fragment UserFrag on User {
+      fragment UserFrag on Author {
         name
         posts {
           title
         }
       }
     `,
-    expected: `
+    expectedOutput: `
       {
         user {
           ...UserFrag
@@ -58,11 +58,11 @@ const cases = [
         }
       }
     `,
-    fields: ["id"]
+    fieldsToInsert: ["id"]
   },
   {
-    name: "should insert props in queries with inline fragments",
-    query: `
+    title: "should insert props in queries with inline fragments",
+    input: `
       {
         user {
           name
@@ -74,7 +74,7 @@ const cases = [
         }
       }
     `,
-    expected: `
+    expectedOutput: `
       {
         user {
           name
@@ -82,17 +82,20 @@ const cases = [
             posts {
               title
               id
+              __typename
             }
           }
+          id
+          __typename
         }
       }
     `,
-    fields: ["id"]
+    fieldsToInsert: ["id", "__typename"]
   }
 ];
 
-for (const { name, query, expected, fields } of cases) {
-  test(name, t => {
-    t.is(print(insertFields(schema, parse(query), fields)), print(parse(expected)));
+for (const { title, input, expectedOutput, fieldsToInsert } of cases) {
+  test(title, t => {
+    t.is(print(insertFields(schema, parse(input), fieldsToInsert)), print(parse(expectedOutput)));
   });
 }
