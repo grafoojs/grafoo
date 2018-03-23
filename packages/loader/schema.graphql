@@ -36,13 +36,16 @@ type Tag {
   updateAt: String!
 }
 
-type User {
+interface User {
   id: ID!
   username: String!
   email: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Author implements User {
   name: String
   bio: String
   posts: [Post!]!
-  createdAt: String!
-  updatedAt: String!
 }

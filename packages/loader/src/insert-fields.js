@@ -30,9 +30,7 @@ export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
       types.push(getDefinition(parsedSchema, typeCondition.name.value));
     },
     Field: {
-      enter(node) {
-        const { selectionSet, name } = node;
-
+      enter({ selectionSet, name }) {
         if (!selectionSet) return;
 
         const currentType = getDefinition(
@@ -43,9 +41,10 @@ export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
         types.push(currentType);
 
         for (const field of fieldsToInsert) {
-          if (selectionSet.selections.some(_ => !_.name)) continue;
+          const fieldIsNotDeclared = selectionSet.selections
+            .filter(_ => _.kind !== "InlineFragment")
+            .some(_ => _.name.value !== field);
 
-          const fieldIsNotDeclared = selectionSet.selections.some(_ => _.name.value !== field);
           const typeHasField = currentType.fields.some(_ => _.name.value === field);
 
           if ((fieldIsNotDeclared && typeHasField) || field === "__typename") {

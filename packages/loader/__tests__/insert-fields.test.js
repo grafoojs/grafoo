@@ -29,7 +29,11 @@ const cases = [
   {
     name: "should insert props in queries with fragments",
     query: `
-      { user { ...UserFrag } }
+      {
+        user {
+          ...UserFrag
+        }
+      }
 
       fragment UserFrag on User {
         name
@@ -39,9 +43,14 @@ const cases = [
       }
     `,
     expected: `
-      { user { ...UserFrag id } }
+      {
+        user {
+          ...UserFrag
+          id
+        }
+      }
 
-      fragment UserFrag on User {
+      fragment UserFrag on Author {
         name
         posts {
           title
@@ -57,7 +66,7 @@ const cases = [
       {
         user {
           name
-          ...on User {
+          ...on Author {
             posts {
               title
             }
@@ -69,7 +78,7 @@ const cases = [
       {
         user {
           name
-          ...on User {
+          ...on Author {
             posts {
               title
               id
