@@ -12,33 +12,26 @@ const visitor = {
   OperationDefinition(node) {
     sort(node.directives);
     sort(node.variableDefinitions, _ => _.variable.name.value);
-    return node;
   },
   SelectionSet(node) {
     sort(node.selections, _ => (_.alias || _.name).value);
-    return node;
   },
   Field(node) {
     sort(node.directives);
     sort(node.arguments);
-    return node;
   },
   InlineFragment(node) {
     sort(node.directives);
-    return node;
   },
   FragmentSpread(node) {
     sort(node.directives);
-    return node;
   },
   FragmentDefinition(node) {
     sort(node.directives);
     sort(node.variableDefinitions, _ => _.variable.name.value);
-    return node;
   },
   Directive(node) {
     sort(node.arguments);
-    return node;
   }
 };
 
