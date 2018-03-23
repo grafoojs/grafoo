@@ -30,7 +30,9 @@ export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
       types.push(getDefinition(parsedSchema, typeCondition.name.value));
     },
     Field: {
-      enter({ selectionSet, name }) {
+      enter(node) {
+        const { selectionSet, name } = node;
+
         if (!selectionSet) return;
 
         const currentType = getDefinition(
@@ -41,8 +43,10 @@ export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
         types.push(currentType);
 
         for (const field of fieldsToInsert) {
-          const fieldIsNotDeclared = selectionSet.selections.some(s => s.name.value !== field);
-          const typeHasField = currentType.fields.some(f => f.name.value === field);
+          if (selectionSet.selections.some(_ => !_.name)) continue;
+
+          const fieldIsNotDeclared = selectionSet.selections.some(_ => _.name.value !== field);
+          const typeHasField = currentType.fields.some(_ => _.name.value === field);
 
           if ((fieldIsNotDeclared && typeHasField) || field === "__typename") {
             selectionSet.selections.push({
