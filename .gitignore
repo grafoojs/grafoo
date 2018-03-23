@@ -123,3 +123,6 @@ typings/
 
 # vscode
 .vscode
+
+# output directories
+dist/

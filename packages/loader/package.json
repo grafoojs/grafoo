@@ -2,18 +2,21 @@
   "name": "@grafoo/loader",
   "version": "0.0.0",
   "description": "a babel plugin for the grafoo client",
-  "main": "index.js",
+  "main": "dist/index.js",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "echo ok",
+    "prepare": "yarn test && yarn build",
     "test": "ava --verbose",
-    "lint": "eslint \"**/*.js\""
+    "build": "babel src --out-dir dist"
   },
   "dependencies": {
     "babel-literal-to-ast": "^2.0.0",
     "babel-types": "^6.26.0",
     "graphql": "^0.13.1",
     "graphql-query-compress": "^0.9.10"
+  },
+  "ava": {
+    "require": ["@babel/register"]
   }
 }
