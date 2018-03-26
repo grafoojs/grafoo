@@ -93,7 +93,104 @@ const cases = [
     fieldsToInsert: ["id", "__typename"]
   },
   {
-    title: "should insert field present on a type that inherits from an interface",
+    title: "should not insert `__typename` inside fragments",
+    input: `
+      {
+        user {
+          ...UserFrag
+        }
+      }
+
+      fragment UserFrag on Author {
+        name
+        posts {
+          title
+        }
+      }
+    `,
+    expectedOutput: `
+      {
+        user {
+          ...UserFrag
+          __typename
+        }
+      }
+
+      fragment UserFrag on Author {
+        name
+        posts {
+          title
+          __typename
+        }
+      }
+    `,
+    fieldsToInsert: ["__typename"]
+  },
+  {
+    title: "should not insert `__typename` inside inline fragments",
+    input: `
+      {
+        user {
+          name
+          ...on Author {
+            posts {
+              title
+            }
+          }
+        }
+      }
+    `,
+    expectedOutput: `
+      {
+        user {
+          name
+          ...on Author {
+            posts {
+              title
+              __typename
+            }
+          }
+          __typename
+        }
+      }
+    `,
+    fieldsToInsert: ["__typename"]
+  },
+  {
+    title: "should insert field present on a fragment",
+    input: `
+      {
+        user {
+          ...UserFrag
+        }
+      }
+
+      fragment UserFrag on Author {
+        name
+        posts {
+          title
+        }
+      }
+    `,
+    expectedOutput: `
+      {
+        user {
+          ...UserFrag
+        }
+      }
+
+      fragment UserFrag on Author {
+        name
+        posts {
+          title
+        }
+        bio
+      }
+    `,
+    fieldsToInsert: ["bio"]
+  },
+  {
+    title: "should insert field present on an inline fragment",
     input: `
       {
         user {

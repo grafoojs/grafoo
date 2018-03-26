@@ -6,28 +6,36 @@ function getType(typeInfo) {
   return currentType;
 }
 
+function insertField(selections, value) {
+  selections.push({ kind: "Field", name: { kind: "Name", value } });
+}
+
 export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
   const typeInfo = new TypeInfo(buildASTSchema(parse(schemaStr)));
 
   const visitor = {
     SelectionSet({ selections }) {
       const type = getType(typeInfo);
-      const fields = Object.keys(type.getFields());
+      const typeFields = Object.keys(type.getFields());
 
       for (const field of fieldsToInsert) {
+        const fieldIsNotDeclared = selections.some(_ => _.name.value !== field);
+        const fieldIsTypename = field === "__typename";
+        const typeDoesNotImplementInterface = !(type.getInterfaces && type.getInterfaces().length);
+        const typeHasField = typeFields.some(_ => _ === field);
+        const typeIsNotQuery = type.name !== "Query";
+
         if (
-          field === "__typename" &&
-          type.name !== "Query" &&
-          !(type.getInterfaces && type.getInterfaces().length)
+          fieldIsTypename &&
+          fieldIsNotDeclared &&
+          typeIsNotQuery &&
+          typeDoesNotImplementInterface
         ) {
-          selections.push({ kind: "Field", name: { kind: "Name", value: field } });
+          insertField(selections, field);
         }
 
-        const fieldIsNotDeclared = selections.some(_ => _.name.value !== field);
-        const typeHasField = fields.some(_ => _ === field);
-
         if (fieldIsNotDeclared && typeHasField) {
-          selections.push({ kind: "Field", name: { kind: "Name", value: field } });
+          insertField(selections, field);
         }
       }
     }
