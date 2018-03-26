@@ -1,6 +1,6 @@
 import test from "ava";
 
-import { mergeObjects } from ".";
+import { mergeObjects } from "../src/util";
 
 const objects = {
   "1": { title: "foo", id: "1" },

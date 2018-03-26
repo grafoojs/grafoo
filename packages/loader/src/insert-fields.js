@@ -10,27 +10,24 @@ export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
   const typeInfo = new TypeInfo(buildASTSchema(parse(schemaStr)));
 
   const visitor = {
-    Field({ selectionSet }) {
-      if (!selectionSet) return;
-
+    SelectionSet({ selections }) {
       const type = getType(typeInfo);
       const fields = Object.keys(type.getFields());
 
       for (const field of fieldsToInsert) {
-        const fieldIsNotDeclared = selectionSet.selections
-          .filter(_ => _.kind !== "InlineFragment")
-          .some(_ => _.name.value !== field);
+        if (
+          field === "__typename" &&
+          type.name !== "Query" &&
+          !(type.getInterfaces && type.getInterfaces.length)
+        ) {
+          selections.push({ kind: "Field", name: { kind: "Name", value: field } });
+        }
 
+        const fieldIsNotDeclared = selections.some(_ => _.name.value !== field);
         const typeHasField = fields.some(_ => _ === field);
 
-        if ((fieldIsNotDeclared && typeHasField) || field === "__typename") {
-          selectionSet.selections.push({
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: field
-            }
-          });
+        if (fieldIsNotDeclared && typeHasField) {
+          selections.push({ kind: "Field", name: { kind: "Name", value: field } });
         }
       }
     }

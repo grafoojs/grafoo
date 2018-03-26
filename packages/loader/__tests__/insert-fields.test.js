@@ -96,6 +96,7 @@ const cases = [
 
 for (const { title, input, expectedOutput, fieldsToInsert } of cases) {
   test(title, t => {
+    // console.log(print(insertFields(schema, parse(input), fieldsToInsert)));
     t.is(print(insertFields(schema, parse(input), fieldsToInsert)), print(parse(expectedOutput)));
   });
 }
