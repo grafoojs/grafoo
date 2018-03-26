@@ -91,12 +91,40 @@ const cases = [
       }
     `,
     fieldsToInsert: ["id", "__typename"]
+  },
+  {
+    title: "should insert field present on a type that inherits from an interface",
+    input: `
+      {
+        user {
+          name
+          ...on Author {
+            posts {
+              title
+            }
+          }
+        }
+      }
+    `,
+    expectedOutput: `
+      {
+        user {
+          name
+          ...on Author {
+            posts {
+              title
+            }
+            bio
+          }
+        }
+      }
+    `,
+    fieldsToInsert: ["bio"]
   }
 ];
 
 for (const { title, input, expectedOutput, fieldsToInsert } of cases) {
   test(title, t => {
-    // console.log(print(insertFields(schema, parse(input), fieldsToInsert)));
     t.is(print(insertFields(schema, parse(input), fieldsToInsert)), print(parse(expectedOutput)));
   });
 }

@@ -18,7 +18,7 @@ export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
         if (
           field === "__typename" &&
           type.name !== "Query" &&
-          !(type.getInterfaces && type.getInterfaces.length)
+          !(type.getInterfaces && type.getInterfaces().length)
         ) {
           selections.push({ kind: "Field", name: { kind: "Name", value: field } });
         }
