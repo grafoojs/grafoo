@@ -8,8 +8,10 @@ export const assign = Object.assign;
 
 export const isNotNullObject = _ => _ && typeof _ == "object";
 
-export const queryID = ({ query: { query } }, variables) =>
-  query + ":" + JSON.stringify(variables) || "";
+export const getQueryIdentifier = ({ query: { query } }, variables) => {
+  const vars = JSON.stringify(variables);
+  return query + vars ? ":" + JSON.stringify(variables) : "";
+};
 
 export { default as buildQueryTree } from "./buildQueryTree";
 export { default as mapObjects } from "./mapObjects";
