@@ -29,10 +29,7 @@ export default function createCache(initialState = {}, idFromProps = _ => _.id) 
 
       var { data, objects } = operation;
 
-      return {
-        data: buildQueryTree(data, objectsMap, idFromProps),
-        objects
-      };
+      return { data: buildQueryTree(data, objectsMap, idFromProps), objects };
     }
   };
 }
