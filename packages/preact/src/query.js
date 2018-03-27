@@ -1,8 +1,10 @@
 import { h, Component } from "preact";
 
-function shallowEqual() {
+var shallowEqual = (a, b) => {
+  for (let i in a) if (a[i] !== b[i]) return false;
+  for (let i in b) if (!(i in a)) return false;
   return true;
-}
+};
 
 export function Query({ query, variables, skipCache, children }, { client }) {
   const cachedQuery = client.read({ query, variables });

@@ -14,18 +14,34 @@ export default function createCache(initialState = {}, idFromProps = _ => _.id) 
       };
     },
     write(request, data) {
-      var objects = mapObjects(data, idFromProps);
+      var { query: { paths } } = request,
+        objects = {};
+
+      for (var path in paths) {
+        var pathObjects = mapObjects(data[paths[path].root], idFromProps);
+        objects = Object.assign(objects, pathObjects);
+        pathsMap[path] = { data: data[paths[path].root], objects: pathObjects };
+      }
 
       objectsMap = mergeObjects(objectsMap, objects);
-
-      pathsMap[request.query.query] = { data, objects };
 
       for (var i = 0; i < listeners.length; i++) listeners[i](objects);
     },
     read(request) {
-      var operation = pathsMap[request.query.query];
+      var { query: { paths } } = request,
+        operation = { data: {}, objects: {} };
 
-      if (!operation) return null;
+      for (var path in paths) {
+        var currentPath = pathsMap[path];
+        if (currentPath) {
+          operation.data[paths[path].root] = currentPath.data;
+          for (var key in currentPath.objects) {
+            operation.objects[key] = currentPath.objects[key];
+          }
+        }
+      }
+
+      if (!Object.keys(operation.data).length) return null;
 
       var { data, objects } = operation;
 
