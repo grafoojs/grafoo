@@ -1,41 +1,16 @@
-import { assign, queryID } from "./util";
-
-function ClientError(response, request) {
-  var msg;
-
-  try {
-    msg = response.errors[0].message;
-  } catch (e) {
-    msg = `GraphQL Error (Code: ${response.status})`;
-  }
-
-  Error.call(this, `${msg}: ${JSON.stringify({ response, request })}`);
-
-  this.response = response;
-  this.request = request;
-
-  if ("function" == typeof Error.captureStackTrace) {
-    Error.captureStackTrace(this, ClientError);
-  }
-}
-
-(ClientError.prototype = Object.create(Error.prototype)).contructor = ClientError;
+import { assign } from "../util";
+import TransportError from "./TransportError";
 
 export default function createTransport(uri, fetchOptions = { headers: {} }) {
-  var prehook, posthook, tempRequestID;
+  var prehook, posthook;
 
   return {
     request(request) {
-      /* Assures that equal requests are not fired at the same time */
-      var requestID = queryID(request.query, request.variables);
-      if (tempRequestID == requestID) return;
-      else tempRequestID = requestID;
-
       var context = assign({ headers: fetchOptions.headers }, request);
 
       if (prehook) context = assign({}, context, prehook(context));
 
-      var { headers, query, variables } = context;
+      var { headers, query: { query }, variables } = context;
 
       var options = assign({ body: JSON.stringify({ query, variables }) }, fetchOptions, {
         method: "POST",
@@ -59,12 +34,12 @@ export default function createTransport(uri, fetchOptions = { headers: {} }) {
 
           if (posthook) ({ response, result } = posthook({ response, result }));
 
-          if (response.ok && !result.errors && result.data) {
+          if (response.ok && !(result.error || result.errors) && result.data) {
             return result.data;
           } else {
             var errorResult = "string" == typeof result ? { error: result } : result;
 
-            throw new ClientError(assign({ status: response.status }, errorResult), {
+            throw new TransportError(assign({ status: response.status }, errorResult), {
               query,
               variables
             });

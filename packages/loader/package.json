@@ -14,7 +14,7 @@
     "babel-literal-to-ast": "^2.0.0",
     "babel-types": "^6.26.0",
     "graphql": "^0.13.1",
-    "graphql-query-compress": "^0.9.10"
+    "graphql-query-compress": "^1.0.0"
   },
   "ava": {
     "require": ["@babel/register"]
