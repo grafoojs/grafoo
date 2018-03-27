@@ -1,9 +1,10 @@
 import { h } from "preact";
-import { queryID, assign } from "../../util";
+// import { queryID, assign } from "../../util";
 
 export function Mutation({ children, query }, { client }) {
   const mutate = ({ variables, optimisticUpdate }) => {
-    const id = queryID(query, variables);
+    // change
+    const id = String(query, variables);
 
     if (optimisticUpdate) {
       try {
@@ -11,6 +12,7 @@ export function Mutation({ children, query }, { client }) {
       } catch (err) {
         const source = query.loc.source.body.replace(/[\s,]+/g, " ").trim();
 
+        // eslint-disable-next-line
         console.error(
           `Failed to apply optimistic update on mutation \`${source}\`. Have you forgot to pass an ID field?`
         );
@@ -32,7 +34,7 @@ export function Mutation({ children, query }, { client }) {
 export function withMutation(query) {
   return Child => {
     const Wrapper = ownProps =>
-      h(Mutation, { query }, props => h(Child, assign({}, ownProps, props)));
+      h(Mutation, { query }, props => h(Child, Object.assign({}, ownProps, props)));
 
     if (process.env.NODE_ENV !== "production") {
       Wrapper.displayName = `Mutation(${Child.name})`;

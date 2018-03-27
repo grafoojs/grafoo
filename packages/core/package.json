@@ -2,12 +2,16 @@
   "name": "@grafoo/core",
   "version": "0.0.0",
   "description": "the grafoo client core",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "umd:main": "dist/index.umd.js",
+  "module": "dist/index.m.js",
+  "source": "src/index.js",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "echo ok",
-    "test": "ava --verbose"
+    "prepare": "yqrn build && echo ok",
+    "test": "ava --verbose",
+    "build": "microbundle"
   },
   "ava": {
     "require": ["@babel/register"]

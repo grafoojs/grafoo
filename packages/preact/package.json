@@ -2,10 +2,20 @@
   "name": "@grafoo/preact",
   "version": "0.0.0",
   "description": "the grafoo client preact-bindings",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "umd:main": "dist/index.umd.js",
+  "module": "dist/index.m.js",
+  "source": "src/index.js",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "echo ok"
+    "prepare": "yarn build && echo ok",
+    "build": "microbundle"
+  },
+  "peerDependencies": {
+    "preact": "^8.2.7"
+  },
+  "devDependencies": {
+    "preact": "^8.2.7"
   }
 }
