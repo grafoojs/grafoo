@@ -5,7 +5,7 @@ import { parse, print } from "graphql";
 
 import insertFields from "../src/insert-fields";
 
-const schema = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "utf-8");
+const schema = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8");
 
 const cases = [
   {

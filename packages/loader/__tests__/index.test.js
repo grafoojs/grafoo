@@ -5,7 +5,7 @@ import plugin from "../src";
 
 const transform = (program, opts) =>
   babel.transform(program, {
-    plugins: [[plugin, Object.assign({ schema: "schema.graphql" }, opts)]]
+    plugins: [[plugin, Object.assign({ schema: "__tests__/schema.graphql" }, opts)]]
   });
 
 test.afterEach(() => {
