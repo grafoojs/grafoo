@@ -13,23 +13,26 @@ export default function createCache(initialState = {}, idFromProps = _ => _.id) 
         listeners.splice(listeners.indexOf(listener), 1);
       };
     },
-    write(query, data) {
+    write(request, data) {
       var objects = mapObjects(data, idFromProps);
 
       objectsMap = mergeObjects(objectsMap, objects);
 
-      pathsMap[query] = { data, objects };
+      pathsMap[request.query.query] = { data, objects };
 
       for (var i = 0; i < listeners.length; i++) listeners[i](objects);
     },
-    read(query) {
-      var operation = pathsMap[query];
+    read(request) {
+      var operation = pathsMap[request.query.query];
 
       if (!operation) return null;
 
       var { data, objects } = operation;
 
       return { data: buildQueryTree(data, objectsMap, idFromProps), objects };
+    },
+    getState() {
+      return { objectsMap, pathsMap };
     }
   };
 }

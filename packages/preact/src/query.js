@@ -5,8 +5,8 @@ function shallowEqual() {
 }
 
 export function Query({ query, variables, skipCache, children }, { client }) {
-  const id = String(query, variables);
-  const cachedQuery = client.read(id);
+  const cachedQuery = client.read({ query, variables });
+
   let state =
     cachedQuery && !skipCache ? Object.assign({ loading: false }, cachedQuery) : { loading: true };
 
@@ -17,7 +17,7 @@ export function Query({ query, variables, skipCache, children }, { client }) {
     if (!state.objects) return;
 
     if (!shallowEqual(nextObjects, state.objects)) {
-      state = Object.assign({ loading: false }, client.read(id));
+      state = Object.assign({ loading: false }, client.read({ query, variables }));
 
       this.setState(null);
     }
@@ -27,9 +27,9 @@ export function Query({ query, variables, skipCache, children }, { client }) {
     client.request({ query, variables }).then(data => {
       lockUpdate = true;
 
-      client.write(id, data);
+      client.write({ query, variables }, data);
 
-      state = Object.assign({ loading: false }, client.read(id));
+      state = Object.assign({ loading: false }, client.read({ query, variables }));
 
       this.setState(null);
     });

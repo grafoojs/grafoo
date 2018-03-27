@@ -5,6 +5,8 @@ import graphql from "@grafoo/loader";
 
 const client = createClient("https://api.graph.cool/simple/v1/cj28ccc28umr50115gjodwzix");
 
+window.client = client;
+
 const query = graphql`
   query {
     allAuthors {
