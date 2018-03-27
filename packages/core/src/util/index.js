@@ -6,10 +6,10 @@ export const shallowEqual = (a, b) => {
 
 export const assign = Object.assign;
 
-export const isNotNullObject = val => val && "object" == typeof val;
+export const isNotNullObject = _ => _ && typeof _ == "object";
 
-export const queryID = (query, variables) =>
-  query.loc.source.body.replace(/[\s,]+/g, "").trim() + JSON.stringify(variables) || "";
+export const queryID = ({ query: { query } }, variables) =>
+  query + ":" + JSON.stringify(variables) || "";
 
 export { default as buildQueryTree } from "./buildQueryTree";
 export { default as mapObjects } from "./mapObjects";

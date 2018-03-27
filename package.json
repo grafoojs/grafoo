@@ -12,7 +12,8 @@
     "test": "lerna run test",
     "lint": "eslint \"./packages/**/*.js\"",
     "prepare": "lerna run prepare",
-    "clean": "rimraf packages/**/dist"
+    "clean": "rimraf packages/**/dist",
+    "postcommit": "echo \"\n\n\n---------------\nPUSH YOUR CODE!\n---------------\n\n\n\""
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.42",
@@ -23,6 +24,7 @@
     "ava": "^0.25.0",
     "eslint": "^4.19.0",
     "eslint-plugin-import": "^2.9.0",
+    "husky": "^0.14.3",
     "lerna": "^3.0.0-alpha.1",
     "microbundle": "^0.4.4",
     "rimraf": "^2.6.2"
