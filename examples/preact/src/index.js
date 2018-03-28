@@ -13,12 +13,17 @@ const query = graphql`
       firstname
       lastname
     }
+    allUsers {
+      createdAt
+    }
   }
 `;
 
+console.log(query);
+
 const App = () => (
   <Provider client={client}>
-    <Query query={query}>{({ data }) => <pre>{JSON.stringify(data, null, 2)}</pre>}}</Query>
+    <Query query={query}>{({ data }) => <pre>{JSON.stringify(data, null, 2)}</pre>}</Query>
   </Provider>
 );
 
