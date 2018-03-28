@@ -18,9 +18,7 @@ const query = graphql`
 
 const App = () => (
   <Provider client={client}>
-    <Query query={query}>
-      {({ data, loading, errors }) => <pre>{JSON.stringify(data, null, 2)}</pre>}}
-    </Query>
+    <Query query={query}>{({ data }) => <pre>{JSON.stringify(data, null, 2)}</pre>}}</Query>
   </Provider>
 );
 

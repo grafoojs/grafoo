@@ -13,24 +13,36 @@ function insertField(selections, value) {
 export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
   const typeInfo = new TypeInfo(buildASTSchema(parse(schemaStr)));
 
+  let isFragment = false;
+
   const visitor = {
+    InlineFragment() {
+      isFragment = true;
+    },
+    FragmentDefinition() {
+      isFragment = true;
+    },
     SelectionSet({ selections }) {
       const type = getType(typeInfo);
       const typeFields = Object.keys(type.getFields());
+      const typeInterfaces = type.getInterfaces ? type.getInterfaces() : [];
+      const typeInterfacesFields = typeInterfaces.reduce(
+        (acc, next) => acc.concat(Object.keys(next.getFields())),
+        []
+      );
 
       for (const field of fieldsToInsert) {
         const fieldIsNotDeclared = selections.some(_ => _.name.value !== field);
         const fieldIsTypename = field === "__typename";
-        const typeDoesNotImplementInterface = !(type.getInterfaces && type.getInterfaces().length);
         const typeHasField = typeFields.some(_ => _ === field);
+        const typeInterfacesHasField = typeInterfacesFields.some(_ => _ === field);
         const typeIsNotQuery = type.name !== "Query";
 
-        if (
-          fieldIsTypename &&
-          fieldIsNotDeclared &&
-          typeIsNotQuery &&
-          typeDoesNotImplementInterface
-        ) {
+        if (fieldIsTypename && fieldIsNotDeclared && typeIsNotQuery && !isFragment) {
+          insertField(selections, field);
+        }
+
+        if (fieldIsNotDeclared && typeInterfacesHasField && !isFragment) {
           insertField(selections, field);
         }
 
@@ -38,6 +50,8 @@ export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
           insertField(selections, field);
         }
       }
+
+      isFragment = false;
     }
   };
 

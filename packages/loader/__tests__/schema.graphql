@@ -20,6 +20,8 @@ type Post {
 }
 
 type Query {
+  author(id: ID!): Author
+  authors(start: Int!, offset: Int!): [Author]
   posts(start: Int!, offset: Int!): [Post]
   post(id: ID!): Post
   tag(id: ID!): Tag

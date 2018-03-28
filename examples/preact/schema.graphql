@@ -19,11 +19,27 @@ type Author implements Node {
   firstname: String
   id: ID!
   lastname: String
-  posts(filter: PostFilter, orderBy: PostOrderBy, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
+  posts(
+    filter: PostFilter
+    orderBy: PostOrderBy
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Post!]
   updatedAt: DateTime!
 
   # Meta information about the query.
-  _postsMeta(filter: PostFilter, orderBy: PostOrderBy, skip: Int, after: String, before: String, first: Int, last: Int): _QueryMeta!
+  _postsMeta(
+    filter: PostFilter
+    orderBy: PostOrderBy
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): _QueryMeta!
 }
 
 input AuthorFilter {
@@ -1058,10 +1074,21 @@ type FileSubscriptionPayload {
 }
 
 type Mutation {
-  createAuthor(firstname: String, lastname: String, postsIds: [ID!], posts: [AuthorpostsPost!]): Author
+  createAuthor(
+    firstname: String
+    lastname: String
+    postsIds: [ID!]
+    posts: [AuthorpostsPost!]
+  ): Author
   createFile(name: String!): File
   createPost(content: String, title: String, authorId: ID, author: PostauthorAuthor): Post
-  updateAuthor(firstname: String, id: ID!, lastname: String, postsIds: [ID!], posts: [AuthorpostsPost!]): Author
+  updateAuthor(
+    firstname: String
+    id: ID!
+    lastname: String
+    postsIds: [ID!]
+    posts: [AuthorpostsPost!]
+  ): Author
   updateFile(id: ID!, name: String): File
   updatePost(content: String, id: ID!, title: String, authorId: ID, author: PostauthorAuthor): Post
   updateUser(id: ID!): User
@@ -1491,14 +1518,78 @@ type PostSubscriptionPayload {
 }
 
 type Query {
-  allAuthors(filter: AuthorFilter, orderBy: AuthorOrderBy, skip: Int, after: String, before: String, first: Int, last: Int): [Author!]!
-  allFiles(filter: FileFilter, orderBy: FileOrderBy, skip: Int, after: String, before: String, first: Int, last: Int): [File!]!
-  allPosts(filter: PostFilter, orderBy: PostOrderBy, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]!
-  allUsers(filter: UserFilter, orderBy: UserOrderBy, skip: Int, after: String, before: String, first: Int, last: Int): [User!]!
-  _allAuthorsMeta(filter: AuthorFilter, orderBy: AuthorOrderBy, skip: Int, after: String, before: String, first: Int, last: Int): _QueryMeta!
-  _allFilesMeta(filter: FileFilter, orderBy: FileOrderBy, skip: Int, after: String, before: String, first: Int, last: Int): _QueryMeta!
-  _allPostsMeta(filter: PostFilter, orderBy: PostOrderBy, skip: Int, after: String, before: String, first: Int, last: Int): _QueryMeta!
-  _allUsersMeta(filter: UserFilter, orderBy: UserOrderBy, skip: Int, after: String, before: String, first: Int, last: Int): _QueryMeta!
+  allAuthors(
+    filter: AuthorFilter
+    orderBy: AuthorOrderBy
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Author!]!
+  allFiles(
+    filter: FileFilter
+    orderBy: FileOrderBy
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [File!]!
+  allPosts(
+    filter: PostFilter
+    orderBy: PostOrderBy
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Post!]!
+  allUsers(
+    filter: UserFilter
+    orderBy: UserOrderBy
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [User!]!
+  _allAuthorsMeta(
+    filter: AuthorFilter
+    orderBy: AuthorOrderBy
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): _QueryMeta!
+  _allFilesMeta(
+    filter: FileFilter
+    orderBy: FileOrderBy
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): _QueryMeta!
+  _allPostsMeta(
+    filter: PostFilter
+    orderBy: PostOrderBy
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): _QueryMeta!
+  _allUsersMeta(
+    filter: UserFilter
+    orderBy: UserOrderBy
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): _QueryMeta!
   Author(id: ID): Author
   File(id: ID, secret: String, url: String): File
   Post(id: ID): Post
@@ -1776,4 +1867,3 @@ type UserSubscriptionPayload {
   updatedFields: [String!]
   previousValues: UserPreviousValues
 }
-

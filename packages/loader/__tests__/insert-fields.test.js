@@ -10,20 +10,20 @@ const schema = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8");
 const cases = [
   {
     title: "should insert a field",
-    input: "{ user { name } }",
-    expectedOutput: "{ user { name id } }",
+    input: "{ author { name } }",
+    expectedOutput: "{ author { name id } }",
     fieldsToInsert: ["id"]
   },
   {
     title: "should insert more then a field if specified",
-    input: "{ user { name } }",
-    expectedOutput: "{ user { name username email id } }",
+    input: "{ author { name } }",
+    expectedOutput: "{ author { name username email id } }",
     fieldsToInsert: ["username", "email", "id"]
   },
   {
     title: "should insert `__typename` if specified",
-    input: "{ user { name } }",
-    expectedOutput: "{ user { name __typename } }",
+    input: "{ author { name } }",
+    expectedOutput: "{ author { name __typename } }",
     fieldsToInsert: ["__typename"]
   },
   {
