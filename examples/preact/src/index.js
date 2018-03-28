@@ -8,18 +8,29 @@ const client = createClient("https://api.graph.cool/simple/v1/cj28ccc28umr50115g
 window.client = client;
 
 const query = graphql`
-  query {
+  {
     allAuthors {
       firstname
       lastname
     }
-    allUsers {
+    allPosts {
+      title
+      content
       createdAt
+      updatedAt
     }
   }
 `;
 
-console.log(query);
+const mutation = graphql`
+  mutation createPost($content: String, $title: String, $authorId: ID) {
+    createPost(content: $content, title: $title, authorId: $authorId) {
+      id
+    }
+  }
+`;
+
+console.log(mutation);
 
 const App = () => (
   <Provider client={client}>

@@ -9,7 +9,7 @@
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "yarn build && echo ok",
+    "prepare": "yarn build",
     "test": "ava --verbose",
     "build": "microbundle"
   },

@@ -13,6 +13,7 @@
     "lint": "eslint \"./packages/**/*.js\"",
     "prepare": "lerna run prepare",
     "clean": "rimraf packages/**/dist",
+    "prepush": "lerna run test",
     "postcommit": "echo \"---------------\nPUSH YOUR CODE!\n---------------\n\""
   },
   "devDependencies": {

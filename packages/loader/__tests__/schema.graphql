@@ -1,5 +1,5 @@
 type Mutation {
-  createPost(title: String!, body: String!, authors: [ID!], tags: [String!]): Post
+  createPost(title: String!, body: String!, authors: [ID!]!, tags: [String!]): Post
   deletePost(id: ID): Post
   createTag(name: String!): Tag
   register(username: String!, email: String!, password: String!): User

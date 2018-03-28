@@ -217,6 +217,34 @@ const cases = [
       }
     `,
     fieldsToInsert: ["bio"]
+  },
+  {
+    title: "should not insert `__typename` in an operation definition",
+    input: `
+      mutation createPost($title: Int!, $body: Int!, $id: ID! $authors: [ID!]!) {
+        createPost(title: $title, body: $body, authors: $authors) {
+          title
+          body
+          createdAt
+          tags { name }
+          authors { name username }
+        }
+      }
+    `,
+    expectedOutput: `
+      mutation createPost($title: Int!, $body: Int!, $id: ID! $authors: [ID!]!) {
+        createPost(title: $title, body: $body, authors: $authors) {
+          title
+          body
+          createdAt
+          tags { name id __typename }
+          authors { name username id __typename }
+          id
+          __typename
+        }
+      }
+    `,
+    fieldsToInsert: ["id", "__typename"]
   }
 ];
 

@@ -13,9 +13,13 @@ function insertField(selections, value) {
 export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
   const typeInfo = new TypeInfo(buildASTSchema(parse(schemaStr)));
 
+  let isOperationDefinition = false;
   let isFragment = false;
 
   const visitor = {
+    OperationDefinition() {
+      isOperationDefinition = true;
+    },
     InlineFragment() {
       isFragment = true;
     },
@@ -23,6 +27,12 @@ export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
       isFragment = true;
     },
     SelectionSet({ selections }) {
+      if (isOperationDefinition) {
+        isOperationDefinition = false;
+
+        return;
+      }
+
       const type = getType(typeInfo);
       const typeFields = Object.keys(type.getFields());
       const typeInterfaces = type.getInterfaces ? type.getInterfaces() : [];
@@ -36,9 +46,8 @@ export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
         const fieldIsTypename = field === "__typename";
         const typeHasField = typeFields.some(_ => _ === field);
         const typeInterfacesHasField = typeInterfacesFields.some(_ => _ === field);
-        const typeIsNotQuery = type.name !== "Query";
 
-        if (fieldIsTypename && fieldIsNotDeclared && typeIsNotQuery && !isFragment) {
+        if (fieldIsTypename && fieldIsNotDeclared && !isFragment) {
           insertField(selections, field);
         }
 
