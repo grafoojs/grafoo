@@ -3,14 +3,11 @@ import { h } from "preact";
 
 export function Mutation({ children, query }, { client }) {
   const mutate = ({ variables, optimisticUpdate }) => {
-    // change
-    const id = String(query, variables);
-
     if (optimisticUpdate) {
       try {
-        client.write(id, optimisticUpdate);
+        client.write({ query, variables }, optimisticUpdate);
       } catch (err) {
-        const source = query.loc.source.body.replace(/[\s,]+/g, " ").trim();
+        const source = query.query.replace(/[\s,]+/g, " ").trim();
 
         // eslint-disable-next-line
         console.error(
@@ -22,8 +19,8 @@ export function Mutation({ children, query }, { client }) {
     return client.request({ query, variables }).then(data => ({
       data,
       cache: {
-        read: () => client.read(id),
-        write: data => client.write(id, data)
+        read: () => client.read({ query, variables }),
+        write: data => client.write({ query, variables }, data)
       }
     }));
   };

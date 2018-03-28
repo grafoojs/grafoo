@@ -49,7 +49,7 @@ export function Query({ query, variables, skipCache, children }, { client }) {
     unwatch();
   };
 
-  this.render = () => children[0]({ client, data: state.data });
+  this.render = () => children[0](Object.assign({}, { client }, state));
 }
 
 (Query.prototype = new Component()).constructor = Query;

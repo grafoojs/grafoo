@@ -12,11 +12,14 @@ module.exports = {
     }
   },
   parserOptions: {
+    ecmaVersion: 2017,
     ecmaFeatures: {
-      jsx: true
+      jsx: true,
+      experimentalObjectRestSpread: true
     }
   },
   rules: {
-    "graphql/template-strings": ["error", { schemaString, tagName: "graphql" }]
+    "graphql/template-strings": ["error", { schemaString, tagName: "graphql" }],
+    "react/prop-types": "off"
   }
 };
