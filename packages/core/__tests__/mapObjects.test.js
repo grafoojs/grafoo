@@ -29,7 +29,9 @@ const data = {
   ]
 };
 
-const map = mapObjects(data);
+const idFromProps = _ => _.id;
+
+const map = mapObjects(data, idFromProps);
 
 test("should return a map of objects", t => {
   const expected = {
@@ -57,5 +59,5 @@ test("should accept null values", t => {
     }
   };
 
-  t.notThrows(() => mapObjects(result));
+  t.notThrows(() => mapObjects(result, idFromProps));
 });

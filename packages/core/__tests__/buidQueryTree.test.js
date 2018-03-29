@@ -38,7 +38,9 @@ const objects = {
   "6": { name: "laura", id: "6" }
 };
 
-const map = buildQueryTree(tree, objects);
+const idFromProps = _ => _.id;
+
+const map = buildQueryTree(tree, objects, idFromProps);
 
 test("should produce a resulting query tree", t => {
   t.deepEqual(map, tree);
@@ -77,5 +79,5 @@ test("should update values of a resulting query tree", t => {
     ]
   };
 
-  t.deepEqual(buildQueryTree(tree, objects), expected);
+  t.deepEqual(buildQueryTree(tree, objects, idFromProps), expected);
 });
