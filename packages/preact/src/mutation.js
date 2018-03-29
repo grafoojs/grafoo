@@ -1,5 +1,4 @@
 import { h } from "preact";
-// import { queryID, assign } from "../../util";
 
 export function Mutation({ children, query }, { client }) {
   const mutate = ({ variables, optimisticUpdate }) => {
@@ -9,20 +8,26 @@ export function Mutation({ children, query }, { client }) {
       } catch (err) {
         const source = query.query.replace(/[\s,]+/g, " ").trim();
 
-        // eslint-disable-next-line
+        // eslint-disable-next-line no-console
         console.error(
-          `Failed to apply optimistic update on mutation \`${source}\`. Have you forgot to pass an ID field?`
+          "Failed to apply optimistic update on mutation `" +
+            source +
+            "`. Have you forgot to pass an ID field?"
         );
       }
     }
 
-    return client.request({ query, variables }).then(data => ({
-      data,
-      cache: {
-        read: () => client.read({ query, variables }),
-        write: data => client.write({ query, variables }, data)
-      }
-    }));
+    return client.request({ query, variables }).then(data => {
+      const request = { query, variables };
+
+      return {
+        data,
+        cache: {
+          read: () => client.read(request),
+          write: data => client.write(request, data)
+        }
+      };
+    });
   };
 
   return children[0]({ mutate });
@@ -33,9 +38,7 @@ export function withMutation(query) {
     const Wrapper = ownProps =>
       h(Mutation, { query }, props => h(Child, Object.assign({}, ownProps, props)));
 
-    if (process.env.NODE_ENV !== "production") {
-      Wrapper.displayName = `Mutation(${Child.name})`;
-    }
+    if (process.env.NODE_ENV !== "production") Wrapper.displayName = `Mutation(${Child.name})`;
 
     return Wrapper;
   };

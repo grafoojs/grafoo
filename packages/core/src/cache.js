@@ -19,6 +19,7 @@ export default function createCache(initialState = {}, idFromProps = _ => _.id) 
 
       for (var path in paths) {
         var pathObjects = mapObjects(data[paths[path].root], idFromProps);
+
         objects = Object.assign(objects, pathObjects);
         pathsMap[path] = { data: data[paths[path].root], objects: pathObjects };
       }

@@ -1,16 +1,11 @@
-import { h, Component } from "preact";
-import { withMutation } from "@grafoo/preact";
+import { h } from "preact";
+import { Mutation } from "@grafoo/preact";
 import graphql from "@grafoo/loader";
 
 import { Wrapper, H1, Form, Input, Textarea, Button } from "./ui-kit";
 
-class PostForm extends Component {
-  constructor(props) {
-    super(props);
-    this.submit = this.submit.bind(this);
-  }
-
-  async submit(event) {
+function handleSubmit(mutate) {
+  return async event => {
     event.preventDefault();
 
     const variables = [...event.target.elements].reduce(
@@ -18,33 +13,37 @@ class PostForm extends Component {
       { authorId: "cjf8wunvn9a090108zyom8xs2" }
     );
 
-    const optimisticUpdate = variables;
+    const optimisticUpdate = Object.assign({}, variables, { id: "tempID" });
 
-    const { data, cache } = await this.props.mutate({ variables, optimisticUpdate });
+    const { data, cache } = await mutate({ variables, optimisticUpdate });
 
     cache.write(data);
-  }
-
-  render() {
-    return (
-      <Wrapper>
-        <H1>Post Form</H1>
-        <Form onSubmit={this.submit}>
-          <Input placeholder="title" name="title" />
-          <Textarea placeholder="content" name="content" />
-          <Button>submit</Button>
-        </Form>
-      </Wrapper>
-    );
-  }
+  };
 }
 
 const mutation = graphql`
   mutation createPost($content: String, $title: String, $authorId: ID) {
     createPost(content: $content, title: $title, authorId: $authorId) {
+      title
+      content
       id
     }
   }
 `;
 
-export default withMutation(mutation)(PostForm);
+export default function PostForm() {
+  return (
+    <Mutation query={mutation}>
+      {({ mutate }) => (
+        <Wrapper>
+          <H1>Post Form</H1>
+          <Form onSubmit={handleSubmit(mutate)}>
+            <Input placeholder="title" name="title" />
+            <Textarea placeholder="content" name="content" />
+            <Button>submit</Button>
+          </Form>
+        </Wrapper>
+      )}
+    </Mutation>
+  );
+}
