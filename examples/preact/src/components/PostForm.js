@@ -1,43 +1,46 @@
 import { h } from "preact";
 import { Mutation } from "@grafoo/preact";
-import graphql from "@grafoo/loader";
 
+import { allPosts, createPost } from "../queries";
 import { Wrapper, H1, Form, Input, Textarea, Button } from "./ui-kit";
 
-function handleSubmit(mutate) {
+function handleSubmit(client, mutate) {
   return async event => {
     event.preventDefault();
 
-    const variables = [...event.target.elements].reduce(
+    const tempId = Math.random()
+      .toString(36)
+      .substring(2, 7);
+
+    const elements = [...event.target.elements];
+
+    const newPost = elements.reduce(
       (acc, cur) => (!cur.name ? acc : Object.assign({}, acc, { [cur.name]: cur.value })),
-      { authorId: "cjf8wunvn9a090108zyom8xs2" }
+      {
+        authorId: "cjf8wunvn9a090108zyom8xs2",
+        id: tempId
+      }
     );
 
-    const optimisticUpdate = Object.assign({}, variables, { id: "tempID" });
+    elements.forEach(_ => (_.value = ""));
 
-    const { data, cache } = await mutate({ variables, optimisticUpdate });
+    const { data: fromCache } = client.read({ query: allPosts });
 
-    cache.write(data);
+    client.write({ query: allPosts }, { allPosts: [newPost, ...fromCache.allPosts] });
+
+    const { data: fromServer } = await mutate({ variables: newPost });
+
+    client.write({ query: allPosts }, { allPosts: [fromServer.createPost, ...fromCache.allPosts] });
   };
 }
 
-const mutation = graphql`
-  mutation createPost($content: String, $title: String, $authorId: ID) {
-    createPost(content: $content, title: $title, authorId: $authorId) {
-      title
-      content
-      id
-    }
-  }
-`;
-
 export default function PostForm() {
   return (
-    <Mutation query={mutation}>
-      {({ mutate }) => (
+    <Mutation query={createPost}>
+      {({ mutate, client }) => (
         <Wrapper>
           <H1>Post Form</H1>
-          <Form onSubmit={handleSubmit(mutate)}>
+          <Form onSubmit={handleSubmit(client, mutate)}>
             <Input placeholder="title" name="title" />
             <Textarea placeholder="content" name="content" />
             <Button>submit</Button>

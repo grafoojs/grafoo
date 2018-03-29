@@ -1,23 +1,29 @@
 import { h } from "preact";
-import { Query } from "@grafoo/preact";
-import graphql from "@grafoo/loader";
+import { Query, withMutation } from "@grafoo/preact";
 
-import { Ul, Li, H2, Wrapper } from "./ui-kit";
+import { allPosts, deletePost } from "../queries";
+import { Ul, Li, H2, Wrapper, Button } from "./ui-kit";
 
-const query = graphql`
-  query {
-    allPosts(orderBy: createdAt_DESC) {
-      title
-      content
-      createdAt
-      updatedAt
-    }
-  }
-`;
+function removePost(mutate, id, client) {
+  return event => {
+    event.preventDefault();
 
-export default function PostsList() {
+    const { data } = client.read({ query: allPosts });
+
+    client.write(
+      { query: allPosts },
+      {
+        allPosts: data.allPosts.filter(_ => _.id !== id)
+      }
+    );
+
+    mutate({ variables: { id } });
+  };
+}
+
+export default withMutation(deletePost)(function PostsList(props) {
   return (
-    <Query query={query}>
+    <Query query={allPosts}>
       {({ data, loading }) => {
         if (loading) return <Wrapper>loading...</Wrapper>;
 
@@ -28,6 +34,13 @@ export default function PostsList() {
                 <Wrapper>
                   <H2>{post.title}</H2>
                   <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                  <br />
+                  <Button onClick={removePost(props.mutate, post.id, props.client)}>
+                    update post
+                  </Button>{" "}
+                  <Button onClick={removePost(props.mutate, post.id, props.client)}>
+                    remove post
+                  </Button>
                 </Wrapper>
               </Li>
             ))}
@@ -36,4 +49,4 @@ export default function PostsList() {
       }}
     </Query>
   );
-}
+});

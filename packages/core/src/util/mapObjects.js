@@ -1,6 +1,6 @@
 import { isNotNullObject, assign } from ".";
 
-export default function mapObjects(tree) {
+export default function mapObjects(tree, idFromProps) {
   // dictionary in which objects will be stored having their ids as key
   var dict = {},
     stack = [],
@@ -14,7 +14,7 @@ export default function mapObjects(tree) {
     // pops the current branch from the stack
     var branch = stack.pop(),
       // probable node id
-      { id } = branch,
+      id = idFromProps(branch),
       // next node to be traversed. nested branches will be removed
       filteredBranch = {};
 

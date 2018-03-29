@@ -1,6 +1,6 @@
 import { isNotNullObject } from ".";
 
-export default function buildQueryTree(tree, objects) {
+export default function buildQueryTree(tree, objects, idFromProps) {
   // clone resulting query tree
   var queryTree = JSON.parse(JSON.stringify(tree)),
     stack = [],
@@ -17,7 +17,7 @@ export default function buildQueryTree(tree, objects) {
       // assigns nested branch
       branch = currentTree[key],
       // probable node id
-      { id } = branch;
+      id = idFromProps(branch);
 
     // iterates over the child branch
     for (i in branch) {
