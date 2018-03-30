@@ -1,9 +1,11 @@
-import { buildQueryTree, mapObjects, mergeObjects } from "./util";
+import buildQueryTree from "./util/buildQueryTree";
+import mapObjects from "./util/mapObjects";
+import { assign } from "./util";
 
 export default function createCache(initialState = {}, idFromProps = _ => _.id) {
-  var objectsMap = initialState.objectsMap || {},
-    pathsMap = initialState.pathsMap || {},
-    listeners = [];
+  const objectsMap = initialState.objectsMap || {};
+  const pathsMap = initialState.pathsMap || {};
+  const listeners = [];
 
   return {
     watch(listener) {
@@ -13,41 +15,45 @@ export default function createCache(initialState = {}, idFromProps = _ => _.id) 
         listeners.splice(listeners.indexOf(listener), 1);
       };
     },
-    write(request, data) {
-      var { query: { paths } } = request,
-        objects = {};
+    write({ query: { paths } }, data) {
+      const objects = {};
 
-      for (var path in paths) {
-        var pathObjects = mapObjects(data[paths[path].root], idFromProps);
+      for (const path in paths) {
+        const pathData = data[paths[path].root];
+        const pathObjects = mapObjects(pathData, idFromProps);
 
-        objects = Object.assign(objects, pathObjects);
+        assign(objects, pathObjects);
 
-        pathsMap[path] = { data: data[paths[path].root], objects: pathObjects };
+        pathsMap[path] = { data: pathData, objects: pathObjects };
       }
 
-      objectsMap = mergeObjects(objectsMap, objects);
+      assign(objectsMap, objects);
 
-      for (var i = 0; i < listeners.length; i++) listeners[i](objects);
+      for (const id in objectsMap) {
+        objectsMap[id] = assign(objectsMap[id], objects[id]);
+      }
+
+      for (const i in listeners) {
+        listeners[i](objects);
+      }
     },
-    read(request) {
-      var { query: { paths } } = request,
-        operation = { data: {}, objects: {} };
+    read({ query: { paths } }) {
+      const data = {};
+      const objects = {};
 
-      for (var path in paths) {
-        var currentPath = pathsMap[path];
+      for (const path in paths) {
+        const currentPath = pathsMap[path];
 
         if (currentPath) {
-          operation.data[paths[path].root] = currentPath.data;
+          data[paths[path].root] = currentPath.data;
 
-          for (var key in currentPath.objects) {
-            operation.objects[key] = currentPath.objects[key];
+          for (const key in currentPath.objects) {
+            objects[key] = currentPath.objects[key];
           }
         }
       }
 
-      if (!Object.keys(operation.data).length) return null;
-
-      var { data, objects } = operation;
+      if (!Object.keys(data).length) return null;
 
       return { data: buildQueryTree(data, objectsMap, idFromProps), objects };
     },

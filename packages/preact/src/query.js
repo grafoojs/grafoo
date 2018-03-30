@@ -1,18 +1,17 @@
 import { h, Component } from "preact";
 
-var shallowEqual = (a, b) => {
+const shallowEqual = (a, b) => {
   for (let i in a) if (a[i] !== b[i]) return false;
   for (let i in b) if (!(i in a)) return false;
   return true;
 };
 
 export function Query({ query, variables, skipCache, children }, { client }) {
-  const cachedQuery = client.read({ query, variables });
+  const request = { query, variables };
+  const cachedQuery = client.read(request);
 
   let state =
-    cachedQuery && !skipCache
-      ? Object.assign({}, { loading: false }, cachedQuery)
-      : { loading: true };
+    cachedQuery && !skipCache ? Object.assign({ loading: false }, cachedQuery) : { loading: true };
 
   let lockUpdate = false;
   const update = nextObjects => {
@@ -21,19 +20,19 @@ export function Query({ query, variables, skipCache, children }, { client }) {
     if (!state.objects) return;
 
     if (!shallowEqual(nextObjects, state.objects)) {
-      state = Object.assign({}, { loading: false }, client.read({ query, variables }));
+      state = Object.assign({ loading: false }, client.read(request));
 
       this.setState(null);
     }
   };
 
   const executeQuery = () =>
-    client.request({ query, variables }).then(data => {
+    client.request(request).then(data => {
       lockUpdate = true;
 
-      client.write({ query, variables }, data);
+      client.write(request, data);
 
-      state = Object.assign({}, { loading: false }, client.read({ query, variables }));
+      state = Object.assign({ loading: false }, client.read(request));
 
       this.setState(null);
     });
@@ -51,7 +50,7 @@ export function Query({ query, variables, skipCache, children }, { client }) {
     unwatch();
   };
 
-  this.render = () => children[0](Object.assign({}, { client }, state));
+  this.render = () => children[0](state);
 }
 
 (Query.prototype = new Component()).constructor = Query;

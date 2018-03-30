@@ -2,19 +2,19 @@ import { assign } from "../util";
 import TransportError from "./TransportError";
 
 export default function createTransport(uri, fetchOptions = { headers: {} }) {
-  var prehook, posthook;
+  var prehook;
 
   return {
     request(request) {
       var context = assign({ headers: fetchOptions.headers }, request);
 
-      if (prehook) context = assign({}, context, prehook(context));
+      if (prehook) assign(context, prehook(context));
 
       var { headers, query: { query }, variables } = context;
 
       var options = assign({ body: JSON.stringify({ query, variables }) }, fetchOptions, {
         method: "POST",
-        headers: assign({}, headers, { "Content-Type": "application/json" })
+        headers: assign(headers, { "Content-Type": "application/json" })
       });
 
       var response, result;
@@ -32,8 +32,6 @@ export default function createTransport(uri, fetchOptions = { headers: {} }) {
         .then(res => {
           result = res;
 
-          if (posthook) ({ response, result } = posthook({ response, result }));
-
           if (response.ok && !(result.error || result.errors) && result.data) {
             return result.data;
           } else {
@@ -47,9 +45,6 @@ export default function createTransport(uri, fetchOptions = { headers: {} }) {
         });
     },
     pre(fn) {
-      prehook = fn;
-    },
-    post(fn) {
       prehook = fn;
     }
   };
