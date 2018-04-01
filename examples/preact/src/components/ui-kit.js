@@ -9,6 +9,7 @@ export const Wrapper = styled.div`
 
 export const H1 = styled.H1`
   color: #333;
+  text-transform: uppercase;
   text-align: center;
   margin-top: 0;
 `;

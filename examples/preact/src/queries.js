@@ -1,7 +1,7 @@
 import graphql from "@grafoo/loader";
 
 export const allPosts = graphql`
-  query {
+  query getPosts {
     allPosts(orderBy: createdAt_DESC) {
       title
       content
@@ -16,6 +16,8 @@ export const createPost = graphql`
     createPost(content: $content, title: $title, authorId: $authorId) {
       title
       content
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -25,6 +27,8 @@ export const updatePost = graphql`
     updatePost(id: $id, title: $title, content: $content) {
       title
       content
+      createdAt
+      updatedAt
     }
   }
 `;

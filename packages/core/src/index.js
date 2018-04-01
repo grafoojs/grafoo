@@ -4,8 +4,8 @@ import createCache from "./cache";
 import createTransport from "./transport";
 
 export default function createClient(uri, options = {}) {
-  let transport = createTransport(uri, options.fetchOptions);
-  let cache = createCache(options.initialState);
+  const transport = createTransport(uri, options.fetchOptions);
+  const cache = createCache(options.initialState, options.idFromProps);
 
   return assign({}, transport, cache);
 }

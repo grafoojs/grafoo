@@ -10,12 +10,7 @@ function removePost(mutate, id, client) {
 
     const { data } = client.read({ query: allPosts });
 
-    client.write(
-      { query: allPosts },
-      {
-        allPosts: data.allPosts.filter(_ => _.id !== id)
-      }
-    );
+    client.write({ query: allPosts }, { allPosts: data.allPosts.filter(_ => _.id !== id) });
 
     mutate({ variables: { id } });
   };
