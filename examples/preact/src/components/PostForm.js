@@ -34,10 +34,10 @@ export default function PostForm() {
           client.write({ query: allPosts }, { allPosts: [newPost, ...data.allPosts] });
 
           // perform mutation on the server
-          const { createPost } = await mutate({ variables: newPost });
+          const { createPost: postFromServer } = await mutate({ variables: newPost });
 
           // update cache
-          client.write({ query: allPosts }, { allPosts: [createPost, ...data.allPosts] });
+          client.write({ query: allPosts }, { allPosts: [postFromServer, ...data.allPosts] });
         }
 
         return (
