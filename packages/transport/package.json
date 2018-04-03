@@ -1,15 +1,17 @@
 {
-  "name": "@grafoo/core",
+  "name": "@grafoo/transport",
+  "description": "Grafoo standard transport",
   "version": "0.0.0",
-  "description": "the grafoo client core",
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
   "module": "dist/index.m.js",
   "source": "src/index.js",
-  "author": "malbernaz<albernazmiguel@gmail.com>",
-  "license": "MIT",
   "scripts": {
     "prepare": "yarn build",
+    "test": "ava --verbose",
     "build": "microbundle"
+  },
+  "ava": {
+    "require": ["@babel/register"]
   }
 }

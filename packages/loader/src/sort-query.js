@@ -1,12 +1,5 @@
 import { visit } from "graphql";
-
-const sort = (array, fn = _ => _.name.value) =>
-  array &&
-  array.sort((prev, next) => {
-    if (fn(prev) < fn(next)) return -1;
-    if (fn(prev) > fn(next)) return 1;
-    return 0;
-  });
+import { sortAlphabetically as sort } from "@grafoo/util";
 
 const visitor = {
   OperationDefinition(node) {

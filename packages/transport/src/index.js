@@ -1,4 +1,5 @@
-import { assign } from "../util";
+import { assign } from "@grafoo/util";
+
 import TransportError from "./TransportError";
 
 export default function createTransport(uri, fetchOptions = { headers: {} }) {

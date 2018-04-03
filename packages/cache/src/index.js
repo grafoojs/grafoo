@@ -1,6 +1,7 @@
-import buildQueryTree from "./util/buildQueryTree";
-import mapObjects from "./util/mapObjects";
-import { assign } from "./util";
+import { assign } from "@grafoo/util";
+
+import buildQueryTree from "./buildQueryTree";
+import mapObjects from "./mapObjects";
 
 export default function createCache(initialState = {}, idFromProps = _ => _.id) {
   const objectsMap = initialState.objectsMap || {};

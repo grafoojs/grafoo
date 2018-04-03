@@ -1,4 +1,4 @@
-import { isNotNullObject } from ".";
+import { isNotNullObject } from "@grafoo/util";
 
 export default function buildQueryTree(tree, objects, idFromProps) {
   // clone resulting query tree

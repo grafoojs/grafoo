@@ -1,7 +1,6 @@
-import { assign } from "./util";
-
-import createCache from "./cache";
-import createTransport from "./transport";
+import createTransport from "@grafoo/transport";
+import createCache from "@grafoo/cache";
+import { assign } from "@grafoo/util";
 
 export default function createClient(uri, options = {}) {
   const transport = createTransport(uri, options.fetchOptions);
