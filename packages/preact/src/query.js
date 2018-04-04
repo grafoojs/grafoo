@@ -22,7 +22,7 @@ export function Query({ query, variables, skipCache, children }, { client }) {
   };
 
   const executeQuery = () =>
-    client.request(request).then(data => {
+    client.request({ query: query.query, variables }).then(data => {
       lockUpdate = true;
 
       client.write(request, data);
@@ -55,9 +55,7 @@ export function withQuery(query, variables, skipCache) {
     const Wrapper = ownProps =>
       h(Query, { query, variables, skipCache }, props => h(Child, assign({}, ownProps, props)));
 
-    if (process.env.NODE_ENV !== "production") {
-      Wrapper.displayName = `Query(${Child.name})`;
-    }
+    if (process.env.NODE_ENV !== "production") Wrapper.displayName = `Query(${Child.name})`;
 
     return Wrapper;
   };

@@ -2,6 +2,7 @@
   "extends": ["eslint:recommended", "plugin:import/errors", "plugin:import/warnings"],
   "parserOptions": {
     "sourceType": "module",
+    "ecmaVersion": 2017,
     "ecmaFeatures": {
       "jsx": true
     }
