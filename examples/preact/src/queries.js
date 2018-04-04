@@ -35,6 +35,8 @@ export const updatePost = graphql`
 
 export const deletePost = graphql`
   mutation deletePost($id: ID!) {
-    deletePost(id: $id)
+    deletePost(id: $id) {
+      id
+    }
   }
 `;

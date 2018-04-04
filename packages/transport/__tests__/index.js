@@ -73,20 +73,13 @@ test("should accept fetchObjects as a function", async t => {
   });
 });
 
-test("should handle errors", async t => {
-  const response = {
-    data: null,
-    errors: [
-      {
-        message: "I AM ERROR!"
-      }
-    ]
-  };
+test("should handle graphql errors", async t => {
+  const response = { data: null, errors: [{ message: "I AM ERROR!" }] };
 
   await mock(response, async () => {
     const error = await t.throws(
       client.request({ query }),
-      'GraphQlError: on request {"query":"{ hello }"}'
+      'graphql error on request {"query":"{ hello }"}'
     );
 
     t.deepEqual(error.errors, response.errors);

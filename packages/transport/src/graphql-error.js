@@ -1,10 +1,10 @@
 export default function GraphQlError(errors, request) {
   Error.call(this);
 
-  this.message = "GraphQlError: on request " + JSON.stringify(request);
+  this.message = "graphql error on request " + JSON.stringify(request);
   this.errors = errors;
 
-  if (typeof Error.captureStackTrace === "function") {
+  if (Error.captureStackTrace) {
     Error.captureStackTrace(this, GraphQlError);
   }
 }

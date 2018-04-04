@@ -3,9 +3,10 @@ import { assign } from "@grafoo/util";
 import buildQueryTree from "./build-query-tree";
 import mapObjects from "./map-objects";
 
-export default function createCache(initialState = {}, idFromProps = _ => _.id) {
-  const objectsMap = initialState.objectsMap || {};
-  const pathsMap = initialState.pathsMap || {};
+export default function createCache({ initialState, idFromProps } = {}) {
+  initialState = initialState || {};
+  idFromProps = idFromProps || (_ => _.id);
+  const { objectsMap = {}, pathsMap = {} } = initialState;
   const listeners = [];
 
   return {
@@ -58,7 +59,7 @@ export default function createCache(initialState = {}, idFromProps = _ => _.id) 
 
       return { data: buildQueryTree(data, objectsMap, idFromProps), objects };
     },
-    getState() {
+    flush() {
       return { objectsMap, pathsMap };
     }
   };

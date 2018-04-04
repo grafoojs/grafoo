@@ -3,7 +3,7 @@
     "test": {
       "presets": [["@babel/preset-env", { "targets": { "node": "current" } }]],
       "plugins": [
-        ["module:@grafoo/loader", { "schema": "__tests__/schema.graphql", "fields": ["id"] }]
+        ["module:@grafoo/loader", { "schema": "__mocks__/schema.graphql", "fields": ["id"] }]
       ]
     }
   }

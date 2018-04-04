@@ -22,14 +22,19 @@
     "@babel/preset-env": "^7.0.0-beta.42",
     "@babel/register": "^7.0.0-beta.42",
     "ava": "^0.25.0",
+    "casual": "^1.5.19",
     "eslint": "^4.19.0",
     "eslint-plugin-import": "^2.9.0",
     "fetch-mock": "^6.3.0",
+    "graphql": "^0.13.2",
+    "graphql-tools": "^2.23.1",
     "husky": "^0.14.3",
     "lerna": "^3.0.0-alpha.1",
     "microbundle": "^0.4.4",
     "node-fetch": "^2.1.2",
     "rimraf": "^2.6.2"
   },
-  "workspaces": ["packages/*"]
+  "workspaces": [
+    "packages/*"
+  ]
 }
