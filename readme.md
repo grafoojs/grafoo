@@ -36,3 +36,7 @@ const client = createClient("http://some-graphql-api.com", {
   idFromProps: obj => obj.id
 });
 ```
+
+## LICENSE
+
+[MIT](https://github.com/malbernaz/grafoo/blob/master/LICENSE)

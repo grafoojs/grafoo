@@ -29,3 +29,7 @@ client.request({ query, variables: { id: 123 } });
 ## Warning
 
 As this package uses the fetch api under the hood, make sure to install a polyfill if you want to use it in your project.
+
+## LICENSE
+
+[MIT](https://github.com/malbernaz/grafoo/blob/master/LICENSE)
