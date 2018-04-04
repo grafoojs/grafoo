@@ -9,11 +9,12 @@
   "license": "MIT",
   "scripts": {
     "prepare": "yarn build",
-    "test": "ava --verbose",
+    "test": "ava",
     "build": "microbundle"
   },
   "ava": {
     "serial": true,
+    "verbose": true,
     "require": ["@babel/register"]
   }
 }

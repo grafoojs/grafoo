@@ -1,10 +1,7 @@
 {
   "env": {
     "test": {
-      "plugins": [
-        "@babel/plugin-transform-modules-commonjs",
-        ["module:@grafoo/loader", { "schema": "__mocks__/schema.graphql", "fields": ["id"] }]
-      ]
+      "plugins": ["@babel/plugin-transform-modules-commonjs"]
     }
   }
 }

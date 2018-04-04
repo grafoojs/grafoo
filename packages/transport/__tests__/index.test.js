@@ -2,10 +2,9 @@ import test from "ava";
 import fetchMock from "fetch-mock";
 
 import createClient from "../src";
-import { simpleQuery } from "../__mocks__/mock-queries";
 
 const fakeAPI = "http://fake-api.com/graphql";
-const { query } = simpleQuery;
+const query = "{ hello }";
 let client;
 
 test.beforeEach(() => {
@@ -87,7 +86,7 @@ test("should handle errors", async t => {
   await mock(response, async () => {
     const error = await t.throws(
       client.request({ query }),
-      'GraphQlError: on request {"query":"{\\n  hello\\n}\\n"}'
+      'GraphQlError: on request {"query":"{ hello }"}'
     );
 
     t.deepEqual(error.errors, response.errors);
