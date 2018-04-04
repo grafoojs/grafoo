@@ -3,7 +3,7 @@
     "test": {
       "plugins": [
         "@babel/plugin-transform-modules-commonjs",
-        ["module:@grafoo/loader", { "schema": "__tests__/schema.graphql", "fields": ["id"] }]
+        ["module:@grafoo/loader", { "schema": "__mocks__/schema.graphql", "fields": ["id"] }]
       ]
     }
   }

@@ -25,9 +25,11 @@
     "ava": "^0.25.0",
     "eslint": "^4.19.0",
     "eslint-plugin-import": "^2.9.0",
+    "fetch-mock": "^6.3.0",
     "husky": "^0.14.3",
     "lerna": "^3.0.0-alpha.1",
     "microbundle": "^0.4.4",
+    "node-fetch": "^2.1.2",
     "rimraf": "^2.6.2"
   },
   "workspaces": ["packages/*"]

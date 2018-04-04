@@ -1,5 +1,7 @@
 import { assign } from "@grafoo/util";
 
+import GraphQlError from "./graphql-error";
+
 export default function createTransport(uri, fetchOptions = {}) {
   return {
     request(request) {
@@ -7,12 +9,16 @@ export default function createTransport(uri, fetchOptions = {}) {
 
       const options = assign({ body: JSON.stringify(request) }, init, {
         method: "POST",
-        headers: assign(init.headers || {}, { "Content-Type": "application/json" })
+        headers: assign({ "Content-Type": "application/json" }, init.headers)
       });
 
       return fetch(uri, options)
         .then(res => res.json())
-        .then(({ data }) => data);
+        .then(({ data, errors }) => {
+          if (errors) throw new GraphQlError(errors, request);
+
+          return data;
+        });
     }
   };
 }

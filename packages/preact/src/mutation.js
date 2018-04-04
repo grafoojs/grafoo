@@ -3,7 +3,7 @@ import { h } from "preact";
 export function Mutation({ children, query }, { client }) {
   return children[0]({
     client,
-    mutate: ({ variables }) => client.request({ query, variables })
+    mutate: ({ variables }) => client.request({ query: query.query, variables })
   });
 }
 
