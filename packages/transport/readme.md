@@ -8,7 +8,6 @@ A simple network layer to comunicate with graphql servers.
 
 ```js
 import createTransport from "@grafoo/transport";
-import graphql from "@grafoo/loader";
 
 const client = createClient("http://some-api.com/graphql", () => ({
   headers: {
@@ -16,7 +15,7 @@ const client = createClient("http://some-api.com/graphql", () => ({
   }
 }));
 
-const { query } = grapqhl`
+const query = `
   query($id: ID!) {
     user(id: $id) {
       name
