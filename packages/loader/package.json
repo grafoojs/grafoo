@@ -18,6 +18,8 @@
   },
   "ava": {
     "verbose": true,
-    "require": ["@babel/register"]
+    "require": [
+      "@babel/register"
+    ]
   }
 }
