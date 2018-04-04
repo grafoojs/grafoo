@@ -1,10 +1,10 @@
-# @grafoo/transport
+# `@grafoo/transport`
 
 A simple network layer to comunicate with graphql servers.
 
 ## Usage
 
-@grafoo/transport default export is a factory that accepts `uri` and `fetchOptions` (can be an object or a function) as arguments:
+`@grafoo/transport` default export is a factory that accepts `uri` and `fetchOptions` (can be an object or a function) as arguments:
 
 ```js
 import createTransport from "@grafoo/transport";
