@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "yarn build",
-    "test": "ava --verbose",
+    "test": "ava",
     "build": "babel src --out-dir dist"
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "graphql-query-compress": "^1.0.0"
   },
   "ava": {
+    "verbose": true,
     "require": ["@babel/register"]
   }
 }

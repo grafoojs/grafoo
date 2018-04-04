@@ -1,6 +1,6 @@
 import test from "ava";
 
-import buildQueryTree from "../src/buildQueryTree";
+import buildQueryTree from "../src/build-query-tree";
 
 const tree = {
   posts: [

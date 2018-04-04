@@ -1,6 +1,6 @@
 import test from "ava";
 
-import mapObjects from "../src/mapObjects";
+import mapObjects from "../src/map-objects";
 
 const data = {
   posts: [
