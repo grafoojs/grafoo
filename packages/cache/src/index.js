@@ -3,6 +3,13 @@ import { assign } from "@grafoo/util";
 import buildQueryTree from "./build-query-tree";
 import mapObjects from "./map-objects";
 
+function getPathId(path, pathArguments, variables) {
+  return (
+    path +
+    pathArguments.reduce((args, arg) => args + variables[arg], pathArguments.length ? ":" : "")
+  );
+}
+
 export default function createCache({ initialState, idFromProps } = {}) {
   initialState = initialState || {};
   idFromProps = idFromProps || (_ => _.id);
@@ -17,16 +24,21 @@ export default function createCache({ initialState, idFromProps } = {}) {
         listeners.splice(listeners.indexOf(listener), 1);
       };
     },
-    write({ query: { paths } }, data) {
+    write({ query: { paths }, variables }, data) {
       const objects = {};
 
       for (const path in paths) {
-        const pathData = data[paths[path].root];
+        const pathName = paths[path].root;
+        const pathArguments = paths[path].args;
+        const pathData = { [pathName]: data[pathName] };
         const pathObjects = mapObjects(pathData, idFromProps);
 
         assign(objects, pathObjects);
 
-        pathsMap[path] = { data: pathData, objects: pathObjects };
+        pathsMap[getPathId(path, pathArguments, variables)] = {
+          data: pathData,
+          objects: pathObjects
+        };
       }
 
       assign(objectsMap, objects);
@@ -39,15 +51,17 @@ export default function createCache({ initialState, idFromProps } = {}) {
         listeners[i](objects);
       }
     },
-    read({ query: { paths } }) {
+    read({ query: { paths }, variables }) {
       const data = {};
       const objects = {};
 
       for (const path in paths) {
-        const currentPath = pathsMap[path];
+        const pathName = paths[path].root;
+        const pathArguments = paths[path].args;
+        const currentPath = pathsMap[getPathId(path, pathArguments, variables)];
 
         if (currentPath) {
-          data[paths[path].root] = currentPath.data;
+          data[pathName] = currentPath.data[pathName];
 
           for (const key in currentPath.objects) {
             objects[key] = currentPath.objects[key];

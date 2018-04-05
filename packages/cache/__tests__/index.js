@@ -1,7 +1,7 @@
 import test from "ava";
 
 import executeQuery from "../__mocks__/execute-query";
-import { PostsAndAuthors, Authors } from "../__mocks__/queries";
+import { PostsAndAuthors, Authors, Post } from "../__mocks__/queries";
 
 import createCache from "../src";
 
@@ -44,4 +44,20 @@ test("should read queries from the cache", async t => {
   t.truthy(state.data);
   t.truthy(state.objects);
   t.snapshot(state);
+});
+
+test("should handle queries with variables", async t => {
+  const { query } = Post;
+  const variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+  const { data } = await executeQuery({ query, variables });
+
+  const cache = createCache();
+
+  cache.write({ query: Post, variables }, data);
+
+  t.is(cache.read({ query: Post, variables: { id: "123" } }), null);
+
+  const dataFromCache = cache.read({ query: Post, variables });
+
+  t.snapshot(dataFromCache);
 });
