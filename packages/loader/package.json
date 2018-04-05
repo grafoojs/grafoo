@@ -1,7 +1,7 @@
 {
   "name": "@grafoo/loader",
   "version": "0.0.0",
-  "description": "a babel plugin for the grafoo client",
+  "description": "the grafoo client babel plugin",
   "main": "dist/index.js",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
@@ -18,8 +18,6 @@
   },
   "ava": {
     "verbose": true,
-    "require": [
-      "@babel/register"
-    ]
+    "require": ["@babel/register"]
   }
 }

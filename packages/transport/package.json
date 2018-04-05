@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/transport",
-  "description": "Grafoo standard transport",
+  "description": "the grafoo client standard transport",
   "version": "0.0.0",
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
@@ -8,7 +8,7 @@
   "source": "src/index.js",
   "license": "MIT",
   "scripts": {
-    "prepare": "yarn build",
+    "prepare": "yarn build # transport",
     "test": "ava",
     "build": "microbundle"
   },
