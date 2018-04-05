@@ -4,15 +4,15 @@ import buildQueryTree from "./build-query-tree";
 import mapObjects from "./map-objects";
 
 function getPathId(path, pathArguments, variables) {
-  return (
-    path +
-    pathArguments.reduce((args, arg) => args + variables[arg], pathArguments.length ? ":" : "")
-  );
+  return variables
+    ? path +
+        pathArguments.reduce((args, arg) => args + variables[arg], pathArguments.length ? ":" : "")
+    : path;
 }
 
-export default function createCache({ initialState, idFromProps } = {}) {
-  initialState = initialState || {};
-  idFromProps = idFromProps || (_ => _.id);
+export default function createCache(options) {
+  options = options || {};
+  const { initialState = {}, idFromProps = _ => _.id } = options;
   const { objectsMap = {}, pathsMap = {} } = initialState;
   const listeners = [];
 
@@ -42,10 +42,6 @@ export default function createCache({ initialState, idFromProps } = {}) {
       }
 
       assign(objectsMap, objects);
-
-      for (const id in objectsMap) {
-        objectsMap[id] = assign(objectsMap[id], objects[id]);
-      }
 
       for (const i in listeners) {
         listeners[i](objects);

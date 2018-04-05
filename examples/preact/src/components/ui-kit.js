@@ -24,10 +24,10 @@ export const Input = styled.input`
   border: 1px solid #777;
   height: 40px;
   width: 100%;
-  font-size: 1em;
   padding: 0.8rem 1em;
+  font: inherit;
 
-  & ~ input,
+  ~ input,
   ~ button,
   ~ textarea {
     margin-top: 1em;
@@ -36,6 +36,8 @@ export const Input = styled.input`
 
 export const Textarea = styled.textarea`
   appearance: none;
+  font: inherit;
+
   resize: none;
   border: 1px solid #777;
   width: 100%;
@@ -52,6 +54,7 @@ export const Button = styled.button`
   color: #fff;
   font-size: 1em;
   padding: 0 1em;
+  font: inherit;
 `;
 
 export const Form = styled.form`

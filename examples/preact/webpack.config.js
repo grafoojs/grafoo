@@ -13,6 +13,11 @@ module.exports = () => ({
     rules: [
       {
         test: /\.js$/,
+        loader: "source-map-loader",
+        enforce: "pre"
+      },
+      {
+        test: /\.js$/,
         loader: "babel-loader",
         exclude: /node_modules/
       }
