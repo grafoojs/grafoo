@@ -1,28 +1,46 @@
 import fs from "fs";
 import path from "path";
-import casual from "casual";
 import { graphql } from "graphql";
-import { makeExecutableSchema, addMockFunctionsToSchema } from "graphql-tools";
+import { makeExecutableSchema } from "graphql-tools";
 
-casual.seed(123);
+import db from "./db";
 
-const schemaString = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8");
+const typeDefs = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8");
 
-const schema = makeExecutableSchema({ typeDefs: schemaString });
-
-const mocks = {
-  ID: () => casual.uuid,
-  Author: () => ({
-    name: casual.name
-  }),
-  Post: () => ({
-    title: casual.title,
-    body: casual.text
-  })
+const resolvers = {
+  Query: {
+    post: (_, { id }) =>
+      db
+        .get("posts")
+        .find({ id })
+        .value(),
+    posts: () => db.get("posts").value(),
+    author: (_, { id }) =>
+      db
+        .get("authors")
+        .find({ id })
+        .value(),
+    authors: () => db.get("authors").value()
+  },
+  Post: {
+    author: post =>
+      db
+        .get("authors")
+        .find({ id: post.author })
+        .value()
+  },
+  Author: {
+    posts: author =>
+      author.posts.map(id =>
+        db
+          .get("posts")
+          .find({ id })
+          .value()
+      )
+  }
 };
 
-addMockFunctionsToSchema({ schema, mocks });
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 
-export default function executeQuery({ query, variables }) {
-  return graphql({ schema, variableValues: variables, source: query });
-}
+export default ({ query, variables }) =>
+  graphql({ schema, source: query, variableValues: variables });
