@@ -33,7 +33,10 @@
     "lowdb": "^1.0.0",
     "microbundle": "^0.4.4",
     "node-fetch": "^2.1.2",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "sinon": "^4.5.0"
   },
-  "workspaces": ["packages/*"]
+  "workspaces": [
+    "packages/*"
+  ]
 }

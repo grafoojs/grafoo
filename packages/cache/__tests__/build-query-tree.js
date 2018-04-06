@@ -12,9 +12,8 @@ const tree = {
         id: "2",
         posts: [
           {
-            title: "foo",
             id: "1",
-            content: "nice post",
+            content: "a post content",
             author: {
               name: "miguel",
               lastName: "albernaz",
@@ -29,55 +28,45 @@ const tree = {
   ]
 };
 
-const objects = {
-  "1": { title: "foo", id: "1", content: "nice post" },
-  "2": { name: "miguel", id: "2", lastName: "albernaz" },
-  "3": { title: "bar", id: "3" },
-  "4": { name: "vicente", id: "4" },
-  "5": { title: "baz", id: "5" },
-  "6": { name: "laura", id: "6" }
-};
-
 const idFromProps = _ => _.id;
-
-const map = buildQueryTree(tree, objects, idFromProps);
-
-test("should produce a resulting query tree", t => {
-  t.deepEqual(map, tree);
-});
 
 test("should update values of a resulting query tree", t => {
   const objects = {
-    "1": { title: "not foo", id: "1", content: "nice post" },
-    "2": { name: "miguel", id: "2", lastName: "albernaz" },
-    "3": { title: "bar", id: "3" },
-    "4": { name: "vicente", id: "4" },
-    "5": { title: "baz", id: "5" },
-    "6": { name: "laura", id: "6" }
+    "1": { title: "foobar", id: "1", content: "a new post content" },
+    "2": { name: "miguel", id: "2", lastName: "coelho" }
   };
 
-  const expected = {
-    posts: [
-      {
-        author: {
-          id: "2",
-          name: "miguel",
-          posts: [
-            {
-              author: { id: "2", lastName: "albernaz", name: "miguel" },
-              content: "nice post",
-              id: "1",
-              title: "not foo"
-            }
-          ]
-        },
-        id: "1",
-        title: "not foo"
-      },
-      { author: { id: "4", name: "vicente" }, id: "3", title: "bar" },
-      { author: { id: "6", name: "laura" }, id: "5", title: "baz" }
-    ]
+  const { posts } = buildQueryTree(tree, objects, idFromProps);
+
+  t.is(posts[0].title, "foobar");
+  t.is(posts[0].content, "a new post content");
+  t.is(posts[0].author.lastName, "coelho");
+});
+
+test("should add all properties of an object to its corresponding branch", t => {
+  const objects = {
+    "1": { title: "foo", id: "1", content: "a post content" },
+    "2": { name: "miguel", id: "2", lastName: "coelho" }
   };
 
-  t.deepEqual(buildQueryTree(tree, objects, idFromProps), expected);
+  const [post] = buildQueryTree(tree, objects, idFromProps).posts;
+
+  t.truthy(post.content);
+  t.truthy(post.author.lastName);
+  t.truthy(post.author.posts[0].title);
+});
+
+test("should not remove a property from a branch", t => {
+  const objects = {
+    "1": { id: "1" },
+    "2": { id: "2" },
+    "3": { id: "3" },
+    "4": { id: "4" },
+    "5": { id: "5" },
+    "6": { id: "6" }
+  };
+
+  const newTree = buildQueryTree(tree, objects, idFromProps);
+
+  t.deepEqual(newTree, tree);
 });

@@ -1,4 +1,4 @@
-import { isNotNullObject } from "@grafoo/util";
+import { isNotNullObject, assign } from "@grafoo/util";
 
 export default function buildQueryTree(tree, objects, idFromProps) {
   // clone resulting query tree
@@ -6,7 +6,7 @@ export default function buildQueryTree(tree, objects, idFromProps) {
   const stack = [];
 
   // populates stack with the properties of the query tree and the query tree it self
-  for (let i in queryTree) stack.push([i, queryTree]);
+  for (const i in queryTree) stack.push([i, queryTree]);
 
   // will loop until the stack is empty
   while (stack.length) {
@@ -18,11 +18,11 @@ export default function buildQueryTree(tree, objects, idFromProps) {
     // get node identifier
     const identifier = idFromProps(branch);
 
-    // iterates over the child branch
-    for (let i in branch) {
+    // iterates over the child branch properties
+    for (const i in assign({}, objects[identifier], branch)) {
       // assigns to the child branch all properties retrieved
       // from the corresponding object retrieved from the objects cache
-      if (identifier) branch[i] = objects[identifier][i] || branch[i];
+      if (identifier && objects[identifier]) branch[i] = objects[identifier][i] || branch[i];
 
       // pushes properties of the child branch and the branch it self to the stack
       if (isNotNullObject(branch[i])) stack.push([i, branch]);

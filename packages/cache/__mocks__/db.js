@@ -1,53 +1,62 @@
-import casual from "casual";
 import low from "lowdb";
-import Memory from "lowdb/adapters/Memory";
+import MemoryAdapter from "lowdb/adapters/Memory";
+import casual from "casual";
 
 casual.seed(666);
 
-const adapter = new Memory();
-const db = low(adapter);
+function times(t, fn) {
+  Array.from(Array(t), fn);
+}
 
-db.defaults({ posts: [], authors: [] }).write();
+function setupDB() {
+  db = low(new MemoryAdapter());
 
-db.drop();
+  db.defaults({ posts: [], authors: [] }).write();
 
-Array.from(Array(2), () => {
-  db
-    .get("authors")
-    .push({
-      id: casual.uuid,
-      name: casual.first_name + " " + casual.last_name
-    })
-    .write();
-});
-
-db
-  .get("authors")
-  .value()
-  .forEach(_ => {
-    Array.from(Array(4), () =>
-      db
-        .get("posts")
-        .push({
-          author: _.id,
-          id: casual.uuid,
-          title: casual.title,
-          body: casual.short_description
-        })
-        .write()
-    );
-
-    const posts = db
-      .get("posts")
-      .filter(post => post.author === _.id)
-      .map(post => post.id)
-      .value();
-
+  times(2, () =>
     db
       .get("authors")
-      .find({ id: _.id })
-      .set("posts", posts)
-      .write();
-  });
+      .push({
+        id: casual.uuid,
+        name: casual.first_name + " " + casual.last_name
+      })
+      .write()
+  );
+
+  db
+    .get("authors")
+    .value()
+    .forEach(({ id }) => {
+      times(4, () =>
+        db
+          .get("posts")
+          .push({
+            author: id,
+            id: casual.uuid,
+            title: casual.title,
+            body: casual.short_description
+          })
+          .write()
+      );
+
+      const posts = db
+        .get("posts")
+        .filter(post => post.author === id)
+        .map(post => post.id)
+        .value();
+
+      db
+        .get("authors")
+        .find({ id })
+        .set("posts", posts)
+        .write();
+    });
+
+  return db;
+}
+
+let db;
+
+db = db || setupDB();
 
 export default db;
