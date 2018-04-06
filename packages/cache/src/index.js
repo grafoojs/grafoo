@@ -15,7 +15,7 @@ export default function createCache(options) {
   const listeners = [];
 
   return {
-    watch(listener) {
+    listen(listener) {
       listeners.push(listener);
 
       return () => {

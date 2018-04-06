@@ -14,7 +14,7 @@ test.beforeEach(() => {
 test("should not throw", t => t.notThrows(createCache));
 
 test("should be instantiable", t => {
-  t.is(typeof cache.watch, "function");
+  t.is(typeof cache.listen, "function");
   t.is(typeof cache.write, "function");
   t.is(typeof cache.read, "function");
   t.is(typeof cache.flush, "function");
@@ -151,7 +151,7 @@ test("should call cache listeners on write with paths objects as arguments", asy
   const { data } = await executeQuery({ query: Post.query, variables });
   const postRequest = { query: Post, variables };
 
-  cache.watch(listener);
+  cache.listen(listener);
 
   cache.write(postRequest, data);
 
