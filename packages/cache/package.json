@@ -15,7 +15,6 @@
   },
   "ava": {
     "verbose": true,
-    "serial": true,
     "require": ["@babel/register"]
   }
 }

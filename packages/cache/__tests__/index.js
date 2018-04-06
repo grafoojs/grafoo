@@ -6,14 +6,9 @@ import { PostsAndAuthors, Authors, Post, Posts } from "../__mocks__/queries";
 
 import createCache from "../src";
 
-let cache;
-test.beforeEach(() => {
-  cache = createCache();
-});
-
-test("should not throw", t => t.notThrows(createCache));
-
 test("should be instantiable", t => {
+  const cache = createCache();
+
   t.is(typeof cache.listen, "function");
   t.is(typeof cache.write, "function");
   t.is(typeof cache.read, "function");
@@ -21,147 +16,159 @@ test("should be instantiable", t => {
 });
 
 test("should write queries to the cache", async t => {
-  const { query } = PostsAndAuthors;
-  const { data } = await executeQuery({ query });
+  await mock(PostsAndAuthors, async (cache, data, request) => {
+    cache.write(request, data);
 
-  cache.write({ query: PostsAndAuthors }, data);
+    const { authors, posts } = data;
+    const { objectsMap, pathsMap } = cache.flush();
 
-  const { objectsMap, pathsMap } = cache.flush();
-
-  const { authors, posts } = data;
-
-  t.deepEqual(
-    authors,
-    pathsMap["authors{__typename id name posts{__typename body id title}}"].data.authors
-  );
-  t.deepEqual(
-    posts,
-    pathsMap["posts{__typename author{__typename id name}body id title}"].data.posts
-  );
-  t.true(authors.every(author => Boolean(objectsMap[author.id])));
-  t.true(posts.every(post => Boolean(objectsMap[post.id])));
+    t.deepEqual(
+      authors,
+      pathsMap["authors{__typename id name posts{__typename body id title}}"].data.authors
+    );
+    t.deepEqual(
+      posts,
+      pathsMap["posts{__typename author{__typename id name}body id title}"].data.posts
+    );
+    t.true(authors.every(author => Boolean(objectsMap[author.id])));
+    t.true(posts.every(post => Boolean(objectsMap[post.id])));
+  });
 });
 
 test("should read queries from the cache", async t => {
-  const { data } = await executeQuery({ query: Authors.query });
-  const authorRequest = { query: Authors };
+  await mock(Authors, async (cache, data, request) => {
+    cache.write(request, data);
 
-  cache.write(authorRequest, data);
+    const result = cache.read(request);
 
-  const { objects, data: fromCache } = cache.read(authorRequest);
+    const { authors } = data;
 
-  const { authors } = data;
-
-  t.deepEqual(authors, fromCache.authors);
-  t.true(authors.every(author => Boolean(objects[author.id])));
-  t.true(authors.every(author => author.posts.every(post => Boolean(objects[post.id]))));
+    t.deepEqual(authors, result.data.authors);
+    t.true(authors.every(author => Boolean(result.objects[author.id])));
+    t.true(authors.every(author => author.posts.every(post => Boolean(result.objects[post.id]))));
+  });
 });
 
 test("should handle queries with variables", async t => {
-  const variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-  const { data } = await executeQuery({ query: Post.query, variables });
+  await mock(Post, async (cache, data, request) => {
+    cache.write(request, data);
 
-  cache.write({ query: Post, variables }, data);
-
-  t.is(cache.read({ query: Post, variables: { id: "123" } }), null);
-
-  const dataFromCache = cache.read({ query: Post, variables });
-
-  t.snapshot(dataFromCache);
+    t.is(cache.read({ query: Post, variables: { id: "123" } }), null);
+    t.is(cache.read(request).data.post.id, request.variables.id);
+  });
 });
 
 test("should perform update to cache", async t => {
-  const variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-  const { data } = await executeQuery({ query: Post.query, variables });
+  await mock(Post, async (cache, data, request) => {
+    cache.write(request, data);
 
-  cache.write({ query: Post, variables }, data);
+    const { data: { post } } = cache.read(request);
 
-  const { data: { post } } = cache.read({ query: Post, variables });
+    t.is(post.title, "Quam odit");
 
-  t.is(post.title, "Quam odit");
+    cache.write(request, { post: Object.assign({}, post, { title: "updated title" }) });
 
-  cache.write(
-    { query: Post, variables },
-    { post: Object.assign({}, post, { title: "updated title" }) }
-  );
-
-  const { data: { post: postUpdated } } = cache.read({ query: Post, variables });
-
-  t.is(postUpdated.title, "updated title");
+    t.is(cache.read(request).data.post.title, "updated title");
+  });
 });
 
 test("should reflect updates on queries with shared objects", async t => {
-  const variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-  const { data: PostsData } = await executeQuery({ query: Posts.query });
-  const { data: PostData } = await executeQuery({ query: Post.query, variables });
-  const postsRequest = { query: Posts };
+  await mock([Posts, Post], async (cache, [ostsData, postData], [postsRequest, postRequest]) => {
+    cache.write(postsRequest, ostsData);
 
-  cache.write(postsRequest, PostsData);
+    const { posts } = cache.read(postsRequest).data;
 
-  const { data: { posts } } = cache.read(postsRequest);
+    t.is(posts.find(p => p.id === postsRequest.variables.id).title, "Quam odit");
 
-  t.is(posts.find(p => p.id === variables.id).title, "Quam odit");
+    cache.write(postRequest, {
+      post: Object.assign(postData.post, { title: "updated title" })
+    });
 
-  cache.write(
-    { query: Post, variables },
-    { post: Object.assign(PostData.post, { title: "updated title" }) }
-  );
+    const { posts: updatedPosts } = cache.read(postsRequest).data;
 
-  const { data: { posts: updatedPosts } } = cache.read(postsRequest);
-
-  t.is(updatedPosts.find(p => p.id === variables.id).title, "updated title");
+    t.is(updatedPosts.find(p => p.id === postsRequest.variables.id).title, "updated title");
+  });
 });
 
 test("should merge objects in the cache when removing or adding properties", async t => {
-  const variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-  const { data } = await executeQuery({ query: Post.query, variables });
-  const postRequest = { query: Post, variables };
+  await mock(Post, async (cache, data, request) => {
+    cache.write(request, data);
 
-  cache.write(postRequest, data);
+    const post = JSON.parse(JSON.stringify(cache.read(request).data.post));
 
-  const { data: fromCache } = cache.read(postRequest);
+    delete post.__typename;
 
-  const post = JSON.parse(JSON.stringify(fromCache.post));
+    post.foo = "bar";
 
-  delete post.__typename;
+    cache.write(request, { post });
 
-  post.foo = "bar";
-
-  cache.write(postRequest, { post });
-
-  const { data: { post: updatedPost } } = cache.read(postRequest, true);
-
-  t.deepEqual(updatedPost, {
-    __typename: "Post",
-    author: {
-      __typename: "Author",
-      id: "a1d3a2bc-e503-4640-9178-23cbd36b542c",
-      name: "Murphy Abshire"
-    },
-    body: "Ducimus harum delectus consectetur.",
-    id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85",
-    title: "Quam odit",
-    foo: "bar"
+    t.deepEqual(cache.read(request, true).data.post, {
+      __typename: "Post",
+      author: {
+        __typename: "Author",
+        id: "a1d3a2bc-e503-4640-9178-23cbd36b542c",
+        name: "Murphy Abshire"
+      },
+      body: "Ducimus harum delectus consectetur.",
+      id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85",
+      title: "Quam odit",
+      foo: "bar"
+    });
   });
 });
 
 test("should call cache listeners on write with paths objects as arguments", async t => {
-  const listener = sinon.spy();
-  const variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-  const { data } = await executeQuery({ query: Post.query, variables });
-  const postRequest = { query: Post, variables };
+  await mock(Post, async (cache, data, request) => {
+    const listener = sinon.spy();
 
-  cache.listen(listener);
+    cache.listen(listener);
 
-  cache.write(postRequest, data);
+    cache.write(request, data);
 
-  const { objects } = cache.read(postRequest);
+    const [lastCallArg] = listener.lastCall.args;
 
-  const [lastCallArg] = listener.lastCall.args;
-
-  t.deepEqual(objects, lastCallArg);
+    t.deepEqual(cache.read(request).objects, lastCallArg);
+  });
 });
 
-test.todo("should accept initialProps in options");
+test("should be able read from the cache with a declared initialState", async t => {
+  await mock(Authors, async (cache, data, request) => {
+    cache.write(request, data);
 
-test.todo("should accept idFromProps function in options");
+    cache = createCache({ initialState: cache.flush() });
+
+    t.deepEqual(cache.read(request).data, data);
+  });
+});
+
+test("should accept `idFromProps` function in options", async t => {
+  await mock(Authors, async (_, data, request) => {
+    const cache = createCache({ idFromProps: obj => obj.__typename + ":" + obj.id });
+
+    cache.write(request, data);
+
+    t.true(Object.keys(cache.flush().objectsMap).every(_ => /(Post|Author):/.test(_)));
+  });
+});
+
+async function mock(...args) {
+  let [sources, variables, fn] = args;
+  const { query } = sources;
+  let results, requests;
+  const cache = createCache();
+
+  if (args.length < 3)
+    (fn = variables), (variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" });
+
+  if (Array.isArray(sources)) {
+    requests = sources.map(query => ({ query, variables }));
+    results = (await Promise.all(
+      sources.map(({ query }) => executeQuery({ query, variables }))
+    )).map(_ => _.data);
+  } else {
+    requests = { query: sources, variables };
+    results = (await executeQuery({ query, variables })).data;
+  }
+
+  await fn(cache, results, requests);
+}
