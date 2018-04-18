@@ -15,7 +15,7 @@ export function Query({ query, variables, skipCache, children }, { client }) {
     if (!state.objects) return;
 
     if (!shallowEqual(nextObjects, state.objects)) {
-      state = assign({ loading: false }, client.read(request));
+      assign(state, client.read(request));
 
       this.setState(null);
     }
@@ -27,14 +27,14 @@ export function Query({ query, variables, skipCache, children }, { client }) {
 
       client.write(request, data);
 
-      state = assign({ loading: false }, client.read(request));
+      assign(state, { loading: false }, client.read(request));
 
       this.setState(null);
     });
 
-  let unwatch;
+  let unlisten;
   this.componentDidMount = () => {
-    unwatch = client.watch(update);
+    unlisten = client.listen(update);
 
     if (!state.loading || skipCache) return;
 
@@ -42,21 +42,19 @@ export function Query({ query, variables, skipCache, children }, { client }) {
   };
 
   this.componentWillUnmount = () => {
-    unwatch();
+    unlisten();
   };
 
-  this.render = () => children[0](state);
+  this.render = () => children[0]({ data: state.data, loading: state.loading });
 }
 
 (Query.prototype = new Component()).constructor = Query;
 
 export function withQuery(query, variables, skipCache) {
   return Child => {
-    const Wrapper = ownProps =>
+    const WithQuery = ownProps =>
       h(Query, { query, variables, skipCache }, props => h(Child, assign({}, ownProps, props)));
 
-    if (process.env.NODE_ENV !== "production") Wrapper.displayName = `Query(${Child.name})`;
-
-    return Wrapper;
+    return WithQuery;
   };
 }

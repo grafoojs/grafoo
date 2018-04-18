@@ -1,19 +1,18 @@
 import { h } from "preact";
+import { assign } from "@grafoo/util";
 
-export function Mutation({ children, query }, { client }) {
+export function Mutation({ children, query: { query } }, { client }) {
   return children[0]({
-    client,
-    mutate: ({ variables }) => client.request({ query: query.query, variables })
+    mutate: ({ variables }) => client.request({ query, variables }),
+    client
   });
 }
 
 export function withMutation(query) {
   return Child => {
-    const Wrapper = ownProps =>
-      h(Mutation, { query }, props => h(Child, Object.assign({}, ownProps, props)));
+    const WithMutation = ownProps =>
+      h(Mutation, { query }, props => h(Child, assign({}, ownProps, props)));
 
-    if (process.env.NODE_ENV !== "production") Wrapper.displayName = `Mutation(${Child.name})`;
-
-    return Wrapper;
+    return WithMutation;
   };
 }

@@ -3,7 +3,9 @@ import path from "path";
 import { graphql } from "graphql";
 import { makeExecutableSchema } from "graphql-tools";
 
-import db from "./db";
+import setupDB from "./db";
+
+const db = setupDB();
 
 const typeDefs = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8");
 

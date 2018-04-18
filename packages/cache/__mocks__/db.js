@@ -8,8 +8,8 @@ function times(t, fn) {
   Array.from(Array(t), fn);
 }
 
-function setupDB() {
-  db = low(new MemoryAdapter());
+export default function setupDB() {
+  const db = low(new MemoryAdapter());
 
   db.defaults({ posts: [], authors: [] }).write();
 
@@ -54,9 +54,3 @@ function setupDB() {
 
   return db;
 }
-
-let db;
-
-db = db || setupDB();
-
-export default db;

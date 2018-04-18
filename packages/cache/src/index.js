@@ -4,12 +4,12 @@ import buildQueryTree from "./build-query-tree";
 import mapObjects from "./map-objects";
 
 function getPathId(path, args, variables) {
-  const hasArgs = args.length;
+  const hasArgs = args.length && variables && args.some(arg => variables[arg]);
+
   return hasArgs ? path + args.reduce((args, arg) => args + variables[arg], ":") : path;
 }
 
-export default function createCache(options) {
-  options = options || {};
+export default function createCache(options = {}) {
   const { initialState = {}, idFromProps = _ => _.id } = options;
   const { objectsMap = {}, pathsMap = {} } = initialState;
   const listeners = [];
@@ -19,7 +19,11 @@ export default function createCache(options) {
       listeners.push(listener);
 
       return () => {
-        listeners.splice(listeners.indexOf(listener), 1);
+        const index = listeners.indexOf(listener);
+
+        if (index < 0) return;
+
+        listeners.splice(index, 1);
       };
     },
     write({ query: { paths }, variables }, data) {
@@ -44,7 +48,7 @@ export default function createCache(options) {
 
       for (const i in listeners) listeners[i](objects);
     },
-    read({ query: { paths }, variables }, log) {
+    read({ query: { paths }, variables }) {
       const data = {};
       const objects = {};
 
@@ -55,13 +59,13 @@ export default function createCache(options) {
         if (currentPath) {
           data[root] = currentPath.data[root];
 
-          for (const key in currentPath.objects) objects[key] = currentPath.objects[key];
+          for (const i in currentPath.objects) objects[i] = currentPath.objects[i];
         }
       }
 
       if (!Object.keys(data).length) return null;
 
-      return { data: buildQueryTree(data, objectsMap, idFromProps, log), objects };
+      return { data: buildQueryTree(data, objectsMap, idFromProps), objects };
     },
     flush() {
       return { objectsMap, pathsMap };

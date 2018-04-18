@@ -1,56 +1,64 @@
-import { h } from "preact";
-import { Mutation } from "@grafoo/preact";
+import { h, Component } from "preact";
+import { withMutation } from "@grafoo/preact";
 
 import { allPosts, createPost } from "../queries";
 import { Wrapper, H1, Form, Input, Textarea, Button } from "./ui-kit";
 
-export default function PostForm() {
-  return (
-    <Mutation query={createPost}>
-      {({ mutate, client }) => {
-        async function handleSubmit(event) {
-          event.preventDefault();
+class PostForm extends Component {
+  constructor(props) {
+    super(props);
 
-          const elements = Array.prototype.slice.call(event.target.elements);
+    this.state = { title: "", content: "" };
 
-          // crutial to perform the optmistic update
-          const tempId = Math.random()
-            .toString(36)
-            .substr(2, 5);
+    this.submit = this.submit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
 
-          // get variables from form
-          const newPost = elements.reduce(
-            (acc, cur) => (!cur.name ? acc : Object.assign({}, acc, { [cur.name]: cur.value })),
-            { id: tempId }
-          );
+  handleChange(value) {
+    return event => this.setState({ [value]: event.target.value });
+  }
 
-          // empty form
-          elements.forEach(_ => (_.value = ""));
+  async submit(event) {
+    event.preventDefault();
 
-          // get allPosts query data from client
-          const { data } = client.read({ query: allPosts });
+    const { mutate, client } = this.props;
 
-          // optimistic update with data from form
-          client.write({ query: allPosts }, { allPosts: [newPost, ...data.allPosts] });
+    // crutial to perform the optmistic update
+    const tempId = Math.random()
+      .toString(36)
+      .substr(2, 5);
 
-          // perform mutation on the server
-          const { createPost: postFromServer } = await mutate({ variables: newPost });
+    // new post from state
+    const newPost = Object.assign({ id: tempId }, this.state);
 
-          // update cache
-          client.write({ query: allPosts }, { allPosts: [postFromServer, ...data.allPosts] });
-        }
+    // get allPosts query data from client
+    const { data } = client.read({ query: allPosts });
 
-        return (
-          <Wrapper>
-            <H1>Post Form</H1>
-            <Form onSubmit={handleSubmit}>
-              <Input placeholder="title" name="title" />
-              <Textarea placeholder="content" name="content" />
-              <Button>submit</Button>
-            </Form>
-          </Wrapper>
-        );
-      }}
-    </Mutation>
-  );
+    // optimistic update with data from form
+    client.write({ query: allPosts }, { allPosts: [newPost, ...data.allPosts] });
+
+    // empty state
+    this.setState({ title: "", content: "" });
+
+    // perform mutation on the server
+    const { createPost: postFromServer } = await mutate({ variables: newPost });
+
+    // update cache
+    client.write({ query: allPosts }, { allPosts: [postFromServer, ...data.allPosts] });
+  }
+
+  render(props, { title, content }) {
+    return (
+      <Wrapper>
+        <H1>Post Form</H1>
+        <Form onSubmit={this.submit}>
+          <Input placeholder="title" value={title} onInput={this.handleChange("title")} />
+          <Textarea placeholder="content" value={content} onInput={this.handleChange("content")} />
+          <Button>submit</Button>
+        </Form>
+      </Wrapper>
+    );
+  }
 }
+
+export default withMutation(createPost)(PostForm);

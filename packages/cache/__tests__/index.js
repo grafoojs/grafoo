@@ -120,14 +120,27 @@ test("should merge objects in the cache when removing or adding properties", asy
 test("should call cache listeners on write with paths objects as arguments", async t => {
   await mock(Post, async (cache, data, request) => {
     const listener = sinon.spy();
+    const listener2 = sinon.spy();
 
-    cache.listen(listener);
+    const unlisten = cache.listen(listener);
+    cache.listen(listener2);
 
     cache.write(request, data);
 
     const [lastCallArg] = listener.lastCall.args;
 
     t.deepEqual(cache.read(request).objects, lastCallArg);
+
+    unlisten();
+    cache.write(request, data);
+
+    t.true(listener.calledOnce);
+    t.true(listener2.calledTwice);
+
+    unlisten();
+    cache.write(request, data);
+
+    t.true(listener2.calledThrice);
   });
 });
 
@@ -152,13 +165,17 @@ test("should accept `idFromProps` function in options", async t => {
 });
 
 async function mock(...args) {
-  let [sources, variables, fn] = args;
-  const { query } = sources;
-  let results, requests;
-  const cache = createCache();
+  let [sources, variables, fn] = args,
+    { query } = sources,
+    cache = createCache(),
+    results,
+    requests;
 
-  if (args.length < 3)
-    (fn = variables), (variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" });
+  if (args.length < 3) {
+    fn = variables;
+    // default post id
+    variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+  }
 
   if (Array.isArray(sources)) {
     requests = sources.map(query => ({ query, variables }));
