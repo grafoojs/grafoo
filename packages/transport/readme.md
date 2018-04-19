@@ -23,7 +23,9 @@ const query = `
   }
 `;
 
-request({ query, variables: { id: 123 } });
+request({ query, variables: { id: 123 } }).then(({ user }) => {
+  console.log(user);
+});
 ```
 
 ## Warning
