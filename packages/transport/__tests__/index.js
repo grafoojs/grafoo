@@ -1,19 +1,19 @@
 import test from "ava";
 import fetchMock from "fetch-mock";
 
-import createClient from "../src";
+import createTransport from "../src";
 
 const fakeAPI = "http://fake-api.com/graphql";
 const query = "{ hello }";
-let client;
+let request;
 
 test.beforeEach(() => {
-  client = createClient(fakeAPI);
+  request = createTransport(fakeAPI);
 });
 
 test("should perform a simple request", async t => {
   await mock(async () => {
-    await client.request({ query });
+    await request({ query });
 
     const [, { body, headers, method }] = fetchMock.lastCall();
 
@@ -27,7 +27,7 @@ test("should perform a request with variables", async t => {
   await mock(async () => {
     const variables = { some: "variable" };
 
-    await client.request({ query, variables });
+    await request({ query, variables });
 
     const [, { body }] = fetchMock.lastCall();
 
@@ -36,14 +36,14 @@ test("should perform a request with variables", async t => {
 });
 
 test("should accept fetchObjects as an object", async t => {
-  client = createClient(fakeAPI, {
+  request = createTransport(fakeAPI, {
     headers: {
       authorization: "Bearer some-token"
     }
   });
 
   await mock(async () => {
-    await client.request({ query });
+    await request({ query });
 
     const [, { headers }] = fetchMock.lastCall();
 
@@ -55,14 +55,14 @@ test("should accept fetchObjects as an object", async t => {
 });
 
 test("should accept fetchObjects as a function", async t => {
-  client = createClient(fakeAPI, () => ({
+  request = createTransport(fakeAPI, () => ({
     headers: {
       authorization: "Bearer some-token"
     }
   }));
 
   await mock(async () => {
-    await client.request({ query });
+    await request({ query });
 
     const [, { headers }] = fetchMock.lastCall();
 
@@ -78,7 +78,7 @@ test("should handle graphql errors", async t => {
 
   await mock(response, async () => {
     const error = await t.throws(
-      client.request({ query }),
+      request({ query }),
       'graphql error on request {"query":"{ hello }"}'
     );
 
