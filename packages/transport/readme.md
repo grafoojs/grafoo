@@ -1,6 +1,6 @@
 # `@grafoo/transport`
 
-A simple network layer to comunicate with graphql servers.
+> A simple network layer to comunicate with graphql servers.
 
 ## Usage
 
@@ -9,7 +9,7 @@ A simple network layer to comunicate with graphql servers.
 ```js
 import createTransport from "@grafoo/transport";
 
-const client = createClient("http://some-api.com/graphql", () => ({
+const client = createTransport("http://some-api.com/graphql", () => ({
   headers: {
     authorization: storage.getItem("authorization");
   }

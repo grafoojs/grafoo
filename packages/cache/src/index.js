@@ -26,7 +26,13 @@ export default function createCache(options = {}) {
         listeners.splice(index, 1);
       };
     },
-    write({ query: { paths }, variables }, data) {
+    write(
+      {
+        query: { paths },
+        variables
+      },
+      data
+    ) {
       const objects = {};
 
       for (const path in paths) {
@@ -42,9 +48,7 @@ export default function createCache(options = {}) {
         };
       }
 
-      for (const i in objects) {
-        objectsMap[i] = objects[i] = assign({}, objectsMap[i], objects[i]);
-      }
+      for (const i in objects) objectsMap[i] = objects[i] = assign({}, objectsMap[i], objects[i]);
 
       for (const i in listeners) listeners[i](objects);
     },

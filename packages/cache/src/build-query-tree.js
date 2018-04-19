@@ -17,12 +17,14 @@ export default function buildQueryTree(tree, objects, idFromProps) {
     const branch = currentTree[key];
     // get node identifier
     const identifier = idFromProps(branch);
+    // possible node matching object
+    const branchObject = objects[identifier];
 
     // iterates over the child branch properties
-    for (const i in assign({}, objects[identifier], branch)) {
+    for (const i in assign({}, branch, branchObject)) {
       // assigns to the child branch all properties retrieved
       // from the corresponding object retrieved from the objects cache
-      if (identifier && objects[identifier]) branch[i] = objects[identifier][i] || branch[i];
+      if (identifier && branchObject) branch[i] = branchObject[i] || branch[i];
 
       // pushes properties of the child branch and the branch it self to the stack
       if (isNotNullObject(branch[i])) stack.push([i, branch]);
