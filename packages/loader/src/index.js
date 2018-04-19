@@ -7,6 +7,14 @@ const visitor = {
   Program(programPath, { opts }) {
     const tagNames = [];
 
+    if (!opts.schema) {
+      throw programPath.buildCodeFrameError("@grafoo/loader needs a schema!");
+    }
+
+    if (!opts.fieldsToInsert) {
+      opts.fieldsToInsert = [];
+    }
+
     programPath.traverse({
       ImportDeclaration(path) {
         if (path.node.source.value === "@grafoo/loader") {

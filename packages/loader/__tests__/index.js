@@ -79,7 +79,7 @@ test("should replace a tagged template literal with the compiled grafoo object",
     \`;
   `;
 
-  t.snapshot(transform(program, { fields: ["id"] }).code);
+  t.snapshot(transform(program, { fieldsToInsert: ["id"] }).code);
 });
 
 test("should compress query in production", t => {
@@ -101,5 +101,5 @@ test("should compress query in production", t => {
 
   process.env.NODE_ENV = "production";
 
-  t.snapshot(transform(program, { fields: ["id"] }).code);
+  t.snapshot(transform(program, { fieldsToInsert: ["id"] }).code);
 });

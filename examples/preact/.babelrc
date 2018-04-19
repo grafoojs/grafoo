@@ -4,7 +4,10 @@
     ["@babel/preset-react", { "pragma": "h" }]
   ],
   "plugins": [
-    ["module:@grafoo/loader", { "schema": "schema.graphql", "fields": ["id", "__typename"] }]
+    [
+      "module:@grafoo/loader",
+      { "schema": "schema.graphql", "fieldsToInsert": ["id", "__typename"] }
+    ]
   ],
   "env": {
     "production": {

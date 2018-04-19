@@ -5,7 +5,7 @@
       "plugins": [
         [
           "module:@grafoo/loader",
-          { "schema": "__mocks__/schema.graphql", "fields": ["id", "__typename"] }
+          { "schema": "__mocks__/schema.graphql", "fieldsToInsert": ["id", "__typename"] }
         ]
       ]
     }

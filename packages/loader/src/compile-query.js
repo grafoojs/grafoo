@@ -34,15 +34,8 @@ function getPaths(ast) {
 }
 
 export default function compileQuery(source, opts) {
-  if (!opts.schema) {
-    throw new Error("@grafoo/loader needs a schema!");
-  }
-
-  if (!opts.fields) opts.fields = [];
-
   const schema = getSchema(opts.schema);
-
-  const document = sortDocument(insertFields(schema, parse(source), opts.fields));
+  const document = sortDocument(insertFields(schema, parse(source), opts.fieldsToInsert));
 
   return {
     query: process.env.NODE_ENV !== "production" ? print(document) : compress(print(document)),
