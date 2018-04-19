@@ -1,31 +1,19 @@
-const path = require("path");
-const { HotModuleReplacementPlugin } = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack");
+const HtmlPlugin = require("html-webpack-plugin");
 
 module.exports = () => ({
   mode: "development",
   entry: "./src/index.js",
   output: {
     filename: "bundle.js",
-    path: path.resolve(__dirname, "dist")
+    path: "./dist"
   },
   module: {
-    rules: [
-      {
-        test: /\.js$/,
-        loader: "source-map-loader",
-        enforce: "pre"
-      },
-      {
-        test: /\.js$/,
-        loader: "babel-loader",
-        exclude: /node_modules/
-      }
-    ]
+    rules: [{ test: /\.js$/, loader: "babel-loader", exclude: /node_modules/ }]
   },
   plugins: [
-    new HtmlWebpackPlugin({ template: "./src/index.html" }),
-    new HotModuleReplacementPlugin()
+    new HtmlPlugin({ template: "./src/index.html" }),
+    new webpack.HotModuleReplacementPlugin()
   ],
   devServer: {
     host: "0.0.0.0",
