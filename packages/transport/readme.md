@@ -4,7 +4,7 @@
 
 ## Usage
 
-`@grafoo/transport` default export is a factory that accepts `uri` and `fetchOptions` (can be an object or a function) as arguments:
+`@grafoo/transport` default export is a factory that accepts as arguments `uri` and `fetchOptions` (that can be an object or a function):
 
 ```js
 import createTransport from "@grafoo/transport";
