@@ -2,16 +2,16 @@ import { assign } from "@grafoo/util";
 
 import GraphQlError from "./graphql-error";
 
-export default function createTransport(uri, fetchOptions) {
-  fetchOptions = fetchOptions || {};
+export default function createTransport(uri, options) {
+  options = options || {};
 
   return request => {
-    const init = fetchOptions.call ? fetchOptions() : fetchOptions;
+    const init = options.call ? options() : options;
 
     assign(init, {
       body: JSON.stringify(request),
       method: "POST",
-      headers: assign({}, init.headers, { "Content-Type": "application/json" })
+      headers: assign({ "Content-Type": "application/json" }, init.headers)
     });
 
     return fetch(uri, init)
