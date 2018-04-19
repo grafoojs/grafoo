@@ -9,7 +9,7 @@
 ```js
 import createTransport from "@grafoo/transport";
 
-const client = createTransport("http://some-api.com/graphql", () => ({
+const request = createTransport("http://some-api.com/graphql", () => ({
   headers: {
     authorization: storage.getItem("authorization");
   }
@@ -23,7 +23,7 @@ const query = `
   }
 `;
 
-client.request({ query, variables: { id: 123 } });
+request({ query, variables: { id: 123 } });
 ```
 
 ## Warning
