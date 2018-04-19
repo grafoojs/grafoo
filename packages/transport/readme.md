@@ -11,7 +11,7 @@ import createTransport from "@grafoo/transport";
 
 const request = createTransport("http://some-api.com/graphql", () => ({
   headers: {
-    authorization: storage.getItem("authorization");
+    authorization: storage.getItem("authorization")
   }
 }));
 
