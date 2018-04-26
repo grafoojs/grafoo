@@ -126,6 +126,3 @@ typings/
 
 # output directories
 dist/
-
-# parcel cache
-.cache/

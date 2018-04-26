@@ -1,18 +1,30 @@
+// @flow
+
 import { assign } from "@grafoo/util";
 
 import GraphQlError from "./graphql-error";
 
-export default function createTransport(uri, options) {
-  options = options || {};
+export interface Variables {
+  [key: string]: any;
+}
 
-  return request => {
-    const init = options.call ? options() : options;
+export interface GraphQLRequestContext {
+  query: string;
+  variables?: Variables;
+}
 
-    assign(init, {
+export default function createTransport(uri: string, headers?: {} | (() => {})) {
+  headers = headers || {};
+
+  return (request: GraphQLRequestContext) => {
+    const init = {
       body: JSON.stringify(request),
       method: "POST",
-      headers: assign({ "Content-Type": "application/json" }, init.headers)
-    });
+      headers: assign(
+        { "Content-Type": "application/json" },
+        typeof headers == "function" ? headers() : headers
+      )
+    };
 
     return fetch(uri, init)
       .then(res => res.json())

@@ -5,12 +5,13 @@
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
   "module": "dist/index.m.js",
+  "typings": "types.d.ts",
   "source": "src/index.js",
   "license": "MIT",
   "scripts": {
     "prepare": "yarn build # transport",
     "test": "ava",
-    "build": "microbundle"
+    "build": "microbundle && flow-copy-source src dist"
   },
   "ava": {
     "serial": true,

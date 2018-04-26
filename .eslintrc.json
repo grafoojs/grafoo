@@ -1,5 +1,11 @@
 {
-  "extends": ["eslint:recommended", "plugin:import/errors", "plugin:import/warnings"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:flowtype/recommended"
+  ],
+  "parser": "babel-eslint",
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2017,
@@ -7,6 +13,7 @@
       "jsx": true
     }
   },
+  "plugins": ["import", "flowtype"],
   "env": {
     "browser": true,
     "commonjs": true,
