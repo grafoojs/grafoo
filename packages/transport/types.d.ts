@@ -1,33 +1,23 @@
-export interface Location {
-  line: number;
-  column: number;
-}
+export declare type GraphQLRequestContext = { query: string; variables?: { [key: string]: any } };
 
-export interface GraphQlError {
-  message: string;
-  locations: Location[];
-  path: string[];
-}
+export declare type Headers = () => Object | Object;
 
-export interface Variables {
-  [key: string]: any;
-}
+export declare type TransportPayload = { [key: string]: any };
 
-export interface GraphQLRequestContext {
-  query: string;
-  variables?: Variables;
-}
+export declare type TransportRequest = (
+  request: {
+    query: string;
+    variables?: { [key: string]: any };
+  }
+) => Promise<{ [key: string]: any }>;
 
-export declare type TransportOptions = (() => RequestInit) | RequestInit;
-
-export declare type TransportRequest = Promise<object>;
-
-export interface GraphQLResponse {
-  data?: any;
-  errors?: GraphQlError[];
-}
+export declare type Variables = { [key: string]: any };
 
 export default function createTransport(
   uri: string,
-  options?: TransportOptions
-): (GraphQLRequestContext) => Promise<GraphQLResponse>;
+  headers?: () => Object | Object
+): (
+  request: { query: string; variables?: { [key: string]: any } }
+) => Promise<{
+  [key: string]: any;
+}>;

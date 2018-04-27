@@ -13,35 +13,23 @@ export type Variables = { [key: string]: any };
 
 export type Listener = ObjectsMap => void;
 
-export interface InitialState {
-  objectsMap: ObjectsMap;
-  pathsMap: PathsMap;
-}
+export type InitialState = { objectsMap: ObjectsMap, pathsMap: PathsMap };
 
-export interface CacheOptions {
-  initialState?: InitialState;
-  idFromProps?: ({}) => string;
-}
+export type CacheOptions = { initialState?: InitialState, idFromProps?: ({}) => string };
 
-export interface CacheRequest {
-  query: { paths: { root: string, args: string[] } };
-  variables: Variables;
-}
+export type CacheRequest = {
+  query: { paths: { root: string, args: string[] } },
+  variables?: Variables
+};
 
-export interface CacheObject {
-  listen: Listener => () => void;
-  write: (CacheRequest, {}) => void;
-  read: CacheRequest => { data: {}, objects: ObjectsMap } | null;
-  flush: () => InitialState;
-}
+export type CacheObject = {
+  listen(Listener): () => void,
+  write(CacheRequest, {}): void,
+  read(CacheRequest): { data: {}, objects: ObjectsMap } | null,
+  flush(): InitialState
+};
 
-function getPathId(path: string, args: string[], variables: Variables) {
-  const hasArgs = args.length && variables ? args.some(arg => variables[arg]) : false;
-
-  return hasArgs ? path + args.reduce((args, arg) => args + variables[arg], ":") : path;
-}
-
-export default function createCache(options?: CacheOptions) {
+export default function createCache(options?: CacheOptions): CacheObject {
   options = options || {};
 
   let { initialState, idFromProps } = options;
@@ -115,4 +103,24 @@ export default function createCache(options?: CacheOptions) {
       return { objectsMap, pathsMap };
     }
   };
+}
+
+function getPathId(path: string, args: string[], variables?: Variables = {}) {
+  let hasArgs = false;
+  let finalPath = path;
+  let i = args.length;
+
+  while (i--) {
+    if (args[i] in variables) {
+      let v = variables[args[i]];
+      if (!hasArgs) {
+        finalPath += ":" + v;
+      } else {
+        finalPath += v;
+        hasArgs = true;
+      }
+    }
+  }
+
+  return finalPath;
 }

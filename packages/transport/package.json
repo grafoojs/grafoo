@@ -11,7 +11,8 @@
   "scripts": {
     "prepare": "yarn build # transport",
     "test": "ava",
-    "build": "microbundle && flow-copy-source src dist"
+    "build": "microbundle && flow-copy-source src dist",
+    "flow": "flow"
   },
   "ava": {
     "serial": true,
