@@ -47,13 +47,10 @@ export const Textarea = styled.textarea`
 
 export const Button = styled.button`
   appearance: none;
-  border: none;
-  height: 40px;
-  line-height: 40px;
+  border: 0;
   background: #333;
   color: #fff;
-  font-size: 1em;
-  padding: 0 1em;
+  padding: 0.8em 1em;
   font: inherit;
 `;
 

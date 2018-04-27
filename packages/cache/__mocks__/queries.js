@@ -1,4 +1,4 @@
-import graphql from "@grafoo/loader";
+import graphql from "@grafoo/core/tag";
 
 export const PostsAndAuthors = graphql`
   query {

@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/preact",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "the grafoo client preact-bindings",
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",

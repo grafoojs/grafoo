@@ -1,10 +1,13 @@
 {
   "env": {
     "test": {
-      "presets": [["@babel/preset-env", { "targets": { "node": "current" } }]],
+      "presets": [
+        "@babel/preset-flow",
+        ["@babel/preset-env", { "targets": { "node": "current" } }]
+      ],
       "plugins": [
         [
-          "module:@grafoo/loader",
+          "@grafoo/babel-plugin-tag",
           { "schema": "__mocks__/schema.graphql", "fieldsToInsert": ["id", "__typename"] }
         ]
       ]

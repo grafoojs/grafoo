@@ -36,11 +36,7 @@ test("should perform a request with variables", async t => {
 });
 
 test("should accept fetchObjects as an object", async t => {
-  request = createTransport(fakeAPI, {
-    headers: {
-      authorization: "Bearer some-token"
-    }
-  });
+  request = createTransport(fakeAPI, { authorization: "Bearer some-token" });
 
   await mock(async () => {
     await request({ query });
@@ -55,11 +51,7 @@ test("should accept fetchObjects as an object", async t => {
 });
 
 test("should accept fetchObjects as a function", async t => {
-  request = createTransport(fakeAPI, () => ({
-    headers: {
-      authorization: "Bearer some-token"
-    }
-  }));
+  request = createTransport(fakeAPI, () => ({ authorization: "Bearer some-token" }));
 
   await mock(async () => {
     await request({ query });

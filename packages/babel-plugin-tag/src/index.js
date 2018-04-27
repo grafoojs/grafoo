@@ -8,7 +8,7 @@ const visitor = {
     const tagNames = [];
 
     if (!opts.schema) {
-      throw programPath.buildCodeFrameError("@grafoo/loader needs a schema!");
+      throw programPath.buildCodeFrameError("@grafoo/babel-plugin-tag needs a schema!");
     }
 
     if (!opts.fieldsToInsert) {
@@ -17,20 +17,20 @@ const visitor = {
 
     programPath.traverse({
       ImportDeclaration(path) {
-        if (path.node.source.value === "@grafoo/loader") {
+        if (path.node.source.value === "@grafoo/core/tag") {
           const defaultSpecifier = path.node.specifiers.find(specifier =>
             isImportDefaultSpecifier(specifier)
           );
 
           if (!defaultSpecifier) {
-            throw path.buildCodeFrameError("@grafoo/loader is a default import!");
+            throw path.buildCodeFrameError("@grafoo/core/tag is a default import!");
           }
 
           const importToken = defaultSpecifier.local.name;
 
           if (importToken !== "gql" && importToken !== "graphql") {
             throw path.buildCodeFrameError(
-              "@grafoo/loader should be imported as `gql` or `graphql`, instead got: `" +
+              "@grafoo/core/tag should be imported as `gql` or `graphql`, instead got: `" +
                 importToken +
                 "`!"
             );
@@ -46,7 +46,7 @@ const visitor = {
           try {
             if (path.get("quasi").get("expressions").length) {
               throw path.buildCodeFrameError(
-                "@grafoo/loader does not support interpolation in a graphql template string!"
+                "@grafoo/babel-plugin-tag does not support interpolation in a graphql template string!"
               );
             }
 
