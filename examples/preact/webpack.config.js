@@ -16,6 +16,7 @@ module.exports = () => ({
     new HtmlPlugin({ template: "./src/index.html" }),
     new webpack.HotModuleReplacementPlugin()
   ],
+  devtool: "eval",
   devServer: {
     host: "0.0.0.0",
     port: 3000,

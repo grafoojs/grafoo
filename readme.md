@@ -15,19 +15,37 @@ Mobile traffic. Grafoo is targeted to low-end devices.
 
 ## How?
 
-Grafoo parses all queries beforehand with the help of a babel plugin. At runtime the cache normalizes query results to then serve then to the application.
+Grafoo parses all queries beforehand with the help of a babel plugin. At runtime the cache normalizes query results to then serve to the application.
 
-## install
+## Installation
 
 ```shell
-npm i @grafoo/core @grafoo/preact && \
-npm i -D @grafoo/loader
+npm i @grafoo/core && npm i -D @grafoo/babel-plugin-tag
 ```
 
-## setup
+## Usage
+
+### Babel
+
+```json
+{
+  "plugins": [
+    [
+      "@grafoo/babel-plugin-tag",
+      {
+        "schema": "schema.graphql",
+        "fieldsToInsert": ["id"]
+      }
+    ]
+  ]
+}
+```
+
+### App
 
 ```js
 import createClient from "@grafoo/core";
+import graphql from "@grafoo/core/tag";
 
 const client = createClient("http://some-graphql-api.com", {
   fetchOptions: {
@@ -35,6 +53,22 @@ const client = createClient("http://some-graphql-api.com", {
   },
   idFromProps: obj => obj.id
 });
+
+const HELLO = graphql`
+  query($id: ID!) {
+    user(id: $id) {
+      name
+    }
+  }
+`;
+
+const variables = { id: 123 };
+
+client.request({ query: HELLO.query, variables }).then(data => {
+  cache.write({ query: HELLO, variables }, data);
+});
+
+console.log(client.read({ query: HELLO, variables }));
 ```
 
 ## LICENSE

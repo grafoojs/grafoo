@@ -9,6 +9,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "yarn build # util",
-    "build": "microbundle && flow-copy-source src dist"
+    "build": "microbundle && flow-copy-source src dist",
+    "flow": "flow"
   }
 }

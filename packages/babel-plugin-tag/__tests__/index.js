@@ -13,15 +13,15 @@ test.afterEach(() => {
 });
 
 test("should throw if a import is not default", t => {
-  const program = 'import { gql } from "@grafoo/loader";';
+  const program = 'import { gql } from "@grafoo/core/tag";';
 
   t.throws(() => transform(program));
 });
 
 test("should name the default export `gql` or `graphql`", t => {
-  const program1 = 'import gql from "@grafoo/loader";';
-  const program2 = 'import graphql from "@grafoo/loader";';
-  const program3 = 'import someDefaultSpecifier from "@grafoo/loader";';
+  const program1 = 'import gql from "@grafoo/core/tag";';
+  const program2 = 'import graphql from "@grafoo/core/tag";';
+  const program3 = 'import someDefaultSpecifier from "@grafoo/core/tag";';
 
   t.notThrows(() => transform(program1));
   t.notThrows(() => transform(program2));
@@ -29,14 +29,14 @@ test("should name the default export `gql` or `graphql`", t => {
 });
 
 test("should remove the imported path", t => {
-  const program = 'import gql from "@grafoo/loader";';
+  const program = 'import gql from "@grafoo/core/tag";';
 
   t.is(transform(program).code, "");
 });
 
 test("should throw if a schema is not specified", t => {
   const program = `
-    import gql from "@grafoo/loader";
+    import gql from "@grafoo/core/tag";
     const query = gql\`{ hello }\`;
   `;
 
@@ -45,7 +45,7 @@ test("should throw if a schema is not specified", t => {
 
 test("should throw if a schema path points to a inexistent file", t => {
   const program = `
-    import gql from "@grafoo/loader";
+    import gql from "@grafoo/core/tag";
     const query = gql\`{ hello }\`;
   `;
 
@@ -54,7 +54,7 @@ test("should throw if a schema path points to a inexistent file", t => {
 
 test("should throw if a tagged template string literal has expressions in it", t => {
   const program = `
-    import gql from "@grafoo/loader";
+    import gql from "@grafoo/core/tag";
     const id = 1;
     const query = gql\`{ user(id: "\${id}") { name } }\`;
   `;
@@ -64,7 +64,7 @@ test("should throw if a tagged template string literal has expressions in it", t
 
 test("should replace a tagged template literal with the compiled grafoo object", t => {
   const program = `
-    import gql from "@grafoo/loader";
+    import gql from "@grafoo/core/tag";
     const query = gql\`
       query($start: Int!, $offset: Int!, $id: ID!) {
         posts(start: $start, offset: $offset) {
@@ -84,7 +84,7 @@ test("should replace a tagged template literal with the compiled grafoo object",
 
 test("should compress query in production", t => {
   const program = `
-    import gql from "@grafoo/loader";
+    import gql from "@grafoo/core/tag";
     const query = gql\`
       query($start: Int!, $offset: Int!, $id: ID!) {
         posts(start: $start, offset: $offset) {

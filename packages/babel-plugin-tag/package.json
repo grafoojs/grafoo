@@ -1,5 +1,5 @@
 {
-  "name": "@grafoo/loader",
+  "name": "@grafoo/babel-plugin-tag",
   "version": "0.0.0",
   "description": "the grafoo client babel plugin",
   "main": "dist/index.js",
