@@ -34,14 +34,12 @@
     "graphql": "^0.13.2",
     "graphql-tools": "^2.23.1",
     "husky": "^0.14.3",
-    "lerna": "^3.0.0-alpha.1",
+    "lerna": "^3.0.0-beta.19",
     "lowdb": "^1.0.0",
     "microbundle": "^0.4.4",
     "node-fetch": "^2.1.2",
     "rimraf": "^2.6.2",
     "sinon": "^4.5.0"
   },
-  "workspaces": [
-    "packages/*"
-  ]
+  "workspaces": ["packages/*"]
 }
