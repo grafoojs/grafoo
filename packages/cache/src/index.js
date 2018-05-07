@@ -11,25 +11,24 @@ export type PathsMap = { [key: string]: { [key: string]: any } };
 
 export type Variables = { [key: string]: any };
 
-export type Listener = ObjectsMap => void;
+export type Listener = (objects: ObjectsMap) => void;
 
 export type InitialState = { objectsMap: ObjectsMap, pathsMap: PathsMap };
 
 export type CacheOptions = { initialState?: InitialState, idFromProps?: ({}) => string };
 
-export type CacheRequest = {
-  query: { paths: { root: string, args: string[] } },
-  variables?: Variables
-};
+export type GrafooObject = { paths: { root: string, args: string[] } };
 
-export type CacheObject = {
-  listen(Listener): () => void,
-  write(CacheRequest, {}): void,
-  read(CacheRequest): { data: {}, objects: ObjectsMap } | null,
+export type CacheRequest = { query: GrafooObject, variables?: Variables };
+
+export type CacheInstance = {
+  listen(listener: Listener): () => void,
+  write(cacheRequest: CacheRequest, data: {}): void,
+  read(cacheRequest: CacheRequest): { data: {}, objects: ObjectsMap } | null,
   flush(): InitialState
 };
 
-export default function createCache(options?: CacheOptions): CacheObject {
+export default function createCache(options?: CacheOptions): CacheInstance {
   options = options || {};
 
   let { initialState, idFromProps } = options;
@@ -45,7 +44,7 @@ export default function createCache(options?: CacheOptions): CacheObject {
   const listeners = [];
 
   return {
-    listen(listener: Listener): () => void {
+    listen(listener) {
       listeners.push(listener);
 
       return () => {
@@ -56,7 +55,7 @@ export default function createCache(options?: CacheOptions): CacheObject {
         listeners.splice(index, 1);
       };
     },
-    write(cacheRequest: CacheRequest, data: {}) {
+    write(cacheRequest, data: {}) {
       const {
         query: { paths },
         variables
@@ -80,7 +79,7 @@ export default function createCache(options?: CacheOptions): CacheObject {
 
       for (let i = 0; i < listeners.length; i++) listeners[i](objects);
     },
-    read({ query: { paths }, variables }: CacheRequest): { data: {}, objects: ObjectsMap } | null {
+    read({ query: { paths }, variables }) {
       const data = {};
       const objects: Object = {};
 
@@ -99,7 +98,7 @@ export default function createCache(options?: CacheOptions): CacheObject {
 
       return { data: buildQueryTree(data, objectsMap, idFromProps), objects };
     },
-    flush(): InitialState {
+    flush() {
       return { objectsMap, pathsMap };
     }
   };

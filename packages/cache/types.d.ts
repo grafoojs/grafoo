@@ -1,33 +1,24 @@
-export interface ObjectsMap {
-  [key: string]: object;
-}
+export type ObjectsMap = { [key: string]: { [key: string]: any } };
 
-export interface PathsMap {
-  [key: string]: object;
-}
+export type PathsMap = { [key: string]: { [key: string]: any } };
 
-export interface InitialState {
-  objectsMap: ObjectsMap;
-  pathsMap: PathsMap;
-}
+export type Variables = { [key: string]: any };
 
-export interface CacheOptions {
-  initialState?: object;
-  idFromProps: (object) => string;
-}
+export type Listener = (objects: ObjectsMap) => void;
 
-export declare type Listener = (ObjectsMap) => void;
+export type InitialState = { objectsMap: ObjectsMap; pathsMap: PathsMap };
 
-export interface CacheRequest {
-  query: { paths: { root: string; args: string[] } };
-  variables?: object;
-}
+export type CacheOptions = { initialState?: InitialState; idFromProps?: ({}) => string };
 
-export interface CacheObject {
-  listen: (Listener) => () => void;
-  write: (CacheRequest, object) => void;
-  read: (CacheRequest) => { data: {}; objects: ObjectsMap };
-  flush: () => InitialState;
-}
+export type GrafooObject = { paths: { root: string; args: string[] } };
 
-export default function createCache(options?: CacheOptions): CacheObject;
+export type CacheRequest = { query: GrafooObject; variables?: Variables };
+
+export type CacheInstance = {
+  listen(listener: Listener): () => void;
+  write(cacheRequest: CacheRequest, data: {}): void;
+  read(cacheRequest: CacheRequest): { data: {}; objects: ObjectsMap } | null;
+  flush(): InitialState;
+};
+
+export default function createCache(options?: CacheOptions): CacheOptions;

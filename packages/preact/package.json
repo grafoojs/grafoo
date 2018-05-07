@@ -13,9 +13,6 @@
     "build": "microbundle"
   },
   "peerDependencies": {
-    "preact": "^8.2.7"
-  },
-  "devDependencies": {
-    "preact": "^8.2.7"
+    "preact": "^8"
   }
 }

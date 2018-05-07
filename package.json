@@ -10,7 +10,8 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test",
-    "lint": "eslint \"./packages/**/*.js\"",
+    "flow": "flow",
+    "lint": "flow && eslint \"./packages/**/*.js\"",
     "prepare": "lerna run prepare",
     "clean": "rimraf packages/**/dist",
     "prepush": "lerna run test",
@@ -31,6 +32,7 @@
     "fetch-mock": "^6.3.0",
     "flow-bin": "^0.70.0",
     "flow-copy-source": "^1.3.0",
+    "flow-typed": "^2.4.0",
     "graphql": "^0.13.2",
     "graphql-tools": "^2.23.1",
     "husky": "^0.14.3",
@@ -38,6 +40,7 @@
     "lowdb": "^1.0.0",
     "microbundle": "^0.4.4",
     "node-fetch": "^2.1.2",
+    "preact": "^8.2.9",
     "rimraf": "^2.6.2",
     "sinon": "^4.5.0"
   },

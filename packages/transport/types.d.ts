@@ -1,23 +1,11 @@
-export declare type GraphQLRequestContext = { query: string; variables?: { [key: string]: any } };
+export type Variables = { [key: string]: any };
 
-export declare type Headers = () => Object | Object;
+export type GraphQLRequestContext = { query: string; variables?: Variables };
 
-export declare type TransportPayload = { [key: string]: any };
+export type TransportPayload = { [key: string]: any };
 
-export declare type TransportRequest = (
-  request: {
-    query: string;
-    variables?: { [key: string]: any };
-  }
-) => Promise<{ [key: string]: any }>;
+export type TransportRequest = (request: GraphQLRequestContext) => Promise<TransportPayload>;
 
-export declare type Variables = { [key: string]: any };
+export type Headers = (() => Object) | Object;
 
-export default function createTransport(
-  uri: string,
-  headers?: () => Object | Object
-): (
-  request: { query: string; variables?: { [key: string]: any } }
-) => Promise<{
-  [key: string]: any;
-}>;
+export default function createTransport(uri: string, headers?: Headers): TransportRequest;
