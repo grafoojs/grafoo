@@ -15,7 +15,9 @@ export type Listener = (objects: ObjectsMap) => void;
 
 export type InitialState = { objectsMap: ObjectsMap, pathsMap: PathsMap };
 
-export type CacheOptions = { initialState?: InitialState, idFromProps?: ({}) => string };
+export type IdFromPropsFn = ({ [key: string]: any }) => string;
+
+export type CacheOptions = { initialState?: InitialState, idFromProps?: IdFromPropsFn };
 
 export type GrafooObject = { paths: { root: string, args: string[] } };
 
@@ -55,12 +57,14 @@ export default function createCache(options?: CacheOptions): CacheInstance {
         listeners.splice(index, 1);
       };
     },
-    write(cacheRequest, data: {}) {
-      const {
+    write(
+      {
         query: { paths },
         variables
-      } = cacheRequest;
-      const objects: Object = {};
+      },
+      data: {}
+    ) {
+      const objects: ObjectsMap = {};
 
       for (const path in paths) {
         const { root, args } = paths[path];
@@ -81,7 +85,7 @@ export default function createCache(options?: CacheOptions): CacheInstance {
     },
     read({ query: { paths }, variables }) {
       const data = {};
-      const objects: Object = {};
+      const objects: ObjectsMap = {};
 
       for (const path in paths) {
         const { root, args } = paths[path];
@@ -112,6 +116,7 @@ function getPathId(path: string, args: string[], variables?: Variables = {}) {
   while (i--) {
     if (args[i] in variables) {
       let v = variables[args[i]];
+
       if (!hasArgs) {
         finalPath += ":" + v;
       } else {
