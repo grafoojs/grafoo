@@ -14,7 +14,7 @@ function getSchema(schemaPath) {
 
     return fs.readFileSync(fullPath, "utf-8");
   } catch (err) {
-    throw new Error(err);
+    throw err;
   }
 }
 

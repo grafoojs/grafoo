@@ -10,7 +10,6 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test",
-    "flow": "flow",
     "lint": "flow && eslint \"./packages/**/*.js\"",
     "prepare": "lerna run prepare",
     "clean": "rimraf packages/**/dist",
