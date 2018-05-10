@@ -1,7 +1,7 @@
 import { isImportDefaultSpecifier, isIdentifier } from "babel-types";
 import parseLiteral from "babel-literal-to-ast";
 
-import compileQuery from "./compile-query";
+import compileDocument from "./compile-document";
 
 const visitor = {
   Program(programPath, { opts }) {
@@ -26,17 +26,7 @@ const visitor = {
             throw path.buildCodeFrameError("@grafoo/core/tag is a default import!");
           }
 
-          const importToken = defaultSpecifier.local.name;
-
-          if (importToken !== "gql" && importToken !== "graphql") {
-            throw path.buildCodeFrameError(
-              "@grafoo/core/tag should be imported as `gql` or `graphql`, instead got: `" +
-                importToken +
-                "`!"
-            );
-          }
-
-          tagNames.push(importToken);
+          tagNames.push(defaultSpecifier.local.name);
 
           path.remove();
         }
@@ -46,7 +36,8 @@ const visitor = {
           try {
             if (path.get("quasi").get("expressions").length) {
               throw path.buildCodeFrameError(
-                "@grafoo/babel-plugin-tag does not support interpolation in a graphql template string!"
+                "@grafoo/babel-plugin-tag does not support" +
+                  " interpolation in a graphql template string!"
               );
             }
 
@@ -54,7 +45,15 @@ const visitor = {
               .get("quasi")
               .node.quasis.reduce((head, quasi) => head + quasi.value.raw, "");
 
-            path.replaceWith(parseLiteral(compileQuery(source, opts)));
+            try {
+              const compiled = compileDocument(source, opts);
+
+              path.replaceWith(parseLiteral(compiled));
+            } catch (err) {
+              if (err.code === "ENOENT") throw err;
+
+              throw path.buildCodeFrameError(err.message);
+            }
           } catch (error) {
             throw error;
           }

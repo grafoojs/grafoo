@@ -18,16 +18,6 @@ test("should throw if a import is not default", t => {
   t.throws(() => transform(program));
 });
 
-test("should name the default export `gql` or `graphql`", t => {
-  const program1 = 'import gql from "@grafoo/core/tag";';
-  const program2 = 'import graphql from "@grafoo/core/tag";';
-  const program3 = 'import someDefaultSpecifier from "@grafoo/core/tag";';
-
-  t.notThrows(() => transform(program1));
-  t.notThrows(() => transform(program2));
-  t.throws(() => transform(program3));
-});
-
 test("should remove the imported path", t => {
   const program = 'import gql from "@grafoo/core/tag";';
 

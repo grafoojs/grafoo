@@ -43,5 +43,7 @@
     "rimraf": "^2.6.2",
     "sinon": "^4.5.0"
   },
-  "workspaces": ["packages/*"]
+  "workspaces": [
+    "packages/*"
+  ]
 }

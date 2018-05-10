@@ -18,8 +18,8 @@ function getSchema(schemaPath) {
   }
 }
 
-function getPaths(ast) {
-  const [definition] = ast.definitions;
+function getPaths(document) {
+  const [definition] = document.definitions;
 
   return definition.selectionSet.selections.reduce(
     (paths, s) =>
@@ -33,7 +33,7 @@ function getPaths(ast) {
   );
 }
 
-export default function compileQuery(source, opts) {
+export default function compileDocument(source, opts) {
   const schema = getSchema(opts.schema);
   const document = sortDocument(insertFields(schema, parse(source), opts.fieldsToInsert));
 

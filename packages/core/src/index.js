@@ -4,7 +4,7 @@ import createTransport, { type TransportRequest, type Headers } from "@grafoo/tr
 import createCache, { type CacheInstance, type CacheOptions } from "@grafoo/cache/src";
 import { assign } from "@grafoo/util";
 
-export type ClientInstance = CacheInstance & { +request: TransportRequest };
+export type ClientInstance = { ...CacheInstance, +request: TransportRequest };
 
 export type ClientOptions = CacheOptions & { headers: Headers };
 

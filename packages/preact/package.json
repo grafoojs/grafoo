@@ -13,6 +13,6 @@
     "build": "microbundle"
   },
   "peerDependencies": {
-    "preact": "^8"
+    "preact": ">=8"
   }
 }
