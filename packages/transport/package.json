@@ -5,18 +5,22 @@
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
   "module": "dist/index.m.js",
-  "typings": "types.d.ts",
-  "source": "src/index.js",
+  "typings": "dist/index.d.ts",
+  "source": "temp/transport/src/index.js",
+  "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
     "prepare": "yarn build # transport",
     "test": "ava",
-    "build": "microbundle && flow-copy-source src dist",
-    "flow": "flow"
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "@grafoo/util": "0.0.1"
   },
   "ava": {
     "serial": true,
     "verbose": true,
-    "require": ["@babel/register"]
+    "require": ["@babel/register"],
+    "files": ["__tests__/**/*.js"]
   }
 }

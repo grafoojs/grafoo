@@ -6,7 +6,7 @@
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "yarn build",
+    "prepare": "yarn build # babel-plugin-tag",
     "test": "ava",
     "build": "babel src --out-dir dist"
   },

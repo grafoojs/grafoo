@@ -5,15 +5,17 @@
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
   "module": "dist/index.m.js",
-  "typings": "types.d.ts",
-  "source": "src/index.js",
+  "typings": "dist/cache/src/index.d.ts",
+  "source": "src/index.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
     "prepare": "yarn build # cache",
-    "test": "ava",
-    "build": "microbundle && flow-copy-source src dist",
-    "flow": "flow"
+    "test": "tsc && ava",
+    "build": "microbundle"
+  },
+  "dependencies": {
+    "@grafoo/util": "0.0.1"
   },
   "ava": {
     "verbose": true,

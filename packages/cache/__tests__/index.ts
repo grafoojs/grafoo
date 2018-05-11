@@ -62,7 +62,9 @@ test("should perform update to cache", async t => {
   await mock(Post, async (cache, data, request) => {
     cache.write(request, data);
 
-    const { data: { post } } = cache.read(request);
+    const {
+      data: { post }
+    } = cache.read(request);
 
     t.is(post.title, "Quam odit");
 

@@ -8,11 +8,14 @@
   "source": "src/index.js",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
-  "scripts": {
-    "prepare": "yarn build # preact",
-    "build": "microbundle"
+  "dependencies": {
+    "@grafoo/util": "0.0.1"
   },
   "peerDependencies": {
     "preact": ">=8"
+  },
+  "scripts": {
+    "prepare": "yarn build # preact",
+    "build": "microbundle"
   }
 }
