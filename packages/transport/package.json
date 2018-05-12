@@ -5,14 +5,14 @@
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
   "module": "dist/index.m.js",
-  "typings": "dist/index.d.ts",
-  "source": "temp/transport/src/index.js",
+  "typings": "dist/transport/src/index.d.ts",
+  "source": "src/index.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
     "prepare": "yarn build # transport",
     "test": "ava",
-    "build": "node build.js"
+    "build": "microbundle && flowgen dist/transport/src/index.d.ts --output-file dist/index.js.flow"
   },
   "dependencies": {
     "@grafoo/util": "0.0.1"

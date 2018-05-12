@@ -1,14 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "esnext",
-    "strict": false,
-    "declaration": true,
     "moduleResolution": "node",
-    "lib": ["esnext", "dom"],
-    "baseUrl": "./packages",
-    "paths": {
-      "@grafoo/*": ["*/src/index"]
-    }
-  }
+    "target": "es5",
+    "module": "esnext",
+    "declaration": true,
+    "strict": false,
+    "lib": ["esnext", "dom"]
+  },
+  "include": ["**/src"]
 }

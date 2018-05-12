@@ -1,6 +1,0 @@
-{
-  "compilerOptions": { "outDir": "temp" },
-  "extends": "../../tsconfig.json",
-  "include": ["src/**/*.ts"],
-  "exclude": ["__tests__"]
-}

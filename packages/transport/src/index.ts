@@ -6,7 +6,7 @@ export type GraphQlError = {
   path: string[];
 };
 
-export class TransportError extends Error {
+class TransportError extends Error {
   errors: GraphQlError[];
 
   constructor(errors: GraphQlError[], request: string) {

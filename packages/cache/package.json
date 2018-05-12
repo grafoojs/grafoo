@@ -12,7 +12,7 @@
   "scripts": {
     "prepare": "yarn build # cache",
     "test": "tsc && ava",
-    "build": "microbundle"
+    "build": "microbundle && flowgen dist/cache/src/index.d.ts --output-file dist/index.js.flow"
   },
   "dependencies": {
     "@grafoo/util": "0.0.1"
