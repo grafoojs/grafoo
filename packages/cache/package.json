@@ -12,7 +12,7 @@
   "scripts": {
     "prepare": "yarn build # cache",
     "test": "jest",
-    "build": "microbundle && flowgen dist/cache/src/index.d.ts --output-file dist/index.js.flow"
+    "build": "microbundle"
   },
   "jest": {
     "moduleFileExtensions": ["ts", "tsx", "js"],
