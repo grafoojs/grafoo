@@ -9,9 +9,6 @@
   "typings": "dist/core/src/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "@grafoo/util": "0.0.1"
-  },
   "scripts": {
     "prepare": "yarn build # core",
     "build": "microbundle"
