@@ -8,9 +8,6 @@
   "source": "src/index.js",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "@grafoo/util": "0.0.1"
-  },
   "peerDependencies": {
     "preact": ">=8"
   },
