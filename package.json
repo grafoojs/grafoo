@@ -14,10 +14,11 @@
     "prepare": "node scripts/build.js",
     "clean": "rimraf packages/**/dist",
     "prepush": "yarn lint && yarn test",
-    "postcommit":
-      "echo \"---------------\nPUSH YOUR CODE!\n---------------\n\" && prettier --write && git add -A"
+    "postcommit": "echo \"---------------\nPUSH YOUR CODE!\n---------------\n\" && prettier --write && git add -A"
   },
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.46",
     "@babel/core": "^7.0.0-beta.46",
@@ -28,7 +29,6 @@
     "@types/lowdb": "^1.0.1",
     "@types/node": "^10.0.6",
     "@types/sinon": "^4.3.3",
-    "ava": "^0.25.0",
     "babel-eslint": "^8.2.3",
     "casual": "^1.5.19",
     "eslint": "^4.19.0",
