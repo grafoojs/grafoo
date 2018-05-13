@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "yarn build # babel-plugin-tag",
-    "test": "ava",
+    "test": "jest",
     "build": "babel src --out-dir dist"
   },
   "dependencies": {
@@ -16,8 +16,11 @@
     "graphql": "^0.13.1",
     "graphql-query-compress": "^1.0.0"
   },
-  "ava": {
-    "verbose": true,
-    "require": ["@babel/register"]
+  "jest": {
+    "moduleFileExtensions": ["ts", "tsx", "js"],
+    "testMatch": ["**/__tests__/*.+(ts|tsx|js)"],
+    "transform": {
+      "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
+    }
   }
 }

@@ -9,7 +9,7 @@ function times(t, fn) {
 }
 
 export default function setupDB() {
-  const db = low(new MemoryAdapter());
+  const db = low(new MemoryAdapter(""));
 
   db.defaults({ posts: [], authors: [] }).write();
 

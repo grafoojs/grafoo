@@ -9,6 +9,6 @@
   "license": "MIT",
   "scripts": {
     "prepare": "yarn build # util",
-    "build": "microbundle && flowgen dist/util/src/index.d.ts --output-file dist/index.js.flow"
+    "build": "microbundle"
   }
 }

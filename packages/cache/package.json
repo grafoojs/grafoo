@@ -11,14 +11,14 @@
   "license": "MIT",
   "scripts": {
     "prepare": "yarn build # cache",
-    "test": "tsc && ava",
+    "test": "jest",
     "build": "microbundle && flowgen dist/cache/src/index.d.ts --output-file dist/index.js.flow"
   },
-  "dependencies": {
-    "@grafoo/util": "0.0.1"
-  },
-  "ava": {
-    "verbose": true,
-    "require": ["@babel/register"]
+  "jest": {
+    "moduleFileExtensions": ["ts", "tsx", "js"],
+    "testMatch": ["**/__tests__/*.+(ts|tsx|js)"],
+    "transform": {
+      "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
+    }
   }
 }

@@ -31,9 +31,9 @@ export type CacheInstance = {
 export default function createCache(options?: CacheOptions): CacheInstance {
   options = options || {};
 
-  let { initialState = { objectsMap: {}, pathsMap: {} }, idFromProps = _ => _.id } = options;
+  const { initialState = { objectsMap: {}, pathsMap: {} }, idFromProps = _ => _.id } = options;
 
-  let { objectsMap = {}, pathsMap = {} } = initialState;
+  const { objectsMap = {}, pathsMap = {} } = initialState;
 
   const listeners = [];
 
@@ -67,7 +67,7 @@ export default function createCache(options?: CacheOptions): CacheInstance {
 
       for (const i in objects) objectsMap[i] = objects[i] = assign({}, objectsMap[i], objects[i]);
 
-      for (let i = 0; i < listeners.length; i++) listeners[i](objects);
+      for (const listener of listeners) listener(objects);
     },
     read({ query: { paths }, variables }) {
       const data = {};
@@ -96,13 +96,13 @@ export default function createCache(options?: CacheOptions): CacheInstance {
 
 function getPathId(path: string, args: string[], variables?: Variables) {
   variables = variables || {};
-  let hasArgs = false,
-    finalPath = path,
-    i = args.length;
+  let hasArgs = false;
+  let finalPath = path;
+  let i = args.length;
 
   while (i--) {
     if (args[i] in variables) {
-      let v = variables[args[i]];
+      const v = variables[args[i]];
 
       if (!hasArgs) {
         finalPath += ":" + v;

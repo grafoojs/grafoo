@@ -7,7 +7,7 @@ export type GraphQlError = {
 };
 
 class TransportError extends Error {
-  errors: GraphQlError[];
+  public errors: GraphQlError[];
 
   constructor(errors: GraphQlError[], request: string) {
     super("graphql error on request " + request);
@@ -21,14 +21,14 @@ export type Variables = { [key: string]: any };
 
 export type GraphQLRequestContext = { query: string; variables?: Variables };
 
-export type TransportRequest = (request: GraphQLRequestContext) => Promise<Object>;
+export type TransportRequest = (request: GraphQLRequestContext) => Promise<{}>;
 
-export type Headers = (() => Object) | Object;
+export type Headers = (() => {}) | {};
 
 export default function createTransport(uri: string, headers?: Headers): TransportRequest {
   headers = headers || {};
 
-  return (request: GraphQLRequestContext): Promise<Object> => {
+  return (request: GraphQLRequestContext): Promise<{}> => {
     const body = JSON.stringify(request);
     const init = {
       body,

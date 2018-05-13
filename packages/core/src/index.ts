@@ -1,5 +1,5 @@
-import createTransport, { TransportRequest, Headers } from "@grafoo/transport";
-import createCache, { CacheInstance, CacheOptions } from "@grafoo/cache";
+import createTransport, { TransportRequest, Headers } from "@grafoo/transport/src";
+import createCache, { CacheInstance, CacheOptions } from "@grafoo/cache/src";
 import { assign } from "@grafoo/util";
 
 export type ClientInstance = CacheInstance & { request: TransportRequest };

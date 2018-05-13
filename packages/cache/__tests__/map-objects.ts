@@ -1,5 +1,3 @@
-import test from "ava";
-
 import mapObjects from "../src/map-objects";
 
 const tree = {
@@ -45,7 +43,7 @@ const tree = {
 
 const idFromProps = _ => _.id;
 
-test("should return the correct map of objects", t => {
+test("should return the correct map of objects", () => {
   const objects = mapObjects(tree, idFromProps);
 
   const expected = {
@@ -57,10 +55,10 @@ test("should return the correct map of objects", t => {
     "6": { name: "laura", id: "6", __typename: "Author" }
   };
 
-  t.deepEqual(objects, expected);
+  expect(objects).toEqual(expected);
 });
 
-test("should accept null values", t => {
+test("should accept null values", () => {
   const result = {
     data: {
       me: {
@@ -73,14 +71,14 @@ test("should accept null values", t => {
     }
   };
 
-  t.notThrows(() => mapObjects(result, idFromProps));
+  expect(() => mapObjects(result, idFromProps)).not.toThrow();
 });
 
-test("should build an object identifier based on the `idFromProps` function", t => {
+test("should build an object identifier based on the `idFromProps` function", () => {
   const idFromProps = obj => obj.__typename + ":" + obj.id;
   const objects = mapObjects(tree, idFromProps);
 
   const expected = ["Post:1", "Author:2", "Post:3", "Author:4", "Post:5", "Author:6"];
 
-  t.true(Object.keys(objects).every(obj => expected.some(exp => exp === obj)));
+  expect(Object.keys(objects).every(obj => expected.some(exp => exp === obj))).toBe(true);
 });

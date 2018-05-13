@@ -14,6 +14,6 @@
   },
   "scripts": {
     "prepare": "yarn build # core",
-    "build": "microbundle && flowgen dist/core/src/index.d.ts --output-file dist/index.js.flow"
+    "build": "microbundle"
   }
 }
