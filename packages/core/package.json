@@ -5,13 +5,12 @@
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
   "module": "dist/index.m.js",
-  "source": "src/index.js",
-  "typings": "types.d.ts",
+  "source": "src/index.ts",
+  "typings": "dist/core/src/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
     "prepare": "yarn build # core",
-    "build": "microbundle && flow-copy-source src dist",
-    "flow": "flow"
+    "build": "microbundle"
   }
 }

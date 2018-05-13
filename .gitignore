@@ -126,3 +126,9 @@ typings/
 
 # output directories
 dist/
+
+# Typescript
+.rpt2_cache
+
+# temp folder
+temp

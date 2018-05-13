@@ -8,11 +8,11 @@
   "source": "src/index.js",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
+  "peerDependencies": {
+    "preact": ">=8"
+  },
   "scripts": {
     "prepare": "yarn build # preact",
     "build": "microbundle"
-  },
-  "peerDependencies": {
-    "preact": ">=8"
   }
 }

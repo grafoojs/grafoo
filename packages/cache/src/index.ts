@@ -1,5 +1,3 @@
-// @flow
-
 import { assign } from "@grafoo/util";
 
 import buildQueryTree from "./build-query-tree";
@@ -13,35 +11,29 @@ export type Variables = { [key: string]: any };
 
 export type Listener = (objects: ObjectsMap) => void;
 
-export type InitialState = { objectsMap: ObjectsMap, pathsMap: PathsMap };
+export type InitialState = { objectsMap: ObjectsMap; pathsMap: PathsMap };
 
-export type IdFromPropsFn = ({ [key: string]: any }) => string;
+export type IdFromPropsFn = (data: { [key: string]: any }) => string;
 
-export type CacheOptions = { initialState?: InitialState, idFromProps?: IdFromPropsFn };
+export type CacheOptions = { initialState?: InitialState; idFromProps?: IdFromPropsFn };
 
-export type GrafooObject = { paths: { root: string, args: string[] } };
+export type GrafooObject = { paths: { root: string; args: string[] } };
 
-export type CacheRequest = { query: GrafooObject, variables?: Variables };
+export type CacheRequest = { query: GrafooObject; variables?: Variables };
 
 export type CacheInstance = {
-  listen(listener: Listener): () => void,
-  write(cacheRequest: CacheRequest, data: {}): void,
-  read(cacheRequest: CacheRequest): { data: {}, objects: ObjectsMap } | null,
-  flush(): InitialState
+  listen(listener: Listener): () => void;
+  write(cacheRequest: CacheRequest, data: {}): void;
+  read(cacheRequest: CacheRequest): { data: {}; objects: ObjectsMap } | null;
+  flush(): InitialState;
 };
 
 export default function createCache(options?: CacheOptions): CacheInstance {
   options = options || {};
 
-  let { initialState, idFromProps } = options;
+  const { initialState = { objectsMap: {}, pathsMap: {} }, idFromProps = _ => _.id } = options;
 
-  initialState = initialState || {};
-  idFromProps = idFromProps || (_ => _.id);
-
-  let { objectsMap, pathsMap } = initialState;
-
-  objectsMap = objectsMap || {};
-  pathsMap = pathsMap || {};
+  const { objectsMap = {}, pathsMap = {} } = initialState;
 
   const listeners = [];
 
@@ -57,13 +49,7 @@ export default function createCache(options?: CacheOptions): CacheInstance {
         listeners.splice(index, 1);
       };
     },
-    write(
-      {
-        query: { paths },
-        variables
-      },
-      data: {}
-    ) {
+    write({ query: { paths }, variables }, data: {}) {
       const objects: ObjectsMap = {};
 
       for (const path in paths) {
@@ -81,7 +67,7 @@ export default function createCache(options?: CacheOptions): CacheInstance {
 
       for (const i in objects) objectsMap[i] = objects[i] = assign({}, objectsMap[i], objects[i]);
 
-      for (let i = 0; i < listeners.length; i++) listeners[i](objects);
+      for (const listener of listeners) listener(objects);
     },
     read({ query: { paths }, variables }) {
       const data = {};
@@ -108,14 +94,15 @@ export default function createCache(options?: CacheOptions): CacheInstance {
   };
 }
 
-function getPathId(path: string, args: string[], variables?: Variables = {}) {
+function getPathId(path: string, args: string[], variables?: Variables) {
+  variables = variables || {};
   let hasArgs = false;
   let finalPath = path;
   let i = args.length;
 
   while (i--) {
     if (args[i] in variables) {
-      let v = variables[args[i]];
+      const v = variables[args[i]];
 
       if (!hasArgs) {
         finalPath += ":" + v;

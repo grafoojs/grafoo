@@ -1,4 +1,3 @@
-import test from "ava";
 import fetchMock from "fetch-mock";
 
 import createTransport from "../src";
@@ -7,23 +6,23 @@ const fakeAPI = "http://fake-api.com/graphql";
 const query = "{ hello }";
 let request;
 
-test.beforeEach(() => {
+beforeEach(() => {
   request = createTransport(fakeAPI);
 });
 
-test("should perform a simple request", async t => {
+test("should perform a simple request", async () => {
   await mock(async () => {
     await request({ query });
 
     const [, { body, headers, method }] = fetchMock.lastCall();
 
-    t.is(method, "POST");
-    t.is(body, JSON.stringify({ query }));
-    t.deepEqual(headers, { "Content-Type": "application/json" });
+    expect(method).toBe("POST");
+    expect(body).toBe(JSON.stringify({ query }));
+    expect(headers).toEqual({ "Content-Type": "application/json" });
   });
 });
 
-test("should perform a request with variables", async t => {
+test("should perform a request with variables", async () => {
   await mock(async () => {
     const variables = { some: "variable" };
 
@@ -31,11 +30,11 @@ test("should perform a request with variables", async t => {
 
     const [, { body }] = fetchMock.lastCall();
 
-    t.deepEqual(JSON.parse(body).variables, variables);
+    expect(JSON.parse(body).variables).toEqual(variables);
   });
 });
 
-test("should accept fetchObjects as an object", async t => {
+test("should accept fetchObjects as an object", async () => {
   request = createTransport(fakeAPI, { authorization: "Bearer some-token" });
 
   await mock(async () => {
@@ -43,14 +42,14 @@ test("should accept fetchObjects as an object", async t => {
 
     const [, { headers }] = fetchMock.lastCall();
 
-    t.deepEqual(headers, {
+    expect(headers).toEqual({
       authorization: "Bearer some-token",
       "Content-Type": "application/json"
     });
   });
 });
 
-test("should accept fetchObjects as a function", async t => {
+test("should accept fetchObjects as a function", async () => {
   request = createTransport(fakeAPI, () => ({ authorization: "Bearer some-token" }));
 
   await mock(async () => {
@@ -58,33 +57,28 @@ test("should accept fetchObjects as a function", async t => {
 
     const [, { headers }] = fetchMock.lastCall();
 
-    t.deepEqual(headers, {
+    expect(headers).toEqual({
       authorization: "Bearer some-token",
       "Content-Type": "application/json"
     });
   });
 });
 
-test("should handle graphql errors", async t => {
+test("should handle graphql errors", async () => {
   const response = { data: null, errors: [{ message: "I AM ERROR!" }] };
 
   await mock(response, async () => {
-    const error = await t.throws(
-      request({ query }),
-      'graphql error on request {"query":"{ hello }"}'
-    );
-
-    t.deepEqual(error.errors, response.errors);
+    await expect(request({ query })).rejects.toMatchObject({
+      message: 'graphql error on request {"query":"{ hello }"}',
+      errors: response.errors
+    });
   });
 });
 
 async function mock(...args) {
   let [response, testFn] = args;
 
-  if (args.length === 1) {
-    testFn = response;
-    response = { data: { hello: "world" } };
-  }
+  if (args.length === 1) [testFn, response] = [response, { data: { hello: "world" } }];
 
   fetchMock.mock(fakeAPI, response);
 

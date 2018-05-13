@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import test from "ava";
 import { parse, print } from "graphql";
 
 import insertFields from "../src/insert-fields";
@@ -249,7 +248,9 @@ const cases = [
 ];
 
 for (const { title, input, expectedOutput, fieldsToInsert } of cases) {
-  test(title, t => {
-    t.is(print(insertFields(schema, parse(input), fieldsToInsert)), print(parse(expectedOutput)));
+  test(title, () => {
+    expect(print(insertFields(schema, parse(input), fieldsToInsert))).toBe(
+      print(parse(expectedOutput))
+    );
   });
 }

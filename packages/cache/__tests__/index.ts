@@ -1,4 +1,3 @@
-import test from "ava";
 import sinon from "sinon";
 
 import executeQuery from "../__mocks__/execute-query";
@@ -6,36 +5,34 @@ import { PostsAndAuthors, Authors, Post, Posts } from "../__mocks__/queries";
 
 import createCache from "../src";
 
-test("should be instantiable", t => {
+test("should be instantiable", () => {
   const cache = createCache();
 
-  t.is(typeof cache.listen, "function");
-  t.is(typeof cache.write, "function");
-  t.is(typeof cache.read, "function");
-  t.is(typeof cache.flush, "function");
+  expect(typeof cache.listen).toBe("function");
+  expect(typeof cache.write).toBe("function");
+  expect(typeof cache.read).toBe("function");
+  expect(typeof cache.flush).toBe("function");
 });
 
-test("should write queries to the cache", async t => {
+test("should write queries to the cache", async () => {
   await mock(PostsAndAuthors, async (cache, data, request) => {
     cache.write(request, data);
 
     const { authors, posts } = data;
     const { objectsMap, pathsMap } = cache.flush();
 
-    t.deepEqual(
-      authors,
+    expect(authors).toEqual(
       pathsMap["authors{__typename id name posts{__typename body id title}}"].data.authors
     );
-    t.deepEqual(
-      posts,
+    expect(posts).toEqual(
       pathsMap["posts{__typename author{__typename id name}body id title}"].data.posts
     );
-    t.true(authors.every(author => Boolean(objectsMap[author.id])));
-    t.true(posts.every(post => Boolean(objectsMap[post.id])));
+    expect(authors.every(author => Boolean(objectsMap[author.id]))).toBe(true);
+    expect(posts.every(post => Boolean(objectsMap[post.id]))).toBe(true);
   });
 });
 
-test("should read queries from the cache", async t => {
+test("should read queries from the cache", async () => {
   await mock(Authors, async (cache, data, request) => {
     cache.write(request, data);
 
@@ -43,54 +40,58 @@ test("should read queries from the cache", async t => {
 
     const { authors } = data;
 
-    t.deepEqual(authors, result.data.authors);
-    t.true(authors.every(author => Boolean(result.objects[author.id])));
-    t.true(authors.every(author => author.posts.every(post => Boolean(result.objects[post.id]))));
+    expect(authors).toEqual(result.data.authors);
+    expect(authors.every(author => Boolean(result.objects[author.id]))).toBe(true);
+    expect(
+      authors.every(author => author.posts.every(post => Boolean(result.objects[post.id])))
+    ).toBe(true);
   });
 });
 
-test("should handle queries with variables", async t => {
+test("should handle queries with variables", async () => {
   await mock(Post, async (cache, data, request) => {
     cache.write(request, data);
 
-    t.is(cache.read({ query: Post, variables: { id: "123" } }), null);
-    t.is(cache.read(request).data.post.id, request.variables.id);
+    expect(cache.read({ query: Post, variables: { id: "123" } })).toBe(null);
+    expect(cache.read(request).data.post.id).toBe(request.variables.id);
   });
 });
 
-test("should perform update to cache", async t => {
+test("should perform update to cache", async () => {
   await mock(Post, async (cache, data, request) => {
     cache.write(request, data);
 
-    const { data: { post } } = cache.read(request);
+    const {
+      data: { post }
+    } = cache.read(request);
 
-    t.is(post.title, "Quam odit");
+    expect(post.title).toBe("Quam odit");
 
-    cache.write(request, { post: Object.assign({}, post, { title: "updated title" }) });
+    cache.write(request, { post: { ...post, title: "updated title" } });
 
-    t.is(cache.read(request).data.post.title, "updated title");
+    expect(cache.read(request).data.post.title).toBe("updated title");
   });
 });
 
-test("should reflect updates on queries with shared objects", async t => {
+test("should reflect updates on queries with shared objects", async () => {
   await mock([Posts, Post], async (cache, [ostsData, postData], [postsRequest, postRequest]) => {
     cache.write(postsRequest, ostsData);
 
     const { posts } = cache.read(postsRequest).data;
 
-    t.is(posts.find(p => p.id === postsRequest.variables.id).title, "Quam odit");
+    expect(posts.find(p => p.id === postsRequest.variables.id).title).toBe("Quam odit");
 
     cache.write(postRequest, {
-      post: Object.assign(postData.post, { title: "updated title" })
+      post: { ...postData.post, title: "updated title" }
     });
 
     const { posts: updatedPosts } = cache.read(postsRequest).data;
 
-    t.is(updatedPosts.find(p => p.id === postsRequest.variables.id).title, "updated title");
+    expect(updatedPosts.find(p => p.id === postsRequest.variables.id).title).toBe("updated title");
   });
 });
 
-test("should merge objects in the cache when removing or adding properties", async t => {
+test("should merge objects in the cache when removing or adding properties", async () => {
   await mock(Post, async (cache, data, request) => {
     cache.write(request, data);
 
@@ -102,7 +103,7 @@ test("should merge objects in the cache when removing or adding properties", asy
 
     cache.write(request, { post });
 
-    t.deepEqual(cache.read(request, true).data.post, {
+    expect(cache.read(request, true).data.post).toEqual({
       __typename: "Post",
       author: {
         __typename: "Author",
@@ -117,7 +118,7 @@ test("should merge objects in the cache when removing or adding properties", asy
   });
 });
 
-test("should call cache listeners on write with paths objects as arguments", async t => {
+test("should call cache listeners on write with paths objects as arguments", async () => {
   await mock(Post, async (cache, data, request) => {
     const listener = sinon.spy();
     const listener2 = sinon.spy();
@@ -129,47 +130,50 @@ test("should call cache listeners on write with paths objects as arguments", asy
 
     const [lastCallArg] = listener.lastCall.args;
 
-    t.deepEqual(cache.read(request).objects, lastCallArg);
+    expect(cache.read(request).objects).toEqual(lastCallArg);
 
     unlisten();
     cache.write(request, data);
 
-    t.true(listener.calledOnce);
-    t.true(listener2.calledTwice);
+    expect(listener.calledOnce).toBe(true);
+    expect(listener2.calledTwice).toBe(true);
 
     unlisten();
     cache.write(request, data);
 
-    t.true(listener2.calledThrice);
+    expect(listener2.calledThrice).toBe(true);
   });
 });
 
-test("should be able read from the cache with a declared initialState", async t => {
+test("should be able read from the cache with a declared initialState", async () => {
   await mock(Authors, async (cache, data, request) => {
     cache.write(request, data);
 
     cache = createCache({ initialState: cache.flush() });
 
-    t.deepEqual(cache.read(request).data, data);
+    expect(cache.read(request).data).toEqual(data);
   });
 });
 
-test("should accept `idFromProps` function in options", async t => {
+test("should accept `idFromProps` function in options", async () => {
   await mock(Authors, async (_, data, request) => {
     const cache = createCache({ idFromProps: obj => obj.__typename + ":" + obj.id });
 
     cache.write(request, data);
 
-    t.true(Object.keys(cache.flush().objectsMap).every(_ => /(Post|Author):/.test(_)));
+    expect(Object.keys(cache.flush().objectsMap).every(key => /(Post|Author):/.test(key))).toBe(
+      true
+    );
   });
 });
 
 async function mock(...args) {
-  let [sources, variables, fn] = args,
-    { query } = sources,
-    cache = createCache(),
-    results,
-    requests;
+  // tslint:disable-next-line prefer-const
+  let [sources, variables, fn] = args;
+  const { query } = sources;
+  const cache = createCache();
+  let results;
+  let requests;
 
   if (args.length < 3) {
     fn = variables;

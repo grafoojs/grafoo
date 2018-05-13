@@ -1,5 +1,3 @@
-// @flow
-
 export const assign = Object.assign;
 
 export const isNotNullObject = (_: {}): boolean => _ && typeof _ == "object";
@@ -12,10 +10,15 @@ export const shallowEqual = (a: {}, b: {}) => {
 
 type SortFn = (obj: { name: { value: string } }) => string;
 
-export const sortAlphabetically = (array: any[], fn?: SortFn = obj => obj.name.value): any[] =>
-  array &&
-  array.sort((prev, next) => {
-    if (fn(prev) < fn(next)) return -1;
-    if (fn(prev) > fn(next)) return 1;
-    return 0;
-  });
+export const sortAlphabetically = (array: any[], fn?: SortFn) => {
+  fn = fn || (obj => obj.name.value);
+
+  return (
+    array &&
+    array.sort((prev, next) => {
+      if (fn(prev) < fn(next)) return -1;
+      if (fn(prev) > fn(next)) return 1;
+      return 0;
+    })
+  );
+};

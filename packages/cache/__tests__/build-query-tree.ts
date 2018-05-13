@@ -1,5 +1,3 @@
-import test from "ava";
-
 import buildQueryTree from "../src/build-query-tree";
 
 const tree = {
@@ -30,7 +28,7 @@ const tree = {
 
 const idFromProps = _ => _.id;
 
-test("should update values of a resulting query tree", t => {
+test("should update values of a resulting query tree", () => {
   const objects = {
     "1": { title: "foobar", id: "1", content: "a new post content" },
     "2": { name: "miguel", id: "2", lastName: "coelho" }
@@ -38,12 +36,12 @@ test("should update values of a resulting query tree", t => {
 
   const { posts } = buildQueryTree(tree, objects, idFromProps);
 
-  t.is(posts[0].title, "foobar");
-  t.is(posts[0].content, "a new post content");
-  t.is(posts[0].author.lastName, "coelho");
+  expect(posts[0].title).toBe("foobar");
+  expect(posts[0].content).toBe("a new post content");
+  expect(posts[0].author.lastName).toBe("coelho");
 });
 
-test("should add all properties of an object to its corresponding branch", t => {
+test("should add all properties of an object to its corresponding branch", () => {
   const objects = {
     "1": { title: "foo", id: "1", content: "a post content" },
     "2": { name: "miguel", id: "2", lastName: "coelho" }
@@ -51,12 +49,12 @@ test("should add all properties of an object to its corresponding branch", t => 
 
   const [post] = buildQueryTree(tree, objects, idFromProps).posts;
 
-  t.truthy(post.content);
-  t.truthy(post.author.lastName);
-  t.truthy(post.author.posts[0].title);
+  expect(post.content).toBeTruthy();
+  expect(post.author.lastName).toBeTruthy();
+  expect(post.author.posts[0].title).toBeTruthy();
 });
 
-test("should not remove a property from a branch", t => {
+test("should not remove a property from a branch", () => {
   const objects = {
     "1": { id: "1" },
     "2": { id: "2" },
@@ -68,5 +66,5 @@ test("should not remove a property from a branch", t => {
 
   const newTree = buildQueryTree(tree, objects, idFromProps);
 
-  t.deepEqual(newTree, tree);
+  expect(newTree).toEqual(tree);
 });

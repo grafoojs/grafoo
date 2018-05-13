@@ -1,0 +1,19 @@
+{
+  "extends": ["tslint:latest", "tslint-config-prettier"],
+  "rules": {
+    "triple-equals": false,
+    "curly": false,
+    "object-literal-sort-keys": false,
+    "interface-over-type-literal": false,
+    "array-type": false,
+    "ordered-imports": false,
+    "no-implicit-dependencies": false,
+    "no-submodule-imports": false,
+    "forin": false,
+    "no-unused-expression": false,
+    "no-shadowed-variable": false
+  },
+  "linterOptions": {
+    "exclude": ["**/dist"]
+  }
+}

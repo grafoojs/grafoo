@@ -5,18 +5,23 @@
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
   "module": "dist/index.m.js",
-  "typings": "types.d.ts",
-  "source": "src/index.js",
+  "typings": "dist/transport/src/index.d.ts",
+  "source": "src/index.ts",
+  "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
     "prepare": "yarn build # transport",
-    "test": "ava",
-    "build": "microbundle && flow-copy-source src dist",
-    "flow": "flow"
+    "test": "jest",
+    "build": "microbundle"
   },
-  "ava": {
-    "serial": true,
-    "verbose": true,
-    "require": ["@babel/register"]
+  "dependencies": {
+    "@grafoo/util": "0.0.1"
+  },
+  "jest": {
+    "moduleFileExtensions": ["ts", "tsx", "js"],
+    "testMatch": ["**/__tests__/*.+(ts|tsx|js)"],
+    "transform": {
+      "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
+    }
   }
 }

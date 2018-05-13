@@ -1,4 +1,3 @@
-import test from "ava";
 import * as babel from "@babel/core";
 
 import plugin from "../src";
@@ -8,51 +7,51 @@ const transform = (program, opts) =>
     plugins: [[plugin, Object.assign({ schema: "__tests__/schema.graphql" }, opts)]]
   });
 
-test.afterEach(() => {
+afterEach(() => {
   process.env.NODE_ENV = "test";
 });
 
-test("should throw if a import is not default", t => {
+test("should throw if a import is not default", () => {
   const program = 'import { gql } from "@grafoo/core/tag";';
 
-  t.throws(() => transform(program));
+  expect(() => transform(program)).toThrow();
 });
 
-test("should remove the imported path", t => {
+test("should remove the imported path", () => {
   const program = 'import gql from "@grafoo/core/tag";';
 
-  t.is(transform(program).code, "");
+  expect(transform(program).code).toBe("");
 });
 
-test("should throw if a schema is not specified", t => {
+test("should throw if a schema is not specified", () => {
   const program = `
     import gql from "@grafoo/core/tag";
     const query = gql\`{ hello }\`;
   `;
 
-  t.throws(() => transform(program, { schema: undefined }));
+  expect(() => transform(program, { schema: undefined })).toThrow();
 });
 
-test("should throw if a schema path points to a inexistent file", t => {
+test("should throw if a schema path points to a inexistent file", () => {
   const program = `
     import gql from "@grafoo/core/tag";
     const query = gql\`{ hello }\`;
   `;
 
-  t.throws(() => transform(program, { schema: "?" }));
+  expect(() => transform(program, { schema: "?" })).toThrow();
 });
 
-test("should throw if a tagged template string literal has expressions in it", t => {
+test("should throw if a tagged template string literal has expressions in it", () => {
   const program = `
     import gql from "@grafoo/core/tag";
     const id = 1;
     const query = gql\`{ user(id: "\${id}") { name } }\`;
   `;
 
-  t.throws(() => transform(program));
+  expect(() => transform(program)).toThrow();
 });
 
-test("should replace a tagged template literal with the compiled grafoo object", t => {
+test("should replace a tagged template literal with the compiled grafoo object", () => {
   const program = `
     import gql from "@grafoo/core/tag";
     const query = gql\`
@@ -69,10 +68,10 @@ test("should replace a tagged template literal with the compiled grafoo object",
     \`;
   `;
 
-  t.snapshot(transform(program, { fieldsToInsert: ["id"] }).code);
+  expect(transform(program, { fieldsToInsert: ["id"] }).code).toMatchSnapshot();
 });
 
-test("should compress query in production", t => {
+test("should compress query in production", () => {
   const program = `
     import gql from "@grafoo/core/tag";
     const query = gql\`
@@ -91,5 +90,5 @@ test("should compress query in production", t => {
 
   process.env.NODE_ENV = "production";
 
-  t.snapshot(transform(program, { fieldsToInsert: ["id"] }).code);
+  expect(transform(program, { fieldsToInsert: ["id"] }).code).toMatchSnapshot();
 });

@@ -1,9 +1,8 @@
-import test from "ava";
 import { parse, print } from "graphql";
 
 import sortQuery from "../src/sort-query";
 
-test("sorts fields, variable declarations and arguments", t => {
+test("sorts fields, variable declarations and arguments", () => {
   const query = `
     query ($f: ID $e: ID $d: ID $c: ID $b: ID $a: ID) {
       f
@@ -54,5 +53,5 @@ test("sorts fields, variable declarations and arguments", t => {
     }
   `;
 
-  t.is(print(sortQuery(parse(query))), print(parse(expected)));
+  expect(print(sortQuery(parse(query)))).toBe(print(parse(expected)));
 });
