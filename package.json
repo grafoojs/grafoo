@@ -10,10 +10,10 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test",
-    "lint": "flow && eslint \"./packages/**/*.js\"",
+    "lint": "eslint \"./packages/**/*.js\" && tslint \"./packages/**/*.ts\"",
     "prepare": "node scripts/build.js",
     "clean": "rimraf packages/**/dist",
-    "prepush": "yarn test",
+    "prepush": "yarn lint && yarn test",
     "postcommit":
       "echo \"---------------\nPUSH YOUR CODE!\n---------------\n\" && prettier --write && git add -A"
   },

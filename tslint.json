@@ -12,5 +12,8 @@
     "forin": false,
     "no-unused-expression": false,
     "no-shadowed-variable": false
+  },
+  "linterOptions": {
+    "exclude": ["**/dist"]
   }
 }
