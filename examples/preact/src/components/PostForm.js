@@ -1,15 +1,14 @@
 import { h, Component } from "preact";
-import { withMutation } from "@grafoo/preact";
+import { Mutation } from "@grafoo/preact";
 
 import { allPosts, createPost } from "../queries";
 import { Wrapper, H1, Form, Input, Textarea, Button } from "./ui-kit";
 
-class PostForm extends Component {
+class PostFormQuery extends Component {
   constructor(props) {
     super(props);
 
     this.state = { title: "", content: "" };
-
     this.submit = this.submit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
@@ -41,7 +40,7 @@ class PostForm extends Component {
     this.setState({ title: "", content: "" });
 
     // perform mutation on the server
-    const { createPost: postFromServer } = await mutate({ variables: newPost });
+    const { createPost: postFromServer } = await mutate(newPost);
 
     // update cache
     client.write({ query: allPosts }, { allPosts: [postFromServer, ...data.allPosts] });
@@ -61,4 +60,6 @@ class PostForm extends Component {
   }
 }
 
-export default withMutation(createPost)(PostForm);
+export default function PostForm() {
+  return <Mutation query={createPost}>{props => <PostFormQuery {...props} />}</Mutation>;
+}

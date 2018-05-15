@@ -3,30 +3,48 @@ import { assign } from "@grafoo/util";
 import buildQueryTree from "./build-query-tree";
 import mapObjects from "./map-objects";
 
-export type ObjectsMap = { [key: string]: { [key: string]: any } };
+export interface ObjectsMap {
+  [key: string]: { [key: string]: any };
+}
 
-export type PathsMap = { [key: string]: { [key: string]: any } };
+export interface PathsMap {
+  [key: string]: { [key: string]: any };
+}
 
-export type Variables = { [key: string]: any };
+export interface Variables {
+  [key: string]: any;
+}
 
 export type Listener = (objects: ObjectsMap) => void;
 
-export type InitialState = { objectsMap: ObjectsMap; pathsMap: PathsMap };
+export interface InitialState {
+  objectsMap: ObjectsMap;
+  pathsMap: PathsMap;
+}
 
 export type IdFromPropsFn = (data: { [key: string]: any }) => string;
 
-export type CacheOptions = { initialState?: InitialState; idFromProps?: IdFromPropsFn };
+export interface CacheOptions {
+  initialState?: InitialState;
+  idFromProps?: IdFromPropsFn;
+}
 
-export type GrafooObject = { paths: { root: string; args: string[] } };
+export interface GrafooObject {
+  paths: { root: string; args: string[] };
+  query: string;
+}
 
-export type CacheRequest = { query: GrafooObject; variables?: Variables };
+export interface CacheRequest {
+  query: GrafooObject;
+  variables?: Variables;
+}
 
-export type CacheInstance = {
+export interface CacheInstance {
   listen(listener: Listener): () => void;
   write(cacheRequest: CacheRequest, data: {}): void;
   read(cacheRequest: CacheRequest): { data: {}; objects: ObjectsMap } | null;
   flush(): InitialState;
-};
+}
 
 export default function createCache(options?: CacheOptions): CacheInstance {
   options = options || {};

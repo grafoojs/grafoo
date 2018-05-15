@@ -11,7 +11,10 @@
     "no-submodule-imports": false,
     "forin": false,
     "no-unused-expression": false,
-    "no-shadowed-variable": false
+    "no-shadowed-variable": false,
+    "member-access": false,
+    "member-ordering": false,
+    "interface-name": false
   },
   "linterOptions": {
     "exclude": ["**/dist"]

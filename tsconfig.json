@@ -5,7 +5,9 @@
     "moduleResolution": "node",
     "declaration": true,
     "strict": false,
-    "lib": ["esnext", "dom"]
+    "lib": ["esnext", "dom"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "include": ["**/src"]
 }

@@ -1,13 +1,13 @@
 import { assign } from "@grafoo/util";
 
-export type GraphQlError = {
+export interface GraphQlError {
   message: string;
   locations: { line: number; column: number }[];
   path: string[];
-};
+}
 
 class TransportError extends Error {
-  public errors: GraphQlError[];
+  errors: GraphQlError[];
 
   constructor(errors: GraphQlError[], request: string) {
     super("graphql error on request " + request);
@@ -15,11 +15,19 @@ class TransportError extends Error {
   }
 }
 
-export type GraphQlPayload = { data: { [key: string]: any }; errors?: GraphQlError[] };
+export interface GraphQlPayload {
+  data: { [key: string]: any };
+  errors?: GraphQlError[];
+}
 
-export type Variables = { [key: string]: any };
+export interface Variables {
+  [key: string]: any;
+}
 
-export type GraphQLRequestContext = { query: string; variables?: Variables };
+export interface GraphQLRequestContext {
+  query: string;
+  variables?: Variables;
+}
 
 export type TransportRequest = (request: GraphQLRequestContext) => Promise<{}>;
 

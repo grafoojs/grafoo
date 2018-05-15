@@ -1,6 +1,7 @@
 export const assign = Object.assign;
 
-export const isNotNullObject = (_: {}): boolean => _ && typeof _ == "object";
+export const isNotNullObject = (obj: {} | null | undefined): boolean =>
+  obj && typeof obj == "object";
 
 export const shallowEqual = (a: {}, b: {}) => {
   for (const i in a) if (a[i] !== b[i]) return false;

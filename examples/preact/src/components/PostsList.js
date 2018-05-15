@@ -1,5 +1,5 @@
 import { h } from "preact";
-import { Query, withMutation } from "@grafoo/preact";
+import { Query, Mutation } from "@grafoo/preact";
 
 import { allPosts, deletePost } from "../queries";
 import { Ul, Li, H2, Wrapper, Button } from "./ui-kit";
@@ -12,11 +12,11 @@ function removePost(mutate, id, client) {
 
     client.write({ query: allPosts }, { allPosts: data.allPosts.filter(_ => _.id !== id) });
 
-    mutate({ variables: { id } });
+    mutate({ id });
   };
 }
 
-export default withMutation(deletePost)(function PostsList(props) {
+function PostsListQuery(props) {
   return (
     <Query query={allPosts}>
       {({ data, loading }) => {
@@ -44,4 +44,8 @@ export default withMutation(deletePost)(function PostsList(props) {
       }}
     </Query>
   );
-});
+}
+
+export default function PostsList() {
+  return <Mutation query={deletePost}>{props => <PostsListQuery {...props} />}</Mutation>;
+}
