@@ -3,7 +3,7 @@
   "plugins": [
     [
       "@grafoo/babel-plugin-tag",
-      { "schema": "src/schema.graphql", "fieldsToInsert": ["id", "__typename"] }
+      { "schema": "schema.graphql", "fieldsToInsert": ["id", "__typename"] }
     ]
   ]
 }

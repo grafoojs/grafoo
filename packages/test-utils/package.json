@@ -3,8 +3,9 @@
   "name": "@grafoo/test-utils",
   "version": "0.0.1",
   "main": "dist/index.js",
+  "module": "src/index.js",
   "scripts": {
     "prepare": "yarn build # babel-plugin-tag",
-    "build": "babel src --out-dir dist && cpy src/schema.graphql dist"
+    "build": "babel src --out-dir dist"
   }
 }
