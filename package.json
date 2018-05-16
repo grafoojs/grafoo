@@ -31,7 +31,6 @@
     "@types/sinon": "^4.3.3",
     "babel-eslint": "^8.2.3",
     "casual": "^1.5.19",
-    "cpy-cli": "^1.0.1",
     "eslint": "^4.19.0",
     "eslint-plugin-import": "^2.9.0",
     "fetch-mock": "^6.3.0",
