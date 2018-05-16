@@ -1,8 +1,7 @@
-import { ObjectsMap, GrafooObject, Variables } from "@grafoo/cache";
-import { GraphQlError } from "@grafoo/transport";
+import { ObjectsMap, Variables } from "@grafoo/cache";
 import { ClientInstance } from "@grafoo/core";
-
-export { ClientInstance } from "@grafoo/core";
+import { GrafooObject } from "@grafoo/tag";
+import { GraphQlError } from "@grafoo/transport";
 
 export interface Context {
   client: ClientInstance;

@@ -1,6 +1,6 @@
+import { assign, shallowEqual } from "@grafoo/util";
 import { Component } from "preact";
-import { shallowEqual, assign } from "@grafoo/util";
-import { Context, QueryProps, QueryRenderProps, Bindings } from "./types";
+import { Bindings, Context, QueryProps, QueryRenderProps } from "./types";
 
 function createBindings(props: QueryProps, context: Context): Bindings {
   const { query, variables, skipCache } = props;

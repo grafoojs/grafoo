@@ -1,19 +1,17 @@
+import gql from "@grafoo/tag";
+import casual from "casual";
+import fetchMock from "fetch-mock";
 import fs from "fs";
-import path from "path";
-import uuid from "uuid/v4";
 import { graphql } from "graphql";
 import { makeExecutableSchema } from "graphql-tools";
 import low from "lowdb";
 import MemoryAdapter from "lowdb/adapters/Memory";
-import fetchMock from "fetch-mock";
-import casual from "casual";
-import gql from "@grafoo/core/tag";
+import path from "path";
+import uuid from "uuid/v4";
 
 casual.seed(666);
 
-function times(t, fn) {
-  Array.from(Array(t), fn);
-}
+const times = (t, fn) => Array.from(Array(t), fn);
 
 function setupDB() {
   const db = low(new MemoryAdapter());

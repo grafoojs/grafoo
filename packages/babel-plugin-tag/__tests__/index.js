@@ -1,5 +1,4 @@
 import * as babel from "@babel/core";
-
 import plugin from "../src";
 
 const transform = (program, opts) =>
@@ -12,20 +11,20 @@ afterEach(() => {
 });
 
 test("should throw if a import is not default", () => {
-  const program = 'import { gql } from "@grafoo/core/tag";';
+  const program = 'import { gql } from "@grafoo/tag";';
 
   expect(() => transform(program)).toThrow();
 });
 
 test("should remove the imported path", () => {
-  const program = 'import gql from "@grafoo/core/tag";';
+  const program = 'import gql from "@grafoo/tag";';
 
   expect(transform(program).code).toBe("");
 });
 
 test("should throw if a schema is not specified", () => {
   const program = `
-    import gql from "@grafoo/core/tag";
+    import gql from "@grafoo/tag";
     const query = gql\`{ hello }\`;
   `;
 
@@ -34,7 +33,7 @@ test("should throw if a schema is not specified", () => {
 
 test("should throw if a schema path points to a inexistent file", () => {
   const program = `
-    import gql from "@grafoo/core/tag";
+    import gql from "@grafoo/tag";
     const query = gql\`{ hello }\`;
   `;
 
@@ -43,7 +42,7 @@ test("should throw if a schema path points to a inexistent file", () => {
 
 test("should throw if a tagged template string literal has expressions in it", () => {
   const program = `
-    import gql from "@grafoo/core/tag";
+    import gql from "@grafoo/tag";
     const id = 1;
     const query = gql\`{ user(id: "\${id}") { name } }\`;
   `;
@@ -53,7 +52,7 @@ test("should throw if a tagged template string literal has expressions in it", (
 
 test("should replace a tagged template literal with the compiled grafoo object", () => {
   const program = `
-    import gql from "@grafoo/core/tag";
+    import gql from "@grafoo/tag";
     const query = gql\`
       query($start: Int!, $offset: Int!, $id: ID!) {
         posts(start: $start, offset: $offset) {
@@ -73,7 +72,7 @@ test("should replace a tagged template literal with the compiled grafoo object",
 
 test("should compress query in production", () => {
   const program = `
-    import gql from "@grafoo/core/tag";
+    import gql from "@grafoo/tag";
     const query = gql\`
       query($start: Int!, $offset: Int!, $id: ID!) {
         posts(start: $start, offset: $offset) {

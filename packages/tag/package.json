@@ -1,12 +1,12 @@
 {
-  "name": "@grafoo/core",
+  "name": "@grafoo/tag",
+  "description": "the grafoo client template tag meta package",
   "version": "0.0.1",
-  "description": "the grafoo client core",
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
   "module": "dist/index.m.js",
+  "typings": "dist/tag/src/index.d.ts",
   "source": "src/index.ts",
-  "typings": "dist/core/src/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {

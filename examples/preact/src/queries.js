@@ -1,4 +1,4 @@
-import gql from "@grafoo/core/tag";
+import gql from "@grafoo/tag";
 
 export const allPosts = gql`
   query getPosts {

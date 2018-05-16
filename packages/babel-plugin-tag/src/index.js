@@ -1,6 +1,5 @@
-import { isImportDefaultSpecifier, isIdentifier } from "babel-types";
 import parseLiteral from "babel-literal-to-ast";
-
+import { isIdentifier, isImportDefaultSpecifier } from "babel-types";
 import compileDocument from "./compile-document";
 
 const visitor = {
@@ -17,13 +16,13 @@ const visitor = {
 
     programPath.traverse({
       ImportDeclaration(path) {
-        if (path.node.source.value === "@grafoo/core/tag") {
+        if (path.node.source.value === "@grafoo/tag") {
           const defaultSpecifier = path.node.specifiers.find(specifier =>
             isImportDefaultSpecifier(specifier)
           );
 
           if (!defaultSpecifier) {
-            throw path.buildCodeFrameError("@grafoo/core/tag is a default import!");
+            throw path.buildCodeFrameError("@grafoo/tag is a default import!");
           }
 
           tagNames.push(defaultSpecifier.local.name);

@@ -45,7 +45,7 @@ npm i @grafoo/core && npm i -D @grafoo/babel-plugin-tag
 
 ```js
 import createClient from "@grafoo/core";
-import graphql from "@grafoo/core/tag";
+import graphql from "@grafoo/tag";
 
 const client = createClient("http://some-graphql-api.com", {
   fetchOptions: {

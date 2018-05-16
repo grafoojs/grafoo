@@ -8,7 +8,6 @@
   "source": "src/index.ts",
   "typings": "dist/util/src/index.d.ts",
   "scripts": {
-    "prepare": "yarn build # util",
-    "build": "microbundle"
+    "prepare": "microbundle"
   }
 }

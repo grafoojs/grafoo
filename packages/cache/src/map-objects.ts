@@ -1,4 +1,4 @@
-import { isNotNullObject, assign } from "@grafoo/util";
+import { assign, isNotNullObject } from "@grafoo/util";
 
 export default function mapObjects(tree, idFromProps) {
   // map in which objects will be stored

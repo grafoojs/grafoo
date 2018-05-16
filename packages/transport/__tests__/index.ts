@@ -1,5 +1,4 @@
 import fetchMock from "fetch-mock";
-
 import createTransport from "../src";
 
 const fakeAPI = "http://fake-api.com/graphql";

@@ -1,7 +1,5 @@
+import { Authors, Post, Posts, PostsAndAuthors, executeQuery } from "@grafoo/test-utils";
 import sinon from "sinon";
-
-import { executeQuery, PostsAndAuthors, Authors, Post, Posts } from "@grafoo/test-utils";
-
 import createCache from "../src";
 
 test("should be instantiable", () => {

@@ -1,7 +1,6 @@
 import fs from "fs";
-import path from "path";
 import { parse, print } from "graphql";
-
+import path from "path";
 import insertFields from "../src/insert-fields";
 
 const schema = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8");

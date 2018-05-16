@@ -10,9 +10,8 @@
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "yarn build # transport",
-    "test": "jest",
-    "build": "microbundle"
+    "prepare": "microbundle",
+    "test": "jest"
   },
   "dependencies": {
     "@grafoo/util": "0.0.1"

@@ -1,5 +1,5 @@
+import { GrafooObject } from "@grafoo/tag";
 import { assign } from "@grafoo/util";
-
 import buildQueryTree from "./build-query-tree";
 import mapObjects from "./map-objects";
 
@@ -27,11 +27,6 @@ export type IdFromPropsFn = (data: { [key: string]: any }) => string;
 export interface CacheOptions {
   initialState?: InitialState;
   idFromProps?: IdFromPropsFn;
-}
-
-export interface GrafooObject {
-  paths: { root: string; args: string[] };
-  query: string;
 }
 
 export interface CacheRequest {

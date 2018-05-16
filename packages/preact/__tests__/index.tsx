@@ -1,12 +1,9 @@
 /* tslint:disable */
 
-import { h } from "preact";
-import { render } from "preact-render-spy";
-import { Posts } from "@grafoo/test-utils";
-import { GrafooObject } from "@grafoo/cache";
 import createClient, { ClientInstance } from "@grafoo/core";
-
-import { Provider, Mutation } from "../src";
+import { Posts } from "@grafoo/test-utils";
+import { render } from "preact-render-spy";
+import { Mutation, Provider } from "../src";
 
 describe("@grafoo/preact", () => {
   let client: ClientInstance;

@@ -6,9 +6,8 @@
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "yarn build # babel-plugin-tag",
-    "test": "jest",
-    "build": "babel src --out-dir dist"
+    "prepare": "babel src --out-dir dist",
+    "test": "jest"
   },
   "dependencies": {
     "babel-literal-to-ast": "^2.0.0",

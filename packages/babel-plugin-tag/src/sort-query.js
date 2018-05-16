@@ -1,5 +1,5 @@
-import { visit } from "graphql";
 import { sortAlphabetically as sort } from "@grafoo/util";
+import { visit } from "graphql";
 
 const visitor = {
   OperationDefinition(node) {

@@ -5,7 +5,6 @@
   "main": "dist/index.js",
   "module": "src/index.js",
   "scripts": {
-    "prepare": "yarn build # babel-plugin-tag",
-    "build": "babel src --out-dir dist"
+    "prepare": "babel src --out-dir dist"
   }
 }

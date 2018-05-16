@@ -1,4 +1,4 @@
-import { buildASTSchema, parse, TypeInfo, visit, visitWithTypeInfo } from "graphql";
+import { TypeInfo, buildASTSchema, parse, visit, visitWithTypeInfo } from "graphql";
 
 function getType(typeInfo) {
   let currentType = typeInfo.getType();

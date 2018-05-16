@@ -1,8 +1,7 @@
 import fs from "fs";
-import path from "path";
+import { parse, print } from "graphql";
 import compress from "graphql-query-compress";
-import { print, parse } from "graphql";
-
+import path from "path";
 import insertFields from "./insert-fields";
 import sortDocument from "./sort-query";
 

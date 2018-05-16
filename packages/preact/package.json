@@ -13,7 +13,6 @@
     "preact": ">=8"
   },
   "scripts": {
-    "prepare": "yarn build # preact",
-    "build": "microbundle"
+    "prepare": "microbundle"
   }
 }

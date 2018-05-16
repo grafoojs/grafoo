@@ -10,9 +10,8 @@
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "yarn build # cache",
-    "test": "jest",
-    "build": "microbundle"
+    "prepare": "microbundle",
+    "test": "jest"
   },
   "jest": {
     "moduleFileExtensions": ["ts", "tsx", "js"],
