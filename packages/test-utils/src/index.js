@@ -64,7 +64,7 @@ function setupDB() {
 
 const db = setupDB();
 
-const typeDefs = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8");
+const typeDefs = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "utf-8");
 
 const resolvers = {
   Query: {
