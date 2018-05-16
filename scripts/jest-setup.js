@@ -11,8 +11,6 @@ try {
   };
 }
 
-console.log(JSON.stringify(config, null, 2));
-
 module.exports = {
   process: src => {
     return transform(src, config);
