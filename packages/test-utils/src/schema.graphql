@@ -9,7 +9,7 @@ type Mutation {
   createAuthor(name: String!): Author!
   updateAuthor(id: ID!, name: String): Author!
   deleteAuthor(id: ID!): Author!
-  createPost(title: String!, body: String!, author: Author!): Post!
+  createPost(title: String!, body: String!, author: ID!): Post!
   updatePost(id: ID!, title: String, body: String): Post!
   deletePost(id: ID!): Post!
 }
