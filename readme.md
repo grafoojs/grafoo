@@ -66,15 +66,15 @@ const variables = { id: 123 };
 
 client.request({ query: HELLO.query, variables }).then(data => {
   cache.write({ query: HELLO, variables }, data);
-});
 
-console.log(client.read({ query: HELLO, variables }));
+  console.log(client.read({ query: HELLO, variables }));
+});
 ```
 
 ## Todo
 
-- [ ] Finish preact bindings
-- [ ] Enhance babel plugin
+* [ ] Finish preact bindings
+* [ ] Enhance babel plugin
 
 ## LICENSE
 

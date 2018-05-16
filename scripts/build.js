@@ -5,7 +5,7 @@ const { readdirSync } = require("fs");
 const { join } = require("path");
 const exec = promisify(require("child_process").exec);
 
-const toBuildSync = ["util", "transport", "cache", "core"];
+const toBuildSync = ["util", "transport", "cache", "core", "babel-plugin-tag"];
 const toBuildAsync = readdirSync(join(__dirname, "..", "packages")).filter(
   a => !toBuildSync.some(s => s === a)
 );

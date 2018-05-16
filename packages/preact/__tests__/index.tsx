@@ -2,18 +2,11 @@
 
 import { h } from "preact";
 import { render } from "preact-render-spy";
-
+import { Posts } from "@grafoo/test-utils";
 import { GrafooObject } from "@grafoo/cache";
 import createClient, { ClientInstance } from "@grafoo/core";
-import graphql from "@grafoo/core/tag";
 
 import { Provider, Mutation } from "../src";
-
-const ADD_QUERY: GrafooObject = graphql`
-  mutation {
-    add
-  }
-`;
 
 describe("@grafoo/preact", () => {
   let client: ClientInstance;
@@ -24,7 +17,7 @@ describe("@grafoo/preact", () => {
   test("<Mutation />", done => {
     const Comp = () => (
       <Mutation
-        query={ADD_QUERY}
+        query={Posts}
         render={({ mutate }) => (
           <button
             onClick={async _ => {

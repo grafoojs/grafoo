@@ -1,8 +1,8 @@
-import { ClientInstance } from "@grafoo/core";
 import { Component } from "preact";
+import { Context } from "./types";
 
-export class Provider extends Component<{ client: ClientInstance }> {
-  getChildContext() {
+export class Provider extends Component<Context> {
+  getChildContext(): Context {
     return { client: this.props.client };
   }
 

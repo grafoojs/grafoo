@@ -1,33 +1,8 @@
 import { Component } from "preact";
 import { shallowEqual, assign } from "@grafoo/util";
+import { Context, QueryProps, QueryRenderProps, Bindings } from "./types";
 
-import { GraphQlError, Variables } from "@grafoo/transport";
-import { ClientInstance } from "@grafoo/core";
-import { GrafooObject, ObjectsMap } from "@grafoo/cache";
-
-export interface QueryRenderProps {
-  loading: boolean;
-  data?: { [key: string]: any };
-  objects?: ObjectsMap;
-  errors?: GraphQlError[];
-}
-
-export type QueryRenderFn = (props: QueryRenderProps) => JSX.Element;
-
-export interface QueryProps {
-  query: GrafooObject;
-  variables?: Variables;
-  skipCache?: boolean;
-  render: QueryRenderFn;
-}
-
-export interface Bindings {
-  state: QueryRenderProps;
-  update(nextObjects: ObjectsMap, cb: () => void);
-  executeQuery(cb: () => void);
-}
-
-function createBindings(props: QueryProps, context: { client: ClientInstance }): Bindings {
+function createBindings(props: QueryProps, context: Context): Bindings {
   const { query, variables, skipCache } = props;
   const { client } = context;
   const request = { query, variables };
@@ -69,7 +44,7 @@ function createBindings(props: QueryProps, context: { client: ClientInstance }):
 export class Query extends Component<QueryProps> {
   private binds: Bindings;
 
-  constructor(props: QueryProps, context: { client: ClientInstance }) {
+  constructor(props: QueryProps, context: Context) {
     super(props, context);
 
     this.binds = createBindings(props, context);

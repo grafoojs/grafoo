@@ -16,9 +16,7 @@
     "prepush": "yarn lint && yarn test",
     "postcommit": "prettier --write && git add -A"
   },
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": ["packages/*"],
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.46",
     "@babel/core": "^7.0.0-beta.46",
