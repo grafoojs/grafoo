@@ -1,42 +1,38 @@
-import { Component, VNode } from "preact";
+import { Component } from "preact";
 import { shallowEqual, assign } from "@grafoo/util";
 
 import { GraphQlError, Variables } from "@grafoo/transport";
 import { ClientInstance } from "@grafoo/core";
 import { GrafooObject, ObjectsMap } from "@grafoo/cache";
 
-export type QueryRenderFn = (props: State) => VNode<any>;
-
-export interface Props {
-  query: GrafooObject;
-  variables?: Variables;
-  skipCache?: boolean;
-  children: [QueryRenderFn];
-}
-
-export interface State {
+export interface QueryRenderProps {
   loading: boolean;
   data?: { [key: string]: any };
   objects?: ObjectsMap;
   errors?: GraphQlError[];
 }
 
-export interface Context {
-  client: ClientInstance;
+export type QueryRenderFn = (props: QueryRenderProps) => JSX.Element;
+
+export interface QueryProps {
+  query: GrafooObject;
+  variables?: Variables;
+  skipCache?: boolean;
+  render: QueryRenderFn;
 }
 
 export interface Bindings {
-  state: State;
+  state: QueryRenderProps;
   update(nextObjects: ObjectsMap, cb: () => void);
   executeQuery(cb: () => void);
 }
 
-function createBindings(props: Props, context: Context): Bindings {
+function createBindings(props: QueryProps, context: { client: ClientInstance }): Bindings {
   const { query, variables, skipCache } = props;
   const { client } = context;
   const request = { query, variables };
   const cachedQuery = client.read(request);
-  const state: State =
+  const state: QueryRenderProps =
     cachedQuery && !skipCache ? assign({ loading: false }, cachedQuery) : { loading: true };
 
   let lockUpdate = false;
@@ -70,16 +66,16 @@ function createBindings(props: Props, context: Context): Bindings {
   };
 }
 
-export class Query extends Component<Props> {
-  bindings: Bindings;
+export class Query extends Component<QueryProps> {
+  private binds: Bindings;
 
-  constructor(props: Props, context: Context) {
+  constructor(props: QueryProps, context: { client: ClientInstance }) {
     super(props, context);
 
-    this.bindings = createBindings(props, context);
+    this.binds = createBindings(props, context);
 
     const { client } = context;
-    const { update, state, executeQuery } = this.bindings;
+    const { update, state, executeQuery } = this.binds;
     const forceUpdate = () => this.setState(null);
 
     let unlisten: () => void;
@@ -97,6 +93,6 @@ export class Query extends Component<Props> {
   }
 
   render(props) {
-    return props.children[0](this.bindings.state);
+    return props.render(this.binds.state);
   }
 }

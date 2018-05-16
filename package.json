@@ -16,7 +16,9 @@
     "prepush": "yarn lint && yarn test",
     "postcommit": "prettier --write && git add -A"
   },
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.46",
     "@babel/core": "^7.0.0-beta.46",
@@ -29,6 +31,7 @@
     "@types/sinon": "^4.3.3",
     "babel-eslint": "^8.2.3",
     "casual": "^1.5.19",
+    "cpy-cli": "^1.0.1",
     "eslint": "^4.19.0",
     "eslint-plugin-import": "^2.9.0",
     "fetch-mock": "^6.3.0",
@@ -41,11 +44,13 @@
     "microbundle": "^0.4.4",
     "node-fetch": "^2.1.2",
     "preact": "^8.2.9",
+    "preact-render-spy": "^1.2.2",
     "prettier": "^1.12.1",
     "rimraf": "^2.6.2",
     "sinon": "^4.5.0",
     "tslint": "^5.10.0",
     "tslint-config-prettier": "^1.12.0",
-    "typescript": "^2.8.3"
+    "typescript": "^2.8.3",
+    "uuid": "^3.2.1"
   }
 }

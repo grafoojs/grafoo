@@ -15,8 +15,8 @@ class TransportError extends Error {
   }
 }
 
-export interface GraphQlPayload {
-  data: { [key: string]: any };
+export interface GraphQlPayload<T> {
+  data: T;
   errors?: GraphQlError[];
 }
 
@@ -29,14 +29,14 @@ export interface GraphQLRequestContext {
   variables?: Variables;
 }
 
-export type TransportRequest = (request: GraphQLRequestContext) => Promise<{}>;
+export type TransportRequest = <T>(request: GraphQLRequestContext) => Promise<T>;
 
 export type Headers = (() => {}) | {};
 
 export default function createTransport(uri: string, headers?: Headers): TransportRequest {
   headers = headers || {};
 
-  return (request: GraphQLRequestContext): Promise<{}> => {
+  return <T>(request: GraphQLRequestContext): Promise<T> => {
     const body = JSON.stringify(request);
     const init = {
       body,
@@ -49,7 +49,7 @@ export default function createTransport(uri: string, headers?: Headers): Transpo
 
     return fetch(uri, init)
       .then(res => res.json())
-      .then(({ data, errors }: GraphQlPayload) => {
+      .then(({ data, errors }: GraphQlPayload<T>) => {
         if (errors) throw new TransportError(errors, body);
 
         return data;

@@ -1,7 +1,6 @@
 import sinon from "sinon";
 
-import executeQuery from "../__mocks__/execute-query";
-import { PostsAndAuthors, Authors, Post, Posts } from "../__mocks__/queries";
+import { executeQuery, PostsAndAuthors, Authors, Post, Posts } from "@grafoo/test-utils";
 
 import createCache from "../src";
 

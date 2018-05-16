@@ -1,5 +1,12 @@
-export default function GrafooProvider({ client }) {
-  this.getChildContext = () => ({ client });
-}
+import { ClientInstance } from "@grafoo/core";
+import { Component } from "preact";
 
-GrafooProvider.prototype.render = props => props.children[0];
+export class Provider extends Component<{ client: ClientInstance }> {
+  getChildContext() {
+    return { client: this.props.client };
+  }
+
+  render(props) {
+    return props.children[0];
+  }
+}

@@ -1,23 +1,24 @@
-import { VNode } from "preact";
 import { GrafooObject } from "@grafoo/cache";
 import { Variables } from "@grafoo/transport";
 import { ClientInstance } from "@grafoo/core";
-import { Context } from ".";
 
-export interface RenderProps {
+export interface MutationRenderProps {
   mutate(variables?: Variables): Promise<{}>;
   client: ClientInstance;
 }
 
-export type MutationRenderFn = (props: RenderProps) => VNode<any>;
+export type MutationRenderFn = (props: MutationRenderProps) => JSX.Element;
 
 export interface MutationProps {
   query: GrafooObject;
-  children: [MutationRenderFn];
+  render: MutationRenderFn;
 }
 
-export function Mutation({ children, query }: MutationProps, { client }: Context): VNode<any> {
-  return children[0]({
+export function Mutation(
+  { render, query }: MutationProps,
+  { client }: { ClientInstance }
+): JSX.Element {
+  return render({
     mutate: variables => client.request({ query: query.query, variables }),
     client
   });
