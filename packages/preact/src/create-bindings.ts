@@ -1,13 +1,18 @@
 import { assign, shallowEqual } from "@grafoo/util";
 import { Bindings, Context, QueryProps, QueryRenderProps } from "./types";
 
-export default function createBindings(props: QueryProps, context: Context): Bindings {
-  const { query, variables, skipCache } = props;
-  const { client } = context;
+export default function createBindings(
+  { query, variables, skipCache }: QueryProps,
+  { client }: Context
+): Bindings {
   const request = { query, variables };
-  const cachedQuery = client.read(request);
+
+  const { data, objects: objectsMap } = client.read(request);
+
   const state: QueryRenderProps =
-    cachedQuery && !skipCache ? assign({ loading: false }, cachedQuery) : { loading: true };
+    data && !skipCache
+      ? assign({ loading: false, loaded: true }, data)
+      : { loading: true, loaded: false };
 
   let lockUpdate = false;
 
@@ -20,22 +25,37 @@ export default function createBindings(props: QueryProps, context: Context): Bin
 
       if (!state.objects) return;
 
-      if (!shallowEqual(nextObjects, state.objects)) {
-        assign(state, client.read(request));
+      if (!shallowEqual(nextObjects, objectsMap)) {
+        const { data, objects } = client.read(request);
+
+        assign(objectsMap, objects);
+
+        assign(state, data);
 
         cb();
       }
     },
     executeQuery(cb) {
-      return client.request({ query: query.query, variables }).then(data => {
-        lockUpdate = true;
+      return client
+        .request({ query: query.query, variables })
+        .then(response => {
+          lockUpdate = true;
 
-        client.write(request, data);
+          client.write(request, response);
 
-        assign(state, { loading: false }, client.read(request));
+          const { data, objects } = client.read(request);
 
-        cb();
-      });
+          assign(objectsMap || {}, objects);
+
+          assign(state, { loading: false, loaded: true }, data);
+
+          cb();
+        })
+        .catch(({ errors }) => {
+          assign(state, { errors });
+
+          cb();
+        });
     }
   };
 }

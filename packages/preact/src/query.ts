@@ -3,8 +3,8 @@ import createBindings from "./create-bindings";
 import { Bindings, Context, QueryProps } from "./types";
 
 export class Query extends Component<QueryProps> {
-  private binds: Bindings;
-  private unlisten: () => void;
+  binds: Bindings;
+  unlisten: () => void;
 
   constructor(props: QueryProps, context: Context) {
     super(props, context);

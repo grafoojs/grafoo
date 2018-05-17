@@ -10,13 +10,18 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test",
-    "lint": "eslint \"./packages/**/*.js\" && tslint \"./packages/**/*.ts\"",
     "prepare": "node scripts/build.js",
     "clean": "rimraf packages/**/dist",
-    "prepush": "yarn lint && yarn test",
-    "postcommit": "prettier --write && git add -A"
+    "format": "prettier --write --print-width 100",
+    "prepush": "yarn test",
+    "postcommit": "lint-staged"
   },
   "workspaces": ["packages/*"],
+  "lint-staged": {
+    "*.{js}": ["eslint", "git add"],
+    "*.{ts,tsx}": ["tslint", "git add"],
+    "*.{js,ts,tsx,json,graphql}": ["yarn format", "git add"]
+  },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.46",
     "@babel/core": "^7.0.0-beta.46",
@@ -37,6 +42,7 @@
     "husky": "^0.14.3",
     "jest": "^22.4.3",
     "lerna": "^3.0.0-beta.19",
+    "lint-staged": "^7.1.0",
     "lowdb": "^1.0.0",
     "microbundle": "^0.4.4",
     "node-fetch": "^2.1.2",

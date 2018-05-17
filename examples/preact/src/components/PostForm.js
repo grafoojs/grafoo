@@ -4,7 +4,7 @@ import { Mutation } from "@grafoo/preact";
 import { allPosts, createPost } from "../queries";
 import { Wrapper, H1, Form, Input, Textarea, Button } from "./ui-kit";
 
-class PostFormQuery extends Component {
+class PostForm extends Component {
   constructor(props) {
     super(props);
 
@@ -60,6 +60,6 @@ class PostFormQuery extends Component {
   }
 }
 
-export default function PostForm() {
-  return <Mutation query={createPost}>{props => <PostFormQuery {...props} />}</Mutation>;
+export default function PostFormWrapper() {
+  return <Mutation query={createPost} render={props => <PostForm {...props} />} />;
 }

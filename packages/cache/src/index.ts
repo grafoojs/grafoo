@@ -34,7 +34,7 @@ export interface CacheRequest {
 export interface CacheInstance {
   listen(listener: Listener): () => void;
   write(cacheRequest: CacheRequest, data: {}): void;
-  read(cacheRequest: CacheRequest): { data: {}; objects: ObjectsMap } | null;
+  read(cacheRequest: CacheRequest): { data?: {}; objects?: ObjectsMap };
   flush(): InitialState;
 }
 
@@ -94,7 +94,7 @@ export default function createCache(options?: CacheOptions): CacheInstance {
         }
       }
 
-      if (!Object.keys(data).length) return null;
+      if (!Object.keys(data).length) return {};
 
       return { data: buildQueryTree(data, objectsMap, idFromProps), objects };
     },
