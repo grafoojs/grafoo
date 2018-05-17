@@ -1,5 +1,5 @@
 export interface GrafooObject {
-  paths: { root: string; args: string[] };
+  paths: Array<{ root: string; args: string[] }>;
   query: string;
 }
 
