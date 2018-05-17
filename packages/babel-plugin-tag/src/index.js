@@ -7,7 +7,7 @@ const visitor = {
     const tagNames = [];
 
     if (!opts.schema) {
-      throw programPath.buildCodeFrameError("@grafoo/babel-plugin-tag needs a schema!");
+      throw programPath.buildCodeFrameError("@grafoo/babel-plugin-tag: no schema was specified.");
     }
 
     if (!opts.fieldsToInsert) {
@@ -22,7 +22,7 @@ const visitor = {
           );
 
           if (!defaultSpecifier) {
-            throw path.buildCodeFrameError("@grafoo/tag is a default import!");
+            throw path.buildCodeFrameError("@grafoo/tag: no default import.");
           }
 
           tagNames.push(defaultSpecifier.local.name);
@@ -33,28 +33,21 @@ const visitor = {
       TaggedTemplateExpression(path) {
         if (tagNames.some(name => isIdentifier(path.node.tag, { name }))) {
           try {
-            if (path.get("quasi").get("expressions").length) {
+            const quasi = path.get("quasi");
+
+            if (quasi.get("expressions").length) {
               throw path.buildCodeFrameError(
-                "@grafoo/babel-plugin-tag does not support" +
-                  " interpolation in a graphql template string!"
+                "@grafoo/tag: interpolation is not supported in a graphql tagged template literal."
               );
             }
 
-            const source = path
-              .get("quasi")
-              .node.quasis.reduce((head, quasi) => head + quasi.value.raw, "");
+            const source = quasi.node.quasis.reduce((src, quasi) => src + quasi.value.raw, "");
 
-            try {
-              const compiled = compileDocument(source, opts);
-
-              path.replaceWith(parseLiteral(compiled));
-            } catch (err) {
-              if (err.code === "ENOENT") throw err;
-
-              throw path.buildCodeFrameError(err.message);
-            }
+            path.replaceWith(parseLiteral(compileDocument(source, opts)));
           } catch (error) {
-            throw error;
+            if (error.code === "ENOENT") throw error;
+
+            throw path.buildCodeFrameError(error.message);
           }
         }
       }

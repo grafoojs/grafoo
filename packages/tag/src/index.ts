@@ -2,7 +2,7 @@ export interface GrafooObject {
   frags?: {
     [key: string]: string;
   };
-  paths: {
+  paths?: {
     [key: string]: {
       name: string;
       args: string[];

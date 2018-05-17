@@ -188,7 +188,7 @@ const cases = [
     fieldsToInsert: ["bio"]
   },
   {
-    title: "should insert field present on an inline fragment",
+    title: "should insert field present in an inline fragment",
     input: `
       {
         user {

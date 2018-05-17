@@ -25,28 +25,24 @@ export default function compileDocument(source, opts) {
   const oprs = document.definitions.filter(d => d.kind === "OperationDefinition");
   const frags = document.definitions.filter(d => d.kind === "FragmentDefinition");
 
-  if (oprs.length === 0 && frags.length === 0) {
-    throw new Error(
-      "@grafoo/tag: at least one operation or fragment definition must be declared per tag"
-    );
-  }
-
   if (oprs.length > 1) {
-    throw new Error("@grafoo/tag: only one operation definition is accepted per tag");
+    throw new Error("@grafoo/tag: only one operation definition is accepted per tag.");
   }
 
   const grafooObj = { query: DEV ? print(oprs[0]) : compress(print(oprs[0])) };
 
-  grafooObj.paths = oprs[0].selectionSet.selections.reduce(
-    (acc, s) =>
-      Object.assign(acc, {
-        [compress(print(s))]: {
-          name: s.name.value,
-          args: s.arguments.map(a => a.name.value)
-        }
-      }),
-    {}
-  );
+  if (oprs.length) {
+    grafooObj.paths = oprs[0].selectionSet.selections.reduce(
+      (acc, s) =>
+        Object.assign(acc, {
+          [compress(print(s))]: {
+            name: s.name.value,
+            args: s.arguments.map(a => a.name.value)
+          }
+        }),
+      {}
+    );
+  }
 
   if (frags.length) {
     grafooObj.frags = {};

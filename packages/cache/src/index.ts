@@ -1,4 +1,5 @@
 import { GrafooObject } from "@grafoo/tag";
+import { Variables } from "@grafoo/transport";
 import { assign } from "@grafoo/util";
 import buildQueryTree from "./build-query-tree";
 import mapObjects from "./map-objects";
@@ -9,10 +10,6 @@ export interface ObjectsMap {
 
 export interface PathsMap {
   [key: string]: { [key: string]: any };
-}
-
-export interface Variables {
-  [key: string]: any;
 }
 
 export type Listener = (objects: ObjectsMap) => void;
