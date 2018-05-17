@@ -2,14 +2,14 @@
 
 exports[`should compress query in production 1`] = `
 "const query = {
-  \\"query\\": \\"query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}\\",
+  \\"query\\": \\"query ($id: ID!, $offset: Int!, $start: Int!) {\\\\n  posts(offset: $offset, start: $start) {\\\\n    authors {\\\\n      id\\\\n      name\\\\n      username\\\\n    }\\\\n    body\\\\n    createdAt\\\\n    id\\\\n    tags {\\\\n      id\\\\n      name\\\\n    }\\\\n    title\\\\n  }\\\\n  user(id: $id) {\\\\n    id\\\\n    name\\\\n    username\\\\n  }\\\\n}\\",
   \\"paths\\": {
     \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {
-      \\"root\\": \\"posts\\",
+      \\"name\\": \\"posts\\",
       \\"args\\": [\\"offset\\", \\"start\\"]
     },
     \\"user(id:$id){id name username}\\": {
-      \\"root\\": \\"user\\",
+      \\"name\\": \\"user\\",
       \\"args\\": [\\"id\\"]
     }
   }
@@ -18,14 +18,14 @@ exports[`should compress query in production 1`] = `
 
 exports[`should replace a tagged template literal with the compiled grafoo object 1`] = `
 "const query = {
-  \\"query\\": \\"query ($id: ID!, $offset: Int!, $start: Int!) {\\\\n  posts(offset: $offset, start: $start) {\\\\n    authors {\\\\n      id\\\\n      name\\\\n      username\\\\n    }\\\\n    body\\\\n    createdAt\\\\n    id\\\\n    tags {\\\\n      id\\\\n      name\\\\n    }\\\\n    title\\\\n  }\\\\n  user(id: $id) {\\\\n    id\\\\n    name\\\\n    username\\\\n  }\\\\n}\\\\n\\",
+  \\"query\\": \\"query ($id: ID!, $offset: Int!, $start: Int!) {\\\\n  posts(offset: $offset, start: $start) {\\\\n    authors {\\\\n      id\\\\n      name\\\\n      username\\\\n    }\\\\n    body\\\\n    createdAt\\\\n    id\\\\n    tags {\\\\n      id\\\\n      name\\\\n    }\\\\n    title\\\\n  }\\\\n  user(id: $id) {\\\\n    id\\\\n    name\\\\n    username\\\\n  }\\\\n}\\",
   \\"paths\\": {
     \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {
-      \\"root\\": \\"posts\\",
+      \\"name\\": \\"posts\\",
       \\"args\\": [\\"offset\\", \\"start\\"]
     },
     \\"user(id:$id){id name username}\\": {
-      \\"root\\": \\"user\\",
+      \\"name\\": \\"user\\",
       \\"args\\": [\\"id\\"]
     }
   }

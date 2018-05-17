@@ -5,6 +5,8 @@ import path from "path";
 import insertFields from "./insert-fields";
 import sortDocument from "./sort-query";
 
+const DEV = process.env.NODE_ENV !== "production";
+
 function getSchema(schemaPath) {
   try {
     const fullPath = path.join(process.cwd(), schemaPath);
@@ -17,27 +19,51 @@ function getSchema(schemaPath) {
   }
 }
 
-function getPaths(document) {
-  const [definition] = document.definitions;
+export default function compileDocument(source, opts) {
+  const schema = getSchema(opts.schema);
+  const document = sortDocument(insertFields(schema, parse(source), opts.fieldsToInsert));
+  const oprs = document.definitions.filter(d => d.kind === "OperationDefinition");
+  const frags = document.definitions.filter(d => d.kind === "FragmentDefinition");
 
-  return definition.selectionSet.selections.reduce(
-    (paths, s) =>
-      Object.assign(paths, {
+  if (oprs.length === 0 && frags.length === 0) {
+    throw new Error(
+      "@grafoo/tag: at least one operation or fragment definition must be declared per tag"
+    );
+  }
+
+  if (oprs.length > 1) {
+    throw new Error("@grafoo/tag: only one operation definition is accepted per tag");
+  }
+
+  const grafooObj = { query: DEV ? print(oprs[0]) : compress(print(oprs[0])) };
+
+  grafooObj.paths = oprs[0].selectionSet.selections.reduce(
+    (acc, s) =>
+      Object.assign(acc, {
         [compress(print(s))]: {
-          root: s.name.value,
+          name: s.name.value,
           args: s.arguments.map(a => a.name.value)
         }
       }),
     {}
   );
-}
 
-export default function compileDocument(source, opts) {
-  const schema = getSchema(opts.schema);
-  const document = sortDocument(insertFields(schema, parse(source), opts.fieldsToInsert));
+  if (frags.length) {
+    grafooObj.frags = {};
 
-  return {
-    query: process.env.NODE_ENV !== "production" ? print(document) : compress(print(document)),
-    paths: getPaths(document)
-  };
+    for (const frag of frags) {
+      Object.assign(
+        grafooObj.frags,
+        frag.selectionSet.selections.reduce(
+          (acc, s) =>
+            Object.assign(acc, {
+              [s.name.value]: compress(print(s))
+            }),
+          {}
+        )
+      );
+    }
+  }
+
+  return grafooObj;
 }

@@ -1,10 +1,18 @@
 export interface GrafooObject {
-  paths: Array<{ root: string; args: string[] }>;
+  frags?: {
+    [key: string]: string;
+  };
+  paths: {
+    [key: string]: {
+      name: string;
+      args: string[];
+    };
+  };
   query: string;
 }
 
 export default function graphql(strs: string[]): GrafooObject {
   throw new Error(
-    "@grafoo/core: if you are getting this error it means your queries arn not being transpiled"
+    "@grafoo/tag: if you are getting this error it means your queries are not being transpiled"
   );
 }

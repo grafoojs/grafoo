@@ -66,8 +66,8 @@ export default function createCache(options?: CacheOptions): CacheInstance {
       const objects: ObjectsMap = {};
 
       for (const path in paths) {
-        const { root, args } = paths[path];
-        const pathData = { [root]: data[root] };
+        const { name, args } = paths[path];
+        const pathData = { [name]: data[name] };
         const pathObjects = mapObjects(pathData, idFromProps);
 
         assign(objects, pathObjects);
@@ -87,11 +87,11 @@ export default function createCache(options?: CacheOptions): CacheInstance {
       const objects: ObjectsMap = {};
 
       for (const path in paths) {
-        const { root, args } = paths[path];
+        const { name, args } = paths[path];
         const currentPath = pathsMap[getPathId(path, args, variables)];
 
         if (currentPath) {
-          data[root] = currentPath.data[root];
+          data[name] = currentPath.data[name];
 
           for (const i in currentPath.objects) objects[i] = currentPath.objects[i];
         }
