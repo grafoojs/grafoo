@@ -1,8 +1,7 @@
 import { h } from "preact";
 import { GrafooConsumer } from "@grafoo/preact";
-import { allPosts, createPost, deletePost } from "../queries";
-import PostForm from "./PostForm";
-import { Button, H2, Item, List, Wrapper } from "./ui-kit";
+import { allPosts, createPost, deletePost, updatePost } from "../queries";
+import Posts from "./Posts";
 
 const mutations = {
   createPost: {
@@ -13,6 +12,17 @@ const mutations = {
     update({ mutate, allPosts }, variables) {
       return mutate(variables).then(({ createPost: post }) => ({
         allPosts: allPosts.map(p => (p.id === "tempID" ? post : p))
+      }));
+    }
+  },
+  updatePost: {
+    query: updatePost,
+    optmisticUpdate({ allPosts }, variables) {
+      return { allPosts: allPosts.map(p => (p.id === variables.id ? variables : p)) };
+    },
+    update({ mutate, allPosts }, variables) {
+      return mutate(variables).then(({ updatePost: post }) => ({
+        allPosts: allPosts.map(p => (p.id === post.id ? post : p))
       }));
     }
   },
@@ -29,35 +39,14 @@ const mutations = {
   }
 };
 
-const PostsContainer = () => (
-  <GrafooConsumer
-    query={allPosts}
-    variables={{ orderBy: "createdAt_DESC" }}
-    skipCache={false}
-    mutations={mutations}
-    render={({ allPosts, loaded, deletePost, createPost }) => (
-      <div>
-        <PostForm submit={createPost} />
-        {loaded ? (
-          <List>
-            {allPosts.map(post => (
-              <Item key={post.id}>
-                <Wrapper>
-                  <H2>{post.title}</H2>
-                  <div dangerouslySetInnerHTML={{ __html: post.content }} />
-                  <br />
-                  <Button>update post</Button>{" "}
-                  <Button onClick={() => deletePost({ id: post.id })}>remove post</Button>
-                </Wrapper>
-              </Item>
-            ))}
-          </List>
-        ) : (
-          <Wrapper>loading...</Wrapper>
-        )}
-      </div>
-    )}
-  />
-);
-
-export default PostsContainer;
+export default function PostsContainer() {
+  return (
+    <GrafooConsumer
+      query={allPosts}
+      variables={{ orderBy: "createdAt_DESC" }}
+      skipCache={false}
+      mutations={mutations}
+      render={props => <Posts {...props} />}
+    />
+  );
+}
