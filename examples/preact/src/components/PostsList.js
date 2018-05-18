@@ -1,10 +1,40 @@
 import { h, Component } from "preact";
 import { Query, Mutation } from "@grafoo/preact";
 
-import { allPosts, deletePost } from "../queries";
+import { allPosts, deletePost, createPost, updatePost } from "../queries";
 import { Ul, Li, H2, Wrapper, Button } from "./ui-kit";
 
+const mutations = {
+  createPost: {
+    query: createPost,
+    update: ({ allPosts, mutate }, variables) =>
+      mutate(variables).then(({ createPost: post }) => ({
+        allPosts: [post, ...allPosts]
+      })),
+    optmisticUpdate: ({ allPosts }, variables) => ({
+      allPosts: [variables, ...allPosts]
+    })
+  },
+  removePost: {
+    query: createPost,
+    optmisticUpdate: ({ allPosts }, { id }) => ({
+      allPosts: allPosts.filter(_ => _.id !== id)
+    })
+  }
+};
+
 class PostsList extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { title: "", content: "" };
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(value) {
+    return event => this.setState({ [value]: event.target.value });
+  }
+
   removePost(mutate, id, client) {
     return event => {
       event.preventDefault();
@@ -23,29 +53,32 @@ class PostsList extends Component {
         query={allPosts}
         variables={{ orderBy: "createdAt_DESC" }}
         skipCache={false}
+        mutations={mutations}
         render={({ allPosts, loading, loaded, errors }) => {
           console.log({ allPosts, loading, loaded, errors });
 
           if (loading) return <Wrapper>loading...</Wrapper>;
 
           return (
-            <Ul>
-              {allPosts.map(post => (
-                <Li key={post.id}>
-                  <Wrapper>
-                    <H2>{post.title}</H2>
-                    <div dangerouslySetInnerHTML={{ __html: post.content }} />
-                    <br />
-                    <Button onClick={this.removePost(props.mutate, post.id, props.client)}>
-                      update post
-                    </Button>{" "}
-                    <Button onClick={this.removePost(props.mutate, post.id, props.client)}>
-                      remove post
-                    </Button>
-                  </Wrapper>
-                </Li>
-              ))}
-            </Ul>
+            <div>
+              <Ul>
+                {allPosts.map(post => (
+                  <Li key={post.id}>
+                    <Wrapper>
+                      <H2>{post.title}</H2>
+                      <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                      <br />
+                      <Button onClick={this.removePost(props.mutate, post.id, props.client)}>
+                        update post
+                      </Button>{" "}
+                      <Button onClick={this.removePost(props.mutate, post.id, props.client)}>
+                        remove post
+                      </Button>
+                    </Wrapper>
+                  </Li>
+                ))}
+              </Ul>
+            </div>
           );
         }}
       />

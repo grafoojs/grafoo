@@ -36,7 +36,7 @@ export default function createBindings(
       }
     },
     executeQuery(cb) {
-      return client
+      client
         .request({ query: query.query, variables })
         .then(response => {
           lockUpdate = true;
