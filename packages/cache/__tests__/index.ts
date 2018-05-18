@@ -49,7 +49,7 @@ test("should handle queries with variables", async () => {
   await mock(Post, async (cache, data, request) => {
     cache.write(request, data);
 
-    expect(cache.read({ query: Post, variables: { id: "123" } })).toBe(null);
+    expect(cache.read({ query: Post, variables: { id: "123" } })).toBe({});
     expect(cache.read(request).data.post.id).toBe(request.variables.id);
   });
 });
