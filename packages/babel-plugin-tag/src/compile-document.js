@@ -6,14 +6,19 @@ import insertFields from "./insert-fields";
 import sortDocument from "./sort-query";
 
 const DEV = process.env.NODE_ENV !== "production";
+let schema;
 
 function getSchema(schemaPath) {
+  if (schema) return schema;
+
   try {
     const fullPath = path.join(process.cwd(), schemaPath);
 
     fs.accessSync(fullPath, fs.F_OK);
 
-    return fs.readFileSync(fullPath, "utf-8");
+    schema = fs.readFileSync(fullPath, "utf-8");
+
+    return schema;
   } catch (err) {
     throw err;
   }

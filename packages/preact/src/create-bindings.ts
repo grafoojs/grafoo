@@ -59,3 +59,27 @@ export default function createBindings(
     }
   };
 }
+
+// function createMUtation() {
+//   const mutations = {};
+//   const queryOp = { query: this.props.query, variables: this.props.variables };
+
+//   for (const mut in this.props.mutations) {
+//     const mutation = this.props.mutations[mut];
+
+//     mutations[mut] = (...args) => {
+//       const optimisticUp = mutation.optmisticUpdate(...args);
+
+//       this.context.client.write(queryOp, optimisticUp);
+
+//       const mutate = variables =>
+//         this.context.client.request({ query: mutation.query.query, variables });
+
+//       mutation.update(mutate, ...args).then(update => {
+//         this.context.client.write(queryOp, update);
+//       });
+//     };
+//   }
+
+//   return mutations;
+// }

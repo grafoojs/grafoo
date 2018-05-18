@@ -1,17 +1,17 @@
 import { h, Component } from "preact";
 import { Query, Mutation } from "@grafoo/preact";
 
-import { allPosts, deletePost, createPost, updatePost } from "../queries";
+import { allPosts, deletePost, createPost } from "../queries";
 import { Ul, Li, H2, Wrapper, Button } from "./ui-kit";
 
 const mutations = {
   createPost: {
     query: createPost,
-    update: ({ allPosts, mutate }, variables) =>
+    update: (mutate, allPosts, variables) =>
       mutate(variables).then(({ createPost: post }) => ({
         allPosts: [post, ...allPosts]
       })),
-    optmisticUpdate: ({ allPosts }, variables) => ({
+    optmisticUpdate: (allPosts, variables) => ({
       allPosts: [variables, ...allPosts]
     })
   },
@@ -55,6 +55,7 @@ class PostsList extends Component {
         skipCache={false}
         mutations={mutations}
         render={({ allPosts, loading, loaded, errors }) => {
+          // eslint-disable-next-line no-console
           console.log({ allPosts, loading, loaded, errors });
 
           if (loading) return <Wrapper>loading...</Wrapper>;
