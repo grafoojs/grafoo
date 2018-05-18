@@ -7,29 +7,10 @@ export interface Context {
   client: ClientInstance;
 }
 
-export interface QueryRenderProps {
-  loading: boolean;
-  loaded: boolean;
-  objects?: ObjectsMap;
-  errors?: GraphQlError[];
-}
-
-export interface QueryRenderFn {
-  <T>(renderProps: QueryRenderProps & T): JSX.Element;
-  <T, U>(renderProps: QueryRenderProps & T & U): JSX.Element;
-  <T, U, V>(renderProps: QueryRenderProps & T & U & V): JSX.Element;
-  (renderProps: QueryRenderProps & {}): JSX.Element;
-}
-
-export interface QueryProps {
-  query: GrafooObject;
-  variables?: Variables;
-  skipCache?: boolean;
-  render: QueryRenderFn;
-}
+export type Mutate = <T>(variables?: Variables) => Promise<T>;
 
 export interface MutationRenderProps {
-  mutate<T>(variables?: Variables): Promise<T>;
+  mutate: Mutate;
   client: ClientInstance;
 }
 
@@ -40,8 +21,38 @@ export interface MutationProps {
   render: MutationRenderFn;
 }
 
+export interface GrafooRenderProps {
+  loading: boolean;
+  loaded: boolean;
+  errors?: GraphQlError[];
+}
+
+export type GrafooRenderFn = (renderProps: GrafooRenderProps) => JSX.Element;
+
+export type UpdateFn = <T>(
+  props: { mutate: Mutate } & GrafooRenderProps,
+  variables: Variables
+) => Promise<T>;
+
+export type OptimisticUpdateFn = <T>(props: GrafooRenderProps, variables: Variables) => T;
+
+export interface GrafooMutation {
+  query: GrafooObject;
+  update: UpdateFn;
+  optmisticUpdate?: OptimisticUpdateFn;
+}
+
+export interface GrafooConsumerProps {
+  query: GrafooObject;
+  mutations: { [name: string]: GrafooMutation };
+  variables?: Variables;
+  skipCache?: boolean;
+  render: GrafooRenderFn;
+  [key: string]: any;
+}
+
 export interface Bindings {
-  state: QueryRenderProps;
-  update(nextObjects: ObjectsMap, cb: () => void);
-  executeQuery(cb: () => void);
+  getState(): GrafooRenderProps;
+  update(nextObjects: ObjectsMap);
+  executeQuery();
 }

@@ -1,7 +1,7 @@
 import { Component } from "preact";
 import { Context } from "./types";
 
-export class Provider extends Component<Context> {
+export class GrafooProvider extends Component<Context> {
   getChildContext(): Context {
     return { client: this.props.client };
   }
