@@ -4,42 +4,52 @@ import { assign, shallowEqual } from "@grafoo/util";
 import { Bindings, GrafooConsumerProps, GrafooRenderProps } from "./types";
 
 export default function createBindings(
-  { query, mutations, variables, skipCache }: GrafooConsumerProps,
+  props: GrafooConsumerProps,
   client: ClientInstance,
-  cb: () => void
+  updater: () => void
 ): Bindings {
+  const { query, variables, mutations, skipCache } = props;
+
   const cacheOperation = { query, variables };
 
-  const { data, objects: objectsMap = {} } = client.read(cacheOperation);
+  const cachedState = client.read(cacheOperation);
 
-  const state: GrafooRenderProps =
-    data && !skipCache
-      ? assign({ loading: false, loaded: true }, data)
-      : { loading: true, loaded: false };
+  const { data } = cachedState;
+
+  const objectsMap = cachedState || {};
+
+  const mutationActions = {};
+
+  const cacheLoaded = data && !skipCache;
+
+  const state: GrafooRenderProps = { loading: !cacheLoaded, loaded: cacheLoaded };
+
+  if (cacheLoaded) assign(state, data);
+
+  if (mutations) {
+    for (const key in mutations) {
+      const mutation = mutations[key];
+
+      mutationActions[key] = (variables: Variables) => {
+        if (mutation.optmisticUpdate) {
+          client.write(cacheOperation, mutation.optmisticUpdate(state, variables));
+        }
+
+        const mutate = <T>(variables: Variables): Promise<T> =>
+          client.request({ query: mutation.query.query, variables });
+
+        return mutation.update(assign({ mutate }, state), variables).then(update => {
+          client.write(cacheOperation, update);
+        });
+      };
+    }
+  }
 
   let lockUpdate = false;
 
-  for (const mut in mutations) {
-    const mutation = mutations[mut];
-
-    state[mut] = (variables: Variables) => {
-      if (mutation.optmisticUpdate) {
-        const optimisticUpdate = mutation.optmisticUpdate(state, variables);
-        client.write(cacheOperation, optimisticUpdate);
-      }
-
-      const mutate = <T>(variables: Variables): Promise<T> =>
-        client.request({ query: mutation.query.query, variables });
-
-      return mutation.update(assign({ mutate }, state), variables).then(update => {
-        client.write(cacheOperation, update);
-      });
-    };
-  }
-
   return {
     getState() {
-      return state;
+      return assign({}, state, mutationActions);
     },
     update(nextObjects) {
       if (lockUpdate) return (lockUpdate = false);
@@ -53,7 +63,7 @@ export default function createBindings(
 
         assign(state, data);
 
-        cb();
+        updater();
       }
     },
     executeQuery() {
@@ -68,14 +78,14 @@ export default function createBindings(
 
           assign(objectsMap, objects);
 
-          assign(state, { loading: false, loaded: true }, data);
+          assign(state, data, { loading: false, loaded: true });
 
-          cb();
+          updater();
         })
         .catch(({ errors }) => {
           assign(state, { errors, loading: false, loaded: true });
 
-          cb();
+          updater();
         });
     }
   };

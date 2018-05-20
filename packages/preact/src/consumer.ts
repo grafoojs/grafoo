@@ -4,22 +4,28 @@ import { Bindings, Context, GrafooConsumerProps } from "./types";
 
 export class GrafooConsumer extends Component<GrafooConsumerProps> {
   binds: Bindings;
-  unlisten: () => void;
 
   constructor(props: GrafooConsumerProps, context: Context) {
     super(props, context);
-    this.binds = createBindings(props, context.client, () => this.setState(null));
-  }
 
-  componentDidMount() {
-    const { update, getState, executeQuery } = this.binds;
-    this.unlisten = this.context.client.listen(objects => update(objects));
-    if (!getState().loading || this.props.skipCache) return;
-    executeQuery();
-  }
+    const { client } = context;
+    const { update, executeQuery } = (this.binds = createBindings(props, context.client, () =>
+      this.setState(null)
+    ));
 
-  componentWillUnmount() {
-    this.unlisten();
+    let unlisten: () => void;
+
+    this.componentDidMount = () => {
+      unlisten = client.listen(objects => update(objects));
+
+      if (props.skipCache) return;
+
+      executeQuery();
+    };
+
+    this.componentWillUnmount = () => {
+      unlisten();
+    };
   }
 
   render(props: GrafooConsumerProps) {

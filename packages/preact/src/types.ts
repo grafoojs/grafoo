@@ -9,18 +9,6 @@ export interface Context {
 
 export type Mutate = <T>(variables?: Variables) => Promise<T>;
 
-export interface MutationRenderProps {
-  mutate: Mutate;
-  client: ClientInstance;
-}
-
-export type MutationRenderFn = (props: MutationRenderProps) => JSX.Element;
-
-export interface MutationProps {
-  query: GrafooObject;
-  render: MutationRenderFn;
-}
-
 export interface GrafooRenderProps {
   loading: boolean;
   loaded: boolean;
@@ -44,7 +32,7 @@ export interface GrafooMutation {
 
 export interface GrafooConsumerProps {
   query: GrafooObject;
-  mutations: { [name: string]: GrafooMutation };
+  mutations?: { [name: string]: GrafooMutation };
   variables?: Variables;
   skipCache?: boolean;
   render: GrafooRenderFn;
