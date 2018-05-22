@@ -33,8 +33,8 @@ export interface CacheRequest {
 
 export interface CacheInstance {
   listen(listener: Listener): () => void;
-  write(cacheRequest: CacheRequest, data: {}): void;
-  read(cacheRequest: CacheRequest): { data?: {}; objects?: ObjectsMap };
+  write<T>(cacheRequest: CacheRequest, data: T): void;
+  read<T>(cacheRequest: CacheRequest): { data?: T; objects?: ObjectsMap };
   flush(): InitialState;
 }
 

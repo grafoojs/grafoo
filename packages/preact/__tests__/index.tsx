@@ -1,44 +1,30 @@
-/* tslint:disable */
-
 import createClient, { ClientInstance } from "@grafoo/core";
-import { Posts } from "@grafoo/test-utils";
+import { h } from "preact";
 import { render } from "preact-render-spy";
-import { Mutation, Provider } from "../src";
+import { GrafooProvider } from "../src";
 
 describe("@grafoo/preact", () => {
   let client: ClientInstance;
+
   beforeEach(() => {
-    client = createClient("");
+    client = createClient("https://some.graphql.api/");
   });
 
-  test("<Mutation />", done => {
-    const Comp = () => (
-      <Mutation
-        query={Posts}
-        render={({ mutate }) => (
-          <button
-            onClick={async _ => {
-              const data = await mutate();
+  test("<GrafooProvider />", done => {
+    const Comp = ({}, context) => {
+      expect(context.client).toEqual(client);
 
-              expect(data).toMatchObject({ add: 1 });
-
-              done();
-            }}
-          >
-            click me
-          </button>
-        )}
-      />
-    );
+      return <span>testing...</span>;
+    };
 
     const App = () => (
-      <Provider client={client}>
+      <GrafooProvider client={client}>
         <Comp />
-      </Provider>
+      </GrafooProvider>
     );
 
-    render(<App />)
-      .find("button")
-      .simulate("click");
+    render(<App />);
+
+    done();
   });
 });

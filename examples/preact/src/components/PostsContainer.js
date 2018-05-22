@@ -6,36 +6,33 @@ import Posts from "./Posts";
 const mutations = {
   createPost: {
     query: createPost,
-    optmisticUpdate({ allPosts }, variables) {
-      return { allPosts: [{ ...variables, id: "tempID" }, ...allPosts] };
-    },
-    update({ mutate, allPosts }, variables) {
-      return mutate(variables).then(({ createPost: post }) => ({
+    optmisticUpdate: ({ allPosts }, variables) => ({
+      allPosts: [{ ...variables, id: "tempID" }, ...allPosts]
+    }),
+    update: ({ mutate, allPosts }, variables) =>
+      mutate(variables).then(({ createPost: post }) => ({
         allPosts: allPosts.map(p => (p.id === "tempID" ? post : p))
-      }));
-    }
+      }))
   },
   updatePost: {
     query: updatePost,
-    optmisticUpdate({ allPosts }, variables) {
-      return { allPosts: allPosts.map(p => (p.id === variables.id ? variables : p)) };
-    },
-    update({ mutate, allPosts }, variables) {
-      return mutate(variables).then(({ updatePost: post }) => ({
+    optmisticUpdate: ({ allPosts }, variables) => ({
+      allPosts: allPosts.map(p => (p.id === variables.id ? variables : p))
+    }),
+    update: ({ mutate, allPosts }, variables) =>
+      mutate(variables).then(({ updatePost: post }) => ({
         allPosts: allPosts.map(p => (p.id === post.id ? post : p))
-      }));
-    }
+      }))
   },
   deletePost: {
     query: deletePost,
-    optmisticUpdate({ allPosts }, { id }) {
-      return { allPosts: allPosts.filter(_ => _.id !== id) };
+    optmisticUpdate: (props, { id }) => {
+      return { allPosts: props.allPosts.filter(_ => _.id !== id) };
     },
-    update({ mutate, allPosts }, variables) {
-      return mutate(variables).then(({ deletePost: { id } }) => ({
+    update: ({ mutate, allPosts }, variables) =>
+      mutate(variables).then(({ deletePost: { id } }) => ({
         allPosts: allPosts.filter(_ => _.id !== id)
-      }));
-    }
+      }))
   }
 };
 
@@ -44,7 +41,6 @@ export default function PostsContainer() {
     <GrafooConsumer
       query={allPosts}
       variables={{ orderBy: "createdAt_DESC" }}
-      skipCache={false}
       mutations={mutations}
       render={props => <Posts {...props} />}
     />

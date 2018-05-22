@@ -41,6 +41,6 @@ export interface GrafooConsumerProps {
 
 export interface Bindings {
   getState(): GrafooRenderProps;
-  update(nextObjects: ObjectsMap);
-  executeQuery();
+  update(nextObjects: ObjectsMap): void;
+  executeQuery(): void;
 }

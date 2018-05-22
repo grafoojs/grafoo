@@ -13,6 +13,14 @@
     "preact": ">=8"
   },
   "scripts": {
-    "prepare": "microbundle"
+    "prepare": "microbundle",
+    "test": "jest"
+  },
+  "jest": {
+    "moduleFileExtensions": ["ts", "tsx", "js"],
+    "testMatch": ["**/__tests__/*.+(ts|tsx|js)"],
+    "transform": {
+      "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
+    }
   }
 }

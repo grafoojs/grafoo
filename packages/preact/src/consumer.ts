@@ -1,22 +1,27 @@
 import { Component } from "preact";
 import createBindings from "./create-bindings";
-import { Bindings, Context, GrafooConsumerProps } from "./types";
+import { Bindings, Context, GrafooConsumerProps, GrafooRenderProps } from "./types";
 
-export class GrafooConsumer extends Component<GrafooConsumerProps> {
+export class GrafooConsumer extends Component<GrafooConsumerProps, GrafooRenderProps> {
   binds: Bindings;
 
   constructor(props: GrafooConsumerProps, context: Context) {
     super(props, context);
 
-    const { client } = context;
-    const { update, executeQuery } = (this.binds = createBindings(props, context.client, () =>
-      this.setState(null)
+    const { update, executeQuery, getState } = (this.binds = createBindings(
+      props,
+      context.client,
+      nextRenderProps => this.setState(nextRenderProps)
     ));
+
+    this.state = getState();
 
     let unlisten: () => void;
 
     this.componentDidMount = () => {
-      unlisten = client.listen(objects => update(objects));
+      if (!props.query) return;
+
+      unlisten = context.client.listen(objects => update(objects));
 
       if (props.skipCache) return;
 
@@ -28,7 +33,7 @@ export class GrafooConsumer extends Component<GrafooConsumerProps> {
     };
   }
 
-  render(props: GrafooConsumerProps) {
-    return props.render(this.binds.getState());
+  render(props: GrafooConsumerProps, renderProps: GrafooRenderProps) {
+    return props.render(renderProps);
   }
 }

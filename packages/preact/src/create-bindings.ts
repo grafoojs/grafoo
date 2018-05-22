@@ -6,50 +6,48 @@ import { Bindings, GrafooConsumerProps, GrafooRenderProps } from "./types";
 export default function createBindings(
   props: GrafooConsumerProps,
   client: ClientInstance,
-  updater: () => void
+  updater: (renderProps: GrafooRenderProps) => void
 ): Bindings {
   const { query, variables, mutations, skipCache } = props;
 
   const cacheOperation = { query, variables };
 
-  const cachedState = client.read(cacheOperation);
+  const cachedState = query ? client.read(cacheOperation) : {};
 
   const { data } = cachedState;
 
-  const objectsMap = cachedState || {};
+  let objectsMap = cachedState.objects || {};
 
-  const mutationActions = {};
+  let lockUpdate = false;
 
   const cacheLoaded = data && !skipCache;
 
-  const state: GrafooRenderProps = { loading: !cacheLoaded, loaded: cacheLoaded };
+  const renderProps: GrafooRenderProps = { loading: !cacheLoaded, loaded: !!cacheLoaded };
 
-  if (cacheLoaded) assign(state, data);
+  if (cacheLoaded) assign(renderProps, data);
 
   if (mutations) {
     for (const key in mutations) {
       const mutation = mutations[key];
 
-      mutationActions[key] = (variables: Variables) => {
+      renderProps[key] = (variables: Variables) => {
         if (mutation.optmisticUpdate) {
-          client.write(cacheOperation, mutation.optmisticUpdate(state, variables));
+          client.write(cacheOperation, mutation.optmisticUpdate(renderProps, variables));
         }
 
         const mutate = <T>(variables: Variables): Promise<T> =>
           client.request({ query: mutation.query.query, variables });
 
-        return mutation.update(assign({ mutate }, state), variables).then(update => {
+        return mutation.update(assign({ mutate }, renderProps), variables).then(update => {
           client.write(cacheOperation, update);
         });
       };
     }
   }
 
-  let lockUpdate = false;
-
   return {
     getState() {
-      return assign({}, state, mutationActions);
+      return renderProps;
     },
     update(nextObjects) {
       if (lockUpdate) return (lockUpdate = false);
@@ -59,16 +57,22 @@ export default function createBindings(
       if (!shallowEqual(nextObjects, objectsMap)) {
         const { data, objects } = client.read(cacheOperation);
 
-        assign(objectsMap, objects);
+        objectsMap = objects;
 
-        assign(state, data);
-
-        updater();
+        updater(data);
       }
     },
     executeQuery() {
+      let queryString = query.query;
+
+      if (query.frags) {
+        for (const frag in query.frags) {
+          queryString += query.frags[frag];
+        }
+      }
+
       client
-        .request({ query: query.query, variables })
+        .request({ query: queryString, variables })
         .then(response => {
           lockUpdate = true;
 
@@ -76,16 +80,12 @@ export default function createBindings(
 
           const { data, objects } = client.read(cacheOperation);
 
-          assign(objectsMap, objects);
+          objectsMap = objects;
 
-          assign(state, data, { loading: false, loaded: true });
-
-          updater();
+          updater(assign({}, data, { loading: false, loaded: true }));
         })
         .catch(({ errors }) => {
-          assign(state, { errors, loading: false, loaded: true });
-
-          updater();
+          updater({ errors, loading: false, loaded: true });
         });
     }
   };
