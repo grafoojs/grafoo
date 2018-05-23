@@ -20,10 +20,10 @@ export type GrafooRenderFn = <T>(renderProps: GrafooRenderProps) => T;
 
 export type UpdateFn = <T>(
   props: { mutate: Mutate } & GrafooRenderProps,
-  variables: Variables
+  variables?: Variables
 ) => Promise<T>;
 
-export type OptimisticUpdateFn = <T>(props: GrafooRenderProps, variables: Variables) => T;
+export type OptimisticUpdateFn = <T>(props: GrafooRenderProps, variables?: Variables) => T;
 
 export interface GrafooMutation {
   query: GrafooObject;
