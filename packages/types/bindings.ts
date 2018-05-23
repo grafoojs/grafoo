@@ -1,13 +1,13 @@
-import { ObjectsMap } from "@grafoo/cache";
-import { ClientInstance } from "@grafoo/core";
-import { GrafooObject } from "@grafoo/tag";
-import { GraphQlError, Variables } from "@grafoo/transport";
+import { ObjectsMap } from "./cache";
+import { ClientInstance } from "./core";
+import { GrafooObject } from "./tag";
+import { GraphQlError, Variables } from "./transport";
 
-export interface Context {
-  client: ClientInstance;
+export interface Bindings {
+  getState(): GrafooRenderProps;
+  update(nextObjects: ObjectsMap): void;
+  executeQuery(): void;
 }
-
-export type Mutate = <T>(variables?: Variables) => Promise<T>;
 
 export interface GrafooRenderProps {
   loading: boolean;
@@ -15,7 +15,9 @@ export interface GrafooRenderProps {
   errors?: GraphQlError[];
 }
 
-export type GrafooRenderFn = (renderProps: GrafooRenderProps) => JSX.Element;
+export type Mutate = <T>(variables?: Variables) => Promise<T>;
+
+export type GrafooRenderFn = <T>(renderProps: GrafooRenderProps) => T;
 
 export type UpdateFn = <T>(
   props: { mutate: Mutate } & GrafooRenderProps,
@@ -37,10 +39,4 @@ export interface GrafooConsumerProps {
   skipCache?: boolean;
   render: GrafooRenderFn;
   [key: string]: any;
-}
-
-export interface Bindings {
-  getState(): GrafooRenderProps;
-  update(nextObjects: ObjectsMap): void;
-  executeQuery(): void;
 }

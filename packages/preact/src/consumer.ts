@@ -1,6 +1,6 @@
-import { Component } from "preact";
-import createBindings from "./create-bindings";
-import { Bindings, Context, GrafooConsumerProps, GrafooRenderProps } from "./types";
+import createBindings from "@grafoo/bindings";
+import { Bindings, Context, GrafooConsumerProps, GrafooRenderProps } from "@grafoo/types";
+import { Component, VNode } from "preact";
 
 export class GrafooConsumer extends Component<GrafooConsumerProps, GrafooRenderProps> {
   binds: Bindings;
@@ -34,6 +34,6 @@ export class GrafooConsumer extends Component<GrafooConsumerProps, GrafooRenderP
   }
 
   render(props: GrafooConsumerProps, renderProps: GrafooRenderProps) {
-    return props.render(renderProps);
+    return props.render<VNode>(renderProps);
   }
 }

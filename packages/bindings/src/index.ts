@@ -1,7 +1,11 @@
-import { ClientInstance } from "@grafoo/core";
-import { Variables } from "@grafoo/transport";
+import {
+  Bindings,
+  ClientInstance,
+  GrafooConsumerProps,
+  GrafooRenderProps,
+  Variables
+} from "@grafoo/types";
 import { assign, shallowEqual } from "@grafoo/util";
-import { Bindings, GrafooConsumerProps, GrafooRenderProps } from "./types";
 
 export default function createBindings(
   props: GrafooConsumerProps,

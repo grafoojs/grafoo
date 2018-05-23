@@ -1,14 +1,7 @@
-import createCache, { CacheInstance, CacheOptions } from "@grafoo/cache";
-import createTransport, { Headers, TransportRequest } from "@grafoo/transport";
+import createCache from "@grafoo/cache";
+import createTransport from "@grafoo/transport";
+import { ClientInstance, ClientOptions } from "@grafoo/types";
 import { assign } from "@grafoo/util";
-
-export interface ClientInstance extends CacheInstance {
-  request: TransportRequest;
-}
-
-export interface ClientOptions extends CacheOptions {
-  headers: Headers;
-}
 
 export default function createClient(uri: string, options?: ClientOptions): ClientInstance {
   return assign({}, createCache(options), {

@@ -1,4 +1,5 @@
-import createClient, { ClientInstance } from "@grafoo/core";
+import createClient from "@grafoo/core";
+import { ClientInstance } from "@grafoo/types";
 import { h } from "preact";
 import { render } from "preact-render-spy";
 import { GrafooProvider } from "../src";
@@ -12,7 +13,7 @@ describe("@grafoo/preact", () => {
 
   test("<GrafooProvider />", done => {
     const Comp = ({}, context) => {
-      expect(context.client).toEqual(client);
+      expect(context.client).toBe(client);
 
       return <span>testing...</span>;
     };
