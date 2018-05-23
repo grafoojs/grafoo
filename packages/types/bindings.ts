@@ -1,5 +1,4 @@
 import { ObjectsMap } from "./cache";
-import { ClientInstance } from "./core";
 import { GrafooObject } from "./tag";
 import { GraphQlError, Variables } from "./transport";
 
