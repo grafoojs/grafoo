@@ -17,9 +17,9 @@
   },
   "workspaces": ["packages/*"],
   "lint-staged": {
-    "*.js": ["eslint", "git add"],
-    "*.{ts,tsx}": ["tslint", "git add"],
-    "*.{js,ts,tsx,json,graphql}": ["prettier --write", "git add"]
+    "**/*.js": ["eslint", "git add"],
+    "**/*.{ts,tsx}": ["tslint", "git add"],
+    "**/*.{js,ts,tsx,json,graphql}": ["prettier --write", "git add"]
   },
   "prettier": {
     "printWidth": 100
