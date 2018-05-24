@@ -23,13 +23,13 @@ export class GrafooConsumer extends Component<GrafooConsumerProps, GrafooRenderP
 
       unlisten = context.client.listen(objects => update(objects));
 
-      if (props.skipCache) return;
+      if (props.skip) return;
 
       executeQuery();
     };
 
     this.componentWillUnmount = () => {
-      unlisten();
+      if (unlisten) unlisten();
     };
   }
 

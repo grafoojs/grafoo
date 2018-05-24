@@ -12,7 +12,7 @@ export default function createBindings(
   client: ClientInstance,
   updater: (renderProps: GrafooRenderProps) => void
 ): Bindings {
-  const { query, variables, mutations, skipCache } = props;
+  const { query, variables, mutations, skip } = props;
 
   const cacheOperation = { query, variables };
 
@@ -24,7 +24,7 @@ export default function createBindings(
 
   let lockUpdate = false;
 
-  const cacheLoaded = data && !skipCache;
+  const cacheLoaded = data && !skip;
 
   const renderProps: GrafooRenderProps = { loading: !cacheLoaded, loaded: !!cacheLoaded };
 
@@ -35,8 +35,8 @@ export default function createBindings(
       const mutation = mutations[key];
 
       renderProps[key] = (variables: Variables) => {
-        if (mutation.optmisticUpdate) {
-          client.write(cacheOperation, mutation.optmisticUpdate(renderProps, variables));
+        if (mutation.optimisticUpdate) {
+          client.write(cacheOperation, mutation.optimisticUpdate(renderProps, variables));
         }
 
         const mutate = <T>(variables: Variables): Promise<T> =>

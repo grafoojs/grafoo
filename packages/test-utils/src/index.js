@@ -215,7 +215,15 @@ export const Authors = gql`
   }
 `;
 
-export function makeMockRequest(request) {
+export const CreateAuthor = gql`
+  mutation($name: String!) {
+    createAuthor(name: $name) {
+      name
+    }
+  }
+`;
+
+export function mockQueryRequest(request) {
   fetchMock.reset();
   fetchMock.restore();
 

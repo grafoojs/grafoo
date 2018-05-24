@@ -26,9 +26,9 @@ const mutations = {
   },
   deletePost: {
     query: deletePost,
-    optmisticUpdate: (props, { id }) => {
-      return { allPosts: props.allPosts.filter(_ => _.id !== id) };
-    },
+    optmisticUpdate: (props, { id }) => ({
+      allPosts: props.allPosts.filter(_ => _.id !== id)
+    }),
     update: ({ mutate, allPosts }, variables) =>
       mutate(variables).then(({ deletePost: { id } }) => ({
         allPosts: allPosts.filter(_ => _.id !== id)

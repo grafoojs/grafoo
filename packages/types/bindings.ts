@@ -14,28 +14,28 @@ export interface GrafooRenderProps {
   errors?: GraphQlError[];
 }
 
-export type Mutate = <T>(variables?: Variables) => Promise<T>;
+export type Mutate<T> = (variables?: Variables) => Promise<T>;
 
 export type GrafooRenderFn = <T>(renderProps: GrafooRenderProps) => T;
 
-export type UpdateFn = <T>(
-  props: { mutate: Mutate } & GrafooRenderProps,
+export type UpdateFn<T, U> = (
+  props: { mutate: Mutate<U> } & GrafooRenderProps & T,
   variables?: Variables
 ) => Promise<T>;
 
-export type OptimisticUpdateFn = <T>(props: GrafooRenderProps, variables?: Variables) => T;
+export type OptimisticUpdateFn<T> = (props: GrafooRenderProps & T, variables?: Variables) => T;
 
-export interface GrafooMutation {
+export interface GrafooMutation<T = any, U = any> {
   query: GrafooObject;
-  update: UpdateFn;
-  optmisticUpdate?: OptimisticUpdateFn;
+  optimisticUpdate?: OptimisticUpdateFn<T>;
+  update: UpdateFn<T, U>;
 }
 
 export interface GrafooConsumerProps {
-  query: GrafooObject;
+  query?: GrafooObject;
   mutations?: { [name: string]: GrafooMutation };
   variables?: Variables;
-  skipCache?: boolean;
+  skip?: boolean;
   render: GrafooRenderFn;
   [key: string]: any;
 }

@@ -1,31 +1,183 @@
 import createClient from "@grafoo/core";
-import { ClientInstance } from "@grafoo/types";
+import { ClientInstance, GrafooMutation, GrafooObject, GrafooMutations } from "@grafoo/types";
+import { mockQueryRequest, Authors, CreateAuthor } from "@grafoo/test-utils";
 import { h } from "preact";
 import { render } from "preact-render-spy";
-import { GrafooProvider } from "../src";
+import { GrafooProvider, GrafooConsumer } from "../src";
+import { ENODATA } from "constants";
+
+interface Post {
+  title: string;
+  content: string;
+  id: string;
+  __typename: string;
+  author: Author;
+}
+
+interface Author {
+  name: string;
+  id: string;
+  __typename: string;
+  posts?: Array<Post>;
+}
 
 describe("@grafoo/preact", () => {
   let client: ClientInstance;
 
   beforeEach(() => {
+    jest.resetAllMocks();
+
     client = createClient("https://some.graphql.api/");
   });
 
-  test("<GrafooProvider />", done => {
-    const Comp = ({}, context) => {
-      expect(context.client).toBe(client);
+  describe("<GrafooProvider />", () => {
+    it("should provide the client in it's context", done => {
+      const Comp = ({}, context) => {
+        expect(context.client).toBe(client);
 
-      return <span>testing...</span>;
-    };
+        return null;
+      };
 
-    const App = () => (
-      <GrafooProvider client={client}>
-        <Comp />
-      </GrafooProvider>
-    );
+      render(
+        <GrafooProvider client={client}>
+          <Comp />
+        </GrafooProvider>
+      );
 
-    render(<App />);
+      done();
+    });
+  });
 
-    done();
+  describe("<GrafooConsumer />", () => {
+    it("should not crash if a query is not given as prop", () => {
+      expect(() =>
+        render(
+          <GrafooProvider client={client}>
+            <GrafooConsumer render={() => null} />
+          </GrafooProvider>
+        )
+      ).not.toThrow();
+    });
+
+    it("should not fetch a query if skip prop is set to true", async () => {
+      await mockQueryRequest(Authors);
+
+      const spy = jest.spyOn(window, "fetch");
+
+      render(
+        <GrafooProvider client={client}>
+          <GrafooConsumer query={Authors} skip render={() => null} />
+        </GrafooProvider>
+      );
+
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it("should trigger listen on client instance", async () => {
+      await mockQueryRequest(Authors);
+
+      const spy = jest.spyOn(client, "listen");
+
+      render(
+        <GrafooProvider client={client}>
+          <GrafooConsumer query={Authors} skip render={() => null} />
+        </GrafooProvider>
+      );
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it("should not crash on unmount", () => {
+      const ctx = render(
+        <GrafooProvider client={client}>
+          <GrafooConsumer skip render={() => null} />
+        </GrafooProvider>
+      );
+
+      expect(() => ctx.render(null)).not.toThrow();
+    });
+
+    it("should execute render with default render argument", () => {
+      const mockRender = jest.fn();
+
+      render(
+        <GrafooProvider client={client}>
+          <GrafooConsumer query={Authors} skip render={mockRender} />
+        </GrafooProvider>
+      );
+
+      expect(mockRender).toHaveBeenCalledWith({ loading: true, loaded: false });
+    });
+
+    it("should execute render with the right data if a query is specified", async done => {
+      const { data } = await mockQueryRequest(Authors);
+
+      let calls = 1;
+      const fn = props => {
+        if (calls++ === 2) {
+          expect(props).toMatchObject({ loading: false, loaded: true, ...data });
+
+          done();
+        } else {
+          expect(props).toMatchObject({ loading: true, loaded: false });
+        }
+
+        return null;
+      };
+
+      render(
+        <GrafooProvider client={client}>
+          <GrafooConsumer query={Authors} render={fn} />
+        </GrafooProvider>
+      );
+    });
+
+    it("should handle mutations", async done => {
+      const { data } = await mockQueryRequest(Authors);
+
+      let calls = 1;
+      const fn = props => {
+        if (calls++ === 2) {
+          expect(props).toMatchObject({ loading: false, loaded: true, ...data });
+
+          done();
+        } else {
+          expect(props).toMatchObject({ loading: true, loaded: false });
+        }
+
+        return null;
+      };
+
+      interface Mutations extends GrafooMutations {
+        createAuthor: GrafooMutation<
+          {
+            allAuthors: Author[];
+          },
+          {
+            createAuthor: Author;
+          }
+        >;
+      }
+
+      const mutations: Mutations = {
+        createAuthor: {
+          query: CreateAuthor as GrafooObject,
+          optimisticUpdate({ allAuthors }, variables) {
+            return { allAuthors: [...allAuthors, { ...(variables as Author), id: "tempID" }] };
+          },
+          update({ mutate, allAuthors }, variables) {
+            return mutate(variables).then(({ createAuthor: author }) => ({
+              allAuthors: allAuthors.map(a => (a.id === "tempID" ? author : a))
+            }));
+          }
+        }
+      };
+
+      render(
+        <GrafooProvider client={client}>
+          <GrafooConsumer query={Authors} render={fn} mutations={mutations} />
+        </GrafooProvider>
+      );
+    });
   });
 });
