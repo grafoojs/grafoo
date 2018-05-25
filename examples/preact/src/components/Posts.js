@@ -2,28 +2,17 @@ import { h, Component } from "preact";
 import { Button, Form, H1, Input, Textarea, Wrapper, H2, Item, List } from "./ui-kit";
 
 export default class Posts extends Component {
-  constructor(props) {
-    super(props);
+  state = { title: "", content: "", id: null };
 
-    this.state = { title: "", content: "", id: null };
+  handleChange = value => event => this.setState({ [value]: event.target.value });
 
-    this.handleChange = this.handleChange.bind(this);
-    this.submit = this.submit.bind(this);
-  }
-
-  handleChange(value) {
-    return event => this.setState({ [value]: event.target.value });
-  }
-
-  submit(event) {
+  submit = event => {
     event.preventDefault();
 
     const submit = this.props[this.state.id ? "updatePost" : "createPost"];
 
-    submit(this.state).then(() => {
-      this.setState({ title: "", content: "", id: null });
-    });
-  }
+    submit(this.state).then(() => this.setState({ title: "", content: "", id: null }));
+  };
 
   render({ loaded, allPosts, deletePost }, { title, content }) {
     return (

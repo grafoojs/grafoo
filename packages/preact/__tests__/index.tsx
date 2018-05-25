@@ -1,10 +1,9 @@
 import createClient from "@grafoo/core";
-import { ClientInstance, GrafooMutation, GrafooObject, GrafooMutations } from "@grafoo/types";
+import { ClientInstance, GrafooMutation } from "@grafoo/types";
 import { mockQueryRequest, Authors, CreateAuthor } from "@grafoo/test-utils";
 import { h } from "preact";
 import { render } from "preact-render-spy";
 import { GrafooProvider, GrafooConsumer } from "../src";
-import { ENODATA } from "constants";
 
 interface Post {
   title: string;
@@ -19,6 +18,14 @@ interface Author {
   id: string;
   __typename: string;
   posts?: Array<Post>;
+}
+
+interface CreateAuthor {
+  createAuthor: Author;
+}
+
+interface AllAuthors {
+  allAuthors: Author[];
 }
 
 describe("@grafoo/preact", () => {
@@ -148,34 +155,20 @@ describe("@grafoo/preact", () => {
         return null;
       };
 
-      interface Mutations extends GrafooMutations {
-        createAuthor: GrafooMutation<
-          {
-            allAuthors: Author[];
-          },
-          {
-            createAuthor: Author;
-          }
-        >;
-      }
-
-      const mutations: Mutations = {
-        createAuthor: {
-          query: CreateAuthor as GrafooObject,
-          optimisticUpdate({ allAuthors }, variables) {
-            return { allAuthors: [...allAuthors, { ...(variables as Author), id: "tempID" }] };
-          },
-          update({ mutate, allAuthors }, variables) {
-            return mutate(variables).then(({ createAuthor: author }) => ({
-              allAuthors: allAuthors.map(a => (a.id === "tempID" ? author : a))
-            }));
-          }
-        }
+      const createAuthor: GrafooMutation<AllAuthors, CreateAuthor> = {
+        query: CreateAuthor,
+        optimisticUpdate: ({ allAuthors }, variables) => ({
+          allAuthors: [...allAuthors, { ...(variables as Author), id: "tempID" }]
+        }),
+        update: ({ mutate, allAuthors }, variables) =>
+          mutate(variables).then(({ createAuthor: author }) => ({
+            allAuthors: allAuthors.map(a => (a.id === "tempID" ? author : a))
+          }))
       };
 
       render(
         <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors} render={fn} mutations={mutations} />
+          <GrafooConsumer query={Authors} render={fn} mutations={{ createAuthor }} />
         </GrafooProvider>
       );
     });

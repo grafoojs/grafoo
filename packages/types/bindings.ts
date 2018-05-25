@@ -25,15 +25,15 @@ export type UpdateFn<T, U> = (
 
 export type OptimisticUpdateFn<T> = (props: GrafooRenderProps & T, variables?: Variables) => T;
 
-export interface GrafooMutation<T = any, U = any> {
+export interface GrafooMutation<T, U = {}> {
   query: GrafooObject;
   optimisticUpdate?: OptimisticUpdateFn<T>;
   update: UpdateFn<T, U>;
 }
 
-export interface GrafooConsumerProps {
+export interface GrafooConsumerProps<T = {}> {
   query?: GrafooObject;
-  mutations?: { [name: string]: GrafooMutation };
+  mutations?: { [name: string]: GrafooMutation<T> };
   variables?: Variables;
   skip?: boolean;
   render: GrafooRenderFn;

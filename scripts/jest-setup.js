@@ -12,7 +12,5 @@ try {
 }
 
 module.exports = {
-  process: src => {
-    return transform(src, config);
-  }
+  process: src => transform(src, config)
 };
