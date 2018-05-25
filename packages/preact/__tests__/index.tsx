@@ -140,23 +140,18 @@ describe("@grafoo/preact", () => {
         },
         props => {
           expect(props).toMatchObject({ loading: false, loaded: true, ...data });
-
           const variables = { name: "Johnny" };
-
           mockQueryRequest({ query: CreateAuthor.query, variables }).then(() => {
             props.createAuthor(variables);
           });
         },
         props => {
           expect(props.authors.length).toBe(data.authors.length + 1);
-
           const newAuthor: Author = props.authors.find(a => a.id === "tempID");
-
           expect(newAuthor).toMatchObject({ name: "Johnny", id: "tempID" });
         },
         props => {
           expect(props.authors.find(a => a.id === "tempID")).toBeUndefined();
-
           expect(props.authors.find(a => a.name === "Johnny")).toBeTruthy();
         }
       ]);
@@ -181,15 +176,13 @@ describe("@grafoo/preact", () => {
   });
 });
 
-function createMockRenderFn(done, renders) {
-  let stepNum = 0;
+function createMockRenderFn(done, assertionsFns) {
+  let currentRender = 0;
 
   return props => {
-    renders[stepNum](props);
+    assertionsFns[currentRender](props);
 
-    if (stepNum === renders.length - 1) done();
-
-    stepNum++;
+    if (currentRender++ === assertionsFns.length - 1) done();
 
     return null;
   };
