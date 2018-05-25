@@ -1,9 +1,8 @@
 import createClient from "@grafoo/core";
+import { Authors, CreateAuthor, mockQueryRequest } from "@grafoo/test-utils";
 import { ClientInstance, GrafooMutation } from "@grafoo/types";
-import { mockQueryRequest, Authors, CreateAuthor } from "@grafoo/test-utils";
-import { h } from "preact";
 import { render } from "preact-render-spy";
-import { GrafooProvider, GrafooConsumer } from "../src";
+import { GrafooConsumer, GrafooProvider } from "../src";
 
 interface Post {
   title: string;
@@ -184,6 +183,7 @@ describe("@grafoo/preact", () => {
 
 function createMockRenderFn(done, renders) {
   let stepNum = 0;
+
   return props => {
     renders[stepNum](props);
 

@@ -37,6 +37,7 @@
     "@types/node": "^10.0.6",
     "@types/sinon": "^4.3.3",
     "babel-eslint": "^8.2.3",
+    "babel-plugin-jsx-pragmatic": "^1.0.2",
     "casual": "^1.5.19",
     "eslint": "^4.19.0",
     "eslint-plugin-import": "^2.9.0",

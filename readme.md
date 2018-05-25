@@ -73,8 +73,8 @@ client.request({ query: HELLO.query, variables }).then(data => {
 
 ## Todo
 
-* [ ] Finish preact bindings
-* [ ] Preact bindings test suite
+* [x] Finish preact bindings
+* [x] Preact bindings test suite
 * [ ] React bindings
 * [ ] Svelte bindings
 * [x] Enhance babel plugin
