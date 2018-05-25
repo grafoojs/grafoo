@@ -80,11 +80,16 @@ const resolvers = {
     posts: () => db.get("posts").value()
   },
   Mutation: {
-    createAuthor: (_, args) =>
+    createAuthor: (_, args) => {
+      const newAuthor = { ...args, id: uuid() };
+
       db
         .get("authors")
-        .push({ ...args, id: uuid() })
-        .write(),
+        .push(newAuthor)
+        .write();
+
+      return newAuthor;
+    },
     updateAuthor: (_, { id, ...args }) =>
       db
         .get("authors")
@@ -106,11 +111,16 @@ const resolvers = {
 
       return author;
     },
-    createPost: (_, args) =>
+    createPost: (_, args) => {
+      const newPost = { ...args, id: uuid() };
+
       db
         .get("posts")
-        .push({ ...args, id: uuid() })
-        .write(),
+        .push(newPost)
+        .write();
+
+      return newPost;
+    },
     updatePost: (_, { id, ...args }) =>
       db
         .get("posts")

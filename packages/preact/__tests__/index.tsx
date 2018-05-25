@@ -25,7 +25,7 @@ interface CreateAuthor {
 }
 
 interface AllAuthors {
-  allAuthors: Author[];
+  authors: Author[];
 }
 
 describe("@grafoo/preact", () => {
@@ -119,18 +119,10 @@ describe("@grafoo/preact", () => {
     it("should execute render with the right data if a query is specified", async done => {
       const { data } = await mockQueryRequest(Authors);
 
-      let calls = 1;
-      const fn = props => {
-        if (calls++ === 2) {
-          expect(props).toMatchObject({ loading: false, loaded: true, ...data });
-
-          done();
-        } else {
-          expect(props).toMatchObject({ loading: true, loaded: false });
-        }
-
-        return null;
-      };
+      const fn = createMockRenderFn(done, [
+        props => expect(props).toMatchObject({ loading: true, loaded: false }),
+        props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
+      ]);
 
       render(
         <GrafooProvider client={client}>
@@ -142,27 +134,42 @@ describe("@grafoo/preact", () => {
     it("should handle mutations", async done => {
       const { data } = await mockQueryRequest(Authors);
 
-      let calls = 1;
-      const fn = props => {
-        if (calls++ === 2) {
+      const fn = createMockRenderFn(done, [
+        props => {
+          expect(props).toMatchObject({ loading: true, loaded: false });
+          expect(typeof props.createAuthor).toBe("function");
+        },
+        props => {
           expect(props).toMatchObject({ loading: false, loaded: true, ...data });
 
-          done();
-        } else {
-          expect(props).toMatchObject({ loading: true, loaded: false });
-        }
+          const variables = { name: "Johnny" };
 
-        return null;
-      };
+          mockQueryRequest({ query: CreateAuthor.query, variables }).then(() => {
+            props.createAuthor(variables);
+          });
+        },
+        props => {
+          expect(props.authors.length).toBe(data.authors.length + 1);
+
+          const newAuthor: Author = props.authors.find(a => a.id === "tempID");
+
+          expect(newAuthor).toMatchObject({ name: "Johnny", id: "tempID" });
+        },
+        props => {
+          expect(props.authors.find(a => a.id === "tempID")).toBeUndefined();
+
+          expect(props.authors.find(a => a.name === "Johnny")).toBeTruthy();
+        }
+      ]);
 
       const createAuthor: GrafooMutation<AllAuthors, CreateAuthor> = {
         query: CreateAuthor,
-        optimisticUpdate: ({ allAuthors }, variables) => ({
-          allAuthors: [...allAuthors, { ...(variables as Author), id: "tempID" }]
+        optimisticUpdate: ({ authors }, variables: Author) => ({
+          authors: [...authors, { ...variables, id: "tempID" }]
         }),
-        update: ({ mutate, allAuthors }, variables) =>
+        update: ({ mutate, authors }, variables) =>
           mutate(variables).then(({ createAuthor: author }) => ({
-            allAuthors: allAuthors.map(a => (a.id === "tempID" ? author : a))
+            authors: authors.map(a => (a.id === "tempID" ? author : a))
           }))
       };
 
@@ -174,3 +181,16 @@ describe("@grafoo/preact", () => {
     });
   });
 });
+
+function createMockRenderFn(done, renders) {
+  let stepNum = 0;
+  return props => {
+    renders[stepNum](props);
+
+    if (stepNum === renders.length - 1) done();
+
+    stepNum++;
+
+    return null;
+  };
+}

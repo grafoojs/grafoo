@@ -18,10 +18,9 @@ export type Mutate<T> = (variables?: Variables) => Promise<T>;
 
 export type GrafooRenderFn = <T>(renderProps: GrafooRenderProps) => T;
 
-export type UpdateFn<T, U> = (
-  props: { mutate: Mutate<U> } & GrafooRenderProps & T,
-  variables?: Variables
-) => Promise<T>;
+type UpdateProps<T, U> = { mutate: Mutate<U> } & GrafooRenderProps & T;
+
+export type UpdateFn<T, U> = (props: UpdateProps<T, U>, variables?: Variables) => Promise<T>;
 
 export type OptimisticUpdateFn<T> = (props: GrafooRenderProps & T, variables?: Variables) => T;
 
@@ -37,5 +36,4 @@ export interface GrafooConsumerProps<T = {}> {
   variables?: Variables;
   skip?: boolean;
   render: GrafooRenderFn;
-  [key: string]: any;
 }
