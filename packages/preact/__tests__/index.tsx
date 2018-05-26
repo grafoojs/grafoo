@@ -130,6 +130,28 @@ describe("@grafoo/preact", () => {
       );
     });
 
+    it("should not trigger a network request if the query provided is already cached", async done => {
+      const { data } = await mockQueryRequest(Authors);
+
+      client.write({ query: Authors }, data);
+
+      jest.resetAllMocks();
+
+      const spy = jest.spyOn(client, "request");
+
+      const fn = createMockRenderFn(done, [
+        props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
+      ]);
+
+      render(
+        <GrafooProvider client={client}>
+          <GrafooConsumer query={Authors} render={fn} />
+        </GrafooProvider>
+      );
+
+      expect(spy).not.toHaveBeenCalled();
+    });
+
     it("should handle mutations", async done => {
       const { data } = await mockQueryRequest(Authors);
 
@@ -180,7 +202,9 @@ function createMockRenderFn(done, assertionsFns) {
   let currentRender = 0;
 
   return props => {
-    assertionsFns[currentRender](props);
+    const assert = assertionsFns[currentRender];
+
+    if (assert) assertionsFns[currentRender](props);
 
     if (currentRender++ === assertionsFns.length - 1) done();
 

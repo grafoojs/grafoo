@@ -1,10 +1,9 @@
-import { ObjectsMap } from "./cache";
 import { GrafooObject } from "./tag";
 import { GraphQlError, Variables } from "./transport";
 
 export interface Bindings {
   getState(): GrafooRenderProps;
-  update(nextObjects: ObjectsMap): void;
+  unlisten(): void;
   executeQuery(): void;
 }
 
@@ -35,5 +34,5 @@ export interface GrafooConsumerProps<T = {}> {
   mutations?: { [name: string]: GrafooMutation<T> };
   variables?: Variables;
   skip?: boolean;
-  render: GrafooRenderFn;
+  render?: GrafooRenderFn;
 }

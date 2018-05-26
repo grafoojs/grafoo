@@ -3,7 +3,8 @@ import {
   ClientInstance,
   GrafooConsumerProps,
   GrafooRenderProps,
-  Variables
+  Variables,
+  ObjectsMap
 } from "@grafoo/types";
 import { assign, shallowEqual } from "@grafoo/util";
 
@@ -16,7 +17,28 @@ export default function createBindings(
 
   const cacheOperation = { query, variables };
 
-  const cachedState = query ? client.read(cacheOperation) : {};
+  let cachedState: { data?: {}; objects?: ObjectsMap } = {};
+
+  // tslint:disable-next-line: no-empty
+  let unlisten = () => {};
+
+  if (query) {
+    cachedState = client.read(cacheOperation);
+
+    unlisten = client.listen(nextObjects => {
+      if (lockUpdate) return (lockUpdate = false);
+
+      if (!Object.keys(objectsMap).length) return;
+
+      if (!shallowEqual(nextObjects, objectsMap)) {
+        const { data, objects } = client.read(cacheOperation);
+
+        objectsMap = objects;
+
+        updater(data);
+      }
+    });
+  }
 
   const { data } = cachedState;
 
@@ -50,21 +72,9 @@ export default function createBindings(
   }
 
   return {
+    unlisten,
     getState() {
       return renderProps;
-    },
-    update(nextObjects) {
-      if (lockUpdate) return (lockUpdate = false);
-
-      if (!Object.keys(objectsMap).length) return;
-
-      if (!shallowEqual(nextObjects, objectsMap)) {
-        const { data, objects } = client.read(cacheOperation);
-
-        objectsMap = objects;
-
-        updater(data);
-      }
     },
     executeQuery() {
       let queryString = query.query;

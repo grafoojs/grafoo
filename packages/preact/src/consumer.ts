@@ -8,7 +8,7 @@ export class GrafooConsumer extends Component<GrafooConsumerProps, GrafooRenderP
   constructor(props: GrafooConsumerProps, context: Context) {
     super(props, context);
 
-    const { update, executeQuery, getState } = (this.binds = createBindings(
+    const { executeQuery, getState, unlisten } = (this.binds = createBindings(
       props,
       context.client,
       nextRenderProps => this.setState(nextRenderProps)
@@ -16,20 +16,14 @@ export class GrafooConsumer extends Component<GrafooConsumerProps, GrafooRenderP
 
     this.state = getState();
 
-    let unlisten: () => void;
-
     this.componentDidMount = () => {
-      if (!props.query) return;
-
-      unlisten = context.client.listen(objects => update(objects));
-
-      if (props.skip) return;
+      if (props.skip || !props.query || this.state.loaded) return;
 
       executeQuery();
     };
 
     this.componentWillUnmount = () => {
-      if (unlisten) unlisten();
+      unlisten();
     };
   }
 

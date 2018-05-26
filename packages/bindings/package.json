@@ -9,11 +9,9 @@
   "typings": "dist/bindings/src/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
-  "peerDependencies": {
-    "preact": ">=8"
-  },
   "scripts": {
-    "prepare": "microbundle"
+    "prepare": "microbundle",
+    "test": "jest"
   },
   "jest": {
     "moduleFileExtensions": ["ts", "tsx", "js"],
