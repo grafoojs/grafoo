@@ -3,7 +3,7 @@ import { GraphQlError, Variables } from "./transport";
 
 export interface Bindings {
   getState(): GrafooRenderProps;
-  unlisten(): void;
+  unbind(): void;
   executeQuery(): void;
 }
 

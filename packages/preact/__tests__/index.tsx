@@ -130,7 +130,7 @@ describe("@grafoo/preact", () => {
       );
     });
 
-    it("should not trigger a network request if the query provided is already cached", async done => {
+    it("should not trigger a network request if the query is already cached", async done => {
       const { data } = await mockQueryRequest(Authors);
 
       client.write({ query: Authors }, data);
@@ -162,7 +162,7 @@ describe("@grafoo/preact", () => {
         },
         props => {
           expect(props).toMatchObject({ loading: false, loaded: true, ...data });
-          const variables = { name: "Johnny" };
+          const variables = { name: "Homer" };
           mockQueryRequest({ query: CreateAuthor.query, variables }).then(() => {
             props.createAuthor(variables);
           });
@@ -170,15 +170,17 @@ describe("@grafoo/preact", () => {
         props => {
           expect(props.authors.length).toBe(data.authors.length + 1);
           const newAuthor: Author = props.authors.find(a => a.id === "tempID");
-          expect(newAuthor).toMatchObject({ name: "Johnny", id: "tempID" });
+          expect(newAuthor).toMatchObject({ name: "Homer", id: "tempID" });
         },
         props => {
           expect(props.authors.find(a => a.id === "tempID")).toBeUndefined();
-          expect(props.authors.find(a => a.name === "Johnny")).toBeTruthy();
+          expect(props.authors.find(a => a.name === "Homer")).toBeTruthy();
         }
       ]);
 
-      const createAuthor: GrafooMutation<AllAuthors, CreateAuthor> = {
+      type CreateAuthorMutations = GrafooMutation<AllAuthors, CreateAuthor>;
+
+      const createAuthor: CreateAuthorMutations = {
         query: CreateAuthor,
         optimisticUpdate: ({ authors }, variables: Author) => ({
           authors: [...authors, { ...variables, id: "tempID" }]
@@ -193,6 +195,28 @@ describe("@grafoo/preact", () => {
         <GrafooProvider client={client}>
           <GrafooConsumer query={Authors} render={fn} mutations={{ createAuthor }} />
         </GrafooProvider>
+      );
+    });
+
+    it("should reflect updates that happen outside of the component", async done => {
+      const { data }: { data: { authors: Author[] } } = await mockQueryRequest(Authors);
+
+      client.write({ query: Authors }, data);
+
+      const fn = createMockRenderFn(done, [
+        props => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
+        props => expect(props.authors[0].name).toBe("Homer")
+      ]);
+
+      render(
+        <GrafooProvider client={client}>
+          <GrafooConsumer query={Authors} render={fn} />
+        </GrafooProvider>
+      );
+
+      client.write(
+        { query: Authors },
+        { authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a)) }
       );
     });
   });

@@ -20,37 +20,33 @@ export default function createBindings(
   let cachedState: { data?: {}; objects?: ObjectsMap } = {};
 
   // tslint:disable-next-line: no-empty
-  let unlisten = () => {};
+  let unbind = () => {};
+
+  let lockUpdate = false;
 
   if (query) {
     cachedState = client.read(cacheOperation);
 
-    unlisten = client.listen(nextObjects => {
+    unbind = client.listen(nextObjects => {
       if (lockUpdate) return (lockUpdate = false);
 
-      if (!Object.keys(objectsMap).length) return;
+      if (!cachedState.objects) return;
 
-      if (!shallowEqual(nextObjects, objectsMap)) {
+      if (!shallowEqual(nextObjects, cachedState.objects)) {
         const { data, objects } = client.read(cacheOperation);
 
-        objectsMap = objects;
+        cachedState.objects = objects;
 
         updater(data);
       }
     });
   }
 
-  const { data } = cachedState;
-
-  let objectsMap = cachedState.objects || {};
-
-  let lockUpdate = false;
-
-  const cacheLoaded = data && !skip;
+  const cacheLoaded = cachedState.data && !skip;
 
   const renderProps: GrafooRenderProps = { loading: !cacheLoaded, loaded: !!cacheLoaded };
 
-  if (cacheLoaded) assign(renderProps, data);
+  if (cacheLoaded) assign(renderProps, cachedState.data);
 
   if (mutations) {
     for (const key in mutations) {
@@ -72,7 +68,7 @@ export default function createBindings(
   }
 
   return {
-    unlisten,
+    unbind,
     getState() {
       return renderProps;
     },
@@ -94,7 +90,7 @@ export default function createBindings(
 
           const { data, objects } = client.read(cacheOperation);
 
-          objectsMap = objects;
+          cachedState.objects = objects;
 
           updater(assign({}, data, { loading: false, loaded: true }));
         })
