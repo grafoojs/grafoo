@@ -21,7 +21,7 @@ First you have to configure the plugin specifing a schema (required) and the fie
       "@grafoo/babel-plugin-tag",
       {
         "schema": "schema.graphql",
-        "fieldsToInsert": ["id"]
+        "idFields": ["id"]
       }
     ]
   ]

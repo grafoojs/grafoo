@@ -13,11 +13,20 @@ export default function transform({ types: t }) {
         }
 
         if (!opts.schema) {
-          throw new Error("@grafoo/babel-plugin-tag: no schema was specified.");
+          throw new Error("@grafoo/babel-plugin-tag: this `schema` option is required.");
         }
 
-        if (!opts.fieldsToInsert) {
-          opts.fieldsToInsert = [];
+        if (!opts.idFields) {
+          throw new Error("@grafoo/babel-plugin-tag: this `idFields` option is required.");
+        }
+
+        if (
+          !Array.isArray(opts.idFields) ||
+          opts.idFields.some(field => typeof field !== "string")
+        ) {
+          throw new Error(
+            "@grafoo/babel-plugin-tag: this `idFields` option is must be an array of strings."
+          );
         }
 
         programPath.traverse({
@@ -48,19 +57,9 @@ export default function transform({ types: t }) {
           CallExpression(path) {
             const { arguments: args, callee } = path.node;
 
-            const fieldsToInsert = [];
-
-            for (const field of opts.fieldsToInsert) {
-              if (typeof field !== "string") {
-                throw path.buildCodeFrameError(
-                  "@grafoo/babel-plugin-tag: `fieldsToInsert` fields must be of type string"
-                );
-              }
-
-              fieldsToInsert.push(t.stringLiteral(field));
-            }
-
-            const idFieldsArrayAst = t.arrayExpression(fieldsToInsert);
+            const idFieldsArrayAst = t.arrayExpression(
+              opts.idFields.map(field => t.stringLiteral(field))
+            );
 
             const clientObjectAst = t.objectProperty(t.identifier("idFields"), idFieldsArrayAst);
 

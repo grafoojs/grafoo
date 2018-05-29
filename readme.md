@@ -4,10 +4,10 @@
 
 ## Goals
 
-* to have a minimal footprint on bundlesize
-* to have a minimal runtime overhead
-* to provide view layers for all major frameworks
-* easebility of use
+- to have a minimal footprint on bundlesize
+- to have a minimal runtime overhead
+- to provide view layers for all major frameworks
+- easebility of use
 
 ## Why
 
@@ -34,7 +34,7 @@ npm i @grafoo/core && npm i -D @grafoo/babel-plugin-tag
       "@grafoo/babel-plugin-tag",
       {
         "schema": "schema.graphql",
-        "fieldsToInsert": ["id"]
+        "idFields": ["id"]
       }
     ]
   ]
@@ -73,13 +73,13 @@ client.request({ query: HELLO.query, variables }).then(data => {
 
 ## Todo
 
-* [x] Finish preact bindings
-* [x] Preact bindings test suite
-* [ ] React bindings
-* [ ] Svelte bindings
-* [x] Enhance babel plugin
-* [ ] Continuous integration
-* [ ] Publish
+- [x] Finish preact bindings
+- [x] Preact bindings test suite
+- [ ] React bindings
+- [ ] Svelte bindings
+- [x] Enhance babel plugin
+- [ ] Continuous integration
+- [ ] Publish
 
 ## LICENSE
 

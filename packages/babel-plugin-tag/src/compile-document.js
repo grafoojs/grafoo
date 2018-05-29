@@ -24,7 +24,7 @@ function getSchema(schemaPath) {
 
 export default function compileDocument(source, opts) {
   const schema = getSchema(opts.schema);
-  const document = sortDocument(insertFields(schema, parse(source), opts.fieldsToInsert));
+  const document = sortDocument(insertFields(schema, parse(source), opts.idFields));
   const oprs = document.definitions.filter(d => d.kind === "OperationDefinition");
   const frags = document.definitions.filter(d => d.kind === "FragmentDefinition");
 
