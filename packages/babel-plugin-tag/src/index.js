@@ -8,6 +8,10 @@ export default function transform({ types: t }) {
         const tagIdentifiers = [];
         const clientFactoryIdentifiers = [];
 
+        if (typeof opts.compress !== "boolean") {
+          opts.compress = process.env.NODE_ENV === "production";
+        }
+
         if (!opts.schema) {
           throw new Error("@grafoo/babel-plugin-tag: no schema was specified.");
         }
@@ -44,9 +48,19 @@ export default function transform({ types: t }) {
           CallExpression(path) {
             const { arguments: args, callee } = path.node;
 
-            const idFieldsArrayAst = t.arrayExpression(
-              opts.fieldsToInsert.map(field => t.stringLiteral(field))
-            );
+            const fieldsToInsert = [];
+
+            for (const field of opts.fieldsToInsert) {
+              if (typeof field !== "string") {
+                throw path.buildCodeFrameError(
+                  "@grafoo/babel-plugin-tag: `fieldsToInsert` fields must be of type string"
+                );
+              }
+
+              fieldsToInsert.push(t.stringLiteral(field));
+            }
+
+            const idFieldsArrayAst = t.arrayExpression(fieldsToInsert);
 
             const clientObjectAst = t.objectProperty(t.identifier("idFields"), idFieldsArrayAst);
 

@@ -5,9 +5,7 @@ import path from "path";
 import insertFields from "./insert-fields";
 import sortDocument from "./sort-query";
 
-const DEV = process.env.NODE_ENV !== "production";
 let schema;
-
 function getSchema(schemaPath) {
   if (schema) return schema;
 
@@ -34,7 +32,7 @@ export default function compileDocument(source, opts) {
     throw new Error("@grafoo/tag: only one operation definition is accepted per tag.");
   }
 
-  const grafooObj = { query: DEV ? print(oprs[0]) : compress(print(oprs[0])) };
+  const grafooObj = { query: opts.compress ? compress(print(oprs[0])) : print(oprs[0]) };
 
   if (oprs.length) {
     grafooObj.paths = oprs[0].selectionSet.selections.reduce(
