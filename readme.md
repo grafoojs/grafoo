@@ -51,7 +51,7 @@ const client = createClient("http://some-graphql-api.com", {
   fetchOptions: {
     /* can be a function as well */
   },
-  idFromProps: obj => obj.id
+  idFields: ["id"]
 });
 
 const HELLO = graphql`

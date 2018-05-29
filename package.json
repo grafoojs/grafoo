@@ -17,9 +17,12 @@
   },
   "workspaces": ["packages/*"],
   "lint-staged": {
-    "**/*.js": ["eslint", "git add"],
-    "**/*.{ts,tsx}": ["tslint", "git add"],
-    "**/*.{js,ts,tsx,json,graphql}": ["prettier --write", "git add"]
+    "ignore": ["examples/**/*"],
+    "linters": {
+      "**/*.js": ["eslint", "git add"],
+      "**/*.{ts,tsx}": ["tslint", "git add"],
+      "**/*.{js,ts,tsx,json,graphql,md}": ["prettier --write", "git add"]
+    }
   },
   "prettier": {
     "printWidth": 100
@@ -55,7 +58,6 @@
     "preact-render-spy": "^1.2.2",
     "prettier": "^1.12.1",
     "rimraf": "^2.6.2",
-    "sinon": "^4.5.0",
     "tslint": "^5.10.0",
     "tslint-config-prettier": "^1.12.0",
     "typescript": "^2.8.3",

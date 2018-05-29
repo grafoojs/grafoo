@@ -1,6 +1,6 @@
-import { assign, isNotNullObject } from "@grafoo/util";
+import { idFromProps, isNotNullObject } from "./util";
 
-export default function buildQueryTree(tree, objects, idFromProps) {
+export default function buildQueryTree(tree, objects, idFields) {
   // clone resulting query tree
   const queryTree = JSON.parse(JSON.stringify(tree));
   const stack = [];
@@ -16,12 +16,12 @@ export default function buildQueryTree(tree, objects, idFromProps) {
     // assigns nested branch
     const branch = currentTree[key];
     // get node identifier
-    const identifier = idFromProps(branch);
+    const identifier = idFromProps(branch, idFields);
     // possible node matching object
     const branchObject = objects[identifier];
 
     // iterates over the child branch properties
-    for (const i in assign({}, branch, branchObject)) {
+    for (const i in Object.assign({}, branch, branchObject)) {
       // assigns to the child branch all properties retrieved
       // from the corresponding object retrieved from the objects cache
       if (identifier && branchObject) branch[i] = branchObject[i] || branch[i];
