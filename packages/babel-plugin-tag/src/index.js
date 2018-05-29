@@ -40,6 +40,7 @@ export default function transform({ types: t }) {
               clientFactoryIdentifiers.push(defaultSpecifier.local.name);
             }
           },
+
           CallExpression(path) {
             const { arguments: args, callee } = path.node;
 
@@ -72,6 +73,7 @@ export default function transform({ types: t }) {
               }
             }
           },
+
           TaggedTemplateExpression(path) {
             if (tagIdentifiers.some(name => t.isIdentifier(path.node.tag, { name }))) {
               try {
