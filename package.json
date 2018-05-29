@@ -15,13 +15,26 @@
     "prepush": "yarn test",
     "precommit": "lint-staged"
   },
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "lint-staged": {
-    "ignore": ["examples/**/*"],
+    "ignore": [
+      "examples/**/*"
+    ],
     "linters": {
-      "**/*.js": ["eslint", "git add"],
-      "**/*.{ts,tsx}": ["tslint", "git add"],
-      "**/*.{js,ts,tsx,json,graphql,md}": ["prettier --write", "git add"]
+      "**/*.js": [
+        "eslint",
+        "git add"
+      ],
+      "**/*.{ts,tsx}": [
+        "tslint",
+        "git add"
+      ],
+      "**/*.{js,ts,tsx,json,graphql,md}": [
+        "prettier --write",
+        "git add"
+      ]
     }
   },
   "prettier": {
@@ -38,7 +51,6 @@
     "@types/jest": "^22.2.3",
     "@types/lowdb": "^1.0.1",
     "@types/node": "^10.0.6",
-    "@types/sinon": "^4.3.3",
     "babel-eslint": "^8.2.3",
     "babel-plugin-jsx-pragmatic": "^1.0.2",
     "casual": "^1.5.19",

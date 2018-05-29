@@ -10,7 +10,7 @@ function insertField(selections, value) {
   selections.push({ kind: "Field", name: { kind: "Name", value } });
 }
 
-export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
+export default function insertFields(schemaStr, documentAst, idFields) {
   const typeInfo = new TypeInfo(buildASTSchema(parse(schemaStr)));
 
   let isOperationDefinition = false;
@@ -41,7 +41,7 @@ export default function insertFields(schemaStr, documentAst, fieldsToInsert) {
         []
       );
 
-      for (const field of fieldsToInsert) {
+      for (const field of idFields) {
         const fieldIsNotDeclared = selections.some(_ => _.name.value !== field);
         const fieldIsTypename = field === "__typename";
         const typeHasField = typeFields.some(_ => _ === field);

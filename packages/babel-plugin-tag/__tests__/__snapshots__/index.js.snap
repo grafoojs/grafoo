@@ -1,7 +1,99 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should replace a tagged template literal with the compiled grafoo object 1`] = `
-"const query = {
+exports[`@grafoo/babel-plugin-tag should compress the query string if the option compress is specified: should compress the query string if the option compress is specified 1`] = `
+"
+import gql from \\"@grafoo/tag\\";
+const query = gql\`
+  query($start: Int!, $offset: Int!, $id: ID!) {
+    posts(start: $start, offset: $offset) {
+      title
+      body
+      createdAt
+      tags { name }
+      authors { name username }
+    }
+    user(id: $id) { name username }
+  }
+\`;
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+const query = {
+  \\"query\\": \\"query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}\\",
+  \\"paths\\": {
+    \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {
+      \\"name\\": \\"posts\\",
+      \\"args\\": [\\"offset\\", \\"start\\"]
+    },
+    \\"user(id:$id){id name username}\\": {
+      \\"name\\": \\"user\\",
+      \\"args\\": [\\"id\\"]
+    }
+  }
+};
+"
+`;
+
+exports[`@grafoo/babel-plugin-tag should include \`idFields\` in the client instantiation even if options are provided: should include \`idFields\` in the client instantiation even if options are provided 1`] = `
+"
+import createClient from \\"@grafoo/core\\";
+const query = createClient(\\"http://gql.api\\", {
+  headers: () => ({ authorization: \\"some-token\\" })
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import createClient from \\"@grafoo/core\\";
+const query = createClient(\\"http://gql.api\\", {
+  headers: () => ({ authorization: \\"some-token\\" }),
+  idFields: [\\"id\\"]
+});
+"
+`;
+
+exports[`@grafoo/babel-plugin-tag should include \`idFields\` in the client instantiation if options are not provided: should include \`idFields\` in the client instantiation if options are not provided 1`] = `
+"
+import createClient from \\"@grafoo/core\\";
+const query = createClient(\\"http://gql.api\\");
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import createClient from \\"@grafoo/core\\";
+const query = createClient(\\"http://gql.api\\", {
+  idFields: [\\"id\\"]
+});
+"
+`;
+
+exports[`@grafoo/babel-plugin-tag should remove the imported path: should remove the imported path 1`] = `
+"
+import gql from \\"@grafoo/tag\\";
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+
+"
+`;
+
+exports[`@grafoo/babel-plugin-tag should replace a tagged template literal with the compiled grafoo object: should replace a tagged template literal with the compiled grafoo object 1`] = `
+"
+import gql from \\"@grafoo/tag\\";
+const query = gql\`
+  query($start: Int!, $offset: Int!, $id: ID!) {
+    posts(start: $start, offset: $offset) {
+      title
+      body
+      createdAt
+      tags { name }
+      authors { name username }
+    }
+    user(id: $id) { name username }
+  }
+\`;
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+const query = {
   \\"query\\": \\"query ($id: ID!, $offset: Int!, $start: Int!) {\\\\n  posts(offset: $offset, start: $start) {\\\\n    authors {\\\\n      id\\\\n      name\\\\n      username\\\\n    }\\\\n    body\\\\n    createdAt\\\\n    id\\\\n    tags {\\\\n      id\\\\n      name\\\\n    }\\\\n    title\\\\n  }\\\\n  user(id: $id) {\\\\n    id\\\\n    name\\\\n    username\\\\n  }\\\\n}\\",
   \\"paths\\": {
     \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {
@@ -13,5 +105,6 @@ exports[`should replace a tagged template literal with the compiled grafoo objec
       \\"args\\": [\\"id\\"]
     }
   }
-};"
+};
+"
 `;

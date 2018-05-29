@@ -7,25 +7,25 @@ const schema = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8");
 
 const cases = [
   {
-    title: "should insert a field",
+    should: "should insert a field",
     input: "{ author { name } }",
     expectedOutput: "{ author { name id } }",
-    fieldsToInsert: ["id"]
+    idFields: ["id"]
   },
   {
-    title: "should insert more then a field if specified",
+    should: "should insert more then a field if specified",
     input: "{ author { name } }",
     expectedOutput: "{ author { name username email id } }",
-    fieldsToInsert: ["username", "email", "id"]
+    idFields: ["username", "email", "id"]
   },
   {
-    title: "should insert `__typename` if specified",
+    should: "should insert `__typename` if specified",
     input: "{ author { name } }",
     expectedOutput: "{ author { name __typename } }",
-    fieldsToInsert: ["__typename"]
+    idFields: ["__typename"]
   },
   {
-    title: "should insert props in queries with fragments",
+    should: "should insert props in queries with fragments",
     input: `
       {
         user {
@@ -56,10 +56,10 @@ const cases = [
         }
       }
     `,
-    fieldsToInsert: ["id"]
+    idFields: ["id"]
   },
   {
-    title: "should insert props in queries with inline fragments",
+    should: "should insert props in queries with inline fragments",
     input: `
       {
         user {
@@ -88,10 +88,10 @@ const cases = [
         }
       }
     `,
-    fieldsToInsert: ["id", "__typename"]
+    idFields: ["id", "__typename"]
   },
   {
-    title: "should not insert `__typename` inside fragments",
+    should: "should not insert `__typename` inside fragments",
     input: `
       {
         user {
@@ -122,10 +122,10 @@ const cases = [
         }
       }
     `,
-    fieldsToInsert: ["__typename"]
+    idFields: ["__typename"]
   },
   {
-    title: "should not insert `__typename` inside inline fragments",
+    should: "should not insert `__typename` inside inline fragments",
     input: `
       {
         user {
@@ -152,10 +152,10 @@ const cases = [
         }
       }
     `,
-    fieldsToInsert: ["__typename"]
+    idFields: ["__typename"]
   },
   {
-    title: "should insert field present on a fragment",
+    should: "should insert field present on a fragment",
     input: `
       {
         user {
@@ -185,10 +185,10 @@ const cases = [
         bio
       }
     `,
-    fieldsToInsert: ["bio"]
+    idFields: ["bio"]
   },
   {
-    title: "should insert field present in an inline fragment",
+    should: "should insert field present in an inline fragment",
     input: `
       {
         user {
@@ -214,10 +214,10 @@ const cases = [
         }
       }
     `,
-    fieldsToInsert: ["bio"]
+    idFields: ["bio"]
   },
   {
-    title: "should not insert `__typename` in an operation definition",
+    should: "should not insert `__typename` in an operation definition",
     input: `
       mutation createPost($title: Int!, $body: Int!, $id: ID! $authors: [ID!]!) {
         createPost(title: $title, body: $body, authors: $authors) {
@@ -242,14 +242,16 @@ const cases = [
         }
       }
     `,
-    fieldsToInsert: ["id", "__typename"]
+    idFields: ["id", "__typename"]
   }
 ];
 
-for (const { title, input, expectedOutput, fieldsToInsert } of cases) {
-  test(title, () => {
-    expect(print(insertFields(schema, parse(input), fieldsToInsert))).toBe(
-      print(parse(expectedOutput))
-    );
-  });
-}
+describe("insert-fields", () => {
+  for (const { should, input, expectedOutput, idFields } of cases) {
+    it(should, () => {
+      expect(print(insertFields(schema, parse(input), idFields))).toBe(
+        print(parse(expectedOutput))
+      );
+    });
+  }
+});

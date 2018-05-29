@@ -11,13 +11,20 @@
   },
   "dependencies": {
     "babel-literal-to-ast": "^2.0.0",
-    "babel-types": "^6.26.0",
+    "babel-plugin-tester": "^5.0.0",
     "graphql": "^0.13.1",
     "graphql-query-compress": "^1.0.0"
   },
   "jest": {
-    "moduleFileExtensions": ["ts", "tsx", "js"],
-    "testMatch": ["**/__tests__/*.+(ts|tsx|js)"],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ],
+    "testMatch": [
+      "**/__tests__/*.+(ts|tsx|js)"
+    ],
     "transform": {
       "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
     }
