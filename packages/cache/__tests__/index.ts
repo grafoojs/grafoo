@@ -152,7 +152,7 @@ describe("@grafoo/core", () => {
     });
   });
 
-  it("should accept `idFromProps` function in options", async () => {
+  it("should accept `idFields` array in options", async () => {
     await mock(Authors, async (_, data, request) => {
       const cache = createCache({ idFields: ["__typename", "id"] });
 

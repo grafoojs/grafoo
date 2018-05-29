@@ -21,7 +21,7 @@
     "linters": {
       "**/*.js": ["eslint", "git add"],
       "**/*.{ts,tsx}": ["tslint", "git add"],
-      "**/*.{js,ts,tsx,json,graphql}": ["prettier --write", "git add"]
+      "**/*.{js,ts,tsx,json,graphql,md}": ["prettier --write", "git add"]
     }
   },
   "prettier": {
