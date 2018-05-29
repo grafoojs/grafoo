@@ -79,6 +79,7 @@ client.request({ query: HELLO.query, variables }).then(data => {
 * [ ] Svelte bindings
 * [x] Enhance babel plugin
 * [ ] Continuous integration
+* [ ] Publish
 
 ## LICENSE
 
