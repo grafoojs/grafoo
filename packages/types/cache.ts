@@ -16,11 +16,9 @@ export interface InitialState {
   pathsMap: PathsMap;
 }
 
-export type IdFromPropsFn = (data: { [key: string]: any }) => string;
-
 export interface CacheOptions {
   initialState?: InitialState;
-  idFromProps?: IdFromPropsFn;
+  idFields?: Array<string>;
 }
 
 export interface CacheRequest {

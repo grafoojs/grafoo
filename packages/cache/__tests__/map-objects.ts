@@ -41,44 +41,47 @@ const tree = {
   ]
 };
 
-const idFromProps = _ => _.id;
+const idFields = ["id"];
 
-test("should return the correct map of objects", () => {
-  const objects = mapObjects(tree, idFromProps);
+describe("map-objects", () => {
+  it("should return the correct map of objects", () => {
+    const objects = mapObjects(tree, idFields);
 
-  const expected = {
-    "1": { title: "foo", id: "1", __typename: "Post", content: "a post content" },
-    "2": { name: "miguel", id: "2", __typename: "Author", lastName: "albernaz" },
-    "3": { title: "bar", __typename: "Post", id: "3" },
-    "4": { name: "vicente", id: "4", __typename: "Author" },
-    "5": { title: "baz", __typename: "Post", id: "5" },
-    "6": { name: "laura", id: "6", __typename: "Author" }
-  };
+    const expected = {
+      "1": { title: "foo", id: "1", __typename: "Post", content: "a post content" },
+      "2": { name: "miguel", id: "2", __typename: "Author", lastName: "albernaz" },
+      "3": { title: "bar", __typename: "Post", id: "3" },
+      "4": { name: "vicente", id: "4", __typename: "Author" },
+      "5": { title: "baz", __typename: "Post", id: "5" },
+      "6": { name: "laura", id: "6", __typename: "Author" }
+    };
 
-  expect(objects).toEqual(expected);
-});
+    expect(objects).toEqual(expected);
+  });
 
-test("should accept null values", () => {
-  const result = {
-    data: {
-      me: {
-        id: "5a3ab7e93f662a108d978a6e",
-        username: "malbernaz",
-        email: "albernazmiguel@gmail.com",
-        name: null,
-        bio: null
+  it("should accept null values", () => {
+    const result = {
+      data: {
+        me: {
+          id: "5a3ab7e93f662a108d978a6e",
+          username: "malbernaz",
+          email: "albernazmiguel@gmail.com",
+          name: null,
+          bio: null
+        }
       }
-    }
-  };
+    };
 
-  expect(() => mapObjects(result, idFromProps)).not.toThrow();
-});
+    expect(() => mapObjects(result, idFields)).not.toThrow();
+  });
 
-test("should build an object identifier based on the `idFromProps` function", () => {
-  const idFromProps = obj => obj.__typename + ":" + obj.id;
-  const objects = mapObjects(tree, idFromProps);
+  it("should build an object identifier based on the `idFields` cache option", () => {
+    const idFields = ["__typename", "id"];
 
-  const expected = ["Post:1", "Author:2", "Post:3", "Author:4", "Post:5", "Author:6"];
+    const objects = mapObjects(tree, idFields);
 
-  expect(Object.keys(objects).every(obj => expected.some(exp => exp === obj))).toBe(true);
+    const expected = ["Post1", "Author2", "Post3", "Author4", "Post5", "Author6"];
+
+    expect(Object.keys(objects).every(obj => expected.some(exp => exp === obj))).toBe(true);
+  });
 });

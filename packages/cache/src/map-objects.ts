@@ -1,6 +1,6 @@
-import { assign, isNotNullObject } from "@grafoo/util";
+import { isNotNullObject, idFromProps } from "./util";
 
-export default function mapObjects(tree, idFromProps) {
+export default function mapObjects(tree, idFields) {
   // map in which objects will be stored
   // having their extracted ids from props as key
   const map = {};
@@ -19,15 +19,16 @@ export default function mapObjects(tree, idFromProps) {
     // iterate over branch properties
     // if the property is a branch it will be added to the stack
     // else if it is not a branch it will be added to filtered branch
-    for (const i in branch)
-      (isNotNullObject(branch[i]) && stack.push(branch[i])) || (filteredBranch[i] = branch[i]);
-
-    // get node identifier
-    const identifier = String(idFromProps(branch));
-    // if branch is a node assign the value of filtered branch to it
-    if (identifier && identifier.indexOf("undefined") < 0) {
-      map[identifier] = assign({}, map[identifier], filteredBranch);
+    for (const i in branch) {
+      const branchVal = branch[i];
+      (isNotNullObject(branchVal) && stack.push(branchVal)) || (filteredBranch[i] = branchVal);
     }
+
+    // node identifier
+    const identifier = idFromProps(branch, idFields);
+
+    // if branch is a node, assign the value of filtered branch to it
+    if (identifier) map[identifier] = Object.assign({}, map[identifier], filteredBranch);
   }
 
   return map;

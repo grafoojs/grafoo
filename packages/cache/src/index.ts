@@ -1,12 +1,11 @@
 import { CacheInstance, CacheOptions, ObjectsMap, Variables } from "@grafoo/types";
-import { assign } from "@grafoo/util";
 import buildQueryTree from "./build-query-tree";
 import mapObjects from "./map-objects";
 
 export default function createCache(options?: CacheOptions): CacheInstance {
   options = options || {};
 
-  const { initialState = { objectsMap: {}, pathsMap: {} }, idFromProps = _ => _.id } = options;
+  const { initialState = { objectsMap: {}, pathsMap: {} }, idFields = ["id"] } = options;
 
   const { objectsMap = {}, pathsMap = {} } = initialState;
 
@@ -30,9 +29,9 @@ export default function createCache(options?: CacheOptions): CacheInstance {
       for (const path in paths) {
         const { name, args } = paths[path];
         const pathData = { [name]: data[name] };
-        const pathObjects = mapObjects(pathData, idFromProps);
+        const pathObjects = mapObjects(pathData, idFields);
 
-        assign(objects, pathObjects);
+        Object.assign(objects, pathObjects);
 
         pathsMap[getPathId(path, args, variables)] = {
           data: pathData,
@@ -40,7 +39,8 @@ export default function createCache(options?: CacheOptions): CacheInstance {
         };
       }
 
-      for (const i in objects) objectsMap[i] = objects[i] = assign({}, objectsMap[i], objects[i]);
+      for (const i in objects)
+        objectsMap[i] = objects[i] = Object.assign({}, objectsMap[i], objects[i]);
 
       for (const listener of listeners) listener(objects);
     },
@@ -61,7 +61,7 @@ export default function createCache(options?: CacheOptions): CacheInstance {
 
       if (!Object.keys(data).length) return {};
 
-      return { data: buildQueryTree(data, objectsMap, idFromProps), objects };
+      return { data: buildQueryTree(data, objectsMap, idFields), objects };
     },
     flush() {
       return { objectsMap, pathsMap };
