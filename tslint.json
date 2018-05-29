@@ -14,7 +14,8 @@
     "no-shadowed-variable": false,
     "member-access": false,
     "member-ordering": false,
-    "interface-name": false
+    "interface-name": false,
+    "prefer-object-spread": false
   },
   "linterOptions": {
     "exclude": ["**/dist"]
