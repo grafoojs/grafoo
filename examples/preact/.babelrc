@@ -4,6 +4,7 @@
     ["@babel/preset-react", { "pragma": "h" }]
   ],
   "plugins": [
+    "@babel/plugin-proposal-class-properties",
     ["@grafoo/babel-plugin-tag", { "schema": "schema.graphql", "fieldsToInsert": ["id"] }]
   ],
   "env": {

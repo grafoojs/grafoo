@@ -1,15 +1,4 @@
-export interface GrafooObject {
-  frags?: {
-    [key: string]: string;
-  };
-  paths?: {
-    [key: string]: {
-      name: string;
-      args: string[];
-    };
-  };
-  query: string;
-}
+import { GrafooObject } from "@grafoo/types";
 
 export default function graphql(strs: string[]): GrafooObject {
   throw new Error(

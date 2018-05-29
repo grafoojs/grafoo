@@ -3,7 +3,7 @@ const { readdirSync } = require("fs");
 const { join } = require("path");
 const exec = promisify(require("child_process").exec);
 
-const runSync = ["util", "transport", "cache", "core", "babel-plugin-tag"];
+const runSync = ["util", "transport", "cache", "babel-plugin-tag", "bindings"];
 const runAsync = readdirSync(join(__dirname, "..", "packages")).filter(
   a => !runSync.some(s => s === a)
 );

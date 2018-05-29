@@ -7,7 +7,7 @@ const visitor = {
     const tagNames = [];
 
     if (!opts.schema) {
-      throw programPath.buildCodeFrameError("@grafoo/babel-plugin-tag: no schema was specified.");
+      throw new Error("@grafoo/babel-plugin-tag: no schema was specified.");
     }
 
     if (!opts.fieldsToInsert) {
@@ -41,7 +41,7 @@ const visitor = {
               );
             }
 
-            const source = quasi.node.quasis.reduce((src, quasi) => src + quasi.value.raw, "");
+            const source = quasi.node.quasis.reduce((src, q) => src + q.value.raw, "");
 
             path.replaceWith(parseLiteral(compileDocument(source, opts)));
           } catch (error) {

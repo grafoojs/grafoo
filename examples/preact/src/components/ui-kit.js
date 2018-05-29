@@ -61,12 +61,12 @@ export const Form = styled.form`
   flex-direction: column;
 `;
 
-export const Ul = styled.ul`
+export const List = styled.ul`
   margin: 0;
   padding: 0;
 `;
 
-export const Li = styled.li`
+export const Item = styled.li`
   margin: 0;
   padding: 1em;
 

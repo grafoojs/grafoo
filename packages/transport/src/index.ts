@@ -1,10 +1,11 @@
+import {
+  GraphQLRequestContext,
+  GraphQlError,
+  GraphQlPayload,
+  Headers,
+  TransportRequest
+} from "@grafoo/types";
 import { assign } from "@grafoo/util";
-
-export interface GraphQlError {
-  message: string;
-  locations: { line: number; column: number }[];
-  path: string[];
-}
 
 class TransportError extends Error {
   errors: GraphQlError[];
@@ -14,24 +15,6 @@ class TransportError extends Error {
     this.errors = errors;
   }
 }
-
-export interface GraphQlPayload<T> {
-  data: T;
-  errors?: GraphQlError[];
-}
-
-export interface Variables {
-  [key: string]: any;
-}
-
-export interface GraphQLRequestContext {
-  query: string;
-  variables?: Variables;
-}
-
-export type TransportRequest = <T>(request: GraphQLRequestContext) => Promise<T>;
-
-export type Headers = (() => {}) | {};
 
 export default function createTransport(uri: string, headers?: Headers): TransportRequest {
   headers = headers || {};

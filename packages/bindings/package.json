@@ -1,17 +1,14 @@
 {
-  "name": "@grafoo/preact",
+  "name": "@grafoo/bindings",
   "version": "0.0.1",
-  "description": "the grafoo client preact-bindings",
+  "description": "grafoo client internal helper for building framework bindings",
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
   "module": "dist/index.m.js",
   "source": "src/index.ts",
-  "typings": "dist/preact/src/index.d.ts",
+  "typings": "dist/bindings/src/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
-  "peerDependencies": {
-    "preact": ">=8"
-  },
   "scripts": {
     "prepare": "microbundle",
     "test": "jest"

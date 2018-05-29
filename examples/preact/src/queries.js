@@ -1,8 +1,8 @@
 import gql from "@grafoo/tag";
 
 export const allPosts = gql`
-  query getPosts {
-    allPosts(orderBy: createdAt_DESC) {
+  query getPosts($orderBy: PostOrderBy) {
+    allPosts(orderBy: $orderBy) {
       title
       content
       createdAt

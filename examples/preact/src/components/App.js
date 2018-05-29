@@ -1,16 +1,12 @@
 import { h } from "preact";
-import { Provider } from "@grafoo/preact";
+import { GrafooProvider } from "@grafoo/preact";
 
-import PostsList from "./PostsList";
-import PostForm from "./PostForm";
+import PostsContainer from "./PostsContainer";
 
 export default function App({ client }) {
   return (
-    <Provider client={client}>
-      <div>
-        <PostForm />
-        <PostsList />
-      </div>
-    </Provider>
+    <GrafooProvider client={client}>
+      <PostsContainer />
+    </GrafooProvider>
   );
 }
