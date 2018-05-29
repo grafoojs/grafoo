@@ -34,5 +34,5 @@ export interface GrafooConsumerProps<T = {}> {
   mutations?: { [name: string]: GrafooMutation<T> };
   variables?: Variables;
   skip?: boolean;
-  render?: GrafooRenderFn;
+  children?: [GrafooRenderFn];
 }

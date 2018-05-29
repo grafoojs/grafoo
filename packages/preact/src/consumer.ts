@@ -9,8 +9,8 @@ export class GrafooConsumer extends Component<GrafooConsumerProps, GrafooRenderP
     super(props, context);
 
     const { executeQuery, getState, unbind } = (this.binds = createBindings(
-      props,
       context.client,
+      props,
       nextRenderProps => this.setState(nextRenderProps)
     ));
 
@@ -28,6 +28,6 @@ export class GrafooConsumer extends Component<GrafooConsumerProps, GrafooRenderP
   }
 
   render(props: GrafooConsumerProps, state: GrafooRenderProps) {
-    return props.render<VNode>(state);
+    return props.children[0]<VNode>(state);
   }
 }

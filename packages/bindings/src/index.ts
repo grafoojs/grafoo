@@ -9,8 +9,8 @@ import {
 import { assign, shallowEqual } from "@grafoo/util";
 
 export default function createBindings(
-  props: GrafooConsumerProps,
   client: ClientInstance,
+  props: GrafooConsumerProps,
   updater: (renderProps: GrafooRenderProps) => void
 ): Bindings {
   const { query, variables, mutations, skip } = props;
@@ -30,9 +30,7 @@ export default function createBindings(
     unbind = client.listen(nextObjects => {
       if (lockUpdate) return (lockUpdate = false);
 
-      if (!cachedState.objects) return;
-
-      if (!shallowEqual(nextObjects, cachedState.objects)) {
+      if (!shallowEqual(nextObjects, cachedState.objects || {})) {
         const { data, objects } = client.read(cacheOperation);
 
         cachedState.objects = objects;
@@ -81,7 +79,7 @@ export default function createBindings(
         }
       }
 
-      client
+      return client
         .request({ query: queryString, variables })
         .then(response => {
           lockUpdate = true;

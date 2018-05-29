@@ -3,8 +3,23 @@ import createClient from "@grafoo/core";
 import { ClientInstance, Bindings } from "@grafoo/types";
 import { mockQueryRequest, Authors } from "@grafoo/test-utils";
 
-async function sleep(ms?: number) {
-  return new Promise(r => setTimeout(r, ms));
+interface Post {
+  title: string;
+  content: string;
+  id: string;
+  __typename: string;
+  author: Author;
+}
+
+interface Author {
+  name: string;
+  id: string;
+  __typename: string;
+  posts?: Array<Post>;
+}
+
+interface Authors {
+  authors: Author[];
 }
 
 describe("@grafoo/bindings", () => {
@@ -16,7 +31,7 @@ describe("@grafoo/bindings", () => {
   });
 
   it("should be evocable given the minimal props", () => {
-    expect(() => (bindings = createBindings({}, client, () => void 0))).not.toThrow();
+    expect(() => (bindings = createBindings(client, {}, () => void 0))).not.toThrow();
 
     Object.keys(bindings).forEach(fn => {
       expect(typeof bindings[fn]).toBe("function");
@@ -24,7 +39,7 @@ describe("@grafoo/bindings", () => {
   });
 
   it("should provide the right initial state", () => {
-    bindings = createBindings({}, client, () => void 0);
+    bindings = createBindings(client, {}, () => void 0);
 
     expect(bindings.getState()).toEqual({ loading: true, loaded: false });
   });
@@ -34,11 +49,9 @@ describe("@grafoo/bindings", () => {
 
     const renderFn = jest.fn();
 
-    bindings = createBindings({ query: Authors }, client, renderFn);
+    bindings = createBindings(client, { query: Authors }, renderFn);
 
-    bindings.executeQuery();
-
-    await sleep();
+    await bindings.executeQuery();
 
     expect(renderFn).toHaveBeenCalledWith({ ...data, loading: false, loaded: true });
   });
@@ -48,8 +61,53 @@ describe("@grafoo/bindings", () => {
 
     client.write({ query: Authors }, data);
 
-    bindings = createBindings({ query: Authors }, client, () => void 0);
+    bindings = createBindings(client, { query: Authors }, () => void 0);
 
     expect(bindings.getState()).toMatchObject({ loaded: true, loading: false, ...data });
+  });
+
+  it("should trigger updater function if the cache has been updated", async () => {
+    const { data } = await mockQueryRequest(Authors);
+
+    const renderFn = jest.fn();
+
+    bindings = createBindings(client, { query: Authors }, renderFn);
+
+    client.write({ query: Authors }, data);
+
+    expect(renderFn).toHaveBeenCalledWith(data);
+  });
+
+  it("should provide the state for a cached query", async () => {
+    const { data } = await mockQueryRequest(Authors);
+
+    client.write({ query: Authors }, data);
+
+    const renderFn = jest.fn();
+
+    bindings = createBindings(client, { query: Authors }, renderFn);
+
+    expect(bindings.getState()).toMatchObject({ loaded: true, loading: false, ...data });
+  });
+
+  it("should stop updating if unbind has been called", async () => {
+    const { data } = await mockQueryRequest(Authors);
+
+    const renderFn = jest.fn();
+
+    bindings = createBindings(client, { query: Authors }, renderFn);
+
+    await bindings.executeQuery();
+
+    bindings.unbind();
+
+    client.write(
+      { query: Authors },
+      { authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a)) }
+    );
+
+    expect(renderFn).toHaveBeenCalledTimes(1);
+    expect(client.read<Authors>({ query: Authors }).data.authors[0].name).toBe("Homer");
+    expect(renderFn).toHaveBeenCalledWith({ ...data, loading: false, loaded: true });
   });
 });

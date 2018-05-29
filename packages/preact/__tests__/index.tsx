@@ -59,7 +59,7 @@ describe("@grafoo/preact", () => {
       expect(() =>
         render(
           <GrafooProvider client={client}>
-            <GrafooConsumer render={() => null} />
+            <GrafooConsumer>{() => null}</GrafooConsumer>
           </GrafooProvider>
         )
       ).not.toThrow();
@@ -72,7 +72,9 @@ describe("@grafoo/preact", () => {
 
       render(
         <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors} skip render={() => null} />
+          <GrafooConsumer query={Authors} skip>
+            {() => null}
+          </GrafooConsumer>
         </GrafooProvider>
       );
 
@@ -86,7 +88,9 @@ describe("@grafoo/preact", () => {
 
       render(
         <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors} skip render={() => null} />
+          <GrafooConsumer query={Authors} skip>
+            {() => null}
+          </GrafooConsumer>
         </GrafooProvider>
       );
 
@@ -96,7 +100,9 @@ describe("@grafoo/preact", () => {
     it("should not crash on unmount", () => {
       const ctx = render(
         <GrafooProvider client={client}>
-          <GrafooConsumer skip render={() => null} />
+          <GrafooConsumer query={Authors} skip>
+            {() => null}
+          </GrafooConsumer>
         </GrafooProvider>
       );
 
@@ -108,7 +114,9 @@ describe("@grafoo/preact", () => {
 
       render(
         <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors} skip render={mockRender} />
+          <GrafooConsumer query={Authors} skip>
+            {mockRender}
+          </GrafooConsumer>
         </GrafooProvider>
       );
 
@@ -118,14 +126,14 @@ describe("@grafoo/preact", () => {
     it("should execute render with the right data if a query is specified", async done => {
       const { data } = await mockQueryRequest(Authors);
 
-      const fn = createMockRenderFn(done, [
+      const mockRender = createMockRenderFn(done, [
         props => expect(props).toMatchObject({ loading: true, loaded: false }),
         props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
       ]);
 
       render(
         <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors} render={fn} />
+          <GrafooConsumer query={Authors}>{mockRender}</GrafooConsumer>
         </GrafooProvider>
       );
     });
@@ -139,13 +147,13 @@ describe("@grafoo/preact", () => {
 
       const spy = jest.spyOn(client, "request");
 
-      const fn = createMockRenderFn(done, [
+      const mockRender = createMockRenderFn(done, [
         props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
       ]);
 
       render(
         <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors} render={fn} />
+          <GrafooConsumer query={Authors}>{mockRender}</GrafooConsumer>
         </GrafooProvider>
       );
 
@@ -155,7 +163,7 @@ describe("@grafoo/preact", () => {
     it("should handle mutations", async done => {
       const { data } = await mockQueryRequest(Authors);
 
-      const fn = createMockRenderFn(done, [
+      const mockRender = createMockRenderFn(done, [
         props => {
           expect(props).toMatchObject({ loading: true, loaded: false });
           expect(typeof props.createAuthor).toBe("function");
@@ -193,7 +201,9 @@ describe("@grafoo/preact", () => {
 
       render(
         <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors} render={fn} mutations={{ createAuthor }} />
+          <GrafooConsumer query={Authors} mutations={{ createAuthor }}>
+            {mockRender}
+          </GrafooConsumer>
         </GrafooProvider>
       );
     });
@@ -203,14 +213,14 @@ describe("@grafoo/preact", () => {
 
       client.write({ query: Authors }, data);
 
-      const fn = createMockRenderFn(done, [
+      const mockRender = createMockRenderFn(done, [
         props => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
         props => expect(props.authors[0].name).toBe("Homer")
       ]);
 
       render(
         <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors} render={fn} />
+          <GrafooConsumer query={Authors}>{mockRender}</GrafooConsumer>
         </GrafooProvider>
       );
 

@@ -132,3 +132,7 @@ dist/
 
 # temp folder
 temp
+
+# mac
+
+.DS_store
