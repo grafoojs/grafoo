@@ -58,7 +58,6 @@
     "preact-render-spy": "^1.2.2",
     "prettier": "^1.12.1",
     "rimraf": "^2.6.2",
-    "sinon": "^4.5.0",
     "tslint": "^5.10.0",
     "tslint-config-prettier": "^1.12.0",
     "typescript": "^2.8.3",
