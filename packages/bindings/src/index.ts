@@ -6,7 +6,12 @@ import {
   Variables,
   ObjectsMap
 } from "@grafoo/types";
-import { assign, shallowEqual } from "@grafoo/util";
+
+const shallowEqual = (a: {}, b: {}) => {
+  for (const i in a) if (a[i] !== b[i]) return false;
+  for (const i in b) if (!(i in a)) return false;
+  return true;
+};
 
 export default function createBindings(
   client: ClientInstance,
@@ -44,7 +49,7 @@ export default function createBindings(
 
   const renderProps: GrafooRenderProps = { loading: !cacheLoaded, loaded: !!cacheLoaded };
 
-  if (cacheLoaded) assign(renderProps, cachedState.data);
+  if (cacheLoaded) Object.assign(renderProps, cachedState.data);
 
   if (mutations) {
     for (const key in mutations) {
@@ -58,7 +63,7 @@ export default function createBindings(
         const mutate = <T>(variables: Variables): Promise<T> =>
           client.request({ query: mutation.query.query, variables });
 
-        return mutation.update(assign({ mutate }, renderProps), variables).then(update => {
+        return mutation.update(Object.assign({ mutate }, renderProps), variables).then(update => {
           client.write(cacheOperation, update);
         });
       };
@@ -90,7 +95,7 @@ export default function createBindings(
 
           cachedState.objects = objects;
 
-          updater(assign({}, data, { loading: false, loaded: true }));
+          updater(Object.assign({}, data, { loading: false, loaded: true }));
         })
         .catch(({ errors }) => {
           updater({ errors, loading: false, loaded: true });

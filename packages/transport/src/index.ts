@@ -5,7 +5,6 @@ import {
   Headers,
   TransportRequest
 } from "@grafoo/types";
-import { assign } from "@grafoo/util";
 
 class TransportError extends Error {
   errors: GraphQlError[];
@@ -24,7 +23,7 @@ export default function createTransport(uri: string, headers?: Headers): Transpo
     const init = {
       body,
       method: "POST",
-      headers: assign(
+      headers: Object.assign(
         { "Content-Type": "application/json" },
         typeof headers == "function" ? headers() : headers
       )
