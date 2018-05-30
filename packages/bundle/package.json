@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "name": "grafoo-bundle",
+  "version": "0.0.1",
+  "bin": "index.js"
+}

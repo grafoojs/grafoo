@@ -3,21 +3,19 @@
   "description": "the grafoo client standard transport",
   "version": "0.0.1",
   "main": "dist/index.js",
-  "umd:main": "dist/index.umd.js",
-  "module": "dist/index.m.js",
-  "typings": "dist/transport/src/index.d.ts",
-  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "microbundle --compress false",
+    "prepare": "grafoo-bundle --input src/index.ts --skip-compression",
     "test": "jest"
   },
   "jest": {
     "moduleFileExtensions": [
       "ts",
       "tsx",
-      "js"
+      "js",
+      "json"
     ],
     "testMatch": [
       "**/__tests__/*.+(ts|tsx|js)"
