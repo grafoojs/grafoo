@@ -6,7 +6,7 @@ import Posts from "./Posts";
 const mutations = {
   createPost: {
     query: createPost,
-    optmisticUpdate: ({ allPosts }, variables) => ({
+    optimisticUpdate: ({ allPosts }, variables) => ({
       allPosts: [{ ...variables, id: "tempID" }, ...allPosts]
     }),
     update: ({ mutate, allPosts }, variables) =>
@@ -16,7 +16,7 @@ const mutations = {
   },
   updatePost: {
     query: updatePost,
-    optmisticUpdate: ({ allPosts }, variables) => ({
+    optimisticUpdate: ({ allPosts }, variables) => ({
       allPosts: allPosts.map(p => (p.id === variables.id ? variables : p))
     }),
     update: ({ mutate, allPosts }, variables) =>
@@ -26,7 +26,7 @@ const mutations = {
   },
   deletePost: {
     query: deletePost,
-    optmisticUpdate: (props, { id }) => ({
+    optimisticUpdate: (props, { id }) => ({
       allPosts: props.allPosts.filter(_ => _.id !== id)
     }),
     update: ({ mutate, allPosts }, variables) =>
@@ -42,7 +42,8 @@ export default function PostsContainer() {
       query={allPosts}
       variables={{ orderBy: "createdAt_DESC" }}
       mutations={mutations}
-      render={props => <Posts {...props} />}
-    />
+    >
+      {props => <Posts {...props} />}
+    </GrafooConsumer>
   );
 }
