@@ -10,6 +10,6 @@
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "microbundle"
+    "prepare": "microbundle --compress false"
   }
 }

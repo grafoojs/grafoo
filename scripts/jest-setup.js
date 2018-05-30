@@ -2,15 +2,14 @@ const fs = require("fs");
 const path = require("path");
 const { transform } = require("@babel/core");
 
-let config;
+const config = { sourceMap: "inline", ast: false };
+
 try {
-  config = JSON.parse(fs.readFileSync(path.join(process.cwd(), ".babelrc"), "utf-8"));
+  Object.assign(config, JSON.parse(fs.readFileSync(path.join(process.cwd(), ".babelrc"), "utf-8")));
 } catch (e) {
-  config = {
+  Object.assign(config, {
     presets: [["@babel/preset-env", { targets: { node: "current" } }], "@babel/preset-typescript"]
-  };
+  });
 }
 
-module.exports = {
-  process: src => transform(src, config)
-};
+module.exports.process = (src, path) => transform(src, { ...config, filename: path }).code;

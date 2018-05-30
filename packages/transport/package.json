@@ -10,15 +10,21 @@
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "microbundle",
+    "prepare": "microbundle --compress false",
     "test": "jest"
   },
   "dependencies": {
     "@grafoo/util": "0.0.1"
   },
   "jest": {
-    "moduleFileExtensions": ["ts", "tsx", "js"],
-    "testMatch": ["**/__tests__/*.+(ts|tsx|js)"],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "testMatch": [
+      "**/__tests__/*.+(ts|tsx|js)"
+    ],
     "transform": {
       "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
     }
