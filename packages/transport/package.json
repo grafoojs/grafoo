@@ -13,9 +13,6 @@
     "prepare": "microbundle --compress false",
     "test": "jest"
   },
-  "dependencies": {
-    "@grafoo/util": "0.0.1"
-  },
   "jest": {
     "moduleFileExtensions": [
       "ts",
