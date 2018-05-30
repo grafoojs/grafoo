@@ -1,24 +1,20 @@
-const { promisify } = require("util");
 const { readdirSync } = require("fs");
 const { join } = require("path");
-const exec = promisify(require("child_process").exec);
+const { exec } = require("child_process");
 
-const runSync = ["transport", "cache", "babel-plugin-tag", "bindings"];
-const runAsync = readdirSync(join(__dirname, "..", "packages")).filter(
-  a => !runSync.some(s => s === a)
+const hasDependency = ["core", "preact"];
+const noDependency = readdirSync(join(__dirname, "..", "packages")).filter(
+  x => !hasDependency.some(y => y === x)
 );
 
-(async () => {
-  let stdout;
-  try {
-    for (const pkg of runSync) {
-      ({ stdout } = await exec(`lerna run --scope @grafoo/${pkg} prepare`));
-      process.stdout.write(`compiled ${pkg}:\n\n`.toUpperCase() + stdout + "\n");
-    }
+const first = exec(`lerna run --scope "@grafoo/*(${noDependency.join("|")})" prepare`);
 
-    ({ stdout } = await exec(`lerna run --scope "@grafoo/*(${runAsync.join("|")})" prepare`));
-    process.stdout.write(`compiled ${runAsync.join(", ")}:\n\n`.toUpperCase() + stdout);
-  } catch (stderr) {
-    process.stderr.write(stderr);
-  }
-})();
+first.stdout.pipe(process.stdout);
+first.stderr.pipe(process.stderr);
+
+first.on("close", () => {
+  const second = exec(`lerna run --scope "@grafoo/*(${hasDependency.join("|")})" prepare`);
+
+  second.stdout.pipe(process.stdout);
+  second.stderr.pipe(process.stderr);
+});

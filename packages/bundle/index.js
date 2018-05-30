@@ -14,51 +14,49 @@ const fileSize = require("rollup-plugin-filesize");
 const exec = promisify(require("child_process").exec);
 
 (async function bundle() {
-  const CWD = process.cwd();
   const { input, ["skip-compression"]: skipCompress } = mri(process.argv.slice(2));
+  const CWD = process.cwd();
 
   await exec("tsc -p tsconfig.build.json");
-
-  const plugins = [
-    nodeResolve(),
-    resolveTS(),
-    babel({
-      presets: [
-        ["@babel/preset-env", { targets: { node: 10 }, modules: false }],
-        "@babel/preset-typescript"
-      ]
-    }),
-    buble({
-      transforms: {
-        dangerousForOf: true,
-        dangerousTaggedTemplateString: true
-      }
-    }),
-    fileSize()
-  ];
-
-  if (!skipCompress) {
-    plugins.push(
-      terser({
-        sourceMap: true,
-        output: { comments: false },
-        compress: { keep_infinity: true, pure_getters: true },
-        warnings: true,
-        toplevel: true,
-        mangle: {}
-      })
-    );
-  }
 
   const bundle = await rollup({
     input: path.join(CWD, input),
     external: ["preact"],
-    plugins
+    plugins: [
+      nodeResolve(),
+      resolveTS(),
+      babel({
+        presets: [
+          ["@babel/preset-env", { targets: { node: 10 }, modules: false, loose: true }],
+          "@babel/preset-typescript"
+        ]
+      }),
+      buble({
+        transforms: {
+          dangerousForOf: true,
+          dangerousTaggedTemplateString: true
+        }
+      }),
+      fileSize(),
+      !skipCompress &&
+        terser({
+          sourceMap: true,
+          output: { comments: false },
+          compress: { keep_infinity: true, pure_getters: true },
+          warnings: true,
+          toplevel: true,
+          mangle: {}
+        })
+    ].filter(Boolean)
   });
 
   await bundle.write({
     file: path.join(CWD, "dist/index.js"),
-    format: "esm"
+    sourcemap: true,
+    format: "esm",
+    treeshake: {
+      propertyReadSideEffects: false
+    }
   });
 })();
 
