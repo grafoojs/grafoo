@@ -13,7 +13,7 @@ const fileSize = require("rollup-plugin-filesize");
 
 const exec = promisify(require("child_process").exec);
 
-(async function bundle() {
+(async () => {
   const { input, ["skip-compression"]: skipCompress } = mri(process.argv.slice(2));
   const CWD = process.cwd();
 

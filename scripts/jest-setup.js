@@ -13,4 +13,4 @@ try {
 }
 
 module.exports.process = (src, path) =>
-  transform(src, Object.assign({}, config, { filename: path })).code;
+  transform(src, Object.assign({}, config, { filename: path }));
