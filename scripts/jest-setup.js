@@ -12,4 +12,5 @@ try {
   });
 }
 
-module.exports.process = (src, path) => transform(src, { ...config, filename: path }).code;
+module.exports.process = (src, path) =>
+  transform(src, Object.assign({}, config, { filename: path }));

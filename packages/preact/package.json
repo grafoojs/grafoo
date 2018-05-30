@@ -3,17 +3,14 @@
   "version": "0.0.1",
   "description": "the grafoo client preact-bindings",
   "main": "dist/index.js",
-  "umd:main": "dist/index.umd.js",
-  "module": "dist/index.m.js",
-  "source": "src/index.ts",
-  "typings": "dist/preact/src/index.d.ts",
+  "typings": "dist/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
     "preact": ">=8"
   },
   "scripts": {
-    "prepare": "microbundle --compress false",
+    "prepare": "grafoo-bundle --input src/index.ts",
     "test": "jest"
   },
   "jest": {
