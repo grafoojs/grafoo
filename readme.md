@@ -48,10 +48,9 @@ import createClient from "@grafoo/core";
 import graphql from "@grafoo/tag";
 
 const client = createClient("http://some-graphql-api.com", {
-  fetchOptions: {
+  headers: {
     /* can be a function as well */
-  },
-  idFields: ["id"]
+  }
 });
 
 const HELLO = graphql`
