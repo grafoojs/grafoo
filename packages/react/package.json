@@ -1,16 +1,16 @@
 {
-  "name": "@grafoo/preact",
+  "name": "@grafoo/react",
   "version": "0.0.1",
-  "description": "the grafoo client preact bindings",
+  "description": "the grafoo client react bindings",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "preact": ">=8"
+    "react": ">=16.4"
   },
   "scripts": {
-    "prepare": "grafoo-bundle --input src/index.ts",
+    "prepare": "echo ok # grafoo-bundle --input src/index.ts",
     "test": "jest"
   },
   "jest": {

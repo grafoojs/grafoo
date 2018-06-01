@@ -1,6 +1,6 @@
 # Grafoo
 
-[![CircleCI](https://img.shields.io/circleci/project/github/malbernaz/grafoo/master.svg?label=circle)](https://circleci.com/gh/malbernaz/grafoo)
+[![build](https://img.shields.io/circleci/project/github/malbernaz/grafoo/master.svg?label=circle)](https://circleci.com/gh/malbernaz/grafoo)
 
 > Grafoo is an experimental graphql client under heavy development.
 
@@ -79,7 +79,7 @@ client.request({ query: HELLO.query, variables }).then(data => {
 - [ ] React bindings
 - [ ] Svelte bindings
 - [x] Enhance babel plugin
-- [ ] Continuous integration
+- [x] Continuous integration
 - [ ] Publish
 
 ## LICENSE

@@ -3,8 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "emitDeclarationOnly": true,
-    "outDir": "dist",
-    "types": ["preact"]
+    "outDir": "dist"
   },
   "include": ["src"]
 }

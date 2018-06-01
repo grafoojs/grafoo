@@ -1,7 +1,6 @@
 import createClient from "@grafoo/core";
 import { Authors, CreateAuthor, mockQueryRequest, PostsAndAuthors } from "@grafoo/test-utils";
 import { ClientInstance, GrafooMutation } from "@grafoo/types";
-import { h } from "preact";
 import { render } from "preact-render-spy";
 import { GrafooConsumer, GrafooProvider } from "../src";
 

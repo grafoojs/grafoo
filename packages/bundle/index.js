@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const { promisify } = require("util");
 const fs = require("fs");
 const path = require("path");
+const { exec } = require("child_process");
 const mri = require("mri");
 const { rollup } = require("rollup");
 const { terser } = require("rollup-plugin-terser");
@@ -11,16 +11,21 @@ const buble = require("rollup-plugin-buble");
 const nodeResolve = require("rollup-plugin-node-resolve");
 const fileSize = require("rollup-plugin-filesize");
 
-const exec = promisify(require("child_process").exec);
-
 (async () => {
-  const { input, ["skip-compression"]: skipCompress } = mri(process.argv.slice(2));
+  const opts = mri(process.argv.slice(2));
   const CWD = process.cwd();
 
-  await exec("tsc -p tsconfig.build.json");
+  const createDef = exec("tsc -p tsconfig.build.json");
 
+  createDef.stdout.pipe(process.stdout);
+  createDef.stderr.pipe(process.stderr);
+
+  createDef.on("close", () => build(Object.assign({}, opts, { rootPath: CWD })));
+})();
+
+async function build({ input, ["skip-compression"]: skipCompress, rootPath }) {
   const bundle = await rollup({
-    input: path.join(CWD, input),
+    input: path.join(rootPath, input),
     external: ["preact"],
     plugins: [
       nodeResolve(),
@@ -51,14 +56,14 @@ const exec = promisify(require("child_process").exec);
   });
 
   await bundle.write({
-    file: path.join(CWD, "dist/index.js"),
+    file: path.join(rootPath, "dist/index.js"),
     sourcemap: true,
     format: "esm",
     treeshake: {
       propertyReadSideEffects: false
     }
   });
-})();
+}
 
 function resolveTS() {
   return {

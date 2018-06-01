@@ -7,14 +7,13 @@ const noDependency = readdirSync(join(__dirname, "..", "packages")).filter(
   x => !hasDependency.some(y => y === x)
 );
 
-const first = exec(`lerna run --scope "@grafoo/*(${noDependency.join("|")})" prepare`);
+const command = exec(
+  'lerna run --scope "@grafoo/*(' +
+    noDependency.join("|") +
+    ')" prepare && lerna run --scope "@grafoo/*(' +
+    hasDependency.join("|") +
+    ')" prepare'
+);
 
-first.stdout.pipe(process.stdout);
-first.stderr.pipe(process.stderr);
-
-first.on("close", () => {
-  const second = exec(`lerna run --scope "@grafoo/*(${hasDependency.join("|")})" prepare`);
-
-  second.stdout.pipe(process.stdout);
-  second.stderr.pipe(process.stderr);
-});
+command.stdout.pipe(process.stdout);
+command.stderr.pipe(process.stderr);
