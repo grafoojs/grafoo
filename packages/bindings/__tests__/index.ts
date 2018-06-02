@@ -75,7 +75,7 @@ describe("@grafoo/bindings", () => {
 
     client.write({ query: Authors }, data);
 
-    expect(renderFn).toHaveBeenCalledWith(data);
+    expect(renderFn).toHaveBeenCalledWith({ ...data, loaded: false, loading: true });
   });
 
   it("should provide the state for a cached query", async () => {
