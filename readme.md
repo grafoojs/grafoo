@@ -76,7 +76,7 @@ client.request({ query: HELLO.query, variables }).then(data => {
 
 - [x] Finish preact bindings
 - [x] Preact bindings test suite
-- [ ] React bindings
+- [x] React bindings
 - [ ] Svelte bindings
 - [x] Enhance babel plugin
 - [x] Continuous integration
