@@ -1,12 +1,12 @@
-import { Context } from "@grafoo/types";
-import { Component, VNode } from "preact";
+import { Context, GrafooPreactProviderProps } from "@grafoo/types";
+import { Component } from "preact";
 
-export class GrafooProvider extends Component<Context> {
+export class GrafooProvider extends Component<GrafooPreactProviderProps> {
   getChildContext(): Context {
     return { client: this.props.client };
   }
 
-  render(props: Context & { children: [VNode] }): VNode {
+  render(props: GrafooPreactProviderProps): JSX.Element {
     return props.children[0];
   }
 }

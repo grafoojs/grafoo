@@ -1,11 +1,11 @@
 import createBindings from "@grafoo/bindings";
-import { Bindings, Context, GrafooConsumerProps, GrafooRenderProps } from "@grafoo/types";
-import { Component, VNode } from "preact";
+import { Bindings, Context, GrafooPreactConsumerProps, GrafooRenderProps } from "@grafoo/types";
+import { Component } from "preact";
 
-export class GrafooConsumer extends Component<GrafooConsumerProps, GrafooRenderProps> {
+export class GrafooConsumer extends Component<GrafooPreactConsumerProps, GrafooRenderProps> {
   binds: Bindings;
 
-  constructor(props: GrafooConsumerProps, context: Context) {
+  constructor(props: GrafooPreactConsumerProps, context: Context) {
     super(props, context);
 
     const { executeQuery, getState, unbind } = (this.binds = createBindings(
@@ -27,7 +27,7 @@ export class GrafooConsumer extends Component<GrafooConsumerProps, GrafooRenderP
     };
   }
 
-  render(props: GrafooConsumerProps, state: GrafooRenderProps) {
-    return props.children[0]<VNode>(state);
+  render(props: GrafooPreactConsumerProps, state: GrafooRenderProps) {
+    return props.children[0]<JSX.Element>(state);
   }
 }

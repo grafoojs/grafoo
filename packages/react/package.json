@@ -10,8 +10,8 @@
     "react": ">=16.4"
   },
   "scripts": {
-    "prepare": "echo ok # grafoo-bundle --input src/index.ts",
-    "test": "echo ok # jest"
+    "prepare": "grafoo-bundle --input src/index.ts",
+    "test": "jest"
   },
   "jest": {
     "moduleFileExtensions": [

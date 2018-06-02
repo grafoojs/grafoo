@@ -1,10 +1,4 @@
 {
-  "presets": [
-    ["@babel/preset-env", { "targets": { "node": 10 } }],
-    ["@babel/preset-react", { "pragma": "h" }]
-  ],
-  "plugins": [
-    ["babel-plugin-jsx-pragmatic", { "module": "preact", "export": "h", "import": "h" }],
-    ["@babel/plugin-transform-typescript", { "jsxPragma": "h" }]
-  ]
+  "presets": [["@babel/preset-env", { "targets": { "node": 10 } }], "@babel/preset-react"],
+  "plugins": ["@babel/plugin-transform-typescript"]
 }

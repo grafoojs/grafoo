@@ -40,7 +40,7 @@ export default function createBindings(
 
         cachedState.objects = objects;
 
-        updater(data);
+        updater(Object.assign(renderProps, data));
       }
     });
   }
@@ -95,10 +95,10 @@ export default function createBindings(
 
           cachedState.objects = objects;
 
-          updater(Object.assign({}, data, { loading: false, loaded: true }));
+          updater(Object.assign(renderProps, data, { loading: false, loaded: true }));
         })
         .catch(({ errors }) => {
-          updater({ errors, loading: false, loaded: true });
+          updater(Object.assign(renderProps, { errors, loading: false, loaded: true }));
         });
     }
   };

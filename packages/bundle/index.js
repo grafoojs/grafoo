@@ -24,9 +24,13 @@ const fileSize = require("rollup-plugin-filesize");
 })();
 
 async function build({ input, ["skip-compression"]: skipCompress, rootPath }) {
+  const { peerDependencies = {} } = JSON.parse(
+    fs.readFileSync(path.join(rootPath, "package.json"), "utf-8")
+  );
+
   const bundle = await rollup({
     input: path.join(rootPath, input),
-    external: ["preact"],
+    external: Object.keys(peerDependencies),
     plugins: [
       nodeResolve(),
       resolveTS(),
