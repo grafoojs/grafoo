@@ -1,6 +1,6 @@
 <h1 align=center><img src=https://user-images.githubusercontent.com/10574149/40881679-438f8248-66a3-11e8-8d09-b284afb591b9.png alt=Grafoo style="margin: 32px 0"/></h1>
 
-<p align=center>A GraphQl Client and Toolkit</p>
+<p align=center>A GraphQL Client and Toolkit</p>
 
 <p align=center><a href=https://circleci.com/gh/malbernaz/grafoo><img src=https://img.shields.io/circleci/project/github/malbernaz/grafoo/master.svg?label=build alt=build /></a></p>
 
