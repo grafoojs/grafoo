@@ -1,0 +1,18 @@
+{
+  "presets": [
+    ["@babel/preset-env", { "targets": { "chrome": 65 } }],
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    "@babel/plugin-proposal-class-properties",
+    ["@grafoo/babel-plugin-tag", { "schema": "schema.graphql", "idFields": ["id"] }]
+  ],
+  "env": {
+    "production": {
+      "plugins": [["babel-plugin-emotion", { "hoist": true }]]
+    },
+    "development": {
+      "plugins": [["babel-plugin-emotion", { "sourceMap": true, "autoLabel": true }]]
+    }
+  }
+}
