@@ -53,44 +53,34 @@ The recommendation is to use the [`get-graphql-schema`](https://github.com/prism
 - `@grafoo/tag` import statements will be removed.
 - `idFields` will be inserted automatically on client instantiation.
 
-### Input
+```diff
+  import createClient from "@grafoo/core";
+- import graphql from "@grafoo/tag";
 
-```js
-import createClient from "@grafoo/core";
-import graphql from "@grafoo/tag";
+- const client = createClient("http://some.graphql.api/");
++ const client = createClient("http://some.graphql.api/", {
++   idFields: ["id"]
++ });
 
-const client = createClient("http://some.graphql.api/");
-
-const USER_QUERY = graphql`
-  query($id: ID!) {
-    user(id: $id) {
-      name
-      posts {
-        title
-      }
-    }
-  }
-`;
-```
-
-### Output
-
-```js
-import createClient from "@grafoo/core";
-
-const client = createClient("http://some.graphql.api/", {
-  idFields: ["id"]
-});
-
-const USER_QUERY = {
-  query: "query($id: ID!) { user(id: $id) { id name posts { id title } } }",
-  paths: {
-    "user(id:$id){id name posts{id title}}": {
-      name: "user"
-      args: ["id"]
-    }
-  }
-};
+-  const USER_QUERY = graphql`
+-    query($id: ID!) {
+-      user(id: $id) {
+-        name
+-        posts {
+-          title
+-        }
+-      }
+-    }
+-  `;
++ const USER_QUERY = {
++   query: "query($id: ID!) { user(id: $id) { id name posts { id title } } }",
++   paths: {
++     "user(id:$id){id name posts{id title}}": {
++       name: "user"
++       args: ["id"]
++     }
++   }
++ };
 ```
 
 ## LICENSE
