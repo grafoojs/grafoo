@@ -2,19 +2,10 @@
 
 ## Install dependencies
 
+on the root of the project run yarn to install every dependency.
+
 ```
 $ yarn
-```
-
-## Link Grafoo dependencies
-
-On each of the Grafoo dependencies directories (core, babel-plugin-tag and preact) run the `yarn link` command. example:
-
-```
-$ cd packages/preact
-$ yarn link
-$ cd ../../examples/preact
-$ yarn link @grafoo/preact
 ```
 
 ## Run dev server

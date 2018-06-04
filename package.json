@@ -16,6 +16,7 @@
     "precommit": "lint-staged"
   },
   "workspaces": [
+    "examples/*",
     "packages/*"
   ],
   "lint-staged": {

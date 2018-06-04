@@ -1,5 +1,5 @@
 import { h } from "preact";
-import { GrafooConsumer } from "@grafoo/preact";
+import { Consumer } from "@grafoo/preact";
 import { allPosts, createPost, deletePost, updatePost } from "../queries";
 import Posts from "./Posts";
 
@@ -36,14 +36,10 @@ const mutations = {
   }
 };
 
-export default function PostsContainer() {
-  return (
-    <GrafooConsumer
-      query={allPosts}
-      variables={{ orderBy: "createdAt_DESC" }}
-      mutations={mutations}
-    >
-      {props => <Posts {...props} />}
-    </GrafooConsumer>
-  );
-}
+const PostsContainer = () => (
+  <Consumer query={allPosts} variables={{ orderBy: "createdAt_DESC" }} mutations={mutations}>
+    {props => <Posts {...props} />}
+  </Consumer>
+);
+
+export default PostsContainer;
