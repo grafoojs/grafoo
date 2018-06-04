@@ -11,8 +11,12 @@ const CWD = process.cwd();
 
 const createDef = exec("tsc -p tsconfig.build.json");
 
-createDef.stdout.pipe(process.stdout);
-createDef.stderr.pipe(process.stderr);
+createDef.stdout.pipe(stdout => {
+  console.log(stdout);
+});
+createDef.stderr.pipe(stderr => {
+  console.error(stderr);
+});
 
 createDef.on("close", () => {
   build(
