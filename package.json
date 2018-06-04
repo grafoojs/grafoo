@@ -10,9 +10,10 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test",
+    "test:coverage": "lerna run test:coverage",
     "prepare": "node scripts/build.js",
     "clean": "rimraf packages/**/dist",
-    "prepush": "yarn test",
+    "prepush": "yarn test:coverage",
     "precommit": "lint-staged"
   },
   "workspaces": [
