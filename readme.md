@@ -1,6 +1,6 @@
 <h1 align=center>
   <img
-    src=https://user-images.githubusercontent.com/10574149/40881679-438f8248-66a3-11e8-8d09-b284afb591b9.png
+    src=https://raw.githubusercontent.com/malbernaz/grafoo/master/logo.png
     alt=Grafoo
   />
 </h1>
