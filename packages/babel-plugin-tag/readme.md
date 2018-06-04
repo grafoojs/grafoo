@@ -17,7 +17,7 @@ The Grafoo babel plugin.
 
 ## Install
 
-```js
+```
 $ npm i @grafoo/core @grafoo/tag && npm i -D @grafoo/babel-plugin-tag
 ```
 
