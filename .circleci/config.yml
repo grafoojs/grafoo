@@ -16,7 +16,7 @@ jobs:
             - yarn-packages-
 
       - run:
-          name: Install Dependencies
+          name: Install Dependencies and build packages
           command: yarn install
 
       - save_cache:
@@ -25,6 +25,8 @@ jobs:
           paths:
             - node_modules/
 
-      - run: yarn test
+      - run:
+        name: Run tests
+        command: yarn test
 
 

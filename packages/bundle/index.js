@@ -30,7 +30,6 @@ module.exports = async function build({ input, skipCompress, rootPath }) {
           dangerousTaggedTemplateString: true
         }
       }),
-      fileSize(),
       !skipCompress &&
         terser({
           sourceMap: true,
@@ -39,7 +38,8 @@ module.exports = async function build({ input, skipCompress, rootPath }) {
           warnings: true,
           toplevel: true,
           mangle: {}
-        })
+        }),
+      fileSize()
     ].filter(Boolean)
   });
 
