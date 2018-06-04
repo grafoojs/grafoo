@@ -1,6 +1,6 @@
 <h1 align=center>
   <img
-    src=https://raw.githubusercontent.com/malbernaz/grafoo/master/logo.png
+    src=https://raw.githubusercontent.com/grafoojs/grafoo/master/logo.png
     alt=Grafoo
   />
 </h1>
@@ -8,19 +8,19 @@
 <p align=center><i>A GraphQL Client and Toolkit</i></p>
 
 <p align=center>
-  <a href=https://circleci.com/gh/malbernaz/grafoo>
+  <a href=https://circleci.com/gh/grafoojs/grafoo>
     <img
-      src=https://img.shields.io/circleci/project/github/malbernaz/grafoo/master.svg?label=build
+      src=https://img.shields.io/circleci/project/github/grafoojs/grafoo/master.svg?label=build
       alt=build
     />
   </a>
-  <a href=https://github.com/malbernaz/grafoo>
+  <a href=https://github.com/grafoojs/grafoo>
     <img
-      src=https://img.shields.io/codecov/c/github/malbernaz/grafoo/master.svg
+      src=https://img.shields.io/codecov/c/github/grafoojs/grafoo/master.svg
       alt="coverage"
     />
   </a>
-  <a href=https://github.com/malbernaz/grafoo>
+  <a href=https://github.com/grafoojs/grafoo>
     <img
       src=https://img.shields.io/badge/code_style-prettier-ff69b4.svg
       alt="code style: prettier"
@@ -30,8 +30,8 @@
 
 In GraphQL we don't have as many libraries targeted to the client as do on the server side. **Grafoo** is a GraphQL client and toolkit that tries to be different by introducing a **build time dependent approach**, where all your queries are compiled beforehand in order to spare runtime computation. To sum up with that we are working hard to bring **view layer ingrations** for all major frameworks. You can check the ones we already have at:
 
-- [`@grafoo/react`](https://github.com/malbernaz/grafoo/tree/master/packages/react)
-- [`@grafoo/preact`](https://github.com/malbernaz/grafoo/tree/master/packages/preact)
+- [`@grafoo/react`](https://github.com/grafoojs/grafoo/tree/master/packages/react)
+- [`@grafoo/preact`](https://github.com/grafoojs/grafoo/tree/master/packages/preact)
 
 ## Basic usage
 
@@ -94,4 +94,4 @@ client.request(USER_QUERY, variables).then(data => {
 
 ## LICENSE
 
-[MIT](https://github.com/malbernaz/grafoo/blob/master/LICENSE)
+[MIT](https://github.com/grafoojs/grafoo/blob/master/LICENSE)

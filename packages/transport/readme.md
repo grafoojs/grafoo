@@ -1,19 +1,19 @@
 # `@grafoo/transport`
 
 <p>
-  <a href=https://circleci.com/gh/malbernaz/grafoo>
+  <a href=https://circleci.com/gh/grafoojs/grafoo>
     <img
-      src=https://img.shields.io/circleci/project/github/malbernaz/grafoo/master.svg?label=build
+      src=https://img.shields.io/circleci/project/github/grafoojs/grafoo/master.svg?label=build
       alt=build
     />
   </a>
-  <a href=https://github.com/malbernaz/grafoo>
+  <a href=https://github.com/grafoojs/grafoo>
     <img
-      src=https://img.shields.io/codecov/c/github/malbernaz/grafoo/master.svg
+      src=https://img.shields.io/codecov/c/github/grafoojs/grafoo/master.svg
       alt="coverage"
     />
   </a>
-  <a href=https://github.com/malbernaz/grafoo>
+  <a href=https://github.com/grafoojs/grafoo>
     <img
       src=https://img.shields.io/badge/code_style-prettier-ff69b4.svg
       alt="code style: prettier"
@@ -61,4 +61,4 @@ As this package uses `fetch` and `Object.assign` under the hood, so make sure to
 
 ## LICENSE
 
-[MIT](https://github.com/malbernaz/grafoo/blob/master/LICENSE)
+[MIT](https://github.com/grafoojs/grafoo/blob/master/LICENSE)
