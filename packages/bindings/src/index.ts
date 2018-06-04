@@ -20,6 +20,9 @@ export default function createBindings(
 ): Bindings {
   const { query, variables, mutations, skip } = props;
 
+  const writeToCache = data => client.write(query, variables, data);
+  const readFromCache = () => client.read(query, variables);
+
   let cachedState: { data?: {}; objects?: ObjectsMap } = {};
 
   // tslint:disable-next-line: no-empty
@@ -28,13 +31,13 @@ export default function createBindings(
   let lockUpdate = false;
 
   if (query) {
-    cachedState = client.read(query, variables);
+    cachedState = readFromCache();
 
     unbind = client.listen(nextObjects => {
       if (lockUpdate) return (lockUpdate = false);
 
       if (!shallowEqual(nextObjects, cachedState.objects || {})) {
-        const { data, objects } = client.read(query, variables);
+        const { data, objects } = readFromCache();
 
         cachedState.objects = objects;
 
@@ -53,17 +56,17 @@ export default function createBindings(
     for (const key in mutations) {
       const mutation = mutations[key];
 
-      renderProps[key] = (variables: Variables) => {
+      renderProps[key] = (mutationVariables: Variables) => {
         if (mutation.optimisticUpdate) {
-          client.write(query, variables, mutation.optimisticUpdate(renderProps, variables));
+          writeToCache(mutation.optimisticUpdate(renderProps, mutationVariables));
         }
 
-        const mutate = <T>(variables: Variables): Promise<T> =>
-          client.request<T>(mutation.query, variables);
+        const mutate = <T>(mutateVariables: Variables): Promise<T> =>
+          client.request<T>(mutation.query, mutateVariables);
 
-        return mutation.update(Object.assign({ mutate }, renderProps), variables).then(update => {
-          client.write(query, variables, update);
-        });
+        return mutation
+          .update(Object.assign({ mutate }, renderProps), mutationVariables)
+          .then(update => writeToCache(update));
       };
     }
   }
@@ -79,9 +82,9 @@ export default function createBindings(
         .then(response => {
           lockUpdate = true;
 
-          client.write(query, variables, response);
+          writeToCache(response);
 
-          const { data, objects } = client.read(query, variables);
+          const { data, objects } = readFromCache();
 
           cachedState.objects = objects;
 
