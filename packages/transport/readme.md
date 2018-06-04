@@ -17,7 +17,7 @@ A simple http client to comunicate with graphql servers.
 
 ## Install
 
-```sh
+```
 $ npm i @grafoo/transport
 ```
 

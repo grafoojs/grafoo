@@ -22,7 +22,6 @@
   </a>
 </p>
 
-
 In GraphQL we don't have as many libraries targeted to the client as do on the server side. **Grafoo** is a GraphQL client and toolkit that tries to be different by introducing a **build time dependent approach**, where all your queries are compiled beforehand in order to spare runtime computation. To sum up with that we are working hard to bring **view layer ingrations** for all major frameworks. You can check the ones we already have at:
 
 - [`@grafoo/react`](https://github.com/malbernaz/grafoo/tree/master/packages/react)
@@ -34,7 +33,7 @@ In GraphQL we don't have as many libraries targeted to the client as do on the s
 
 The basic packages you'll have to install in order to use Grafoo are core, tag and babel-plugin-tag.
 
-```shell
+```
 $ npm i @grafoo/core @grafoo/tag && npm i -D @grafoo/babel-plugin-tag
 ```
 
