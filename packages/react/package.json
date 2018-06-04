@@ -11,7 +11,8 @@
   },
   "scripts": {
     "prepare": "grafoo-bundle --input src/index.ts",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage && codecov"
   },
   "jest": {
     "moduleFileExtensions": [
