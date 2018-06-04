@@ -142,7 +142,7 @@ describe("@grafoo/preact", () => {
     it("should not trigger a network request if the query is already cached", async done => {
       const { data } = await mockQueryRequest(Authors);
 
-      client.write({ query: Authors }, data);
+      client.write(Authors, data);
 
       jest.resetAllMocks();
 
@@ -212,7 +212,7 @@ describe("@grafoo/preact", () => {
     it("should reflect updates that happen outside of the component", async done => {
       const { data } = await mockQueryRequest(Authors);
 
-      client.write({ query: Authors }, data);
+      client.write(Authors, data);
 
       const mockRender = createMockRenderFn(done, [
         props => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
@@ -225,16 +225,15 @@ describe("@grafoo/preact", () => {
         </GrafooProvider>
       );
 
-      client.write(
-        { query: Authors },
-        { authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a)) }
-      );
+      client.write(Authors, {
+        authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a))
+      });
     });
 
     it("should not trigger a network request if a query field is cached", async done => {
       const { data } = await mockQueryRequest(PostsAndAuthors);
 
-      client.write({ query: PostsAndAuthors }, data);
+      client.write(PostsAndAuthors, data);
 
       const spy = jest.spyOn(client, "request");
 

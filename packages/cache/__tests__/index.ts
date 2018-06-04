@@ -12,8 +12,8 @@ describe("@grafoo/core", () => {
   });
 
   it("should write queries to the cache", async () => {
-    await mock(PostsAndAuthors, async (cache, data, request) => {
-      cache.write(request, data);
+    await mock(PostsAndAuthors, async (cache, data, { query, variables }) => {
+      cache.write(query, variables, data);
 
       const { authors, posts } = data;
       const { objectsMap, pathsMap } = cache.flush();
@@ -30,10 +30,10 @@ describe("@grafoo/core", () => {
   });
 
   it("should read queries from the cache", async () => {
-    await mock(Authors, async (cache, data, request) => {
-      cache.write(request, data);
+    await mock(Authors, async (cache, data, { query, variables }) => {
+      cache.write(query, variables, data);
 
-      const result = cache.read(request);
+      const result = cache.read(query, variables);
 
       const { authors } = data;
 
@@ -46,43 +46,43 @@ describe("@grafoo/core", () => {
   });
 
   it("should handle queries with variables", async () => {
-    await mock(Post, async (cache, data, request) => {
-      cache.write(request, data);
+    await mock(Post, async (cache, data, { query, variables }) => {
+      cache.write(query, variables, data);
 
-      expect(cache.read({ query: Post, variables: { id: "123" } })).toEqual({});
-      expect(cache.read(request).data.post.id).toBe(request.variables.id);
+      expect(cache.read(Post, { id: "123" })).toEqual({});
+      expect(cache.read(query, variables).data.post.id).toBe(variables.id);
     });
   });
 
   it("should perform update to cache", async () => {
-    await mock(Post, async (cache, data, request) => {
-      cache.write(request, data);
+    await mock(Post, async (cache, data, { query, variables }) => {
+      cache.write(query, variables, data);
 
       const {
         data: { post }
-      } = cache.read(request);
+      } = cache.read(query, variables);
 
       expect(post.title).toBe("Quam odit");
 
-      cache.write(request, { post: { ...post, title: "updated title" } });
+      cache.write(query, variables, { post: { ...post, title: "updated title" } });
 
-      expect(cache.read(request).data.post.title).toBe("updated title");
+      expect(cache.read(query, variables).data.post.title).toBe("updated title");
     });
   });
 
   it("should reflect updates on queries with shared objects", async () => {
-    await mock([Posts, Post], async (cache, [ostsData, postData], [postsRequest, postRequest]) => {
-      cache.write(postsRequest, ostsData);
+    await mock([Posts, Post], async (cache, [postsData, postData], [postsRequest, postRequest]) => {
+      cache.write(postsRequest.query, postsRequest.variables, postsData);
 
-      const { posts } = cache.read(postsRequest).data;
+      const { posts } = cache.read(postsRequest.query, postsRequest.variables).data;
 
       expect(posts.find(p => p.id === postsRequest.variables.id).title).toBe("Quam odit");
 
-      cache.write(postRequest, {
+      cache.write(postRequest.query, postRequest.variables, {
         post: { ...postData.post, title: "updated title" }
       });
 
-      const { posts: updatedPosts } = cache.read(postsRequest).data;
+      const { posts: updatedPosts } = cache.read(postsRequest.query, postsRequest.variables).data;
 
       expect(updatedPosts.find(p => p.id === postsRequest.variables.id).title).toBe(
         "updated title"
@@ -91,18 +91,18 @@ describe("@grafoo/core", () => {
   });
 
   it("should merge objects in the cache when removing or adding properties", async () => {
-    await mock(Post, async (cache, data, request) => {
-      cache.write(request, data);
+    await mock(Post, async (cache, data, { query, variables }) => {
+      cache.write(query, variables, data);
 
-      const post = JSON.parse(JSON.stringify(cache.read(request).data.post));
+      const post = JSON.parse(JSON.stringify(cache.read(query, variables).data.post));
 
       delete post.__typename;
 
       post.foo = "bar";
 
-      cache.write(request, { post });
+      cache.write(query, variables, { post });
 
-      expect(cache.read(request, true).data.post).toEqual({
+      expect(cache.read(query, variables).data.post).toEqual({
         __typename: "Post",
         author: {
           __typename: "Author",
@@ -118,45 +118,45 @@ describe("@grafoo/core", () => {
   });
 
   it("should call cache listeners on write with paths objects as arguments", async () => {
-    await mock(Post, async (cache, data, request) => {
+    await mock(Post, async (cache, data, { query, variables }) => {
       const listener = jest.fn();
       const listener2 = jest.fn();
 
       const unlisten = cache.listen(listener);
       cache.listen(listener2);
 
-      cache.write(request, data);
+      cache.write(query, variables, data);
 
-      expect(listener).toHaveBeenCalledWith(cache.read(request).objects);
+      expect(listener).toHaveBeenCalledWith(cache.read(query, variables).objects);
 
       unlisten();
-      cache.write(request, data);
+      cache.write(query, variables, data);
 
       expect(listener).toHaveBeenCalledTimes(1);
       expect(listener2).toHaveBeenCalledTimes(2);
 
       unlisten();
-      cache.write(request, data);
+      cache.write(query, variables, data);
 
       expect(listener2).toHaveBeenCalledTimes(3);
     });
   });
 
   it("should be able read from the cache with a declared initialState", async () => {
-    await mock(Authors, async (cache, data, request) => {
-      cache.write(request, data);
+    await mock(Authors, async (cache, data, { query, variables }) => {
+      cache.write(query, variables, data);
 
       cache = createCache({ initialState: cache.flush() });
 
-      expect(cache.read(request).data).toEqual(data);
+      expect(cache.read(query, variables).data).toEqual(data);
     });
   });
 
   it("should accept `idFields` array in options", async () => {
-    await mock(Authors, async (_, data, request) => {
+    await mock(Authors, async (_, data, { query, variables }) => {
       const cache = createCache({ idFields: ["__typename", "id"] });
 
-      cache.write(request, data);
+      cache.write(query, variables, data);
 
       expect(Object.keys(cache.flush().objectsMap).every(key => /(Post|Author)/.test(key))).toBe(
         true

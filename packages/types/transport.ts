@@ -12,11 +12,6 @@ export interface Variables {
   [key: string]: any;
 }
 
-export interface GraphQLRequestContext {
-  query: string;
-  variables?: Variables;
-}
-
-export type TransportRequest = <T>(request: GraphQLRequestContext) => Promise<T>;
+export type TransportRequest = <T>(query: string, variables?: Variables) => Promise<T>;
 
 export type Headers = (() => {}) | {};

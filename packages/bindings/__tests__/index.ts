@@ -59,7 +59,7 @@ describe("@grafoo/bindings", () => {
   it("should provide the data if the query is already cached", async () => {
     const { data } = await mockQueryRequest(Authors);
 
-    client.write({ query: Authors }, data);
+    client.write(Authors, data);
 
     bindings = createBindings(client, { query: Authors }, () => void 0);
 
@@ -73,7 +73,7 @@ describe("@grafoo/bindings", () => {
 
     bindings = createBindings(client, { query: Authors }, renderFn);
 
-    client.write({ query: Authors }, data);
+    client.write(Authors, data);
 
     expect(renderFn).toHaveBeenCalledWith({ ...data, loaded: false, loading: true });
   });
@@ -81,7 +81,7 @@ describe("@grafoo/bindings", () => {
   it("should provide the state for a cached query", async () => {
     const { data } = await mockQueryRequest(Authors);
 
-    client.write({ query: Authors }, data);
+    client.write(Authors, data);
 
     const renderFn = jest.fn();
 
@@ -101,13 +101,12 @@ describe("@grafoo/bindings", () => {
 
     bindings.unbind();
 
-    client.write(
-      { query: Authors },
-      { authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a)) }
-    );
+    client.write(Authors, {
+      authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a))
+    });
 
     expect(renderFn).toHaveBeenCalledTimes(1);
-    expect(client.read<Authors>({ query: Authors }).data.authors[0].name).toBe("Homer");
+    expect(client.read<Authors>(Authors).data.authors[0].name).toBe("Homer");
     expect(renderFn).toHaveBeenCalledWith({ ...data, loading: false, loaded: true });
   });
 });

@@ -26,9 +26,14 @@ export interface CacheRequest {
   variables?: Variables;
 }
 
+export interface CacheWriteMethod {
+  (grafooObject: GrafooObject, variables: Variables, data: {}): void;
+  (grafooObject: GrafooObject, data: {}): void;
+}
+
 export interface CacheInstance {
   listen(listener: Listener): () => void;
-  write<T>(cacheRequest: CacheRequest, data: T): void;
-  read<T>(cacheRequest: CacheRequest): { data?: T; objects?: ObjectsMap };
+  write: CacheWriteMethod;
+  read<T>(grafooObject: GrafooObject, variables?: Variables): { data?: T; objects?: ObjectsMap };
   flush(): InitialState;
 }

@@ -1,4 +1,11 @@
-import { CacheInstance, CacheOptions, ObjectsMap, Variables } from "@grafoo/types";
+import {
+  CacheInstance,
+  CacheOptions,
+  GrafooObject,
+  Listener,
+  ObjectsMap,
+  Variables
+} from "@grafoo/types";
 import buildQueryTree from "./build-query-tree";
 import mapObjects from "./map-objects";
 
@@ -12,7 +19,7 @@ export default function createCache(options?: CacheOptions): CacheInstance {
   const listeners = [];
 
   return {
-    listen(listener) {
+    listen(listener: Listener) {
       listeners.push(listener);
 
       return () => {
@@ -23,7 +30,9 @@ export default function createCache(options?: CacheOptions): CacheInstance {
         listeners.splice(index, 1);
       };
     },
-    write({ query: { paths }, variables }, data: {}) {
+    write({ paths }: GrafooObject, variables: Variables | {}, data?: {}) {
+      if (!data) data = variables;
+
       const objects: ObjectsMap = {};
 
       for (const path in paths) {
@@ -33,10 +42,7 @@ export default function createCache(options?: CacheOptions): CacheInstance {
 
         Object.assign(objects, pathObjects);
 
-        pathsMap[getPathId(path, args, variables)] = {
-          data: pathData,
-          objects: pathObjects
-        };
+        pathsMap[getPathId(path, args, variables)] = { data: pathData, objects: pathObjects };
       }
 
       for (const i in objects)
@@ -44,7 +50,7 @@ export default function createCache(options?: CacheOptions): CacheInstance {
 
       for (const listener of listeners) listener(objects);
     },
-    read({ query: { paths }, variables }) {
+    read({ paths }: GrafooObject, variables?: Variables) {
       const data = {};
       const objects: ObjectsMap = {};
 

@@ -7,12 +7,17 @@ import {
 } from "@grafoo/types";
 import { Component, createContext, createElement, ReactNode, SFC } from "react";
 
-export default function createGrafooContext(client: ClientInstance) {
+export default function createGrafooContext(
+  client: ClientInstance
+): {
+  Provider: SFC;
+  Consumer: SFC<GrafooReactConsumerProps>;
+} {
   // @ts-ignore
   const CTX = createContext();
 
-  const getConsumer = clientInstance => {
-    return class extends Component<GrafooReactConsumerProps, GrafooRenderProps> {
+  const getConsumer = clientInstance =>
+    class extends Component<GrafooReactConsumerProps, GrafooRenderProps> {
       binds: Bindings;
 
       constructor(props: GrafooReactConsumerProps) {
@@ -36,12 +41,9 @@ export default function createGrafooContext(client: ClientInstance) {
           unbind();
         };
 
-        this.render = () => {
-          return props.children<ReactNode>(this.state);
-        };
+        this.render = () => props.children<ReactNode>(this.state);
       }
     };
-  };
 
   const GrafooConsumer: SFC<GrafooReactConsumerProps> = props =>
     createElement(CTX.Consumer, null, (clientInstance: ClientInstance) =>

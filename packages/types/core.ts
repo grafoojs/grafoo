@@ -1,8 +1,9 @@
 import { CacheOptions, CacheInstance } from "./cache";
-import { TransportRequest } from "./transport";
+import { Variables } from "./transport";
+import { GrafooObject } from "./tag";
 
 export interface ClientInstance extends CacheInstance {
-  request: TransportRequest;
+  request<T>(grafooObject: GrafooObject, variables?: Variables): Promise<T>;
 }
 
 export interface ClientOptions extends CacheOptions {

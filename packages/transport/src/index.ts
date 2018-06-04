@@ -1,10 +1,4 @@
-import {
-  GraphQLRequestContext,
-  GraphQlError,
-  GraphQlPayload,
-  Headers,
-  TransportRequest
-} from "@grafoo/types";
+import { GraphQlError, GraphQlPayload, Headers, TransportRequest, Variables } from "@grafoo/types";
 
 class TransportError extends Error {
   errors: GraphQlError[];
@@ -18,8 +12,8 @@ class TransportError extends Error {
 export default function createTransport(uri: string, headers?: Headers): TransportRequest {
   headers = headers || {};
 
-  return <T>(request: GraphQLRequestContext): Promise<T> => {
-    const body = JSON.stringify(request);
+  return <T>(query: string, variables?: Variables): Promise<T> => {
+    const body = JSON.stringify({ query, variables });
     const init = {
       body,
       method: "POST",

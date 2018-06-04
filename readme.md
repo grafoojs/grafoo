@@ -1,33 +1,27 @@
-# Grafoo
+<h1 align=center><img src=https://user-images.githubusercontent.com/10574149/40881679-438f8248-66a3-11e8-8d09-b284afb591b9.png alt=Grafoo style="margin: 32px 0"/></h1>
 
-[![build](https://img.shields.io/circleci/project/github/malbernaz/grafoo/master.svg?label=circle)](https://circleci.com/gh/malbernaz/grafoo)
+<p align=center>A GraphQl Client and Toolkit</p>
 
-> Grafoo is an experimental graphql client under heavy development.
+<p align=center><a href=https://circleci.com/gh/malbernaz/grafoo><img src=https://img.shields.io/circleci/project/github/malbernaz/grafoo/master.svg?label=build alt=build /></a></p>
 
-## Goals
+In GraphQL we don't have as many libraries targeted to the client as do on the server side. **Grafoo** is a GraphQL client and toolkit that tries to be different by introducing a **build time dependent approach**, where all your queries are compiled beforehand in order to spare runtime computation. To sum up with that we are working hard to bring **view layer ingrations** for all major frameworks. You can check the ones we already have at:
 
-- to have a minimal footprint on bundlesize
-- to have a minimal runtime overhead
-- to provide view layers for all major frameworks
-- easebility of use
+- [`@grafoo/react`](https://github.com/malbernaz/grafoo/tree/master/packages/react)
+- [`@grafoo/preact`](https://github.com/malbernaz/grafoo/tree/master/packages/preact)
 
-## Why
+## Basic usage
 
-Mobile traffic. Grafoo is targeted to low-end devices.
+### Installation
 
-## How
-
-Grafoo parses all queries beforehand with the help of a babel plugin. At runtime the cache normalizes query results to then serve to the application.
-
-## Installation
+The basic packages you'll have to install in order to use Grafoo are core, tag and babel-plugin-tag.
 
 ```shell
-npm i @grafoo/core && npm i -D @grafoo/babel-plugin-tag
+$ npm i @grafoo/core @grafoo/tag && npm i -D @grafoo/babel-plugin-tag
 ```
 
-## Usage
+### Configure babel
 
-### Babel
+In `@grafoo/babel-plugin-tag` the option `schema` is a path to a GraphQL schema in your file system relative to the root of your project and `idFields` is an array of strings that represent the fields that Grafoo will automatically insert on your queries to build unique identifiers in order to normalize the cache. **Both options are required**.
 
 ```json
 {
@@ -43,19 +37,21 @@ npm i @grafoo/core && npm i -D @grafoo/babel-plugin-tag
 }
 ```
 
-### App
+### Writing your app
+
+From `@grafoo/core` you will import the factory that creates the client instance and from `@grafoo/tag` you'll import the `graphql` or `gql` tag that will be compiled at build time.
 
 ```js
 import createClient from "@grafoo/core";
 import graphql from "@grafoo/tag";
 
-const client = createClient("http://some-graphql-api.com", {
+const client = createClient("http://some.graphql.api", {
   headers: {
     /* can be a function as well */
   }
 });
 
-const HELLO = graphql`
+const USER_QUERY = graphql`
   query($id: ID!) {
     user(id: $id) {
       name
@@ -65,22 +61,12 @@ const HELLO = graphql`
 
 const variables = { id: 123 };
 
-client.request({ query: HELLO.query, variables }).then(data => {
-  cache.write({ query: HELLO, variables }, data);
+client.request(USER_QUERY, variables).then(data => {
+  client.write(USER_QUERY, variables, data);
 
-  console.log(client.read({ query: HELLO, variables }));
+  console.log(client.read(USER_QUERY, variables));
 });
 ```
-
-## Todo
-
-- [x] Finish preact bindings
-- [x] Preact bindings test suite
-- [x] React bindings
-- [ ] Svelte bindings
-- [x] Enhance babel plugin
-- [x] Continuous integration
-- [ ] Publish
 
 ## LICENSE
 

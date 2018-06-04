@@ -3,16 +3,16 @@ import createTransport from "../src";
 
 const fakeAPI = "http://fake-api.com/graphql";
 const query = "{ hello }";
-let request;
-
-beforeEach(() => {
-  request = createTransport(fakeAPI);
-});
 
 describe("@grafoo/transport", () => {
+  let request;
+  beforeEach(() => {
+    request = createTransport(fakeAPI);
+  });
+
   it("should perform a simple request", async () => {
     await mock(async () => {
-      await request({ query });
+      await request(query);
 
       const [, { body, headers, method }] = fetchMock.lastCall();
 
@@ -26,7 +26,7 @@ describe("@grafoo/transport", () => {
     await mock(async () => {
       const variables = { some: "variable" };
 
-      await request({ query, variables });
+      await request(query, variables);
 
       const [, { body }] = fetchMock.lastCall();
 
@@ -38,7 +38,7 @@ describe("@grafoo/transport", () => {
     request = createTransport(fakeAPI, { authorization: "Bearer some-token" });
 
     await mock(async () => {
-      await request({ query });
+      await request(query);
 
       const [, { headers }] = fetchMock.lastCall();
 
@@ -53,7 +53,7 @@ describe("@grafoo/transport", () => {
     request = createTransport(fakeAPI, () => ({ authorization: "Bearer some-token" }));
 
     await mock(async () => {
-      await request({ query });
+      await request(query);
 
       const [, { headers }] = fetchMock.lastCall();
 
@@ -68,7 +68,7 @@ describe("@grafoo/transport", () => {
     const response = { data: null, errors: [{ message: "I AM ERROR!" }] };
 
     await mock(response, async () => {
-      await expect(request({ query })).rejects.toMatchObject({
+      await expect(request(query)).rejects.toMatchObject({
         message: 'graphql error on request {"query":"{ hello }"}',
         errors: response.errors
       });
