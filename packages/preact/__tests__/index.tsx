@@ -3,7 +3,7 @@ import { Authors, CreateAuthor, mockQueryRequest, PostsAndAuthors } from "@grafo
 import { ClientInstance, GrafooMutation } from "@grafoo/types";
 import { h } from "preact";
 import { render } from "preact-render-spy";
-import { GrafooConsumer, GrafooProvider } from "../src";
+import { Consumer, Provider } from "../src";
 
 interface Post {
   title: string;
@@ -24,7 +24,7 @@ interface CreateAuthor {
   createAuthor: Author;
 }
 
-interface AllAuthors {
+interface Authors {
   authors: Author[];
 }
 
@@ -37,7 +37,7 @@ describe("@grafoo/preact", () => {
     client = createClient("https://some.graphql.api/");
   });
 
-  describe("<GrafooProvider />", () => {
+  describe("<Provider />", () => {
     it("should provide the client in it's context", done => {
       const Comp = ({}, context) => {
         expect(context.client).toBe(client);
@@ -46,22 +46,22 @@ describe("@grafoo/preact", () => {
       };
 
       render(
-        <GrafooProvider client={client}>
+        <Provider client={client}>
           <Comp />
-        </GrafooProvider>
+        </Provider>
       );
 
       done();
     });
   });
 
-  describe("<GrafooConsumer />", () => {
+  describe("<Consumer />", () => {
     it("should not crash if a query is not given as prop", () => {
       expect(() =>
         render(
-          <GrafooProvider client={client}>
-            <GrafooConsumer>{() => null}</GrafooConsumer>
-          </GrafooProvider>
+          <Provider client={client}>
+            <Consumer>{() => null}</Consumer>
+          </Provider>
         )
       ).not.toThrow();
     });
@@ -72,11 +72,11 @@ describe("@grafoo/preact", () => {
       const spy = jest.spyOn(window, "fetch");
 
       render(
-        <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors} skip>
+        <Provider client={client}>
+          <Consumer query={Authors} skip>
             {() => null}
-          </GrafooConsumer>
-        </GrafooProvider>
+          </Consumer>
+        </Provider>
       );
 
       expect(spy).not.toHaveBeenCalled();
@@ -88,11 +88,11 @@ describe("@grafoo/preact", () => {
       const spy = jest.spyOn(client, "listen");
 
       render(
-        <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors} skip>
+        <Provider client={client}>
+          <Consumer query={Authors} skip>
             {() => null}
-          </GrafooConsumer>
-        </GrafooProvider>
+          </Consumer>
+        </Provider>
       );
 
       expect(spy).toHaveBeenCalled();
@@ -100,11 +100,11 @@ describe("@grafoo/preact", () => {
 
     it("should not crash on unmount", () => {
       const ctx = render(
-        <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors} skip>
+        <Provider client={client}>
+          <Consumer query={Authors} skip>
             {() => null}
-          </GrafooConsumer>
-        </GrafooProvider>
+          </Consumer>
+        </Provider>
       );
 
       expect(() => ctx.render(null)).not.toThrow();
@@ -114,11 +114,11 @@ describe("@grafoo/preact", () => {
       const mockRender = jest.fn();
 
       render(
-        <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors} skip>
+        <Provider client={client}>
+          <Consumer query={Authors} skip>
             {mockRender}
-          </GrafooConsumer>
-        </GrafooProvider>
+          </Consumer>
+        </Provider>
       );
 
       expect(mockRender).toHaveBeenCalledWith({ loading: true, loaded: false });
@@ -133,9 +133,9 @@ describe("@grafoo/preact", () => {
       ]);
 
       render(
-        <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors}>{mockRender}</GrafooConsumer>
-        </GrafooProvider>
+        <Provider client={client}>
+          <Consumer query={Authors}>{mockRender}</Consumer>
+        </Provider>
       );
     });
 
@@ -153,9 +153,9 @@ describe("@grafoo/preact", () => {
       ]);
 
       render(
-        <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors}>{mockRender}</GrafooConsumer>
-        </GrafooProvider>
+        <Provider client={client}>
+          <Consumer query={Authors}>{mockRender}</Consumer>
+        </Provider>
       );
 
       expect(spy).not.toHaveBeenCalled();
@@ -187,7 +187,7 @@ describe("@grafoo/preact", () => {
         }
       ]);
 
-      type CreateAuthorMutations = GrafooMutation<AllAuthors, CreateAuthor>;
+      type CreateAuthorMutations = GrafooMutation<Authors, CreateAuthor>;
 
       const createAuthor: CreateAuthorMutations = {
         query: CreateAuthor,
@@ -201,11 +201,11 @@ describe("@grafoo/preact", () => {
       };
 
       render(
-        <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors} mutations={{ createAuthor }}>
+        <Provider client={client}>
+          <Consumer query={Authors} mutations={{ createAuthor }}>
             {mockRender}
-          </GrafooConsumer>
-        </GrafooProvider>
+          </Consumer>
+        </Provider>
       );
     });
 
@@ -220,9 +220,9 @@ describe("@grafoo/preact", () => {
       ]);
 
       render(
-        <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors}>{mockRender}</GrafooConsumer>
-        </GrafooProvider>
+        <Provider client={client}>
+          <Consumer query={Authors}>{mockRender}</Consumer>
+        </Provider>
       );
 
       client.write(Authors, {
@@ -245,9 +245,9 @@ describe("@grafoo/preact", () => {
       ]);
 
       render(
-        <GrafooProvider client={client}>
-          <GrafooConsumer query={Authors}>{mockRender}</GrafooConsumer>
-        </GrafooProvider>
+        <Provider client={client}>
+          <Consumer query={Authors}>{mockRender}</Consumer>
+        </Provider>
       );
     });
   });

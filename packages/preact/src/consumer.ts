@@ -2,7 +2,7 @@ import createBindings from "@grafoo/bindings";
 import { Bindings, Context, GrafooPreactConsumerProps, GrafooRenderProps } from "@grafoo/types";
 import { Component } from "preact";
 
-export class GrafooConsumer extends Component<GrafooPreactConsumerProps, GrafooRenderProps> {
+export class Consumer extends Component<GrafooPreactConsumerProps, GrafooRenderProps> {
   binds: Bindings;
 
   constructor(props: GrafooPreactConsumerProps, context: Context) {

@@ -43,7 +43,7 @@ To configure the plugin is required to specify a `schema`, which is a path to a 
 
 ## How to get my schema?
 
-The recommendation is to use the [`get-graphql-schema`](https://github.com/prismagraphql/get-graphql-schema), by [Prisma](https://www.prisma.io/). In the near future we are planning to introduce a `schemaUrl` option to this plugin so this step wont be required anymore.
+The recommendation is to use the [`get-graphql-schema`](https://github.com/prismagraphql/get-graphql-schema), by [Prisma](https://www.prisma.io/). In the near future we are planning to introduce a `schemaUrl` option to this plugin so that this step wont be required anymore.
 
 ## Transformations
 
