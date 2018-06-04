@@ -12,7 +12,7 @@
     "test": "lerna run test",
     "prepare": "node scripts/build.js",
     "clean": "rimraf packages/**/dist",
-    "prepush": "yarn clean && yarn prepare && yarn test",
+    "prepush": "yarn test",
     "precommit": "lint-staged"
   },
   "workspaces": [
