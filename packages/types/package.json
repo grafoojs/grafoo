@@ -2,7 +2,7 @@
   "name": "@grafoo/types",
   "version": "0.0.1",
   "description": "the grafoo client typescript definitions",
-  "typings": "index.ts",
+  "typings": "types/index.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT"
 }

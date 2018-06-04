@@ -1,6 +1,17 @@
 # `@grafoo/babel-plugin-tag`
 
-[![build](https://img.shields.io/circleci/project/github/malbernaz/grafoo/master.svg?label=build)](https://circleci.com/gh/malbernaz/grafoo)
+<a href=https://circleci.com/gh/malbernaz/grafoo>
+  <img
+    src=https://img.shields.io/circleci/project/github/malbernaz/grafoo/master.svg?label=build
+    alt=build
+  />
+</a>
+<a href=https://github.com/malbernaz/grafoo>
+  <img
+    src=https://img.shields.io/badge/code_style-prettier-ff69b4.svg
+    alt="code style: prettier"
+  />
+</a>
 
 The Grafoo babel plugin.
 
