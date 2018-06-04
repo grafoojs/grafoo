@@ -16,14 +16,14 @@
   </a>
   <a href=https://github.com/malbernaz/grafoo>
     <img
-      src=https://img.shields.io/badge/code_style-prettier-ff69b4.svg
-      alt="code style: prettier"
+      src=https://img.shields.io/codecov/c/github/malbernaz/grafoo/master.svg
+      alt="coverage"
     />
   </a>
   <a href=https://github.com/malbernaz/grafoo>
     <img
-      src=https://img.shields.io/codecov/c/github/malbernaz/grafoo/master.svg
-      alt="coverage"
+      src=https://img.shields.io/badge/code_style-prettier-ff69b4.svg
+      alt="code style: prettier"
     />
   </a>
 </p>
