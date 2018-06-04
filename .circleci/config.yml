@@ -17,7 +17,7 @@ jobs:
 
       - run:
           name: Install Dependencies and build packages
-          command: yarn bootstrap
+          command: yarn
 
       - save_cache:
           name: Save Yarn Package Cache
