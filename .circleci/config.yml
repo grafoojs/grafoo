@@ -16,7 +16,7 @@ jobs:
             - yarn-packages-
 
       - run:
-          name: Install Dependencies
+          name: Install Dependencies and build packages
           command: yarn install
 
       - save_cache:
@@ -24,10 +24,6 @@ jobs:
           key: yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
             - node_modules/
-
-      - run:
-          name: Build packages
-          command: yarn clean && yarn prepare
 
       - run:
           name: Run tests
