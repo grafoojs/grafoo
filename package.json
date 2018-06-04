@@ -10,6 +10,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test",
+    "test:coverage": "lerna run test:coverage",
     "prepare": "node scripts/build.js",
     "clean": "rimraf packages/**/dist",
     "prepush": "yarn test",
@@ -57,6 +58,7 @@
     "babel-eslint": "^8.2.3",
     "babel-plugin-jsx-pragmatic": "^1.0.2",
     "casual": "^1.5.19",
+    "codecov": "^3.0.2",
     "eslint": "^4.19.1",
     "eslint-plugin-import": "^2.12.0",
     "fetch-mock": "^6.4.3",

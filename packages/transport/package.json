@@ -8,7 +8,8 @@
   "license": "MIT",
   "scripts": {
     "prepare": "grafoo-bundle --input src/index.ts --skip-compression",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage && codecov"
   },
   "jest": {
     "moduleFileExtensions": [
