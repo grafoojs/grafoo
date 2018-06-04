@@ -5,7 +5,7 @@
   />
 </h1>
 
-<p align=center>A GraphQL Client and Toolkit</p>
+<p align=center><i>A GraphQL Client and Toolkit</i></p>
 
 <p align=center>
   <a href=https://circleci.com/gh/malbernaz/grafoo>
