@@ -1,8 +1,27 @@
-<h1 align=center><img src=https://user-images.githubusercontent.com/10574149/40881679-438f8248-66a3-11e8-8d09-b284afb591b9.png alt=Grafoo style="margin: 32px 0"/></h1>
+<h1 align=center>
+  <img
+    src=https://user-images.githubusercontent.com/10574149/40881679-438f8248-66a3-11e8-8d09-b284afb591b9.png
+    alt=Grafoo
+  />
+</h1>
 
 <p align=center>A GraphQL Client and Toolkit</p>
 
-<p align=center><a href=https://circleci.com/gh/malbernaz/grafoo><img src=https://img.shields.io/circleci/project/github/malbernaz/grafoo/master.svg?label=build alt=build /></a></p>
+<p align=center>
+  <a href=https://circleci.com/gh/malbernaz/grafoo>
+    <img
+      src=https://img.shields.io/circleci/project/github/malbernaz/grafoo/master.svg?label=build
+      alt=build
+    />
+  </a>
+  <a href=https://github.com/malbernaz/grafoo>
+    <img
+      src=https://img.shields.io/badge/code_style-prettier-ff69b4.svg
+      alt="code style: prettier"
+    />
+  </a>
+</p>
+
 
 In GraphQL we don't have as many libraries targeted to the client as do on the server side. **Grafoo** is a GraphQL client and toolkit that tries to be different by introducing a **build time dependent approach**, where all your queries are compiled beforehand in order to spare runtime computation. To sum up with that we are working hard to bring **view layer ingrations** for all major frameworks. You can check the ones we already have at:
 
