@@ -13,7 +13,7 @@
     "test:coverage": "lerna run test:coverage",
     "prepare": "node scripts/build.js",
     "clean": "rimraf packages/**/dist",
-    "prepush": "yarn test:coverage",
+    "prepush": "yarn test",
     "precommit": "lint-staged"
   },
   "workspaces": [
