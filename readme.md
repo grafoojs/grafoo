@@ -20,6 +20,12 @@
       alt="code style: prettier"
     />
   </a>
+  <a href=https://github.com/malbernaz/grafoo>
+    <img
+      src=https://img.shields.io/codecov/c/github/malbernaz/grafoo/master.svg
+      alt="coverage"
+    />
+  </a>
 </p>
 
 In GraphQL we don't have as many libraries targeted to the client as do on the server side. **Grafoo** is a GraphQL client and toolkit that tries to be different by introducing a **build time dependent approach**, where all your queries are compiled beforehand in order to spare runtime computation. To sum up with that we are working hard to bring **view layer ingrations** for all major frameworks. You can check the ones we already have at:
