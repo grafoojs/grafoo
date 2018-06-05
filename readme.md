@@ -28,7 +28,9 @@
   </a>
 </p>
 
-In GraphQL we don't have as many libraries targeted to the client as do on the server side. **Grafoo** is a GraphQL client and toolkit that tries to be different by introducing a **build time dependent approach**, where all your queries are compiled beforehand in order to spare runtime computation. To sum up with that we are working hard to bring **view layer ingrations** for all major frameworks. You can check the ones we already have at:
+Grafoo is a GraphQL client that tries to be different by adopting a **simpler API**, without giving up of a **good caching strategy**. It works in a **build time based approach**, compiling all of your queries based on the schema of the GraphQL server your app consumes. By doing so this library is fast, because it spares runtime computation and is really small because it does not ship with a GraphQL parser.
+
+To sum up with all that we are working hard to bring view layer ingrations for all major frameworks. You can check the ones we already have at:
 
 - [`@grafoo/react`](https://github.com/grafoojs/grafoo/tree/master/packages/react)
 - [`@grafoo/preact`](https://github.com/grafoojs/grafoo/tree/master/packages/preact)
