@@ -3,7 +3,7 @@ import plugin from "../src";
 
 pluginTester({
   plugin,
-  pluginName: "@grafoo/babel-plugin-tag",
+  pluginName: "@grafoo/babel-plugin",
   pluginOptions: {
     schema: "__tests__/schema.graphql",
     idFields: ["id"]

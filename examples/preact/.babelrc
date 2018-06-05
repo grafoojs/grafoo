@@ -5,7 +5,7 @@
   ],
   "plugins": [
     "@babel/plugin-proposal-class-properties",
-    ["@grafoo/babel-plugin-tag", { "schema": "schema.graphql", "idFields": ["id"] }]
+    ["module:@grafoo/babel-plugin", { "schema": "schema.graphql", "idFields": ["id"] }]
   ],
   "env": {
     "production": {

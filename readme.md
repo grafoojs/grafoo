@@ -39,21 +39,21 @@ To sum up with all that we are working hard to bring **view layer ingrations** f
 
 ### Installation
 
-The basic packages you'll have to install in order to use Grafoo are core, tag and babel-plugin-tag.
+The basic packages you'll have to install in order to use Grafoo are core, tag and babel-plugin.
 
 ```
-$ npm i @grafoo/core @grafoo/tag && npm i -D @grafoo/babel-plugin-tag
+$ npm i @grafoo/core @grafoo/tag && npm i -D @grafoo/babel-plugin
 ```
 
 ### Configure babel
 
-In `@grafoo/babel-plugin-tag` the option `schema` is a path to a GraphQL schema in your file system relative to the root of your project and `idFields` is an array of strings that represent the fields that Grafoo will automatically insert on your queries to build unique identifiers in order to normalize the cache. **Both options are required**.
+In `@grafoo/babel-plugin` the option `schema` is a path to a GraphQL schema in your file system relative to the root of your project and `idFields` is an array of strings that represent the fields that Grafoo will automatically insert on your queries to build unique identifiers in order to normalize the cache. **Both options are required**.
 
 ```json
 {
   "plugins": [
     [
-      "@grafoo/babel-plugin-tag",
+      "@grafoo/babel-plugin",
       {
         "schema": "schema.graphql",
         "idFields": ["id"]
