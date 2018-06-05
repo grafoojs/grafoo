@@ -53,7 +53,7 @@ _At the moment if you are using babel 7, you'll have to declare the plugin as `m
 
 ## How to get my schema?
 
-The recommendation is to use the [`get-graphql-schema`](https://github.com/prismagraphql/get-graphql-schema), by [Prisma](https://www.prisma.io/). In the near future we are planning to introduce a `schemaUrl` option to this plugin so that this step wont be required anymore.
+The recommendation for now is to use the [`get-graphql-schema`](https://github.com/prismagraphql/get-graphql-schema), by [Prisma](https://www.prisma.io/). In the near future we are planning to introduce a `schemaUrl` option to this plugin so that this step won't be required anymore.
 
 ## Transformations
 
