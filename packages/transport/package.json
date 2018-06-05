@@ -9,7 +9,7 @@
   "scripts": {
     "prepare": "grafoo-bundle --input src/index.ts --skip-compression",
     "test": "jest",
-    "test:coverage": "jest --coverage && codecov"
+    "test:coverage": "jest --coverage && codecov --root \"../..\""
   },
   "jest": {
     "moduleFileExtensions": [

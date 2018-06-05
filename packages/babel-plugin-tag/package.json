@@ -8,7 +8,7 @@
   "scripts": {
     "prepare": "babel src --out-dir dist",
     "test": "jest",
-    "test:coverage": "jest --coverage && codecov"
+    "test:coverage": "jest --coverage && codecov --root \"../..\""
   },
   "dependencies": {
     "babel-literal-to-ast": "^2.0.0",
