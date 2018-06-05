@@ -7,7 +7,7 @@
       alt=build
     />
   </a>
-  <a href=https://github.com/grafoojs/grafoo>
+  <a href=https://codecov.io/github/grafoojs/grafoo>
     <img
       src=https://img.shields.io/codecov/c/github/grafoojs/grafoo/master.svg
       alt="coverage"
