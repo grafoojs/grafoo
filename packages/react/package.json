@@ -12,7 +12,7 @@
   "scripts": {
     "prepare": "grafoo-bundle --input src/index.ts",
     "test": "jest",
-    "test:coverage": "jest --coverage && codecov --root \"../..\""
+    "test:coverage": "jest --coverage && codecov"
   },
   "jest": {
     "moduleFileExtensions": [
