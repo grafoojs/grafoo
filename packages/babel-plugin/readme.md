@@ -1,4 +1,6 @@
-# `@grafoo/babel-plugin-tag`
+# `@grafoo/babel-plugin`
+
+<p><i>The Grafoo Babel Plugin.</i></p>
 
 <p>
   <a href=https://circleci.com/gh/grafoojs/grafoo>
@@ -21,12 +23,12 @@
   </a>
 </p>
 
-The Grafoo babel plugin.
+A premise that Grafoo takes is that it should be able to extract an unique identifier from every node on the queries you write. It can be a GraphQL `ID` field, or more fields that together can form one (eg: an incremental integer and the GraphQL meta field `__typename`). It is `@grafoo/babel-plugin`'s responsibility to insert those fields on your queries automatically. If you have already used Apollo this should be very familiar to you, as our `idFields` configuration has the same pourpose of Apollo Cache's `dataIdFromObject`: to normalize your data.
 
 ## Install
 
 ```
-$ npm i @grafoo/core @grafoo/tag && npm i -D @grafoo/babel-plugin-tag
+$ npm i @grafoo/core @grafoo/tag && npm i -D @grafoo/babel-plugin
 ```
 
 ## Configuration
@@ -37,7 +39,7 @@ To configure the plugin is required to specify a `schema`, which is a path to a 
 {
   "plugins": [
     [
-      "@grafoo/babel-plugin-tag",
+      "@grafoo/babel-plugin",
       {
         "schema": "schema.graphql",
         "idFields": ["id"]
@@ -47,13 +49,15 @@ To configure the plugin is required to specify a `schema`, which is a path to a 
 }
 ```
 
+_At the moment if you are using babel 7, you'll have to declare the plugin as `module:@grafoo/babel-plugin`, because of the naming rules babel has._
+
 ## How to get my schema?
 
 The recommendation is to use the [`get-graphql-schema`](https://github.com/prismagraphql/get-graphql-schema), by [Prisma](https://www.prisma.io/). In the near future we are planning to introduce a `schemaUrl` option to this plugin so that this step wont be required anymore.
 
 ## Transformations
 
-`@grafoo/babel-plugin-tag` transforms your code in three ways:
+`@grafoo/babel-plugin` transforms your code in three ways:
 
 - Template tag literals using the default export from `@grafoo/tag` will be compiled to a special object that will assist the client on the caching process.
 - `@grafoo/tag` import statements will be removed.

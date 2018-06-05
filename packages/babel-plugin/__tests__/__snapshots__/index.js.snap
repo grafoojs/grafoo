@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`@grafoo/babel-plugin-tag should compress the query string if the option compress is specified: should compress the query string if the option compress is specified 1`] = `
+exports[`@grafoo/babel-plugin should compress the query string if the option compress is specified: should compress the query string if the option compress is specified 1`] = `
 "
 import gql from \\"@grafoo/tag\\";
 const query = gql\`
@@ -34,7 +34,7 @@ const query = {
 "
 `;
 
-exports[`@grafoo/babel-plugin-tag should include \`idFields\` in the client instantiation even if options are provided: should include \`idFields\` in the client instantiation even if options are provided 1`] = `
+exports[`@grafoo/babel-plugin should include \`idFields\` in the client instantiation even if options are provided: should include \`idFields\` in the client instantiation even if options are provided 1`] = `
 "
 import createClient from \\"@grafoo/core\\";
 const query = createClient(\\"http://gql.api\\", {
@@ -51,7 +51,7 @@ const query = createClient(\\"http://gql.api\\", {
 "
 `;
 
-exports[`@grafoo/babel-plugin-tag should include \`idFields\` in the client instantiation if options are not provided: should include \`idFields\` in the client instantiation if options are not provided 1`] = `
+exports[`@grafoo/babel-plugin should include \`idFields\` in the client instantiation if options are not provided: should include \`idFields\` in the client instantiation if options are not provided 1`] = `
 "
 import createClient from \\"@grafoo/core\\";
 const query = createClient(\\"http://gql.api\\");
@@ -65,7 +65,7 @@ const query = createClient(\\"http://gql.api\\", {
 "
 `;
 
-exports[`@grafoo/babel-plugin-tag should remove the imported path: should remove the imported path 1`] = `
+exports[`@grafoo/babel-plugin should remove the imported path: should remove the imported path 1`] = `
 "
 import gql from \\"@grafoo/tag\\";
 
@@ -75,7 +75,7 @@ import gql from \\"@grafoo/tag\\";
 "
 `;
 
-exports[`@grafoo/babel-plugin-tag should replace a tagged template literal with the compiled grafoo object: should replace a tagged template literal with the compiled grafoo object 1`] = `
+exports[`@grafoo/babel-plugin should replace a tagged template literal with the compiled grafoo object: should replace a tagged template literal with the compiled grafoo object 1`] = `
 "
 import gql from \\"@grafoo/tag\\";
 const query = gql\`
