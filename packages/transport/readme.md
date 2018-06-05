@@ -1,5 +1,7 @@
 # `@grafoo/transport`
 
+<p><i>A Simple HTTP Client to Comunicate With GraphQL Servers</i></p>
+
 <p>
   <a href=https://circleci.com/gh/grafoojs/grafoo>
     <img
@@ -20,8 +22,6 @@
     />
   </a>
 </p>
-
-A simple http client to comunicate with graphql servers.
 
 ## Install
 
