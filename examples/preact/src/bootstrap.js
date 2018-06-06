@@ -1,5 +1,5 @@
 import { h, render } from "preact";
-import App from "./components/App";
+import App from "./App";
 
 const mnt = document.getElementById("mnt");
 

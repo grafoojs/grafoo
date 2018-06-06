@@ -1,6 +1,7 @@
-import { h } from "preact";
-import { Consumer } from "@grafoo/preact";
-import { allPosts, createPost, deletePost, updatePost } from "../queries";
+import React from "react";
+
+import Consumer from "./client";
+import { allPosts, createPost, deletePost, updatePost } from "./queries";
 import Posts from "./Posts";
 
 const mutations = {
@@ -26,8 +27,8 @@ const mutations = {
   },
   deletePost: {
     query: deletePost,
-    optimisticUpdate: (props, { id }) => ({
-      allPosts: props.allPosts.filter(_ => _.id !== id)
+    optimisticUpdate: ({ allPosts }, { id }) => ({
+      allPosts: allPosts.filter(_ => _.id !== id)
     }),
     update: ({ mutate, allPosts }, variables) =>
       mutate(variables).then(({ deletePost: { id } }) => ({
@@ -36,10 +37,10 @@ const mutations = {
   }
 };
 
-const PostsContainer = () => (
-  <Consumer query={allPosts} variables={{ orderBy: "createdAt_DESC" }} mutations={mutations}>
-    {props => <Posts {...props} />}
-  </Consumer>
-);
-
-export default PostsContainer;
+export default function App() {
+  return (
+    <Consumer query={allPosts} variables={{ orderBy: "createdAt_DESC" }} mutations={mutations}>
+      {props => <Posts {...props} />}
+    </Consumer>
+  );
+}

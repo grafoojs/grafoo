@@ -1,6 +1,6 @@
-import gql from "@grafoo/tag";
+import graphql from "@grafoo/tag";
 
-export const allPosts = gql`
+export const allPosts = graphql`
   query getPosts($orderBy: PostOrderBy) {
     allPosts(orderBy: $orderBy) {
       title
@@ -11,7 +11,7 @@ export const allPosts = gql`
   }
 `;
 
-export const createPost = gql`
+export const createPost = graphql`
   mutation createPost($content: String, $title: String, $authorId: ID) {
     createPost(content: $content, title: $title, authorId: $authorId) {
       title
@@ -22,7 +22,7 @@ export const createPost = gql`
   }
 `;
 
-export const updatePost = gql`
+export const updatePost = graphql`
   mutation updatePost($id: ID!, $title: String, $content: String) {
     updatePost(id: $id, title: $title, content: $content) {
       title
@@ -33,7 +33,7 @@ export const updatePost = gql`
   }
 `;
 
-export const deletePost = gql`
+export const deletePost = graphql`
   mutation deletePost($id: ID!) {
     deletePost(id: $id) {
       id

@@ -7,52 +7,44 @@ import {
 } from "@grafoo/types";
 import { Component, createContext, createElement, ReactNode, SFC } from "react";
 
-export default function createGrafooContext(
+export default function createGrafooComsumer(
   client: ClientInstance
-): {
-  Provider: SFC;
-  Consumer: SFC<GrafooReactConsumerProps>;
-} {
-  // @ts-ignore
-  const CTX = createContext();
+): SFC<GrafooReactConsumerProps> {
+  return consumerProps =>
+    createElement(createContext(client).Consumer, null, (clientInstance: ClientInstance) =>
+      createElement(
+        // disabling the next line because it causes the build to fail
+        // tslint:disable-next-line only-arrow-functions
+        (function() {
+          return class extends Component<GrafooReactConsumerProps, GrafooRenderProps> {
+            binds: Bindings;
 
-  function getConsumer(clientInstance: ClientInstance) {
-    return class extends Component<GrafooReactConsumerProps, GrafooRenderProps> {
-      binds: Bindings;
+            constructor(props: GrafooReactConsumerProps) {
+              super(props);
 
-      constructor(props: GrafooReactConsumerProps) {
-        super(props);
+              const { getState, unbind, executeQuery } = (this.binds = createBindings(
+                clientInstance,
+                props,
+                nextRenderProps => this.setState(nextRenderProps)
+              ));
 
-        const { getState, unbind, executeQuery } = (this.binds = createBindings(
-          clientInstance,
-          props,
-          nextRenderProps => this.setState(nextRenderProps)
-        ));
+              this.state = getState();
 
-        this.state = getState();
+              this.componentDidMount = () => {
+                if (props.skip || !props.query || this.state.loaded) return;
 
-        this.componentDidMount = () => {
-          if (props.skip || !props.query || this.state.loaded) return;
+                executeQuery();
+              };
 
-          executeQuery();
-        };
+              this.componentWillUnmount = () => {
+                unbind();
+              };
 
-        this.componentWillUnmount = () => {
-          unbind();
-        };
-
-        this.render = () => props.children<ReactNode>(this.state);
-      }
-    };
-  }
-
-  const GrafooConsumer: SFC<GrafooReactConsumerProps> = props =>
-    createElement(CTX.Consumer, null, (clientInstance: ClientInstance) =>
-      createElement(getConsumer(clientInstance), props)
+              this.render = () => props.children<ReactNode>(this.state);
+            }
+          };
+        })(),
+        consumerProps
+      )
     );
-
-  const GrafooProvider: SFC = props =>
-    createElement(CTX.Provider, { value: client }, props.children);
-
-  return { Provider: GrafooProvider, Consumer: GrafooConsumer };
 }
