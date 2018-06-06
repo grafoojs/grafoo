@@ -2,7 +2,7 @@ const { readdirSync } = require("fs");
 const { join } = require("path");
 const { exec } = require("child_process");
 
-const hasDependency = ["core", "react", "preact"];
+const hasDependency = ["test-utils", "core", "react", "preact"];
 const noDependency = readdirSync(join(__dirname, "..", "packages")).filter(
   x => !hasDependency.some(y => y === x)
 );
