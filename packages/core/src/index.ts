@@ -12,7 +12,6 @@ import mapObjects from "./map-objects";
 import { getPathId } from "./util";
 
 export default function createClient(uri: string, options?: ClientOptions): ClientInstance {
-  options = options || {};
   const { initialState = { pathsMap: {}, objectsMap: {} }, idFields } = options;
   const pathsMap = initialState.pathsMap;
   const objectsMap = initialState.objectsMap;

@@ -34,7 +34,7 @@ describe("@grafoo/react", () => {
   beforeEach(() => {
     jest.resetAllMocks();
 
-    client = createClient("https://some.graphql.api/");
+    client = createClient("https://some.graphql.api/", { idFields: ["id"] });
   });
 
   it("should not crash if a query is not given as prop", () => {
