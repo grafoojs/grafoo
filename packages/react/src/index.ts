@@ -3,48 +3,46 @@ import {
   Bindings,
   ClientInstance,
   GrafooReactConsumerProps,
-  GrafooRenderProps
+  GrafooRenderProps,
+  Context
 } from "@grafoo/types";
 import { Component, createContext, createElement, ReactNode, SFC } from "react";
 
-export default function createGrafooComsumer(
-  client: ClientInstance
-): SFC<GrafooReactConsumerProps> {
-  return consumerProps =>
-    createElement(createContext(client).Consumer, null, (clientInstance: ClientInstance) =>
-      createElement(
-        // disabling the next line because it causes the build to fail
-        // tslint:disable-next-line only-arrow-functions
-        (function() {
-          return class extends Component<GrafooReactConsumerProps, GrafooRenderProps> {
-            binds: Bindings;
+const ctx = createContext({});
 
-            constructor(props: GrafooReactConsumerProps) {
-              super(props);
+export const Provider: SFC<Context> = props =>
+  createElement(ctx.Provider, { value: props.client }, props.children);
 
-              const { getState, unbind, executeQuery } = (this.binds = createBindings(
-                clientInstance,
-                props,
-                nextRenderProps => this.setState(nextRenderProps)
-              ));
+export const Consumer: SFC<GrafooReactConsumerProps> = consumerProps =>
+  createElement(ctx.Consumer, null, (clientInstance: ClientInstance) =>
+    createElement(
+      class GrafooConsumer extends Component<GrafooReactConsumerProps, GrafooRenderProps> {
+        binds: Bindings;
 
-              this.state = getState();
+        constructor(props: GrafooReactConsumerProps) {
+          super(props);
 
-              this.componentDidMount = () => {
-                if (props.skip || !props.query || this.state.loaded) return;
+          const { getState, unbind, executeQuery } = (this.binds = createBindings(
+            clientInstance,
+            props,
+            nextRenderProps => this.setState(nextRenderProps)
+          ));
 
-                executeQuery();
-              };
+          this.state = getState();
 
-              this.componentWillUnmount = () => {
-                unbind();
-              };
+          this.componentDidMount = () => {
+            if (props.skip || !props.query || this.state.loaded) return;
 
-              this.render = () => props.children<ReactNode>(this.state);
-            }
+            executeQuery();
           };
-        })(),
-        consumerProps
-      )
-    );
-}
+
+          this.componentWillUnmount = () => {
+            unbind();
+          };
+
+          this.render = () => props.children<ReactNode>(this.state);
+        }
+      },
+      consumerProps
+    )
+  );
