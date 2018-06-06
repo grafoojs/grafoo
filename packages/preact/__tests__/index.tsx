@@ -34,7 +34,7 @@ describe("@grafoo/preact", () => {
   beforeEach(() => {
     jest.resetAllMocks();
 
-    client = createClient("https://some.graphql.api/");
+    client = createClient("https://some.graphql.api/", { idFields: ["id"] });
   });
 
   describe("<Provider />", () => {

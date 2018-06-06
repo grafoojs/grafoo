@@ -1,10 +1,11 @@
 import { Authors, Post, Posts, PostsAndAuthors, executeQuery } from "@grafoo/test-utils";
-import createCache from "../src";
+import createClient from "../src";
 
 describe("@grafoo/core", () => {
   it("should be instantiable", () => {
-    const cache = createCache();
+    const cache = createClient("", { idFields: ["id"] });
 
+    expect(typeof cache.request).toBe("function");
     expect(typeof cache.listen).toBe("function");
     expect(typeof cache.write).toBe("function");
     expect(typeof cache.read).toBe("function");
@@ -146,7 +147,7 @@ describe("@grafoo/core", () => {
     await mock(Authors, async (cache, data, { query, variables }) => {
       cache.write(query, variables, data);
 
-      cache = createCache({ initialState: cache.flush() });
+      cache = createClient("", { idFields: ["id"], initialState: cache.flush() });
 
       expect(cache.read(query, variables).data).toEqual(data);
     });
@@ -154,7 +155,7 @@ describe("@grafoo/core", () => {
 
   it("should accept `idFields` array in options", async () => {
     await mock(Authors, async (_, data, { query, variables }) => {
-      const cache = createCache({ idFields: ["__typename", "id"] });
+      const cache = createClient("", { idFields: ["__typename", "id"] });
 
       cache.write(query, variables, data);
 
@@ -169,7 +170,7 @@ async function mock(...args) {
   // tslint:disable-next-line prefer-const
   let [sources, variables, fn] = args;
   const { query } = sources;
-  const cache = createCache();
+  const cache = createClient("", { idFields: ["id"] });
   let results;
   let requests;
 
