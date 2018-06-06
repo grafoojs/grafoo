@@ -27,7 +27,7 @@ describe("@grafoo/bindings", () => {
   let bindings: Bindings;
   beforeEach(() => {
     jest.resetAllMocks();
-    client = createClient("https://some.graphql.api/");
+    client = createClient("https://some.graphql.api/", { idFields: ["id"] });
   });
 
   it("should be evocable given the minimal props", () => {
