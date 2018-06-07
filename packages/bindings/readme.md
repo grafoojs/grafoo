@@ -37,11 +37,11 @@ const bindings = createBindings(client, props, updater);
 
 ### Arguments
 
-| Argument | Description                                           |
-| -------- | ----------------------------------------------------- |
-| client   | a client nstance                                      |
-| props    | a props object passed by the user (description below) |
-| updater  | a callback to notify for data changes                 |
+| Argument | type           | Description                                           |
+| -------- | -------------- | ----------------------------------------------------- |
+| client   | ClientInstance | a client nstance                                      |
+| props    | object         | a props object passed by the user (description below) |
+| updater  | function       | a callback to notify for data changes                 |
 
 ### `props` argument
 
