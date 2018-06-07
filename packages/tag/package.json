@@ -1,17 +1,22 @@
 {
   "name": "@grafoo/tag",
   "description": "the grafoo client template tag meta package",
-  "version": "0.0.2-alpha.1",
+  "version": "0.0.0",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/tag",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prepare": "grafoo-bundle --input src/index.ts"
   },
   "dependencies": {
-    "@grafoo/types": "^0.0.2-alpha.1"
+    "@grafoo/types": "^0.0.0"
   },
-  "gitHead": "a2f8da34d8bc015be87a2b098422e9ed4f055382"
+  "devDependencies": {
+    "grafoo-bundle": "^0.0.0"
+  }
 }

@@ -1,12 +1,15 @@
 {
   "name": "@grafoo/transport",
   "description": "the grafoo client standard transport",
-  "version": "0.0.2-alpha.1",
+  "version": "0.0.0",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/transport",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prepare": "grafoo-bundle --input src/index.ts --skip-compression",
     "test": "jest",
@@ -27,7 +30,7 @@
     }
   },
   "dependencies": {
-    "@grafoo/types": "^0.0.2-alpha.1"
-  },
-  "gitHead": "a2f8da34d8bc015be87a2b098422e9ed4f055382"
+    "@grafoo/types": "^0.0.0",
+    "grafoo-bundle": "^0.0.0"
+  }
 }

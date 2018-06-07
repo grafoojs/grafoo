@@ -1,6 +1,6 @@
 # `grafoo-bundle`
 
-This is and internal cli tool. Basicaly a wrapper around rollup with some configuration already set.
+**This is and internal cli tool for [Grafoo](https://github.com/grafoojs/grafoo) and it's not meant to be used for anything else**. Basicaly a wrapper around rollup with some configuration already set.
 
 ## Usage
 

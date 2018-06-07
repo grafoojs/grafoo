@@ -1,11 +1,14 @@
 {
   "name": "@grafoo/babel-plugin",
-  "version": "0.0.2-alpha.1",
+  "version": "0.0.0",
   "description": "the grafoo client babel plugin",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/babel-plugin",
   "main": "dist/index.js",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prepare": "babel src --out-dir dist",
     "test": "jest",
@@ -30,6 +33,5 @@
     "transform": {
       "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
     }
-  },
-  "gitHead": "a2f8da34d8bc015be87a2b098422e9ed4f055382"
+  }
 }
