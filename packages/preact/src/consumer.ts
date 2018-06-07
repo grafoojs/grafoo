@@ -1,33 +1,35 @@
 import createBindings from "@grafoo/bindings";
-import { Bindings, Context, GrafooPreactConsumerProps, GrafooRenderProps } from "@grafoo/types";
+import { Context, GrafooPreactConsumerProps, GrafooRenderProps } from "@grafoo/types";
 import { Component } from "preact";
 
-export class Consumer extends Component<GrafooPreactConsumerProps, GrafooRenderProps> {
-  binds: Bindings;
+/**
+ * using this flag here because preact definitions
+ * force you to implement the abstract render method
+ * I'm declaring it as a property to save some bytes
+ * on the final bundle. Take CAUTION if you are editing this file.
+ */
 
+// @ts-ignore
+export class Consumer extends Component<GrafooPreactConsumerProps, GrafooRenderProps> {
   constructor(props: GrafooPreactConsumerProps, context: Context) {
     super(props, context);
 
-    const { executeQuery, getState, unbind } = (this.binds = createBindings(
-      context.client,
-      props,
-      nextRenderProps => this.setState(nextRenderProps)
-    ));
+    const { load, getState, unbind } = createBindings(context.client, props, () =>
+      this.setState(null)
+    );
 
-    this.state = getState();
+    const state = getState();
 
     this.componentDidMount = () => {
-      if (props.skip || !props.query || this.state.loaded) return;
+      if (props.skip || !props.query || state.loaded) return;
 
-      executeQuery();
+      load();
     };
 
     this.componentWillUnmount = () => {
       unbind();
     };
-  }
 
-  render(props: GrafooPreactConsumerProps, state: GrafooRenderProps) {
-    return props.children[0]<JSX.Element>(state);
+    this.render = () => props.children[0]<JSX.Element>(state);
   }
 }

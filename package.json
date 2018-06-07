@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "description": "a graphql client and toolkit",
   "main": "index.js",
-  "repository": "https://github.com/grafoojs/grafoo.git",
+  "repository": "https://github.com/grafoojs/grafoo",
   "author": "malbernaz <albernazmiguel@gmail.com>",
   "license": "MIT",
   "scripts": {

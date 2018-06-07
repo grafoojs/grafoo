@@ -51,9 +51,10 @@ describe("@grafoo/bindings", () => {
 
     bindings = createBindings(client, { query: Authors }, renderFn);
 
-    await bindings.executeQuery();
+    await bindings.load();
 
-    expect(renderFn).toHaveBeenCalledWith({ ...data, loading: false, loaded: true });
+    expect(renderFn).toHaveBeenCalled();
+    expect(bindings.getState()).toEqual({ ...data, loading: false, loaded: true });
   });
 
   it("should provide the data if the query is already cached", async () => {
@@ -63,7 +64,7 @@ describe("@grafoo/bindings", () => {
 
     bindings = createBindings(client, { query: Authors }, () => void 0);
 
-    expect(bindings.getState()).toMatchObject({ loaded: true, loading: false, ...data });
+    expect(bindings.getState()).toEqual({ loaded: true, loading: false, ...data });
   });
 
   it("should trigger updater function if the cache has been updated", async () => {
@@ -75,7 +76,8 @@ describe("@grafoo/bindings", () => {
 
     client.write(Authors, data);
 
-    expect(renderFn).toHaveBeenCalledWith({ ...data, loaded: false, loading: true });
+    expect(renderFn).toHaveBeenCalled();
+    expect(bindings.getState()).toEqual({ ...data, loaded: false, loading: true });
   });
 
   it("should provide the state for a cached query", async () => {
@@ -97,7 +99,7 @@ describe("@grafoo/bindings", () => {
 
     bindings = createBindings(client, { query: Authors }, renderFn);
 
-    await bindings.executeQuery();
+    await bindings.load();
 
     bindings.unbind();
 
@@ -107,6 +109,7 @@ describe("@grafoo/bindings", () => {
 
     expect(renderFn).toHaveBeenCalledTimes(1);
     expect(client.read<Authors>(Authors).data.authors[0].name).toBe("Homer");
-    expect(renderFn).toHaveBeenCalledWith({ ...data, loading: false, loaded: true });
+    expect(renderFn).toHaveBeenCalled();
+    expect(bindings.getState()).toEqual({ ...data, loading: false, loaded: true });
   });
 });

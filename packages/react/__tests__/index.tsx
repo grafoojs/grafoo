@@ -175,10 +175,9 @@ describe("@grafoo/react", () => {
       optimisticUpdate: ({ authors }, variables: Author) => ({
         authors: [...authors, { ...variables, id: "tempID" }]
       }),
-      update: ({ mutate, authors }, variables) =>
-        mutate(variables).then(({ createAuthor: author }) => ({
-          authors: authors.map(a => (a.id === "tempID" ? author : a))
-        }))
+      update: ({ authors }, { createAuthor: author }) => ({
+        authors: authors.map(a => (a.id === "tempID" ? author : a))
+      })
     };
 
     TestRenderer.create(

@@ -3,7 +3,6 @@
   "name": "@grafoo/test-utils",
   "version": "0.0.1",
   "main": "dist/index.js",
-  "module": "src/index.js",
   "scripts": {
     "prepare": "babel src --out-dir dist"
   }
