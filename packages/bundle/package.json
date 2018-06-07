@@ -2,5 +2,14 @@
   "name": "grafoo-bundle",
   "version": "0.0.1-alpha.2",
   "bin": "cli.js",
-  "main": "index.js"
+  "main": "index.js",
+  "dependencies": {
+    "rollup": "^0.59.4",
+    "rollup-plugin-babel": "^4.0.0-beta.4",
+    "rollup-plugin-buble": "^0.19.2",
+    "rollup-plugin-filesize": "^1.5.0",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-terser": "^1.0.1",
+    "typescript": "^2.9.1"
+  }
 }
