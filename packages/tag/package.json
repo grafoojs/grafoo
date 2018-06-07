@@ -2,6 +2,7 @@
   "name": "@grafoo/tag",
   "description": "the grafoo client template tag meta package",
   "version": "0.0.1",
+  "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/tag",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",

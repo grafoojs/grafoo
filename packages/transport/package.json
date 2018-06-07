@@ -2,6 +2,7 @@
   "name": "@grafoo/transport",
   "description": "the grafoo client standard transport",
   "version": "0.0.1",
+  "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/transport",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",

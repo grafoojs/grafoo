@@ -72,8 +72,8 @@ const mutations = {
 
 Those properties stand for:
 
-| Name             | type     | Descrition                                                                              |
-| ---------------- | -------- | --------------------------------------------------------------------------------------- |
-| query            | object   | the mutation query created with `@grafoo/tag`                                           |
-| update           | function | a function that will update the cache when a request is completed (description below)   |
-| optimisticUpdate | function | a function that will update the cache before a request is completed (description below) |
+| Name             | type     | Descrition                                                              |
+| ---------------- | -------- | ----------------------------------------------------------------------- |
+| query            | object   | the mutation query created with `@grafoo/tag`                           |
+| update           | function | will update the cache when a request is completed (description below)   |
+| optimisticUpdate | function | will update the cache before a request is completed (description below) |
