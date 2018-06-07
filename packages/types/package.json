@@ -1,9 +1,10 @@
 {
   "name": "@grafoo/types",
-  "version": "0.0.2-alpha.0",
+  "version": "0.0.2-alpha.1",
   "description": "the grafoo client typescript definitions",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/types",
   "typings": "types/index.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "gitHead": "a2f8da34d8bc015be87a2b098422e9ed4f055382"
 }
