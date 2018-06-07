@@ -1,6 +1,5 @@
 import createBindings from "@grafoo/bindings";
 import {
-  Bindings,
   ClientInstance,
   GrafooReactConsumerProps,
   GrafooRenderProps,
@@ -17,30 +16,26 @@ export const Consumer: SFC<GrafooReactConsumerProps> = consumerProps =>
   createElement(ctx.Consumer, null, (clientInstance: ClientInstance) =>
     createElement(
       class GrafooConsumer extends Component<GrafooReactConsumerProps, GrafooRenderProps> {
-        binds: Bindings;
-
         constructor(props: GrafooReactConsumerProps) {
           super(props);
 
-          const { getState, unbind, executeQuery } = (this.binds = createBindings(
-            clientInstance,
-            props,
-            nextRenderProps => this.setState(nextRenderProps)
-          ));
+          const { getState, unbind, load } = createBindings(clientInstance, props, () =>
+            this.forceUpdate()
+          );
 
-          this.state = getState();
+          const state = getState();
 
           this.componentDidMount = () => {
-            if (props.skip || !props.query || this.state.loaded) return;
+            if (props.skip || !props.query || state.loaded) return;
 
-            executeQuery();
+            load();
           };
 
           this.componentWillUnmount = () => {
             unbind();
           };
 
-          this.render = () => props.children<ReactNode>(this.state);
+          this.render = () => props.children<ReactNode>(state);
         }
       },
       consumerProps

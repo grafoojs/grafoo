@@ -16,7 +16,7 @@ const shallowEqual = (a: {}, b: {}) => {
 export default function createBindings(
   client: ClientInstance,
   props: GrafooConsumerProps,
-  updater: (renderProps: GrafooRenderProps) => void
+  updater: () => void
 ): Bindings {
   const { query, variables, mutations, skip } = props;
 
@@ -41,58 +41,61 @@ export default function createBindings(
 
         cachedState.objects = objects;
 
-        updater(Object.assign(renderProps, data));
+        Object.assign(state, data);
+
+        updater();
       }
     });
   }
 
   const cacheLoaded = cachedState.data && !skip;
 
-  const renderProps: GrafooRenderProps = { loading: !cacheLoaded, loaded: !!cacheLoaded };
+  const state: GrafooRenderProps = { loading: !cacheLoaded, loaded: !!cacheLoaded };
 
-  if (cacheLoaded) Object.assign(renderProps, cachedState.data);
+  if (cacheLoaded) Object.assign(state, cachedState.data);
 
   if (mutations) {
     for (const key in mutations) {
       const mutation = mutations[key];
 
-      renderProps[key] = (mutationVariables: Variables) => {
+      state[key] = (mutationVariables: Variables) => {
         if (mutation.optimisticUpdate) {
-          writeToCache(mutation.optimisticUpdate(renderProps, mutationVariables));
+          writeToCache(mutation.optimisticUpdate(state, mutationVariables));
         }
 
-        const mutate = <T>(mutateVariables: Variables): Promise<T> =>
-          client.request<T>(mutation.query, mutateVariables);
-
-        return mutation
-          .update(Object.assign({ mutate }, renderProps), mutationVariables)
-          .then(update => writeToCache(update));
+        return client
+          .request(mutation.query, mutationVariables)
+          .then(data => writeToCache(mutation.update(state, data)));
       };
     }
   }
 
-  return {
-    unbind,
-    getState() {
-      return renderProps;
-    },
-    executeQuery() {
-      return client
-        .request(query, variables)
-        .then(response => {
-          lockUpdate = true;
+  function getState() {
+    return state;
+  }
 
-          writeToCache(response);
+  function load() {
+    return client
+      .request(query, variables)
+      .then(response => {
+        lockUpdate = true;
 
-          const { data, objects } = readFromCache();
+        writeToCache(response);
 
-          cachedState.objects = objects;
+        const { data, objects } = readFromCache();
 
-          updater(Object.assign(renderProps, data, { loading: false, loaded: true }));
-        })
-        .catch(({ errors }) => {
-          updater(Object.assign(renderProps, { errors, loading: false, loaded: true }));
-        });
-    }
-  };
+        cachedState.objects = objects;
+
+        Object.assign(state, data, { loading: false, loaded: true });
+
+        updater();
+      })
+      .catch(({ errors }) => {
+        Object.assign(state, { errors, loading: false, loaded: true });
+
+        updater();
+      });
+  }
+
+  return { getState, unbind, load };
 }

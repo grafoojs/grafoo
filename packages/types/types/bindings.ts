@@ -4,7 +4,7 @@ import { GraphQlError, Variables } from "./transport";
 export interface Bindings {
   getState(): GrafooRenderProps;
   unbind(): void;
-  executeQuery(): void;
+  load(): void;
 }
 
 export interface GrafooRenderProps {
@@ -17,9 +17,7 @@ export type Mutate<T> = (variables?: Variables) => Promise<T>;
 
 export type GrafooRenderFn = <T>(renderProps: GrafooRenderProps) => T;
 
-type UpdateProps<T, U> = { mutate: Mutate<U> } & GrafooRenderProps & T;
-
-export type UpdateFn<T, U> = (props: UpdateProps<T, U>, variables?: Variables) => Promise<T>;
+export type UpdateFn<T, U> = (props: GrafooRenderProps & T, data?: U) => T;
 
 export type OptimisticUpdateFn<T> = (props: GrafooRenderProps & T, variables?: Variables) => T;
 
@@ -31,7 +29,7 @@ export interface GrafooMutation<T, U = {}> {
 
 export interface GrafooConsumerProps<T = {}> {
   query?: GrafooObject;
-  mutations?: { [name: string]: GrafooMutation<T> };
   variables?: Variables;
+  mutations?: { [name: string]: GrafooMutation<T> };
   skip?: boolean;
 }
