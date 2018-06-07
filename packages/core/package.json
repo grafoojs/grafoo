@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/core",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha.0",
   "description": "the grafoo client core",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/core",
   "main": "dist/index.js",
@@ -25,5 +25,9 @@
     "transform": {
       "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
     }
+  },
+  "dependencies": {
+    "@grafoo/transport": "^0.0.2-alpha.0",
+    "@grafoo/types": "^0.0.2-alpha.0"
   }
 }

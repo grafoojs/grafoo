@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "grafoo-bundle",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha.0",
   "bin": "cli.js",
   "main": "index.js"
 }

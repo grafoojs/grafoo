@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/bindings",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha.0",
   "description": "grafoo client internal helper for building framework bindings",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/bindings",
   "main": "dist/index.js",
@@ -25,5 +25,8 @@
     "transform": {
       "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
     }
+  },
+  "dependencies": {
+    "@grafoo/types": "^0.0.2-alpha.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/preact",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha.0",
   "description": "the grafoo client preact bindings",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/preact",
   "main": "dist/index.js",
@@ -27,5 +27,8 @@
     "transform": {
       "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
     }
+  },
+  "dependencies": {
+    "@grafoo/types": "^0.0.2-alpha.0"
   }
 }

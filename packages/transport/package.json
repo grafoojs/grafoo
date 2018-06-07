@@ -1,7 +1,7 @@
 {
   "name": "@grafoo/transport",
   "description": "the grafoo client standard transport",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha.0",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/transport",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -25,5 +25,8 @@
     "transform": {
       "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
     }
+  },
+  "dependencies": {
+    "@grafoo/types": "^0.0.2-alpha.0"
   }
 }
