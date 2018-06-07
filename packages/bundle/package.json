@@ -11,5 +11,6 @@
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-terser": "^1.0.1",
     "typescript": "^2.9.1"
-  }
+  },
+  "gitHead": "d29ea69fdab994304cf860bfabe16058f1341ca3"
 }

@@ -32,5 +32,6 @@
   "dependencies": {
     "@grafoo/types": "^0.0.1-alpha.3",
     "grafoo-bundle": "^0.0.1-alpha.3"
-  }
+  },
+  "gitHead": "d29ea69fdab994304cf860bfabe16058f1341ca3"
 }
