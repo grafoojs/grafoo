@@ -46,12 +46,22 @@
   </a>
 </p>
 
-Grafoo is a GraphQL client that tries to be different by adopting a **simpler API**, without giving up of a **good caching strategy**. It works in a **build time based approach**, compiling all of your queries based on the schema your app consumes. By doing so this library is fast, because it spares runtime computation and is really small because it does not ship with a GraphQL parser.
+Grafoo is a GraphQL client that tries to be different by adopting a **simpler API**, without giving up of a **good caching strategy**.
 
-To sum up with all that we are working hard to bring **view layer ingrations** for all major frameworks. You can check the ones we already have at:
+## Some useful information
 
-- [`@grafoo/react`](https://github.com/grafoojs/grafoo/tree/master/packages/react)
-- [`@grafoo/preact`](https://github.com/grafoojs/grafoo/tree/master/packages/preact)
+- **It's a multiple paradigm library**. So far we have **view layer integrations** for [react](https://github.com/grafoojs/grafoo/tree/master/packages/react) and [preact](https://github.com/grafoojs/grafoo/tree/master/packages/preact) and there are more to come
+- **It's not just a HTTP client**. It comes with a sophisticated caching system under the hood to make sure your data is consistent across your app.
+- **It's build time dependent**. A important piece of Grafoo is it's **babel** plugin that compiles your queries based on the schema your app consumes.
+- **It's environment agnostic**. Apart from the browser you can run Grafoo on the **server** and even on **native** with react.
+
+## Why should I use this
+
+Many of the work that has been put into this project came from borrowed ideas and concepts that are present in the existing GraphQL client ecosystem. Grafoo wants to stand apart from the others trying to be in that sweet spot between **simplicity** and **usability**. Most of the benefits this library brings the table are related to the fact that it does a lot at build time. It's **fast**, because it spares runtime computation and it's really **small** because it does not ship with a GraphQL parser.
+
+## Important
+
+The **disclaimer** here is that you should not ditch your current stack for Grafoo for the time being since we are still in **alpha** stage.
 
 ## Basic usage
 
