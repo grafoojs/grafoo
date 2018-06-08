@@ -203,8 +203,8 @@ const createPost = {
   optimisticUpdate: ({ allPosts }, variables) => ({
     allPosts: [{ ...variables, id: "tempID" }, ...allPosts]
   }),
-  update: ({ allPosts }, { createPost: post }) => ({
-    allPosts: allPosts.map(p => (p.id === "tempID" ? post : p))
+  update: ({ allPosts }, data) => ({
+    allPosts: allPosts.map(p => (p.id === "tempID" ? data.createPost : p))
   })
 };
 
