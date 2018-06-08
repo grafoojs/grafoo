@@ -15,7 +15,8 @@
     "member-access": false,
     "member-ordering": false,
     "interface-name": false,
-    "prefer-object-spread": false
+    "prefer-object-spread": false,
+    "prefer-const": false
   },
   "linterOptions": {
     "exclude": ["**/dist"]

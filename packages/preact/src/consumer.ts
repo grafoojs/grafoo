@@ -2,26 +2,18 @@ import createBindings from "@grafoo/bindings";
 import { Context, GrafooPreactConsumerProps, GrafooRenderProps } from "@grafoo/types";
 import { Component } from "preact";
 
-/**
- * using this flag here because preact definitions
- * force you to implement the abstract render method
- * I'm declaring it as a property to save some bytes
- * on the final bundle. Take CAUTION if you are editing this file.
- */
-
-// @ts-ignore
 export class Consumer extends Component<GrafooPreactConsumerProps, GrafooRenderProps> {
   constructor(props: GrafooPreactConsumerProps, context: Context) {
     super(props, context);
 
-    const { load, getState, unbind } = createBindings(context.client, props, () =>
+    let { load, getState, unbind } = createBindings(context.client, props, () =>
       this.setState(null)
     );
 
-    const state = getState();
+    this.state = getState();
 
     this.componentDidMount = () => {
-      if (props.skip || !props.query || state.loaded) return;
+      if (props.skip || !props.query || this.state.loaded) return;
 
       load();
     };
@@ -29,7 +21,9 @@ export class Consumer extends Component<GrafooPreactConsumerProps, GrafooRenderP
     this.componentWillUnmount = () => {
       unbind();
     };
+  }
 
-    this.render = () => props.children[0]<JSX.Element>(state);
+  render(props: GrafooPreactConsumerProps, state: GrafooRenderProps) {
+    return props.children[0]<JSX.Element>(state);
   }
 }

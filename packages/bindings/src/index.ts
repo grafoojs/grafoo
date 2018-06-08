@@ -7,9 +7,9 @@ import {
   ObjectsMap
 } from "@grafoo/types";
 
-const shallowEqual = (a: {}, b: {}) => {
-  for (const i in a) if (a[i] !== b[i]) return false;
-  for (const i in b) if (!(i in a)) return false;
+let shallowEqual = (a: {}, b: {}) => {
+  for (let i in a) if (a[i] !== b[i]) return false;
+  for (let i in b) if (!(i in a)) return false;
   return true;
 };
 
@@ -18,10 +18,10 @@ export default function createBindings(
   props: GrafooConsumerProps,
   updater: () => void
 ): Bindings {
-  const { query, variables, mutations, skip } = props;
+  let { query, variables, mutations, skip } = props;
 
-  const writeToCache = data => client.write(query, variables, data);
-  const readFromCache = () => client.read(query, variables);
+  let writeToCache = data => client.write(query, variables, data);
+  let readFromCache = () => client.read(query, variables);
 
   let cachedState: { data?: {}; objects?: ObjectsMap } = {};
 
@@ -37,7 +37,7 @@ export default function createBindings(
       if (lockUpdate) return (lockUpdate = false);
 
       if (!shallowEqual(nextObjects, cachedState.objects || {})) {
-        const { data, objects } = readFromCache();
+        let { data, objects } = readFromCache();
 
         cachedState.objects = objects;
 
@@ -48,15 +48,15 @@ export default function createBindings(
     });
   }
 
-  const cacheLoaded = cachedState.data && !skip;
+  let cacheLoaded = cachedState.data && !skip;
 
-  const state: GrafooRenderProps = { loading: !cacheLoaded, loaded: !!cacheLoaded };
+  let state: GrafooRenderProps = { loading: !cacheLoaded, loaded: !!cacheLoaded };
 
   if (cacheLoaded) Object.assign(state, cachedState.data);
 
   if (mutations) {
-    for (const key in mutations) {
-      const mutation = mutations[key];
+    for (let key in mutations) {
+      let mutation = mutations[key];
 
       state[key] = (mutationVariables: Variables) => {
         if (mutation.optimisticUpdate) {
@@ -82,7 +82,7 @@ export default function createBindings(
 
         writeToCache(response);
 
-        const { data, objects } = readFromCache();
+        let { data, objects } = readFromCache();
 
         cachedState.objects = objects;
 
