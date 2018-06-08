@@ -1,19 +1,18 @@
-const fs = require("fs");
-const path = require("path");
-const { rollup } = require("rollup");
-const { terser } = require("rollup-plugin-terser");
-const babel = require("rollup-plugin-babel");
-const buble = require("rollup-plugin-buble");
-const nodeResolve = require("rollup-plugin-node-resolve");
-const fileSize = require("rollup-plugin-filesize");
+var fs = require("fs");
+var path = require("path");
+var { rollup } = require("rollup");
+var { terser } = require("rollup-plugin-terser");
+var babel = require("rollup-plugin-babel");
+var buble = require("rollup-plugin-buble");
+var nodeResolve = require("rollup-plugin-node-resolve");
+var fileSize = require("rollup-plugin-filesize");
 
-module.exports = async function build({ input, skipCompress, rootPath }) {
-  const { peerDependencies = {} } = JSON.parse(
-    fs.readFileSync(path.join(rootPath, "package.json"), "utf-8")
-  );
+module.exports = function build(opts) {
+  var pkg = JSON.parse(fs.readFileSync(path.join(opts.rootPath, "package.json"), "utf-8"));
+  var peerDependencies = pkg.peerDependencies || {};
 
-  const bundle = await rollup({
-    input: path.join(rootPath, input),
+  rollup({
+    input: path.join(opts.rootPath, opts.input),
     external: Object.keys(peerDependencies),
     plugins: [
       nodeResolve(),
@@ -30,7 +29,7 @@ module.exports = async function build({ input, skipCompress, rootPath }) {
           dangerousTaggedTemplateString: true
         }
       }),
-      !skipCompress &&
+      !opts.skipCompress &&
         terser({
           sourceMap: true,
           output: { comments: false },
@@ -41,26 +40,28 @@ module.exports = async function build({ input, skipCompress, rootPath }) {
         }),
       fileSize()
     ].filter(Boolean)
-  });
-
-  await bundle.write({
-    file: path.join(rootPath, "dist/index.js"),
-    sourcemap: true,
-    format: "esm",
-    treeshake: {
-      propertyReadSideEffects: false
-    }
-  });
+  }).then(bundle =>
+    bundle.write({
+      file: path.join(opts.rootPath, "dist/index.js"),
+      sourcemap: true,
+      format: opts.format || "esm",
+      treeshake: {
+        propertyReadSideEffects: false
+      }
+    })
+  );
 };
 
-const resolveTSPlugin = () => ({
-  resolveId(importee, importer) {
-    if (importer) {
-      const tsImportee = path.resolve(path.dirname(importer), importee + ".ts");
+function resolveTSPlugin() {
+  return {
+    resolveId(importee, importer) {
+      if (importer) {
+        var tsImportee = path.resolve(path.dirname(importer), importee + ".ts");
 
-      if (fs.existsSync(tsImportee)) return tsImportee;
+        if (fs.existsSync(tsImportee)) return tsImportee;
+      }
+
+      return importee;
     }
-
-    return importee;
-  }
-});
+  };
+}
