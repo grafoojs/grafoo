@@ -57,7 +57,7 @@ Grafoo is a GraphQL client that tries to be different by adopting a **simpler AP
 
 ## Why should I use this
 
-Many of the work that has been put into this project came from borrowed ideas and concepts that are present in the GraphQL client ecosystem we have today. Grafoo wants to stand apart from the others trying to be in that sweet spot between **simplicity** and **usability**. Moreover, it can be said that most of the benefits this library brings to the table are related to the fact that it does a lot at build time. It's **fast**, because it spares runtime computation and it's really **small** because it does not ship with a GraphQL parser.
+Many of the work that has been put into this project came from borrowed ideas and concepts that are present in the GraphQL clients we have today. Grafoo wants to stand apart from the others trying to be in that sweet spot between **simplicity** and **usability**. Moreover, it can be said that most of the benefits this library brings to the table are related to the fact that it does a lot at build time. It's **fast**, because it spares runtime computation and it's really **small** because it does not ship with a GraphQL parser.
 
 ## Important
 
