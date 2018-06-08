@@ -128,7 +128,7 @@ client.request(USER_QUERY, variables).then(data => {
 
 ### With a framework
 
-Here is how would it go for you to write a simple react app.
+Here is how it would go for you to write a simple react app.
 
 #### `index.js`
 
