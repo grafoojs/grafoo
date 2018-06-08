@@ -138,7 +138,7 @@ import ReactDom from "react-dom";
 import { Provider } from "@grafoo/react";
 
 import client from "./client";
-import App from "./App";
+import Posts from "./Posts";
 
 const App = () => (
   <Provider client={client}>
@@ -149,7 +149,7 @@ const App = () => (
 ReactDom.render(<App />, document.getElementById("mnt"));
 ```
 
-#### `posts.js`
+#### `Posts.js`
 
 ```jsx
 import React from "react";
