@@ -50,18 +50,22 @@ Grafoo is a GraphQL client that tries to be different by adopting a **simpler AP
 
 ## Some useful information
 
-- **It's a multiple paradigm library**. So far we have **view layer integrations** for [react](https://github.com/grafoojs/grafoo/tree/master/packages/react) and [preact](https://github.com/grafoojs/grafoo/tree/master/packages/preact) and there are more to come
+- **It's a multiple paradigm library**. So far we have **view layer integrations** for [react](https://github.com/grafoojs/grafoo/tree/master/packages/react) and [preact](https://github.com/grafoojs/grafoo/tree/master/packages/preact) and there are more to come.
 - **It's not just a HTTP client**. It comes with a sophisticated caching system under the hood to make sure your data is consistent across your app.
 - **It's build time dependent**. A important piece of Grafoo is it's **babel** plugin that compiles your queries based on the schema your app consumes.
 - **It's environment agnostic**. Apart from the browser you can run Grafoo on the **server** and even on **native** with react.
 
 ## Why should I use this
 
-Many of the work that has been put into this project came from borrowed ideas and concepts that are present in the existing GraphQL client ecosystem. Grafoo wants to stand apart from the others trying to be in that sweet spot between **simplicity** and **usability**. Most of the benefits this library brings the table are related to the fact that it does a lot at build time. It's **fast**, because it spares runtime computation and it's really **small** because it does not ship with a GraphQL parser.
+Many of the work that has been put into this project came from borrowed ideas and concepts that are present in the GraphQL client ecosystem we have today. Grafoo wants to stand apart from the others trying to be in that sweet spot between **simplicity** and **usability**. Moreover, it can be said that most of the benefits this library brings to the table are related to the fact that it does a lot at build time. It's **fast**, because it spares runtime computation and it's really **small** because it does not ship with a GraphQL parser.
 
 ## Important
 
 The **disclaimer** here is that you should not ditch your current stack for Grafoo for the time being since we are still in **alpha** stage.
+
+## Example applications
+
+You can refer to examples in [this repository](https://github.com/grafoojs/grafoo-examples).
 
 ## Basic usage
 
@@ -97,15 +101,15 @@ From `@grafoo/core` you will import the factory that creates the client instance
 
 ```js
 import createClient from "@grafoo/core";
-import graphql from "@grafoo/tag";
+import gql from "@grafoo/tag";
 
 const client = createClient("http://some.graphql.api", {
   headers: {
-    /* can be a function as well */
+    /* can also be a function */
   }
 });
 
-const USER_QUERY = graphql`
+const USER_QUERY = gql`
   query($id: ID!) {
     user(id: $id) {
       name
@@ -120,6 +124,108 @@ client.request(USER_QUERY, variables).then(data => {
 
   console.log(client.read(USER_QUERY, variables));
 });
+```
+
+### With a framework
+
+Here is how would it go for you to write a simple react app.
+
+#### `index.js`
+
+```jsx
+import React from "react";
+import ReactDom from "react-dom";
+import { Provider } from "@grafoo/react";
+
+import client from "./client";
+import App from "./App";
+
+const App = () => (
+  <Provider client={client}>
+    <Posts />
+  </Provider>
+);
+
+ReactDom.render(<App />, document.getElementById("mnt"));
+```
+
+#### `posts.js`
+
+```jsx
+import React from "react";
+import gql from "@grafoo/tag";
+import { Consumer } from "@grafoo/react";
+
+const ALL_POSTS = gql`
+  query getPosts($orderBy: PostOrderBy) {
+    allPosts(orderBy: $orderBy) {
+      title
+      content
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export default function Posts() {
+  return (
+    <Consumer query={query} variables={{ orderBy: "createdAt_DESC" }}>
+      {({ loading, loaded, errors, allPosts, createPost }) => (
+        <p>👆 do whatever you want with the variables above 👆</p>
+      )}
+    </Consumer>
+  );
+}
+```
+
+### Mutations
+
+```jsx
+import React from "react";
+import gql from "@grafoo/tag";
+import { Consumer } from "@grafoo/react";
+
+const CREATE_POST = gql`
+  mutation createPost($content: String, $title: String, $authorId: ID) {
+    createPost(content: $content, title: $title, authorId: $authorId) {
+      title
+      content
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+const createPost = {
+  query: CREATE_POST,
+  optimisticUpdate: ({ allPosts }, variables) => ({
+    allPosts: [{ ...variables, id: "tempID" }, ...allPosts]
+  }),
+  update: ({ allPosts }, { createPost: post }) => ({
+    allPosts: allPosts.map(p => (p.id === "tempID" ? post : p))
+  })
+};
+
+const submit = mutate => event => {
+  event.preventDefault();
+
+  const { elements } = event.target;
+
+  mutate({ title: elements.title, content: elements.content });
+};
+
+export default function PostForm() {
+  return (
+    <Consumer mutations={{ createPost }}>
+      {({ createPost }) => (
+        <form onSubmit={submit(createPost)}>
+          <input name="title" />
+          <textarea name="content" />
+        </form>
+      )}
+    </Consumer>
+  );
+}
 ```
 
 ## LICENSE
