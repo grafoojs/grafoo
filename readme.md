@@ -170,7 +170,7 @@ const ALL_POSTS = gql`
 export default function Posts() {
   return (
     <Consumer query={query} variables={{ orderBy: "createdAt_DESC" }}>
-      {({ loading, loaded, errors, allPosts, createPost }) => (
+      {({ loading, loaded, errors, allPosts }) => (
         <h1>
           <marquee>👆 do whatever you want with the variables above 👆</marquee>
         </h1>
