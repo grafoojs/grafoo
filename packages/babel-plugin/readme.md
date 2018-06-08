@@ -17,8 +17,26 @@
   </a>
   <a href=https://github.com/grafoojs/grafoo>
     <img
+      src=https://img.shields.io/npm/v/@grafoo/babel-plugin.svg
+      alt=npm
+    >
+  </a>
+  <a href=https://github.com/grafoojs/grafoo>
+    <img
+      src=https://img.shields.io/npm/dm/@grafoo/babel-plugin.svg
+      alt=downloads
+    >
+  </a>
+  <a href=https://prettier.io>
+    <img
       src=https://img.shields.io/badge/code_style-prettier-ff69b4.svg
       alt="code style: prettier"
+    />
+  </a>
+  <a href=https://lernajs.io>
+    <img
+      src=https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg
+      alt="mantained with: lerna"
     />
   </a>
 </p>
