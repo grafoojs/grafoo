@@ -234,6 +234,7 @@ export default function PostForm() {
         <form onSubmit={submit(createPost)}>
           <input name="title" />
           <textarea name="content" />
+          <button>submit</button>
         </form>
       )}
     </Consumer>
