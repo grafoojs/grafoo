@@ -33,24 +33,24 @@ export default function transform({ types: t }) {
           ImportDeclaration(path) {
             const { source, specifiers } = path.node;
 
-            if (source.value === "@grafoo/tag") {
+            if (source.value === "@grafoo/core") {
+              const defaultSpecifier = specifiers.find(s => t.isImportDefaultSpecifier(s));
+
+              clientFactoryIdentifiers.push(defaultSpecifier.local.name);
+            }
+
+            if (source.value === "@grafoo/core/tag") {
               const defaultSpecifier = specifiers.find(specifier =>
                 t.isImportDefaultSpecifier(specifier)
               );
 
               if (!defaultSpecifier) {
-                throw path.buildCodeFrameError("@grafoo/tag: no default import.");
+                throw path.buildCodeFrameError("@grafoo/core/tag: no default import.");
               }
 
               tagIdentifiers.push(defaultSpecifier.local.name);
 
               path.remove();
-            }
-
-            if (source.value === "@grafoo/core") {
-              const defaultSpecifier = specifiers.find(s => t.isImportDefaultSpecifier(s));
-
-              clientFactoryIdentifiers.push(defaultSpecifier.local.name);
             }
           },
 
@@ -94,7 +94,7 @@ export default function transform({ types: t }) {
 
                 if (quasi.get("expressions").length) {
                   throw path.buildCodeFrameError(
-                    "@grafoo/tag: interpolation is not supported in a graphql tagged template literal."
+                    "@grafoo/core/tag: interpolation is not supported in a graphql tagged template literal."
                   );
                 }
 

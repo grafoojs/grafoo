@@ -1,4 +1,4 @@
-import gql from "@grafoo/tag";
+import gql from "@grafoo/core/tag";
 import casual from "casual";
 import fetchMock from "fetch-mock";
 import fs from "fs";
@@ -28,8 +28,7 @@ function setupDB() {
       .write()
   );
 
-  db
-    .get("authors")
+  db.get("authors")
     .value()
     .forEach(({ id }) => {
       times(4, () =>
@@ -50,8 +49,7 @@ function setupDB() {
         .map(post => post.id)
         .value();
 
-      db
-        .get("authors")
+      db.get("authors")
         .find({ id })
         .set("posts", posts)
         .write();
@@ -83,8 +81,7 @@ const resolvers = {
     createAuthor: (_, args) => {
       const newAuthor = { ...args, id: uuid() };
 
-      db
-        .get("authors")
+      db.get("authors")
         .push(newAuthor)
         .write();
 
@@ -103,8 +100,7 @@ const resolvers = {
         .remove()
         .write();
 
-      db
-        .get("posts")
+      db.get("posts")
         .find({ author: args.id })
         .remove()
         .write();
@@ -114,8 +110,7 @@ const resolvers = {
     createPost: (_, args) => {
       const newPost = { ...args, id: uuid() };
 
-      db
-        .get("posts")
+      db.get("posts")
         .push(newPost)
         .write();
 

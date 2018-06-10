@@ -74,7 +74,7 @@ You can refer to examples in [this repository](https://github.com/grafoojs/grafo
 The basic packages you'll have to install in order to use Grafoo are core, tag and babel-plugin.
 
 ```
-$ npm i @grafoo/core @grafoo/tag && npm i -D @grafoo/babel-plugin
+$ npm i @grafoo/core @grafoo/core/tag && npm i -D @grafoo/babel-plugin
 ```
 
 ### Configure babel
@@ -97,11 +97,11 @@ In `@grafoo/babel-plugin` the option `schema` is a path to a GraphQL schema in y
 
 ### Writing your app
 
-From `@grafoo/core` you will import the factory that creates the client instance and from `@grafoo/tag` you'll import the `graphql` or `gql` tag that will be compiled at build time.
+From `@grafoo/core` you will import the factory that creates the client instance and from `@grafoo/core/tag` you'll import the `graphql` or `gql` tag that will be compiled at build time.
 
 ```js
 import createClient from "@grafoo/core";
-import gql from "@grafoo/tag";
+import gql from "@grafoo/core/tag";
 
 const client = createClient("http://some.graphql.api", {
   headers: {
@@ -153,7 +153,7 @@ ReactDom.render(<App />, document.getElementById("mnt"));
 
 ```jsx
 import React from "react";
-import gql from "@grafoo/tag";
+import gql from "@grafoo/core/tag";
 import { Consumer } from "@grafoo/react";
 
 const ALL_POSTS = gql`
@@ -184,7 +184,7 @@ export default function Posts() {
 
 ```jsx
 import React from "react";
-import gql from "@grafoo/tag";
+import gql from "@grafoo/core/tag";
 import { Consumer } from "@grafoo/react";
 
 const CREATE_POST = gql`
