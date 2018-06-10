@@ -71,10 +71,10 @@ You can refer to examples in [this repository](https://github.com/grafoojs/grafo
 
 ### Installation
 
-The basic packages you'll have to install in order to use Grafoo are core, tag and babel-plugin.
+The basic packages you'll have to install in order to use Grafoo are core and babel-plugin.
 
 ```
-$ npm i @grafoo/core @grafoo/core/tag && npm i -D @grafoo/babel-plugin
+$ npm i @grafoo/core && npm i -D @grafoo/babel-plugin
 ```
 
 ### Configure babel
@@ -97,7 +97,7 @@ In `@grafoo/babel-plugin` the option `schema` is a path to a GraphQL schema in y
 
 ### Writing your app
 
-From `@grafoo/core` you will import the factory that creates the client instance and from `@grafoo/core/tag` you'll import the `graphql` or `gql` tag that will be compiled at build time.
+From `@grafoo/core` you will import the factory that creates the client instance and from submodule `@grafoo/core/tag` you'll import the `graphql` or `gql` tag that will be compiled at build time.
 
 ```js
 import createClient from "@grafoo/core";
