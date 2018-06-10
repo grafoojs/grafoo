@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/babel-plugin",
-  "version": "0.0.1-alpha.4",
+  "version": "0.0.1-alpha.5",
   "description": "the grafoo client babel plugin",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/babel-plugin",
   "main": "dist/index.js",

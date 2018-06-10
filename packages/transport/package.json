@@ -1,7 +1,7 @@
 {
   "name": "@grafoo/transport",
   "description": "the grafoo client standard transport",
-  "version": "0.0.1-alpha.4",
+  "version": "0.0.1-alpha.5",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/transport",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -30,8 +30,8 @@
     }
   },
   "dependencies": {
-    "@grafoo/types": "^0.0.1-alpha.4",
-    "grafoo-bundle": "^0.0.1-alpha.4"
+    "@grafoo/types": "^0.0.1-alpha.5",
+    "grafoo-bundle": "^0.0.1-alpha.5"
   },
   "gitHead": "12dae1eaac67907928d2afb723dafca1703832e5"
 }
