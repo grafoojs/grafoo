@@ -4,7 +4,7 @@
   "description": "the grafoo client react bindings",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/react",
   "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "publishConfig": {

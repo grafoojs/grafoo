@@ -65,7 +65,7 @@ const bindings = createBindings(client, props, updater);
 
 | Name      | type    | default | Descrition                                                 |
 | --------- | ------- | ------- | ---------------------------------------------------------- |
-| query     | object  | -       | the query created with `@grafoo/tag`'s template tag        |
+| query     | object  | -       | the query created with `@grafoo/core/tag`'s template tag   |
 | variables | object  | -       | GraphQL variables object for the query                     |
 | mutations | object  | -       | an object where mutations are declared (description below) |
 | skip      | boolean | -       | a flag to tell Grafoo not to go fetch the query right away |
@@ -92,7 +92,7 @@ Those properties stand for:
 
 | Name             | type     | Descrition                                                              |
 | ---------------- | -------- | ----------------------------------------------------------------------- |
-| query            | object   | the mutation query created with `@grafoo/tag`                           |
+| query            | object   | the mutation query created with `@grafoo/core/tag`                      |
 | update           | function | will update the cache when a request is completed (description below)   |
 | optimisticUpdate | function | will update the cache before a request is completed (description below) |
 

@@ -10,7 +10,7 @@ pluginTester({
   },
   tests: {
     "should throw if a import is not default": {
-      code: 'import { gql } from "@grafoo/tag";',
+      code: 'import { gql } from "@grafoo/core/tag";',
       error: true
     },
     "should throw if a schema is not specified": {
@@ -18,20 +18,20 @@ pluginTester({
         schema: undefined
       },
       code: `
-        import gql from "@grafoo/tag";
+        import gql from "@grafoo/core/tag";
         const query = gql\`{ hello }\`;
       `,
       error: true
     },
     "should throw if a tagged template string literal has expressions in it": {
       code: `
-        import gql from "@grafoo/tag";
+        import gql from "@grafoo/core/tag";
         const query = gql\`{ user(id: "\${1}") { name } }\`;
       `,
       error: true
     },
     "should remove the imported path": {
-      code: 'import gql from "@grafoo/tag";',
+      code: 'import gql from "@grafoo/core/tag";',
       snapshot: true
     },
     "should throw if idFields is not defined": {
@@ -39,7 +39,7 @@ pluginTester({
         schema: "__tests__/schema.graphql"
       },
       code: `
-        import gql from "@grafoo/tag";
+        import gql from "@grafoo/core/tag";
         const query = gql\`{ hello }\`;
       `,
       error: true
@@ -64,7 +64,7 @@ pluginTester({
     },
     "should replace a tagged template literal with the compiled grafoo object": {
       code: `
-        import gql from "@grafoo/tag";
+        import gql from "@grafoo/core/tag";
         const query = gql\`
           query($start: Int!, $offset: Int!, $id: ID!) {
             posts(start: $start, offset: $offset) {
@@ -87,7 +87,7 @@ pluginTester({
         compress: true
       },
       code: `
-        import gql from "@grafoo/tag";
+        import gql from "@grafoo/core/tag";
         const query = gql\`
           query($start: Int!, $offset: Int!, $id: ID!) {
             posts(start: $start, offset: $offset) {

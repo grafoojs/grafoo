@@ -46,7 +46,7 @@ A premise that Grafoo takes is that it should be able to extract an unique ident
 ## Install
 
 ```
-$ npm i @grafoo/core @grafoo/tag && npm i -D @grafoo/babel-plugin
+$ npm i @grafoo/core && npm i -D @grafoo/babel-plugin
 ```
 
 ## Configuration
@@ -77,13 +77,13 @@ The recommendation for now is to use the [`get-graphql-schema`](https://github.c
 
 `@grafoo/babel-plugin` transforms your code in three ways:
 
-- Template tag literals using the default export from `@grafoo/tag` will be compiled to a special object that will assist the client on the caching process.
-- `@grafoo/tag` import statements will be removed.
+- Template tag literals using the default export from submodule `@grafoo/core/tag` will be compiled to a special object that will assist the client on the caching process.
+- Imports from submodule `@grafoo/core/tag` statements will be removed.
 - `idFields` will be inserted automatically on client instantiation.
 
 ```diff
   import createClient from "@grafoo/core";
-- import graphql from "@grafoo/tag";
+- import graphql from "@grafoo/core/tag";
 
 - const client = createClient("http://some.graphql.api/");
 + const client = createClient("http://some.graphql.api/", {

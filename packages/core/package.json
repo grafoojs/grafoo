@@ -4,7 +4,7 @@
   "description": "the grafoo client core",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/core",
   "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "publishConfig": {

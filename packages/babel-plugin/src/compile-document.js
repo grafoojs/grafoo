@@ -29,7 +29,7 @@ export default function compileDocument(source, opts) {
   const frags = document.definitions.filter(d => d.kind === "FragmentDefinition");
 
   if (oprs.length > 1) {
-    throw new Error("@grafoo/tag: only one operation definition is accepted per tag.");
+    throw new Error("@grafoo/core/tag: only one operation definition is accepted per tag.");
   }
 
   const grafooObj = { query: opts.compress ? compress(print(oprs[0])) : print(oprs[0]) };

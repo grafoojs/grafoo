@@ -9,7 +9,7 @@ const transform = (program, opts) =>
 describe("compile document", () => {
   it("should throw if a schema path points to a inexistent file", () => {
     const program = `
-      import gql from "@grafoo/tag";
+      import gql from "@grafoo/core/tag";
       const query = gql\`{ hello }\`;
     `;
 
@@ -18,7 +18,7 @@ describe("compile document", () => {
 
   it("should throw if more then one operation was specified in a query document", () => {
     const program = `
-      import gql from "@grafoo/tag";
+      import gql from "@grafoo/core/tag";
       const query = gql\`
         query { hello }
         query { goodbye }
