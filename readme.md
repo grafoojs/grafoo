@@ -187,6 +187,17 @@ import React from "react";
 import gql from "@grafoo/core/tag";
 import { Consumer } from "@grafoo/react";
 
+const ALL_POSTS = gql`
+  query getPosts($orderBy: PostOrderBy) {
+    allPosts(orderBy: $orderBy) {
+      title
+      content
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 const CREATE_POST = gql`
   mutation createPost($content: String, $title: String, $authorId: ID) {
     createPost(content: $content, title: $title, authorId: $authorId) {
@@ -218,7 +229,7 @@ const submit = mutate => event => {
 
 export default function PostForm() {
   return (
-    <Consumer mutations={{ createPost }}>
+    <Consumer query={ALL_POSTS} mutations={{ createPost }}>
       {({ createPost }) => (
         <form onSubmit={submit(createPost)}>
           <input name="title" />
