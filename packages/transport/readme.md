@@ -81,7 +81,7 @@ request(USER_QUERY, variables).then(({ user }) => {
 
 ## Warning
 
-As this package uses `fetch` and `Object.assign` under the hood, so make sure to install the proper polyfills if you want to use it in your project.
+As this package uses `fetch` and `Object.assign` under the hood, make sure to install the proper polyfills if you want to use it in your project.
 
 ## LICENSE
 
