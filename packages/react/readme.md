@@ -97,13 +97,13 @@ export default function App() {
 
 `Consumer` is the component that performs query requests to your GraphQL API. It accepts the following props:
 
-| Name      | Type     | Default | Required | Descrition                                                    |
-| --------- | -------- | ------- | -------- | ------------------------------------------------------------- |
-| query     | object   | -       | false    | a query created with `@grafoo/core/tag`                       |
-| variables | object   | -       | false    | a GraphQL variables object for the `query` prop               |
-| mutations | object   | -       | false    | a map of mutations (description below)                        |
-| skip      | boolean  | false   | false    | whether `Consumer` should not request the `query` immediately |
-| children  | function | -       | false    | a render function (description below)                         |
+| Name      | Type     | Default | Required | Descrition                                                   |
+| --------- | -------- | ------- | -------- | ------------------------------------------------------------ |
+| query     | object   | -       | false    | a query created with `@grafoo/core/tag`                      |
+| variables | object   | -       | false    | a GraphQL variables object for the `query` prop              |
+| mutations | object   | -       | false    | a map of mutations (description below)                       |
+| skip      | boolean  | false   | false    | whether `Consumer` should skip the `query` request initially |
+| children  | function | -       | false    | a render function (description below)                        |
 
 ### Render parameter
 
