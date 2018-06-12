@@ -6,6 +6,13 @@
   "main": "dist/index.js",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
+  "keywords": [
+    "babel",
+    "babel-plugin",
+    "graphql",
+    "graphql-client",
+    "grafoo"
+  ],
   "publishConfig": {
     "access": "public"
   },
