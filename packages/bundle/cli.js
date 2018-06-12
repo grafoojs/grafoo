@@ -13,5 +13,7 @@ opts.skipCompression = !!opts["skip-compression"];
 opts.rootPath = process.cwd();
 
 exec("tsc -p tsconfig.build.json")
-  .then(() => build(opts))
+  .then(function() {
+    return build(opts);
+  })
   .catch(console.error);
