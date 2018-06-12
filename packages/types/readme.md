@@ -46,3 +46,7 @@
 ```
 $ npm i @grafoo/types
 ```
+
+## LICENSE
+
+[MIT](https://github.com/grafoojs/grafoo/blob/master/LICENSE)

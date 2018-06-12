@@ -59,7 +59,7 @@ For documentation please refer to [`@grafoo/react`](https://github.com/grafoojs/
 
 ## Example
 
-### `index.js`
+**`index.js`**
 
 ```jsx
 import { h, render } from "preact";
@@ -76,7 +76,7 @@ render(
 );
 ```
 
-### `Posts.js`
+**`Posts.js`**
 
 ```jsx
 import { h } from "preact";
@@ -106,3 +106,7 @@ export default function Posts() {
   );
 }
 ```
+
+## LICENSE
+
+[MIT](https://github.com/grafoojs/grafoo/blob/master/LICENSE)

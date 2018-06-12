@@ -56,3 +56,7 @@ $ npm i @grafoo/core
 ## API
 
 _Coming soon..._
+
+## LICENSE
+
+[MIT](https://github.com/grafoojs/grafoo/blob/master/LICENSE)

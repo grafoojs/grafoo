@@ -14,3 +14,7 @@ $ grafoo-bundle --input src/index.ts
 --input            # the entrypoint
 --skip-compression # avoids minification
 ```
+
+## LICENSE
+
+[MIT](https://github.com/grafoojs/grafoo/blob/master/LICENSE)
