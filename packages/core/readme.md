@@ -238,7 +238,7 @@ client.read(USER_QUERY, variables);
 
 ### `ClientInstance.listen`
 
-`listen` takes a _listener_ callback as argument. Whenever the cache is updated that _listener_ is called with the objects that were inserted, modified or removed in cache.
+`listen` takes a _listener_ callback as argument. Whenever the cache is updated that _listener_ is called with the objects that were inserted, modified or removed.
 
 #### Example
 
@@ -256,7 +256,7 @@ unlisten(); // detaches the listener from the client
 
 ### `ClientInstance.flush`
 
-The `flush` method dumps all of the data inside the cache in it's raw state, producing a snapshot. It is to be used in mainly on the server producing a initial state that can be passed as an option to `createClient` on client side.
+The `flush` method dumps all of the data inside the cache in it's raw state, producing a snapshot. It is to be used in mainly on the server producing, a initial state that can be passed as an option to `createClient` on client side.
 
 #### Example
 
