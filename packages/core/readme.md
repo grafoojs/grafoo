@@ -188,7 +188,7 @@ the `createClient` factory returns a client instance with some methods:
 
 ### `ClientInstance.request`
 
-This method receives as arguments a query object created with the `@grafoo/core/tag` template tag and optionally a GraphQL variables object. It returns a promise that will resolve with the data requested or reject with an list of GraphQL errors.
+This method receives as arguments a query object created with the `@grafoo/core/tag` template tag and optionally a GraphQL variables object. It returns a promise that will resolve with the data requested or reject with a list of GraphQL errors.
 
 #### Example
 
