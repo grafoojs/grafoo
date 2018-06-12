@@ -7,6 +7,15 @@
   "types": "dist/index.d.ts",
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
+  "keywords": [
+    "babel",
+    "babel-plugin",
+    "graphql",
+    "graphql-client",
+    "grafoo",
+    "react",
+    "reactjs"
+  ],
   "publishConfig": {
     "access": "public"
   },
