@@ -141,7 +141,7 @@ const clientWithDynamicHeaders = createClient("http://some.graphql.api", {
 
 ### IdFields
 
-`IdFields` is homologous to the `@grafoo/babel-plugin` option with the same name. You don't have much to worry about it because it's **automatically inserted by `@grafoo/babel-plugin`** on every client instatiation. It is an array of fields that Grafoo will take to build unique identifiers.
+`IdFields` is homologous to the `@grafoo/babel-plugin` option with the same name. You don't have much to worry about it because it's **automatically inserted by `@grafoo/babel-plugin`** on every client instantiation. It is an array of fields that Grafoo will take to build unique identifiers.
 
 Say you want to consume a query like so:
 
@@ -214,7 +214,7 @@ client.request(USER_QUERY, variables).then(data => {
 
 ### `ClientInstance.read`
 
-The read method takes as arguments the query object and optionally a variables object. It returns an object with two properties: `data` which is an tree structured object shaped according to your query tree and `objects`, a flat structured object containing every node on your query indexed by a unique id created with the `idProps` option passed on client instatiation.
+The read method takes as arguments the query object and optionally a variables object. It returns an object with two properties: `data` which is an tree structured object shaped according to your query tree and `objects`, a flat structured object containing every node on your query indexed by a unique id created with the `idProps` option passed on client instantiation.
 
 #### Example
 
