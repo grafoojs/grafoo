@@ -1,7 +1,7 @@
 var fs = require("fs");
 var path = require("path");
-var { rollup } = require("rollup");
-var { terser } = require("rollup-plugin-terser");
+var rollup = require("rollup").rollup;
+var terser = require("rollup-plugin-terser").terser;
 var babel = require("rollup-plugin-babel");
 var buble = require("rollup-plugin-buble");
 var nodeResolve = require("rollup-plugin-node-resolve");
@@ -40,21 +40,21 @@ module.exports = function build(opts) {
         }),
       fileSize()
     ].filter(Boolean)
-  }).then(bundle =>
-    bundle.write({
+  }).then(function(bundle) {
+    return bundle.write({
       file: path.join(opts.rootPath, "dist/index.js"),
       sourcemap: true,
       format: opts.format || "esm",
       treeshake: {
         propertyReadSideEffects: false
       }
-    })
-  );
+    });
+  });
 };
 
 function resolveTSPlugin() {
   return {
-    resolveId(importee, importer) {
+    resolveId: function(importee, importer) {
       if (importer) {
         var tsImportee = path.resolve(path.dirname(importer), importee + ".ts");
 
