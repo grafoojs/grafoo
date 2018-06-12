@@ -22,6 +22,7 @@
     "test:coverage": "jest --coverage && codecov"
   },
   "dependencies": {
+    "@babel/core": "^7.0.0-beta.50",
     "babel-literal-to-ast": "^2.0.0",
     "babel-plugin-tester": "^5.0.0",
     "graphql": "^0.13.1",
