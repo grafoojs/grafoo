@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/types",
-  "version": "0.0.1-alpha.6",
+  "version": "0.0.1-alpha.7",
   "description": "the grafoo client typescript definitions",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/types",
   "types": "types/index.ts",
