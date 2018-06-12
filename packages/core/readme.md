@@ -75,7 +75,37 @@ Assuming you already have babel installed, the only additional step required to 
 
 `@grafoo/core` consists of a module that exports as default function a factory to create the client intance and a submodule that exports that `graphql` template tag.
 
-## `createClient`
+### `graphql` template tag
+
+From `@grafoo/core/tag` is exported the `graphql` or `gql` tag that you'll use to create your queries. On build time every time you use that tag it will be replace with a special object that assists the client on the caching process. It is a dummy module and if you do not have `@grafoo/babel-plugin` it will thow you an error.
+
+#### Example
+
+```js
+import gql from "@grafoo/core/tag";
+
+const USER_QUERY = gql`
+  query($id: ID!) {
+    user(id: $id) {
+      name
+    }
+  }
+`;
+
+// will be transformed to this on build time
+
+const USER_QUERY = {
+  query: "query($id: ID!) { user(id: $id) { name id } }"
+  paths: {
+    "user(id:$id){name id}": {
+      name: "user",
+      args: ["id"]
+    }
+  }
+}
+```
+
+### `createClient` factory
 
 `createClient` accepts as arguments `uri` which is the http address to your GraphQL API and an options object. This options are:
 
@@ -163,16 +193,6 @@ This method receives as arguments a query object created with the `@grafoo/core/
 #### Example
 
 ```js
-import gql from "@grafoo/core/tag";
-
-const USER_QUERY = gql`
-  query($id: ID!) {
-    user(id: $id) {
-      name
-    }
-  }
-`;
-
 const variables = { id: 123 };
 
 client.request(USER_QUERY, variables).then(data => {
