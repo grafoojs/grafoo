@@ -27,6 +27,12 @@
       alt=downloads
     >
   </a>
+  <a href=https://github.com/grafoojs/grafoo>
+    <img
+      src=https://img.shields.io/bundlephobia/minzip/@grafoo/react.svg?label=size
+      alt=size
+    >
+  </a>
   <a href=https://prettier.io>
     <img
       src=https://img.shields.io/badge/code_style-prettier-ff69b4.svg
