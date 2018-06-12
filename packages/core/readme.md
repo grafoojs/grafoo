@@ -214,7 +214,7 @@ client.request(USER_QUERY, variables).then(data => {
 
 ### `ClientInstance.read`
 
-The read method takes as argumets the query object and optionally a variables object. It returns an object with two properties: `data` which is an tree structured object shaped according to your query tree and `objects`, a flat structured object containing every node on your query indexed by a unique id created with the `idProps` option.
+The read method takes as arguments the query object and optionally a variables object. It returns an object with two properties: `data` which is an tree structured object shaped according to your query tree and `objects`, a flat structured object containing every node on your query indexed by a unique id created with the `idProps` option.
 
 #### Example
 
