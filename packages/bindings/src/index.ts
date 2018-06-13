@@ -7,12 +7,6 @@ import {
   ObjectsMap
 } from "@grafoo/types";
 
-let shallowEqual = (a: {}, b: {}) => {
-  for (let i in a) if (a[i] !== b[i]) return false;
-  for (let i in b) if (!(i in a)) return false;
-  return true;
-};
-
 export default function createBindings(
   client: ClientInstance,
   props: GrafooConsumerProps,
@@ -36,21 +30,29 @@ export default function createBindings(
     unbind = client.listen(nextObjects => {
       if (lockUpdate) return (lockUpdate = false);
 
-      if (!shallowEqual(nextObjects, cachedState.objects || {})) {
-        let { data, objects } = readFromCache();
+      let cachedObjects = cachedState.objects || {};
 
-        cachedState.objects = objects;
+      for (let i in nextObjects) if (nextObjects[i] === cachedObjects[i]) return;
+      for (let i in cachedObjects) if (i in nextObjects) return;
 
-        Object.assign(state, data);
+      let { data, objects } = readFromCache();
 
-        updater();
-      }
+      cachedState.objects = objects;
+
+      Object.assign(state, data);
+
+      updater();
     });
   }
 
   let cacheLoaded = cachedState.data && !skip;
 
-  let state: GrafooRenderProps = { loading: !cacheLoaded, loaded: !!cacheLoaded };
+  let state: GrafooRenderProps = {
+    client,
+    load,
+    loaded: !!cacheLoaded,
+    loading: !cacheLoaded
+  };
 
   if (cacheLoaded) Object.assign(state, cachedState.data);
 

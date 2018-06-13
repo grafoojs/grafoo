@@ -109,11 +109,13 @@ export default function App() {
 
 The `Consumer` render function takes as parameter an object with the following props:
 
-| Name    | Type     | Default | Descrition                                                   |
-| ------- | -------- | ------- | ------------------------------------------------------------ |
-| loading | boolean  | true    | whether the client is making a request or not                |
-| loaded  | boolean  | false   | whether the query data was already fetched                   |
-| errors  | string[] | -       | an array of GraphQL errors from a failed request to your API |
+| Name    | type     | default  | Descrition                                                        |
+| ------- | -------- | -------- | ----------------------------------------------------------------- |
+| client  | object   | object   | the client instance                                               |
+| load    | function | function | a method to execute or re-execute a request with the `query` prop |
+| loading | boolean  | `true`   | whether the client is making a request or not                     |
+| loaded  | boolean  | `false`  | whether the query data was already fetched                        |
+| errors  | string[] | -        | an array of GraphQL errors from a failed request to your API      |
 
 The remaining props are:
 
@@ -141,7 +143,7 @@ const ALL_POSTS = gql`
 export default function Posts() {
   return (
     <Consumer query={query} variables={{ orderBy: "createdAt_DESC" }}>
-      {({ loading, loaded, errors, allPosts }) => (
+      {({ client, load, loading, loaded, errors, allPosts }) => (
         <h1>
           <marquee>👆 do whatever you want with the variables above 👆</marquee>
         </h1>
@@ -185,7 +187,7 @@ Each mutation will generate a single function that accepts a GraphQL variables o
 
 If you need to perform a mutation but updating the cache is not strictly important the recommendation is to use the client's `request` method directly.
 
-### `update` signature
+### `update`
 
 ```ts
 type UpdateFn = (query: QueryData, response: MutationResponse) => CacheUpdate;
@@ -193,7 +195,7 @@ type UpdateFn = (query: QueryData, response: MutationResponse) => CacheUpdate;
 
 The mutation `update` function is resposible to update the cache when the request is completed. It's first paremater is an object containing the data from the query it depends upon. The second paremater is the mutation response sent by the server. `update` return type is an object that describes the desired changes to be made to the cache.
 
-### `optimisticUpdate` signature
+### `optimisticUpdate`
 
 ```ts
 type OptimistcUpdateFn = (query: QueryData, variables: Variables) => CacheUpdate;

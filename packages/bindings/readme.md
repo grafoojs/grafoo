@@ -41,11 +41,11 @@
   </a>
 </p>
 
-This package was created to standardize how framework integrations are implemented for Grafoo. `@grafoo/bindings` has only a default export that is a `createBindings` factory function that returns an interface that provides data and notify for changes.
+This packages purpose is to standardize how view layer integrations are implemented for Grafoo. `@grafoo/bindings` has only a default export that is a `createBindings` factory function that returns an interface that provides data and notify for changes.
 
 ## API
 
-### `createBindings` signature
+### `createBindings`
 
 ```ts
 import createBindings from "@grafoo/bindings";
@@ -72,60 +72,72 @@ const bindings = createBindings(client, props, updater);
 
 ### Mutations
 
-Mutations is a mutations map having an arbitrary string name as key and the value as an object with some special properties. This object will generate a function with the same name given by the user that triggers the mutation. More on that later.
+The `mutations` prop is a map of _mutation objects_ that are shaped like so:
 
-```ts
-const mutations = {
-  createPost: {
-    query: CREATE_POST_MUTATION,
-    optimisticUpdate: ({ allPosts }, variables) => ({
-      allPosts: [{ ...variables.postInput, id: "tempID" }, ...allPosts]
-    }),
-    update: ({ allPosts }, response) => ({
-      allPosts: allPosts.map(p => (p.id === "tempID" ? response.post : p))
-    })
-  }
+```js
+const createPost = {
+  query: CREATE_POST_MUTATION,
+  optimisticUpdate: ({ allPosts }, variables) => ({
+    allPosts: [{ ...variables.postInput, id: "tempID" }, ...allPosts]
+  }),
+  update: ({ allPosts }, response) => ({
+    allPosts: allPosts.map(p => (p.id === "tempID" ? response.post : p))
+  })
 };
+
+const mutations = { createPost };
 ```
 
-Those properties stand for:
+A mutation object receives the following props:
 
-| Name             | type     | Descrition                                                              |
-| ---------------- | -------- | ----------------------------------------------------------------------- |
-| query            | object   | the mutation query created with `@grafoo/core/tag`                      |
-| update           | function | will update the cache when a request is completed (description below)   |
-| optimisticUpdate | function | will update the cache before a request is completed (description below) |
+| Name             | Type     | Required | Descrition                                                          |
+| ---------------- | -------- | -------- | ------------------------------------------------------------------- |
+| query            | object   | true     | a mutation query created with `@grafoo/core/tag`                    |
+| update           | function | true     | updates the cache when a request is completed (description below)   |
+| optimisticUpdate | function | false    | updates the cache before a request is completed (description below) |
 
-### `update` signature
+Each mutation will generate a single function that accepts a GraphQL variables object as argument and will perform it's request when called.
 
-The mutation `update` function is resposible to update the cache when a mutation request is completed. It's first argument is an object containing the data from the query passed to `createBindings` in the props argument. The second argument is the mutation response sent by the server. `update` return type is an object that describes the changes that have to be made to the cache.
+### Mutation query dependency
+
+**Important** to notice that every mutation depends on a `query` prop (that needs to be passed in the `props`). `@grafoo/react` works that way because it covers most of the use cases for mutations. And it eases significantly the process of updating the cache.
+
+If you need to perform a mutation but updating the cache is not strictly important the recommendation is to use the client's `request` method directly.
+
+### `update`
 
 ```ts
 type UpdateFn = (query: QueryData, response: MutationResponse) => CacheUpdate;
 ```
 
-### `OptimisticUpdate` signature
+The mutation `update` function is resposible to update the cache when the request is completed. It's first paremater is an object containing the data from the query it depends upon. The second paremater is the mutation response sent by the server. `update` return type is an object that describes the desired changes to be made to the cache.
 
-`optimisticUpdate` is the function responsible to update the cache before a mutation request is completed. Like in `update`, `optimisticUpdate` first argument is the data from the query passed to `createBindings`. The second argument is the variables object.
+### `optimisticUpdate`
 
 ```ts
 type OptimistcUpdateFn = (query: QueryData, variables: Variables) => CacheUpdate;
 ```
 
+In modern UIs it's to be expected that every user interaction occur in a fraction of seconds. `optimisticUpdate` responsability is to skip the mutation network roundtrip and update the cache instantaneously, making sure such interactions are as fast as they can be. `optimisticUpdate` as in `update` takes as first paremater the depedent query data. As second paremater it receives the variables object with which it's correpondent generated mutation function was called. And again it should return an object that describes the changes to be made to cache.
+
+If you want to perform an optimitic update you have to make sure that the data you are inserting contains the field or fields to extract a unique identifier. For instance, say `@grafoo/babel-plugin` `idFields` option is set to insert a property `id`. Is to be expected that your update has that field mocked.
+
 ### Bindings
 
 The interface returned by `createBindings` has some fixed props.
 
-| Name    | type     | default | Descrition                                       |
-| ------- | -------- | ------- | ------------------------------------------------ |
-| loading | boolean  | `true`  | whether the client is making a request or not    |
-| loaded  | boolean  | `false` | whether the query data was already fetched       |
-| errors  | string[] | -       | An array of GraphQL errors from a failed request |
+| Name    | type     | default  | Descrition                                                   |
+| ------- | -------- | -------- | ------------------------------------------------------------ |
+| client  | object   | object   | the client instance                                          |
+| load    | function | function | a method to execute a request with the `query` prop          |
+| loading | boolean  | `true`   | whether the client is making a request or not                |
+| loaded  | boolean  | `false`  | whether the query data was already fetched                   |
+| errors  | string[] | -        | an array of GraphQL errors from a failed request to your API |
 
-The remaining bindings props are:
+The remaining props are:
 
-- the data fetched by the client and shaped according to the query property.
-- mutations generated by the mutations map
+- the data fetched by the client and shaped according to your `query`
+- mutation functions generated by the `mutations` object prop
 
 ### Bindings mutation
 
