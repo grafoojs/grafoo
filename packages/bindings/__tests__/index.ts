@@ -26,6 +26,15 @@ interface AllAuthors {
   authors: Author[];
 }
 
+interface CreateAuthor {
+  createAuthor: {
+    name: string;
+    id: string;
+    __typename: string;
+    posts?: Array<Post>;
+  };
+}
+
 describe("@grafoo/bindings", () => {
   let client: ClientInstance;
   let bindings: Bindings;
@@ -148,7 +157,42 @@ describe("@grafoo/bindings", () => {
     expect(bindings.getState()).toMatchObject({ errors });
   });
 
-  it("should provide the right mutations", async () => {
+  it("should provide mutations", async () => {
+    await mockQueryRequest(Authors);
+
+    type CreateAuthorMutations = GrafooMutation<AllAuthors, CreateAuthor>;
+
+    const createAuthor: CreateAuthorMutations = {
+      query: CreateAuthor,
+      update: ({ authors }, data) => ({
+        authors: [data.createAuthor, ...authors]
+      })
+    };
+
+    const update = jest.spyOn(createAuthor, "update");
+
+    bindings = createBindings(
+      client,
+      { query: Authors, mutations: { createAuthor } },
+      () => void 0
+    );
+
+    const props = bindings.getState() as any;
+
+    expect(typeof props.createAuthor).toBe("function");
+
+    await bindings.load();
+
+    const variables = { name: "Homer" };
+
+    const { data } = await mockQueryRequest({ ...CreateAuthor, variables });
+
+    await props.createAuthor(variables);
+
+    expect(update).toHaveBeenCalledWith(props, data);
+  });
+
+  it("should perform optimistic update", async () => {
     await mockQueryRequest(Authors);
 
     type CreateAuthorMutations = GrafooMutation<AllAuthors, CreateAuthor>;
@@ -178,7 +222,7 @@ describe("@grafoo/bindings", () => {
 
     await bindings.load();
 
-    const variables = { name: "Homer" };
+    const variables = { name: "Peter" };
 
     const { data } = await mockQueryRequest({ ...CreateAuthor, variables });
 

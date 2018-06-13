@@ -67,9 +67,9 @@ export default function createBindings(
           writeToCache(mutation.optimisticUpdate(state, mutationVariables));
         }
 
-        return client
-          .request(mutation.query, mutationVariables)
-          .then(data => writeToCache(mutation.update(state, data)));
+        return client.request(mutation.query, mutationVariables).then(data => {
+          writeToCache(mutation.update(state, data));
+        });
       };
     }
   }

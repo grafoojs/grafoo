@@ -97,6 +97,10 @@ const resolvers = {
       const author = db
         .get("authors")
         .find(args)
+        .value();
+
+      db.get("authors")
+        .find(args)
         .remove()
         .write();
 
@@ -122,21 +126,30 @@ const resolvers = {
         .find({ id })
         .update(args)
         .write(),
-    deletePost: (_, args) =>
-      db
+    deletePost: (_, args) => {
+      const post = db
         .get("posts")
         .find(args)
+        .value();
+
+      db.get("posts")
+        .find(args)
         .remove()
-        .write()
+        .write();
+
+      return post;
+    }
   },
   Author: {
     posts: author =>
-      author.posts.map(id =>
-        db
-          .get("posts")
-          .find({ id })
-          .value()
-      )
+      author.posts
+        ? author.posts.map(id =>
+            db
+              .get("posts")
+              .find({ id })
+              .value()
+          )
+        : null
   },
   Post: {
     author: post =>
@@ -223,6 +236,14 @@ export const Authors = gql`
 export const CreateAuthor = gql`
   mutation($name: String!) {
     createAuthor(name: $name) {
+      name
+    }
+  }
+`;
+
+export const DeleteAuthor = gql`
+  mutation($id: ID!) {
+    deleteAuthor(id: $id) {
       name
     }
   }
