@@ -1,3 +1,4 @@
+import { ClientInstance } from "./core";
 import { GrafooObject } from "./tag";
 import { GraphQlError, Variables } from "./transport";
 
@@ -8,9 +9,11 @@ export interface Bindings {
 }
 
 export interface GrafooRenderProps {
-  loading: boolean;
-  loaded: boolean;
+  client: ClientInstance;
   errors?: GraphQlError[];
+  load(): void;
+  loaded: boolean;
+  loading: boolean;
 }
 
 export type Mutate<T> = (variables?: Variables) => Promise<T>;

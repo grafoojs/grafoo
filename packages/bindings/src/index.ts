@@ -7,12 +7,6 @@ import {
   ObjectsMap
 } from "@grafoo/types";
 
-let shallowEqual = (a: {}, b: {}) => {
-  for (let i in a) if (a[i] !== b[i]) return false;
-  for (let i in b) if (!(i in a)) return false;
-  return true;
-};
-
 export default function createBindings(
   client: ClientInstance,
   props: GrafooConsumerProps,
@@ -30,27 +24,37 @@ export default function createBindings(
 
   let lockUpdate = false;
 
+  function performUpdate(additionalData?) {
+    let { data, objects } = readFromCache();
+
+    cachedState.objects = objects;
+
+    Object.assign(state, data, additionalData);
+
+    updater();
+  }
+
   if (query) {
     cachedState = readFromCache();
 
     unbind = client.listen(nextObjects => {
       if (lockUpdate) return (lockUpdate = false);
 
-      if (!shallowEqual(nextObjects, cachedState.objects || {})) {
-        let { data, objects } = readFromCache();
+      let cachedObjects = cachedState.objects || {};
 
-        cachedState.objects = objects;
-
-        Object.assign(state, data);
-
-        updater();
-      }
+      for (let i in nextObjects) if (nextObjects[i] !== cachedObjects[i]) return performUpdate();
+      for (let i in cachedObjects) if (!(i in nextObjects)) return performUpdate();
     });
   }
 
   let cacheLoaded = cachedState.data && !skip;
 
-  let state: GrafooRenderProps = { loading: !cacheLoaded, loaded: !!cacheLoaded };
+  let state: GrafooRenderProps = {
+    client,
+    load,
+    loaded: !!cacheLoaded,
+    loading: !cacheLoaded
+  };
 
   if (cacheLoaded) Object.assign(state, cachedState.data);
 
@@ -63,9 +67,9 @@ export default function createBindings(
           writeToCache(mutation.optimisticUpdate(state, mutationVariables));
         }
 
-        return client
-          .request(mutation.query, mutationVariables)
-          .then(data => writeToCache(mutation.update(state, data)));
+        return client.request(mutation.query, mutationVariables).then(data => {
+          writeToCache(mutation.update(state, data));
+        });
       };
     }
   }
@@ -82,13 +86,7 @@ export default function createBindings(
 
         writeToCache(response);
 
-        let { data, objects } = readFromCache();
-
-        cachedState.objects = objects;
-
-        Object.assign(state, data, { loading: false, loaded: true });
-
-        updater();
+        performUpdate({ loading: false, loaded: true });
       })
       .catch(({ errors }) => {
         Object.assign(state, { errors, loading: false, loaded: true });
