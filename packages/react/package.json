@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/react",
-  "version": "0.0.1-alpha.7",
+  "version": "0.0.1-alpha.8",
   "description": "the grafoo client react bindings",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/react",
   "main": "dist/index.js",
@@ -41,10 +41,10 @@
     "react": ">=16.4"
   },
   "dependencies": {
-    "@grafoo/types": "^0.0.1-alpha.7"
+    "@grafoo/types": "^0.0.1-alpha.8"
   },
   "devDependencies": {
-    "grafoo-bundle": "^0.0.1-alpha.7"
+    "grafoo-bundle": "^0.0.1-alpha.8"
   },
   "gitHead": "77877818ba5194606114e9b5511adb61c62db7d9"
 }
