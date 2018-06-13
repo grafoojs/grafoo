@@ -102,7 +102,10 @@ describe("@grafoo/react", () => {
       </Provider>
     );
 
-    expect(mockRender).toHaveBeenCalledWith({ loading: true, loaded: false });
+    const [[call]] = mockRender.mock.calls;
+
+    // specifing load just to make explicit that it's there
+    expect(call).toMatchObject({ client, load: call.load, loading: true, loaded: false });
   });
 
   it("should execute render with the right data if a query is specified", async done => {

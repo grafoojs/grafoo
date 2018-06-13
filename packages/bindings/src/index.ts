@@ -24,6 +24,16 @@ export default function createBindings(
 
   let lockUpdate = false;
 
+  function performUpdate(additionalData?) {
+    let { data, objects } = readFromCache();
+
+    cachedState.objects = objects;
+
+    Object.assign(state, data, additionalData);
+
+    updater();
+  }
+
   if (query) {
     cachedState = readFromCache();
 
@@ -32,16 +42,8 @@ export default function createBindings(
 
       let cachedObjects = cachedState.objects || {};
 
-      for (let i in nextObjects) if (nextObjects[i] === cachedObjects[i]) return;
-      for (let i in cachedObjects) if (i in nextObjects) return;
-
-      let { data, objects } = readFromCache();
-
-      cachedState.objects = objects;
-
-      Object.assign(state, data);
-
-      updater();
+      for (let i in nextObjects) if (nextObjects[i] !== cachedObjects[i]) return performUpdate();
+      for (let i in cachedObjects) if (!(i in nextObjects)) return performUpdate();
     });
   }
 
@@ -84,13 +86,7 @@ export default function createBindings(
 
         writeToCache(response);
 
-        let { data, objects } = readFromCache();
-
-        cachedState.objects = objects;
-
-        Object.assign(state, data, { loading: false, loaded: true });
-
-        updater();
+        performUpdate({ loading: false, loaded: true });
       })
       .catch(({ errors }) => {
         Object.assign(state, { errors, loading: false, loaded: true });
