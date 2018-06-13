@@ -45,14 +45,6 @@ This packages purpose is to standardize how view layer integrations are implemen
 
 ## API
 
-### `createBindings`
-
-```ts
-import createBindings from "@grafoo/bindings";
-
-const bindings = createBindings(client, props, updater);
-```
-
 ### Arguments
 
 | Argument | type           | Description                                           |
@@ -60,6 +52,19 @@ const bindings = createBindings(client, props, updater);
 | client   | ClientInstance | a client nstance                                      |
 | props    | object         | a props object passed by the user (description below) |
 | updater  | function       | a callback to notify for data changes                 |
+
+#### Example
+
+```js
+import createBindings from "@grafoo/bindings";
+import createClient from "@grafoo/core";
+
+const client = createClient("https://some.graphql.api/");
+const props = {};
+const updater = () => {};
+
+const bindings = createBindings(client, props, updater);
+```
 
 ### `props` argument
 
