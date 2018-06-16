@@ -1,32 +1,9 @@
 import createClient from "@grafoo/core";
 import { Authors, CreateAuthor, mockQueryRequest, PostsAndAuthors } from "@grafoo/test-utils";
-import { ClientInstance, GrafooMutation } from "@grafoo/types";
+import { ClientInstance } from "@grafoo/types";
 import { h } from "preact";
 import { render } from "preact-render-spy";
 import { Consumer, Provider } from "../src";
-
-interface Post {
-  title: string;
-  content: string;
-  id: string;
-  __typename: string;
-  author: Author;
-}
-
-interface Author {
-  name: string;
-  id: string;
-  __typename: string;
-  posts?: Array<Post>;
-}
-
-interface CreateAuthor {
-  createAuthor: Author;
-}
-
-interface Authors {
-  authors: Author[];
-}
 
 describe("@grafoo/preact", () => {
   let client: ClientInstance;
@@ -123,8 +100,8 @@ describe("@grafoo/preact", () => {
 
       const [[call]] = mockRender.mock.calls;
 
-      // specifing load just to make explicit that it's there
-      expect(call).toMatchObject({ client, load: call.load, loading: true, loaded: false });
+      expect(call).toMatchObject({ client, loading: true, loaded: false });
+      expect(typeof call.load).toBe("function");
     });
 
     it("should execute render with the right data if a query is specified", async done => {
@@ -181,7 +158,7 @@ describe("@grafoo/preact", () => {
         },
         props => {
           expect(props.authors.length).toBe(data.authors.length + 1);
-          const newAuthor: Author = props.authors.find(a => a.id === "tempID");
+          const newAuthor = props.authors.find(a => a.id === "tempID");
           expect(newAuthor).toMatchObject({ name: "Homer", id: "tempID" });
         },
         props => {
@@ -190,47 +167,48 @@ describe("@grafoo/preact", () => {
         }
       ]);
 
-      type CreateAuthorMutations = GrafooMutation<Authors, CreateAuthor>;
-
-      const createAuthor: CreateAuthorMutations = {
-        query: CreateAuthor,
-        optimisticUpdate: ({ authors }, variables: Author) => ({
-          authors: [...authors, { ...variables, id: "tempID" }]
-        }),
-        update: ({ authors }, { createAuthor: author }) => ({
-          authors: authors.map(a => (a.id === "tempID" ? author : a))
-        })
-      };
-
       render(
         <Provider client={client}>
-          <Consumer query={Authors} mutations={{ createAuthor }}>
+          <Consumer
+            query={Authors}
+            mutations={{
+              createAuthor: {
+                query: CreateAuthor,
+                optimisticUpdate: ({ authors }, variables) => ({
+                  authors: [...authors, { ...variables, id: "tempID" }]
+                }),
+                update: ({ authors }, { createAuthor: author }) => ({
+                  authors: authors.map(a => (a.id === "tempID" ? author : a))
+                })
+              }
+            }}
+          >
             {mockRender}
           </Consumer>
         </Provider>
       );
     });
 
-    // it("should reflect updates that happen outside of the component", async done => {
-    //   const { data } = await mockQueryRequest(Authors);
+    it("should reflect updates that happen outside of the component", async done => {
+      const { data } = await mockQueryRequest(Authors);
 
-    //   client.write(Authors, data);
+      client.write(Authors, data);
 
-    //   const mockRender = createMockRenderFn(done, [
-    //     props => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
-    //     props => expect(props.authors[0].name).toBe("Homer")
-    //   ]);
+      const mockRender = createMockRenderFn(done, [
+        props => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
+        props => expect(props.authors[0].name).toBe("Homer")
+      ]);
 
-    //   render(
-    //     <Provider client={client}>
-    //       <Consumer query={Authors}>{mockRender}</Consumer>
-    //     </Provider>
-    //   );
+      render(
+        <Provider client={client}>
+          <Consumer query={Authors}>{mockRender}</Consumer>
+        </Provider>
+      );
 
-    //   client.write(Authors, {
-    //     authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a))
-    //   });
-    // });
+      client.write(Authors, {
+        authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a))
+      });
+    });
 
     it("should not trigger a network request if a query field is cached", async done => {
       const { data } = await mockQueryRequest(PostsAndAuthors);
