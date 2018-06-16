@@ -1,17 +1,17 @@
 import {
-  Bindings,
+  GrafooBindings,
   ClientInstance,
   GrafooConsumerProps,
   GrafooRenderProps,
-  Variables,
-  ObjectsMap
+  ObjectsMap,
+  GrafooRenderMutations
 } from "@grafoo/types";
 
-export default function createBindings(
+export default function createBindings<T = {}, U = {}>(
   client: ClientInstance,
-  props: GrafooConsumerProps,
+  props: GrafooConsumerProps<T, U>,
   updater: () => void
-): Bindings {
+): GrafooBindings<T, U> {
   let { query, variables, mutations, skip } = props;
 
   let writeToCache = data => client.write(query, variables, data);
@@ -29,7 +29,8 @@ export default function createBindings(
 
     cachedState.objects = objects;
 
-    Object.assign(state, data, additionalData);
+    Object.assign(queryResult, data);
+    Object.assign(state, additionalData);
 
     updater();
   }
@@ -55,6 +56,8 @@ export default function createBindings(
     loaded: !!cacheLoaded,
     loading: !cacheLoaded
   };
+  let queryResult = {} as T;
+  let mutationFns = {} as GrafooRenderMutations<U>;
 
   if (cacheLoaded) Object.assign(state, cachedState.data);
 
@@ -62,20 +65,20 @@ export default function createBindings(
     for (let key in mutations) {
       let mutation = mutations[key];
 
-      state[key] = (mutationVariables: Variables) => {
+      mutationFns[key] = mutationVariables => {
         if (mutation.optimisticUpdate) {
-          writeToCache(mutation.optimisticUpdate(state, mutationVariables));
+          writeToCache(mutation.optimisticUpdate(queryResult, mutationVariables));
         }
 
-        return client.request(mutation.query, mutationVariables).then(data => {
-          writeToCache(mutation.update(state, data));
+        return client.request(mutation.query, mutationVariables).then((data: U[typeof key]) => {
+          writeToCache(mutation.update(queryResult, data));
         });
       };
     }
   }
 
   function getState() {
-    return state;
+    return Object.assign({}, state, queryResult, mutationFns);
   }
 
   function load() {

@@ -1,9 +1,12 @@
-import { ClientInstance } from "./core";
-import { GrafooObject } from "./tag";
+import { ClientInstance, GrafooObject } from "./core";
 import { GraphQlError, Variables } from "./transport";
 
-export interface Bindings {
-  getState(): GrafooRenderProps;
+/**
+ * T = Query
+ * U = Mutations
+ */
+export interface GrafooBindings<T, U> {
+  getState(): GrafooRenderProps & T & GrafooRenderMutations<U>;
   unbind(): void;
   load(): void;
 }
@@ -11,28 +14,52 @@ export interface Bindings {
 export interface GrafooRenderProps {
   client: ClientInstance;
   errors?: GraphQlError[];
-  load(): void;
+  load: () => void;
   loaded: boolean;
   loading: boolean;
 }
 
-export type Mutate<T> = (variables?: Variables) => Promise<T>;
+/**
+ * T = Query
+ * U = Mutations
+ */
+export type UpdateFn<T, U> = (props: T, data?: U) => T;
 
-export type GrafooRenderFn = <T>(renderProps: GrafooRenderProps) => T;
+/**
+ * T = Query
+ */
+export type OptimisticUpdateFn<T> = (props: T, variables?) => T;
 
-export type UpdateFn<T, U> = (props: GrafooRenderProps & T, data?: U) => T;
+/**
+ * T = Query
+ * U = Mutations
+ * V = keyof Mutation
+ */
+export type GrafooMutations<T, U> = {
+  [V in keyof U]: {
+    query: GrafooObject;
+    optimisticUpdate?: OptimisticUpdateFn<T>;
+    update: UpdateFn<T, U[V]>;
+  }
+};
 
-export type OptimisticUpdateFn<T> = (props: GrafooRenderProps & T, variables?: Variables) => T;
-
-export interface GrafooMutation<T, U = {}> {
-  query: GrafooObject;
-  optimisticUpdate?: OptimisticUpdateFn<T>;
-  update: UpdateFn<T, U>;
+export interface Context {
+  client: ClientInstance;
 }
 
-export interface GrafooConsumerProps<T = {}> {
+/**
+ * T = Mutations
+ * U = keyof Mutations
+ */
+export type GrafooRenderMutations<T> = { [U in keyof T]: (variables?) => Promise<void> };
+
+/**
+ * T = Query
+ * U = Mutations
+ */
+export interface GrafooConsumerProps<T, U> {
   query?: GrafooObject;
   variables?: Variables;
-  mutations?: { [name: string]: GrafooMutation<T> };
+  mutations?: GrafooMutations<T, U>;
   skip?: boolean;
 }

@@ -1,6 +1,6 @@
 import createBindings from "../src";
 import createClient from "@grafoo/core";
-import { ClientInstance, Bindings, GrafooMutation } from "@grafoo/types";
+import { ClientInstance, GrafooMutations } from "@grafoo/types";
 import { mockQueryRequest, Authors, CreateAuthor } from "@grafoo/test-utils";
 
 interface Post {
@@ -22,10 +22,6 @@ interface Authors {
   authors: Author[];
 }
 
-interface AllAuthors {
-  authors: Author[];
-}
-
 interface CreateAuthor {
   createAuthor: {
     name: string;
@@ -37,13 +33,13 @@ interface CreateAuthor {
 
 describe("@grafoo/bindings", () => {
   let client: ClientInstance;
-  let bindings: Bindings;
   beforeEach(() => {
     jest.resetAllMocks();
     client = createClient("https://some.graphql.api/", { idFields: ["id"] });
   });
 
   it("should be evocable given the minimal props", () => {
+    let bindings;
     expect(() => (bindings = createBindings(client, {}, () => void 0))).not.toThrow();
 
     Object.keys(bindings).forEach(fn => {
@@ -54,7 +50,7 @@ describe("@grafoo/bindings", () => {
   });
 
   it("should provide the right initial state", () => {
-    bindings = createBindings(client, {}, () => void 0);
+    const bindings = createBindings(client, {}, () => void 0);
 
     expect(bindings.getState()).toMatchObject({
       client,
@@ -69,7 +65,7 @@ describe("@grafoo/bindings", () => {
 
     const renderFn = jest.fn();
 
-    bindings = createBindings(client, { query: Authors }, renderFn);
+    const bindings = createBindings<Authors>(client, { query: Authors }, renderFn);
 
     await bindings.load();
 
@@ -88,7 +84,7 @@ describe("@grafoo/bindings", () => {
 
     client.write(Authors, data);
 
-    bindings = createBindings(client, { query: Authors }, () => void 0);
+    const bindings = createBindings<Authors>(client, { query: Authors }, () => void 0);
 
     expect(bindings.getState()).toMatchObject({
       ...data,
@@ -102,7 +98,7 @@ describe("@grafoo/bindings", () => {
 
     const renderFn = jest.fn();
 
-    bindings = createBindings(client, { query: Authors }, renderFn);
+    const bindings = createBindings<Authors>(client, { query: Authors }, renderFn);
 
     client.write(Authors, data);
 
@@ -117,7 +113,7 @@ describe("@grafoo/bindings", () => {
 
     const renderFn = jest.fn();
 
-    bindings = createBindings(client, { query: Authors }, renderFn);
+    const bindings = createBindings<Authors>(client, { query: Authors }, renderFn);
 
     expect(bindings.getState()).toMatchObject(data);
   });
@@ -127,7 +123,7 @@ describe("@grafoo/bindings", () => {
 
     const renderFn = jest.fn();
 
-    bindings = createBindings(client, { query: Authors }, renderFn);
+    const bindings = createBindings<Authors>(client, { query: Authors }, renderFn);
 
     await bindings.load();
 
@@ -149,7 +145,7 @@ describe("@grafoo/bindings", () => {
 
     const renderFn = jest.fn();
 
-    bindings = createBindings(client, { query: FailAuthors }, renderFn);
+    const bindings = createBindings(client, { query: FailAuthors }, renderFn);
 
     await bindings.load();
 
@@ -160,24 +156,28 @@ describe("@grafoo/bindings", () => {
   it("should provide mutations", async () => {
     await mockQueryRequest(Authors);
 
-    type CreateAuthorMutations = GrafooMutation<AllAuthors, CreateAuthor>;
+    interface Mutations {
+      createAuthor: CreateAuthor;
+    }
 
-    const createAuthor: CreateAuthorMutations = {
-      query: CreateAuthor,
-      update: ({ authors }, data) => ({
-        authors: [data.createAuthor, ...authors]
-      })
+    const mutations: GrafooMutations<Authors, Mutations> = {
+      createAuthor: {
+        query: CreateAuthor,
+        update: ({ authors }, data) => ({
+          authors: [data.createAuthor, ...authors]
+        })
+      }
     };
 
-    const update = jest.spyOn(createAuthor, "update");
+    const update = jest.spyOn(mutations.createAuthor, "update");
 
-    bindings = createBindings(
+    const bindings = createBindings<Authors, Mutations>(
       client,
-      { query: Authors, mutations: { createAuthor } },
+      { query: Authors, mutations },
       () => void 0
     );
 
-    const props = bindings.getState() as any;
+    const props = bindings.getState();
 
     expect(typeof props.createAuthor).toBe("function");
 
@@ -189,34 +189,42 @@ describe("@grafoo/bindings", () => {
 
     await props.createAuthor(variables);
 
-    expect(update).toHaveBeenCalledWith(props, data);
+    const { authors } = bindings.getState();
+
+    // the state mutates. update is Actually called without
+    // the createAuthor mutation result
+    expect(update).toHaveBeenCalledWith({ authors }, data);
   });
 
   it("should perform optimistic update", async () => {
     await mockQueryRequest(Authors);
 
-    type CreateAuthorMutations = GrafooMutation<AllAuthors, CreateAuthor>;
+    interface Mutations {
+      createAuthor: CreateAuthor;
+    }
 
-    const createAuthor: CreateAuthorMutations = {
-      query: CreateAuthor,
-      optimisticUpdate: ({ authors }, variables: Author) => ({
-        authors: [{ ...variables, id: "tempID" }, ...authors]
-      }),
-      update: ({ authors }, data) => ({
-        authors: authors.map(p => (p.id === "tempID" ? data.createAuthor : p))
-      })
+    const mutations: GrafooMutations<Authors, Mutations> = {
+      createAuthor: {
+        query: CreateAuthor,
+        optimisticUpdate: ({ authors }, variables: Author) => ({
+          authors: [{ ...variables, id: "tempID" }, ...authors]
+        }),
+        update: ({ authors }, data) => ({
+          authors: authors.map(p => (p.id === "tempID" ? data.createAuthor : p))
+        })
+      }
     };
 
-    const optimisticUpdate = jest.spyOn(createAuthor, "optimisticUpdate");
-    const update = jest.spyOn(createAuthor, "update");
+    const optimisticUpdate = jest.spyOn(mutations.createAuthor, "optimisticUpdate");
+    const update = jest.spyOn(mutations.createAuthor, "update");
 
-    bindings = createBindings(
+    const bindings = createBindings<Authors, Mutations>(
       client,
-      { query: Authors, mutations: { createAuthor } },
+      { query: Authors, mutations },
       () => void 0
     );
 
-    const props = bindings.getState() as any;
+    const props = bindings.getState();
 
     expect(typeof props.createAuthor).toBe("function");
 
@@ -226,9 +234,16 @@ describe("@grafoo/bindings", () => {
 
     const { data } = await mockQueryRequest({ ...CreateAuthor, variables });
 
-    await props.createAuthor(variables);
+    const createAuthorPromise = props.createAuthor(variables);
 
-    expect(optimisticUpdate).toHaveBeenCalledWith(props, variables);
-    expect(update).toHaveBeenCalledWith(props, data);
+    const { authors } = bindings.getState();
+
+    expect(optimisticUpdate).toHaveBeenCalledWith({ authors }, variables);
+
+    await createAuthorPromise;
+
+    const { authors: modifiedAuthors } = bindings.getState();
+
+    expect(update).toHaveBeenCalledWith({ authors: modifiedAuthors }, data);
   });
 });

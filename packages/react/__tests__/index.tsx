@@ -1,32 +1,9 @@
 import * as React from "react";
 import createClient from "@grafoo/core";
 import { Authors, CreateAuthor, mockQueryRequest, PostsAndAuthors } from "@grafoo/test-utils";
-import { ClientInstance, GrafooMutation, GrafooReactConsumerProps } from "@grafoo/types";
-import TestRenderer from "react-test-renderer";
+import { ClientInstance } from "@grafoo/types";
+import * as TestRenderer from "react-test-renderer";
 import { Provider, Consumer } from "../src";
-
-interface Post {
-  title: string;
-  content: string;
-  id: string;
-  __typename: string;
-  author: Author;
-}
-
-interface Author {
-  name: string;
-  id: string;
-  __typename: string;
-  posts?: Array<Post>;
-}
-
-interface CreateAuthor {
-  createAuthor: Author;
-}
-
-interface AllAuthors {
-  authors: Author[];
-}
 
 describe("@grafoo/react", () => {
   let client: ClientInstance;
@@ -104,8 +81,8 @@ describe("@grafoo/react", () => {
 
     const [[call]] = mockRender.mock.calls;
 
-    // specifing load just to make explicit that it's there
-    expect(call).toMatchObject({ client, load: call.load, loading: true, loaded: false });
+    expect(call).toMatchObject({ client, loading: true, loaded: false });
+    expect(typeof call.load).toBe("function");
   });
 
   it("should execute render with the right data if a query is specified", async done => {
@@ -162,7 +139,7 @@ describe("@grafoo/react", () => {
       },
       props => {
         expect(props.authors.length).toBe(data.authors.length + 1);
-        const newAuthor: Author = props.authors.find(a => a.id === "tempID");
+        const newAuthor = props.authors.find(a => a.id === "tempID");
         expect(newAuthor).toMatchObject({ name: "Homer", id: "tempID" });
       },
       props => {
@@ -171,21 +148,22 @@ describe("@grafoo/react", () => {
       }
     ]);
 
-    type CreateAuthorMutations = GrafooMutation<AllAuthors, CreateAuthor>;
-
-    const createAuthor: CreateAuthorMutations = {
-      query: CreateAuthor,
-      optimisticUpdate: ({ authors }, variables: Author) => ({
-        authors: [...authors, { ...variables, id: "tempID" }]
-      }),
-      update: ({ authors }, { createAuthor: author }) => ({
-        authors: authors.map(a => (a.id === "tempID" ? author : a))
-      })
-    };
-
     TestRenderer.create(
       <Provider client={client}>
-        <Consumer query={Authors} mutations={{ createAuthor }}>
+        <Consumer
+          query={Authors}
+          mutations={{
+            createAuthor: {
+              query: CreateAuthor,
+              optimisticUpdate: ({ authors }, variables) => ({
+                authors: [...authors, { ...variables, id: "tempID" }]
+              }),
+              update: ({ authors }, data) => ({
+                authors: authors.map(a => (a.id === "tempID" ? data.createAuthor : a))
+              })
+            }
+          }}
+        >
           {mockRender}
         </Consumer>
       </Provider>

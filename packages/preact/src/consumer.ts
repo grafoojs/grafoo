@@ -1,29 +1,59 @@
 import createBindings from "@grafoo/bindings";
-import { Context, GrafooPreactConsumerProps, GrafooRenderProps } from "@grafoo/types";
+import {
+  Context,
+  GrafooRenderProps,
+  GrafooRenderMutations,
+  GrafooConsumerProps
+} from "@grafoo/types";
 import { Component } from "preact";
 
-export class Consumer extends Component<GrafooPreactConsumerProps, GrafooRenderProps> {
-  constructor(props: GrafooPreactConsumerProps, context: Context) {
-    super(props, context);
+/**
+ * T = Query
+ * U = Mutations
+ */
+type GrafooRenderFn<T, U> = (
+  renderProps: GrafooRenderProps & T & GrafooRenderMutations<U>
+) => JSX.Element;
 
-    let { load, getState, unbind } = createBindings(context.client, props, () =>
-      this.setState(null)
-    );
+/**
+ * T = Query
+ * U = Mutations
+ */
+type GrafooPreactConsumerProps<T = {}, U = {}> = GrafooConsumerProps<T, U> & {
+  children?: [GrafooRenderFn<T, U>];
+};
 
-    this.state = getState();
-
-    this.componentDidMount = () => {
-      if (props.skip || !props.query || this.state.loaded) return;
-
-      load();
-    };
-
-    this.componentWillUnmount = () => {
-      unbind();
-    };
-  }
-
-  render(props: GrafooPreactConsumerProps, state: GrafooRenderProps) {
-    return props.children[0]<JSX.Element>(state);
-  }
+/**
+ * T = Query
+ * U = Mutations
+ */
+interface ConsumerType extends Component {
+  <T, U>(props: GrafooPreactConsumerProps<T, U> & { children?: JSX.Element[] }): JSX.Element;
 }
+
+/**
+ * T = Query
+ * U = Mutations
+ */
+// @ts-ignore
+export let Consumer: ConsumerType = function GrafooConsumer<T, U>(
+  props: GrafooPreactConsumerProps<T, U>,
+  context: Context
+) {
+  let { load, getState, unbind } = createBindings(context.client, props, () => this.setState(null));
+
+  this.componentDidMount = () => {
+    if (props.skip || !props.query || getState().loaded) return;
+
+    load();
+  };
+
+  this.componentWillUnmount = () => {
+    unbind();
+  };
+
+  this.render = () => props.children[0](getState());
+};
+
+// @ts-ignore
+(Consumer.prototype = new Component()).constructor = Consumer;

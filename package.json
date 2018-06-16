@@ -26,10 +26,6 @@
         "eslint",
         "git add"
       ],
-      "**/*.{ts,tsx}": [
-        "tslint",
-        "git add"
-      ],
       "**/*.{js,ts,tsx,json,graphql,md}": [
         "prettier --write",
         "git add"
@@ -73,8 +69,6 @@
     "react": "^16.4.0",
     "react-test-renderer": "^16.4.0",
     "rimraf": "^2.6.2",
-    "tslint": "^5.10.0",
-    "tslint-config-prettier": "^1.13.0",
     "typescript": "^2.9.1",
     "uuid": "^3.2.1"
   }
