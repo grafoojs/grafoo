@@ -12,7 +12,7 @@ var opts = mri(process.argv.slice(2));
 opts.skipCompression = !!opts["skip-compression"];
 opts.rootPath = process.cwd();
 
-exec("tsc -p tsconfig.build.json")
+exec("tsc")
   .then(function() {
     return build(opts);
   })
