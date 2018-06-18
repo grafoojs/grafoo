@@ -68,12 +68,12 @@ const bindings = createBindings(client, props, updater);
 
 ### `props` argument
 
-| Name      | type    | default | Descrition                                                 |
-| --------- | ------- | ------- | ---------------------------------------------------------- |
-| query     | object  | -       | the query created with `@grafoo/core/tag`'s template tag   |
-| variables | object  | -       | GraphQL variables object for the query                     |
-| mutations | object  | -       | an object where mutations are declared (description below) |
-| skip      | boolean | -       | a flag to tell Grafoo not to go fetch the query right away |
+| Name      | type    | Descrition                                                 |
+| --------- | ------- | ---------------------------------------------------------- |
+| query     | object  | the query created with `@grafoo/core/tag`'s template tag   |
+| variables | object  | GraphQL variables object for the query                     |
+| mutations | object  | an object where mutations are declared (description below) |
+| skip      | boolean | a flag to tell Grafoo not to go fetch the query right away |
 
 ### Mutations
 
@@ -98,16 +98,14 @@ A mutation object receives the following props:
 | Name             | Type     | Required | Descrition                                                          |
 | ---------------- | -------- | -------- | ------------------------------------------------------------------- |
 | query            | object   | true     | a mutation query created with `@grafoo/core/tag`                    |
-| update           | function | true     | updates the cache when a request is completed (description below)   |
+| update           | function | false    | updates the cache when a request is completed (description below)   |
 | optimisticUpdate | function | false    | updates the cache before a request is completed (description below) |
 
-Each mutation will generate a single function that accepts a GraphQL variables object as argument and will perform it's request when called.
+Each mutation will generate a single function that accepts a GraphQL variables object as argument and will perform it's request when called and return a promise that will resolve with the mutation data or reject with a GraphQL Error.
 
 ### Mutation query dependency
 
-**Important** to notice that every mutation depends on a `query` prop (that needs to be passed in the `props`). `@grafoo/react` works that way because it covers most of the use cases for mutations. And it eases significantly the process of updating the cache.
-
-If you need to perform a mutation but updating the cache is not strictly important the recommendation is to use the client's `request` method directly.
+**Important** to notice that to update the cache a mutation depends on a `query` prop (that needs to be passed in the `props` object argument). If you need to perform a mutation but updating the cache is not strictly important you can just use the mutation promise resolved data.
 
 ### `update`
 
@@ -131,13 +129,12 @@ If you want to perform an optimitic update you have to make sure that the data y
 
 The interface returned by `createBindings` has some fixed props.
 
-| Name    | type     | default  | Descrition                                                   |
-| ------- | -------- | -------- | ------------------------------------------------------------ |
-| client  | object   | object   | the client instance                                          |
-| load    | function | function | a method to execute a request with the `query` prop          |
-| loading | boolean  | `true`   | whether the client is making a request or not                |
-| loaded  | boolean  | `false`  | whether the query data was already fetched                   |
-| errors  | string[] | -        | an array of GraphQL errors from a failed request to your API |
+| Name    | type     | Descrition                                                   |
+| ------- | -------- | ------------------------------------------------------------ |
+| load    | function | a method to execute a request with the `query` prop          |
+| loading | boolean  | whether the client is making a request or not                |
+| loaded  | boolean  | whether the query data was already fetched                   |
+| errors  | string[] | an array of GraphQL errors from a failed request to your API |
 
 The remaining props are:
 

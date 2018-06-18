@@ -100,7 +100,7 @@ describe("@grafoo/preact", () => {
 
       const [[call]] = mockRender.mock.calls;
 
-      expect(call).toMatchObject({ client, loading: true, loaded: false });
+      expect(call).toMatchObject({ loading: true, loaded: false });
       expect(typeof call.load).toBe("function");
     });
 
@@ -141,7 +141,27 @@ describe("@grafoo/preact", () => {
       expect(spy).not.toHaveBeenCalled();
     });
 
-    it("should handle mutations", async done => {
+    it("should handle simple mutations", async done => {
+      const variables = { name: "Bart" };
+
+      const { data } = await mockQueryRequest({ ...CreateAuthor, variables });
+
+      const mockRender = createMockRenderFn(done, [
+        props => {
+          props.createAuthor(variables).then(res => {
+            expect(res).toEqual(data);
+          });
+        }
+      ]);
+
+      render(
+        <Provider client={client}>
+          <Consumer mutations={{ createAuthor: { query: CreateAuthor } }}>{mockRender}</Consumer>
+        </Provider>
+      );
+    });
+
+    it("should handle mutations with cache update", async done => {
       const { data } = await mockQueryRequest(Authors);
 
       const mockRender = createMockRenderFn(done, [

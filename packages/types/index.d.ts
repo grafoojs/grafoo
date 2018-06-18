@@ -41,14 +41,17 @@ export declare interface InitialState {
 }
 
 export declare interface ClientInstance {
-  request<T>(grafooObject: GrafooObject, variables?: Variables): Promise<T>;
-  listen(listener: Listener): () => void;
+  request: <T>(grafooObject: GrafooObject, variables?: Variables) => Promise<T>;
+  listen: (listener: Listener) => () => void;
   write: {
     (grafooObject: GrafooObject, variables: Variables, data: {}): void;
     (grafooObject: GrafooObject, data: {}): void;
   };
-  read<T>(grafooObject: GrafooObject, variables?: Variables): { data?: T; objects?: ObjectsMap };
-  flush(): InitialState;
+  read: <T>(
+    grafooObject: GrafooObject,
+    variables?: Variables
+  ) => { data?: T; objects?: ObjectsMap };
+  flush: () => InitialState;
 }
 
 export declare interface ClientOptions {
@@ -85,11 +88,10 @@ export declare interface GrafooBindings<T, U> {
 }
 
 export declare interface GrafooRenderProps {
-  client: ClientInstance;
   errors?: GraphQlError[];
-  load: () => void;
-  loaded: boolean;
-  loading: boolean;
+  load?: () => void;
+  loaded?: boolean;
+  loading?: boolean;
 }
 
 /**
@@ -112,7 +114,7 @@ export declare type GrafooMutations<T, U> = {
   [V in keyof U]: {
     query: GrafooObject;
     optimisticUpdate?: OptimisticUpdateFn<T>;
-    update: UpdateFn<T, U[V]>;
+    update?: UpdateFn<T, U[V]>;
   }
 };
 
@@ -125,7 +127,7 @@ export declare interface Context {
  * U = keyof Mutations
  */
 export declare type GrafooRenderMutations<T> = {
-  [U in keyof T]: (variables?: Variables) => Promise<void>
+  [U in keyof T]: (variables?: Variables) => Promise<T[U]>
 };
 
 /**

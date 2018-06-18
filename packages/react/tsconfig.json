@@ -9,6 +9,7 @@
     "noUnusedParameters": true,
     "checkJs": false,
     "downlevelIteration": true,
+    "jsx": "react",
     "declaration": true,
     "emitDeclarationOnly": true,
     "outDir": "dist"

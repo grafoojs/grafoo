@@ -19,12 +19,11 @@ export default function createBindings<T = {}, U = {}>(
 
   let cachedState: { data?: {}; objects?: ObjectsMap } = {};
 
-  // tslint:disable-next-line: no-empty
   let unbind = () => {};
 
   let lockUpdate = false;
 
-  function performUpdate(additionalData?) {
+  let performUpdate = (additionalData?) => {
     let { data, objects } = readFromCache();
 
     cachedState.objects = objects;
@@ -33,7 +32,7 @@ export default function createBindings<T = {}, U = {}>(
     Object.assign(state, additionalData);
 
     updater();
-  }
+  };
 
   if (query) {
     cachedState = readFromCache();
@@ -50,12 +49,9 @@ export default function createBindings<T = {}, U = {}>(
 
   let cacheLoaded = cachedState.data && !skip;
 
-  let state: GrafooRenderProps = {
-    client,
-    load,
-    loaded: !!cacheLoaded,
-    loading: !cacheLoaded
-  };
+  let state: GrafooRenderProps = query
+    ? { load, loaded: !!cacheLoaded, loading: !cacheLoaded }
+    : {};
   let queryResult = {} as T;
   let mutationFns = {} as GrafooRenderMutations<U>;
 
@@ -66,12 +62,16 @@ export default function createBindings<T = {}, U = {}>(
       let mutation = mutations[key];
 
       mutationFns[key] = mutationVariables => {
-        if (mutation.optimisticUpdate) {
+        if (query && mutation.optimisticUpdate) {
           writeToCache(mutation.optimisticUpdate(queryResult, mutationVariables));
         }
 
         return client.request(mutation.query, mutationVariables).then((data: U[typeof key]) => {
-          writeToCache(mutation.update(queryResult, data));
+          if (query && mutation.update) {
+            writeToCache(mutation.update(queryResult, data));
+          }
+
+          return data;
         });
       };
     }
