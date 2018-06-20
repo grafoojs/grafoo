@@ -187,7 +187,7 @@ type MutationFn = (variables: Variables) => Promise<MutationResponse>;
 
 ### Mutation query dependency
 
-**Important** to notice that to update the cache `update` and `optimistUpdate` hooks depend on a `query` prop (that needs to be passed in the `props` object argument). If you need to perform a mutation but updating the cache is not strictly important you can just use the mutation promise resolved data or use the client instance directly.
+**Important** to notice that to update the cache `update` and `optimistUpdate` hooks depend on a `query` prop (that needs to be passed to `Consumer` as prop). If you need to perform a mutation but updating the cache is not strictly important you can just use the mutation promise resolved data or use the client instance directly.
 
 ### `update`
 
