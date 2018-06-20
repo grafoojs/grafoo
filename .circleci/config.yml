@@ -16,7 +16,7 @@ jobs:
             - yarn-packages-
 
       - run:
-          name: Install Dependencies and Build packages
+          name: Install Dependencies and Build Packages
           command: yarn
 
       - save_cache:
