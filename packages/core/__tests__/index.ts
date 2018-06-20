@@ -1,23 +1,74 @@
-import { Authors, Post, Posts, PostsAndAuthors, executeQuery } from "@grafoo/test-utils";
+import {
+  Authors,
+  Post,
+  Posts,
+  PostsAndAuthors,
+  executeQuery,
+  mockQueryRequest
+} from "@grafoo/test-utils";
 import createClient from "../src";
+import { ClientInstance } from "@grafoo/types";
+
+interface Post {
+  title: string;
+  content: string;
+  id: string;
+  __typename: string;
+  author: Author;
+}
+
+interface Author {
+  name: string;
+  id: string;
+  __typename: string;
+  posts?: Array<Post>;
+}
+
+interface AuthorsQuery {
+  authors: Author[];
+}
+
+interface PostQuery {
+  post: Post;
+}
+
+interface PostsQuery {
+  posts: Post[];
+}
 
 describe("@grafoo/core", () => {
-  it("should be instantiable", () => {
-    const cache = createClient("", { idFields: ["id"] });
-
-    expect(typeof cache.request).toBe("function");
-    expect(typeof cache.listen).toBe("function");
-    expect(typeof cache.write).toBe("function");
-    expect(typeof cache.read).toBe("function");
-    expect(typeof cache.flush).toBe("function");
+  let client: ClientInstance;
+  beforeEach(() => {
+    client = createClient("", { idFields: ["id"] });
   });
 
-  it("should write queries to the cache", async () => {
-    await mock(PostsAndAuthors, async (cache, data, { query, variables }) => {
-      cache.write(query, variables, data);
+  it("should be instantiable", () => {
+    const client = createClient("", { idFields: ["id"] });
+
+    expect(typeof client.request).toBe("function");
+    expect(typeof client.listen).toBe("function");
+    expect(typeof client.write).toBe("function");
+    expect(typeof client.read).toBe("function");
+    expect(typeof client.flush).toBe("function");
+  });
+
+  it("should perform query requests", async () => {
+    const { data } = await mockQueryRequest({
+      ...Post,
+      variables: { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" }
+    });
+
+    expect(data).toEqual(
+      await client.request(Post, { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" })
+    );
+  });
+
+  it("should write queries to the client", async () => {
+    await mock(PostsAndAuthors, async (data, { query, variables }) => {
+      client.write(query, variables, data);
 
       const { authors, posts } = data;
-      const { objectsMap, pathsMap } = cache.flush();
+      const { objectsMap, pathsMap } = client.flush();
 
       expect(authors).toEqual(
         pathsMap["authors{__typename id name posts{__typename body id title}}"].data.authors
@@ -30,11 +81,11 @@ describe("@grafoo/core", () => {
     });
   });
 
-  it("should read queries from the cache", async () => {
-    await mock(Authors, async (cache, data, { query, variables }) => {
-      cache.write(query, variables, data);
+  it("should read queries from the client", async () => {
+    await mock(Authors, async (data, { query, variables }) => {
+      client.write(query, variables, data);
 
-      const result = cache.read(query, variables);
+      const result = client.read<AuthorsQuery>(query, variables);
 
       const { authors } = data;
 
@@ -47,43 +98,46 @@ describe("@grafoo/core", () => {
   });
 
   it("should handle queries with variables", async () => {
-    await mock(Post, async (cache, data, { query, variables }) => {
-      cache.write(query, variables, data);
+    await mock(Post, async (data, { query, variables }) => {
+      client.write(query, variables, data);
 
-      expect(cache.read(Post, { id: "123" })).toEqual({});
-      expect(cache.read(query, variables).data.post.id).toBe(variables.id);
+      expect(client.read(Post, { id: "123" })).toEqual({});
+      expect(client.read<PostQuery>(query, variables).data.post.id).toBe(variables.id);
     });
   });
 
-  it("should perform update to cache", async () => {
-    await mock(Post, async (cache, data, { query, variables }) => {
-      cache.write(query, variables, data);
+  it("should perform update to client", async () => {
+    await mock(Post, async (data, { query, variables }) => {
+      client.write(query, variables, data);
 
       const {
         data: { post }
-      } = cache.read(query, variables);
+      } = client.read<PostQuery>(query, variables);
 
       expect(post.title).toBe("Quam odit");
 
-      cache.write(query, variables, { post: { ...post, title: "updated title" } });
+      client.write(query, variables, { post: { ...post, title: "updated title" } });
 
-      expect(cache.read(query, variables).data.post.title).toBe("updated title");
+      expect(client.read<PostQuery>(query, variables).data.post.title).toBe("updated title");
     });
   });
 
   it("should reflect updates on queries with shared objects", async () => {
-    await mock([Posts, Post], async (cache, [postsData, postData], [postsRequest, postRequest]) => {
-      cache.write(postsRequest.query, postsRequest.variables, postsData);
+    await mock([Posts, Post], async ([postsData, postData], [postsRequest, postRequest]) => {
+      client.write(postsRequest.query, postsRequest.variables, postsData);
 
-      const { posts } = cache.read(postsRequest.query, postsRequest.variables).data;
+      const { posts } = client.read<PostsQuery>(postsRequest.query, postsRequest.variables).data;
 
       expect(posts.find(p => p.id === postsRequest.variables.id).title).toBe("Quam odit");
 
-      cache.write(postRequest.query, postRequest.variables, {
+      client.write(postRequest.query, postRequest.variables, {
         post: { ...postData.post, title: "updated title" }
       });
 
-      const { posts: updatedPosts } = cache.read(postsRequest.query, postsRequest.variables).data;
+      const { posts: updatedPosts } = client.read<PostsQuery>(
+        postsRequest.query,
+        postsRequest.variables
+      ).data;
 
       expect(updatedPosts.find(p => p.id === postsRequest.variables.id).title).toBe(
         "updated title"
@@ -91,19 +145,19 @@ describe("@grafoo/core", () => {
     });
   });
 
-  it("should merge objects in the cache when removing or adding properties", async () => {
-    await mock(Post, async (cache, data, { query, variables }) => {
-      cache.write(query, variables, data);
+  it("should merge objects in the client when removing or adding properties", async () => {
+    await mock(Post, async (data, { query, variables }) => {
+      client.write(query, variables, data);
 
-      const post = JSON.parse(JSON.stringify(cache.read(query, variables).data.post));
+      const post = JSON.parse(JSON.stringify(client.read<PostQuery>(query, variables).data.post));
 
       delete post.__typename;
 
       post.foo = "bar";
 
-      cache.write(query, variables, { post });
+      client.write(query, variables, { post });
 
-      expect(cache.read(query, variables).data.post).toEqual({
+      expect(client.read<PostQuery>(query, variables).data.post).toEqual({
         __typename: "Post",
         author: {
           __typename: "Author",
@@ -118,67 +172,64 @@ describe("@grafoo/core", () => {
     });
   });
 
-  it("should call cache listeners on write with paths objects as arguments", async () => {
-    await mock(Post, async (cache, data, { query, variables }) => {
+  it("should call client listeners on write with paths objects as arguments", async () => {
+    await mock(Post, async (data, { query, variables }) => {
       const listener = jest.fn();
       const listener2 = jest.fn();
 
-      const unlisten = cache.listen(listener);
-      cache.listen(listener2);
+      const unlisten = client.listen(listener);
+      client.listen(listener2);
 
-      cache.write(query, variables, data);
+      client.write(query, variables, data);
 
-      expect(listener).toHaveBeenCalledWith(cache.read(query, variables).objects);
+      expect(listener).toHaveBeenCalledWith(client.read(query, variables).objects);
 
       unlisten();
-      cache.write(query, variables, data);
+      client.write(query, variables, data);
 
       expect(listener).toHaveBeenCalledTimes(1);
       expect(listener2).toHaveBeenCalledTimes(2);
 
       unlisten();
-      cache.write(query, variables, data);
+      client.write(query, variables, data);
 
       expect(listener2).toHaveBeenCalledTimes(3);
     });
   });
 
-  it("should be able read from the cache with a declared initialState", async () => {
-    await mock(Authors, async (cache, data, { query, variables }) => {
-      cache.write(query, variables, data);
+  it("should be able read from the client with a declared initialState", async () => {
+    await mock(Authors, async (data, { query, variables }) => {
+      client.write(query, variables, data);
 
-      cache = createClient("", { idFields: ["id"], initialState: cache.flush() });
+      client = createClient("", { idFields: ["id"], initialState: client.flush() });
 
-      expect(cache.read(query, variables).data).toEqual(data);
+      expect(client.read(query, variables).data).toEqual(data);
     });
   });
 
   it("should accept `idFields` array in options", async () => {
-    await mock(Authors, async (_, data, { query, variables }) => {
-      const cache = createClient("", { idFields: ["__typename", "id"] });
+    await mock(Authors, async (data, { query, variables }) => {
+      const client = createClient("", { idFields: ["__typename", "id"] });
 
-      cache.write(query, variables, data);
+      client.write(query, variables, data);
 
-      expect(Object.keys(cache.flush().objectsMap).every(key => /(Post|Author)/.test(key))).toBe(
+      expect(Object.keys(client.flush().objectsMap).every(key => /(Post|Author)/.test(key))).toBe(
         true
       );
     });
   });
 });
 
-async function mock(...args) {
-  let [sources, variables, fn] = args;
-  let { query } = sources;
-  let cache = createClient("", { idFields: ["id"] });
-  let results;
-  let requests;
-
-  if (args.length < 3) {
+async function mock(sources, variables, fn?) {
+  if (!fn) {
     fn = variables;
     // default post id
     variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
   }
 
+  let { query } = sources;
+
+  let results, requests;
   if (Array.isArray(sources)) {
     requests = sources.map(query => ({ query, variables }));
     results = (await Promise.all(
@@ -189,5 +240,5 @@ async function mock(...args) {
     results = (await executeQuery({ query, variables })).data;
   }
 
-  await fn(cache, results, requests);
+  await fn(results, requests);
 }
