@@ -15,13 +15,13 @@
       alt="coverage"
     />
   </a>
-  <a href=https://github.com/grafoojs/grafoo>
+  <a href=https://www.npmjs.com/package/@grafoo/babel-plugin>
     <img
       src=https://img.shields.io/npm/v/@grafoo/babel-plugin.svg
       alt=npm
     >
   </a>
-  <a href=https://github.com/grafoojs/grafoo>
+  <a href=https://www.npmjs.com/package/@grafoo/babel-plugin>
     <img
       src=https://img.shields.io/npm/dm/@grafoo/babel-plugin.svg
       alt=downloads
@@ -90,16 +90,16 @@ The recommendation for now is to use the [`get-graphql-schema`](https://github.c
 +   idFields: ["id"]
 + });
 
--  const USER_QUERY = graphql`
--    query($id: ID!) {
--      user(id: $id) {
--        name
--        posts {
--          title
--        }
--      }
--    }
--  `;
+- const USER_QUERY = graphql`
+-   query($id: ID!) {
+-     user(id: $id) {
+-       name
+-       posts {
+-         title
+-       }
+-     }
+-   }
+- `;
 + const USER_QUERY = {
 +   query: "query($id: ID!) { user(id: $id) { id name posts { id title } } }",
 +   paths: {

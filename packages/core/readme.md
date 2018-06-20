@@ -21,13 +21,13 @@
       alt=npm
     >
   </a>
-  <a href=https://github.com/grafoojs/grafoo>
+  <a href=https://www.npmjs.com/package/@grafoo/core>
     <img
       src=https://img.shields.io/npm/dm/@grafoo/core.svg
       alt=downloads
     >
   </a>
-  <a href=https://github.com/grafoojs/grafoo>
+  <a href=https://www.npmjs.com/package/@grafoo/core>
     <img
       src=https://img.shields.io/bundlephobia/minzip/@grafoo/core.svg?label=size
       alt=size

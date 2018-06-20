@@ -54,7 +54,7 @@ describe("@grafoo/bindings", () => {
 
     const props = bindings.getState();
 
-    expect(props).toEqual({});
+    expect(props).toEqual({ client });
   });
 
   it("should execute a query", async () => {
@@ -68,6 +68,27 @@ describe("@grafoo/bindings", () => {
 
     expect(renderFn).toHaveBeenCalledTimes(1);
     expect(bindings.getState()).toMatchObject({ ...data, loaded: true, loading: false });
+  });
+
+  it("should notify a loading state", async () => {
+    const { data } = await mockQueryRequest(Authors);
+
+    const renderFn = jest.fn();
+
+    const bindings = createBindings<Authors>(client, { query: Authors }, renderFn);
+
+    await bindings.load();
+
+    expect(renderFn).toHaveBeenCalledTimes(1);
+    expect(bindings.getState()).toMatchObject({ ...data, loaded: true, loading: false });
+
+    const reloadPromise = bindings.load();
+
+    expect(bindings.getState().loading).toBe(true);
+
+    await reloadPromise;
+
+    expect(bindings.getState().loading).toBe(false);
   });
 
   it("should provide the data if the query is already cached", async () => {

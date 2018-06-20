@@ -21,13 +21,13 @@
       alt=npm
     >
   </a>
-  <a href=https://github.com/grafoojs/grafoo>
+  <a href=https://www.npmjs.com/package/@grafoo/react>
     <img
       src=https://img.shields.io/npm/dm/@grafoo/bindings.svg
       alt=downloads
     >
   </a>
-  <a href=https://github.com/grafoojs/grafoo>
+  <a href=https://www.npmjs.com/package/@grafoo/react>
     <img
       src=https://img.shields.io/bundlephobia/minzip/@grafoo/react.svg?label=size
       alt=size
@@ -109,13 +109,13 @@ export default function App() {
 
 The `Consumer` render function takes as parameter an object with the following props:
 
-| Name    | type     | default  | Descrition                                                        |
-| ------- | -------- | -------- | ----------------------------------------------------------------- |
-| client  | object   | object   | the client instance                                               |
-| load    | function | function | a method to execute or re-execute a request with the `query` prop |
-| loading | boolean  | `true`   | whether the client is making a request or not                     |
-| loaded  | boolean  | `false`  | whether the query data was already fetched                        |
-| errors  | string[] | -        | an array of GraphQL errors from a failed request to your API      |
+| Name    | type     | Descrition                                                   |
+| ------- | -------- | ------------------------------------------------------------ |
+| client  | object   | the client instance                                          |
+| load    | function | a method to execute a request with the `query` prop          |
+| loading | boolean  | whether the client is making a request or not                |
+| loaded  | boolean  | whether the query data was already fetched                   |
+| errors  | string[] | an array of GraphQL errors from a failed request to your API |
 
 The remaining props are:
 
@@ -179,13 +179,15 @@ A mutation object receives the following props:
 | update           | function | true     | updates the cache when a request is completed (description below)   |
 | optimisticUpdate | function | false    | updates the cache before a request is completed (description below) |
 
-Each mutation will generate a single function that accepts a GraphQL variables object as argument and will perform it's request when called.
+Each mutation will generate a single function that accepts a GraphQL variables object as argument and will perform it's request when called and return a promise that will resolve with the mutation data or reject with a GraphQL Error.
+
+```ts
+type MutationFn = (variables: Variables) => Promise<MutationResponse>;
+```
 
 ### Mutation query dependency
 
-**Important** to notice that every mutation depends on a `query` prop (that needs to be declared with the `Consumer`). `@grafoo/react` works that way because it covers most of the use cases for mutations. And it eases significantly the process of updating the cache.
-
-If you need to perform a mutation but updating the cache is not strictly important the recommendation is to use the client's `request` method directly.
+**Important** to notice that to update the cache `update` and `optimistUpdate` hooks depend on a `query` prop (that needs to be passed in the `props` object argument). If you need to perform a mutation but updating the cache is not strictly important you can just use the mutation promise resolved data or use the client instance directly.
 
 ### `update`
 
@@ -193,7 +195,7 @@ If you need to perform a mutation but updating the cache is not strictly importa
 type UpdateFn = (query: QueryData, response: MutationResponse) => CacheUpdate;
 ```
 
-The mutation `update` function is resposible to update the cache when the request is completed. It's first paremater is an object containing the data from the query it depends upon. The second paremater is the mutation response sent by the server. `update` return type is an object that describes the desired changes to be made to the cache.
+The mutation `update` function is resposible to update the cache when the request is completed. It receives as paremeters an object containing the data from the query it depends upon and the mutation response sent by the server. `update` return type is an object that describes the changes to be made to the cache.
 
 ### `optimisticUpdate`
 

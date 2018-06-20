@@ -88,6 +88,7 @@ export declare interface GrafooBindings<T, U> {
 }
 
 export declare interface GrafooRenderProps {
+  client: ClientInstance;
   errors?: GraphQlError[];
   load?: () => void;
   loaded?: boolean;

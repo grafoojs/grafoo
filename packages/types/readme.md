@@ -15,13 +15,13 @@
       alt="coverage"
     />
   </a>
-  <a href=https://github.com/grafoojs/grafoo>
+  <a href=https://www.npmjs.com/package/@grafoo/types>
     <img
       src=https://img.shields.io/npm/v/@grafoo/types.svg
       alt=npm
     >
   </a>
-  <a href=https://github.com/grafoojs/grafoo>
+  <a href=https://www.npmjs.com/package/@grafoo/types>
     <img
       src=https://img.shields.io/npm/dm/@grafoo/types.svg
       alt=downloads
