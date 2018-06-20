@@ -179,7 +179,7 @@ A mutation object receives the following props:
 | update           | function | false    | updates the cache when a request is completed (description below)   |
 | optimisticUpdate | function | false    | updates the cache before a request is completed (description below) |
 
-Each mutation will generate a single function that accepts a GraphQL variables object as argument and will perform it's request when called and return a promise that will resolve with the mutation data or reject with a GraphQL Error.
+Each mutation will generate a single function that accepts a GraphQL variables object as argument and return a promise that will resolve with the mutation data or reject with a GraphQL Error.
 
 ```ts
 type MutationFn = (variables: Variables) => Promise<MutationResponse>;
