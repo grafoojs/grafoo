@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.1-alpha.12
+
+### Features
+
+- replace `@babel/preset-typescript` for `rollup-plugin-typescript2` in `grafoo-bundle`
+
 ## v0.0.1-alpha.11
 
 ### Features
