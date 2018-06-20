@@ -2,10 +2,10 @@ const { readdirSync } = require("fs");
 const { join } = require("path");
 const { exec } = require("child_process");
 
+const pkgsRoot = join(__dirname, "..", "packages");
+
 const hasDependency = ["test-utils", "core", "react", "preact"];
-const noDependency = readdirSync(join(__dirname, "..", "packages")).filter(
-  x => !hasDependency.some(y => y === x)
-);
+const noDependency = readdirSync(pkgsRoot).filter(x => !hasDependency.some(y => y === x));
 
 const command = exec(
   'lerna run --scope "@grafoo/*(' +

@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "esnext",
     "moduleResolution": "node",
     "strict": false,
     "noUnusedLocals": true,
@@ -11,10 +9,7 @@
     "jsx": "react",
     "jsxFactory": "h",
     "lib": ["dom", "esnext"],
-    "types": ["preact", "jest"],
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "outDir": "dist"
+    "types": ["preact", "jest"]
   },
   "include": ["src"]
 }

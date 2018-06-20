@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "esnext",
     "moduleResolution": "node",
     "strict": false,
     "lib": ["esnext", "dom"],
@@ -9,10 +7,7 @@
     "noUnusedParameters": true,
     "checkJs": false,
     "downlevelIteration": true,
-    "jsx": "react",
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "outDir": "dist"
+    "jsx": "react"
   },
   "include": ["src"]
 }
