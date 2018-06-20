@@ -167,10 +167,9 @@ describe("@grafoo/core", () => {
 });
 
 async function mock(...args) {
-  // tslint:disable-next-line prefer-const
   let [sources, variables, fn] = args;
-  const { query } = sources;
-  const cache = createClient("", { idFields: ["id"] });
+  let { query } = sources;
+  let cache = createClient("", { idFields: ["id"] });
   let results;
   let requests;
 

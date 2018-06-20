@@ -49,15 +49,12 @@ describe("@grafoo/bindings", () => {
     expect(bindings.unbind()).toBeUndefined();
   });
 
-  it("should provide the right initial state", () => {
+  it("should not provide any data if no query or mutation is given", () => {
     const bindings = createBindings(client, {}, () => void 0);
 
-    expect(bindings.getState()).toMatchObject({
-      client,
-      load: bindings.load,
-      loaded: false,
-      loading: true
-    });
+    const props = bindings.getState();
+
+    expect(props).toEqual({ client });
   });
 
   it("should execute a query", async () => {
@@ -69,14 +66,29 @@ describe("@grafoo/bindings", () => {
 
     await bindings.load();
 
-    expect(renderFn).toHaveBeenCalled();
-    expect(bindings.getState()).toMatchObject({
-      ...data,
-      client,
-      load: bindings.load,
-      loaded: true,
-      loading: false
-    });
+    expect(renderFn).toHaveBeenCalledTimes(1);
+    expect(bindings.getState()).toMatchObject({ ...data, loaded: true, loading: false });
+  });
+
+  it("should notify a loading state", async () => {
+    const { data } = await mockQueryRequest(Authors);
+
+    const renderFn = jest.fn();
+
+    const bindings = createBindings<Authors>(client, { query: Authors }, renderFn);
+
+    await bindings.load();
+
+    expect(renderFn).toHaveBeenCalledTimes(1);
+    expect(bindings.getState()).toMatchObject({ ...data, loaded: true, loading: false });
+
+    const reloadPromise = bindings.load();
+
+    expect(bindings.getState().loading).toBe(true);
+
+    await reloadPromise;
+
+    expect(bindings.getState().loading).toBe(false);
   });
 
   it("should provide the data if the query is already cached", async () => {
@@ -86,11 +98,7 @@ describe("@grafoo/bindings", () => {
 
     const bindings = createBindings<Authors>(client, { query: Authors }, () => void 0);
 
-    expect(bindings.getState()).toMatchObject({
-      ...data,
-      loaded: true,
-      loading: false
-    });
+    expect(bindings.getState()).toMatchObject({ ...data, loaded: true, loading: false });
   });
 
   it("should trigger updater function if the cache has been updated", async () => {
@@ -153,7 +161,29 @@ describe("@grafoo/bindings", () => {
     expect(bindings.getState()).toMatchObject({ errors });
   });
 
-  it("should provide mutations", async () => {
+  it("should perform a simple mutation", async () => {
+    interface Mutations {
+      createAuthor: CreateAuthor;
+    }
+
+    const bindings = createBindings<{}, Mutations>(
+      client,
+      { mutations: { createAuthor: { query: CreateAuthor } } },
+      () => void 0
+    );
+
+    const props = bindings.getState();
+
+    const variables = { name: "Bart" };
+
+    const { data } = await mockQueryRequest({ ...CreateAuthor, variables });
+
+    const author = await props.createAuthor(variables);
+
+    expect(author).toEqual(data);
+  });
+
+  it("should perform mutation with cache update", async () => {
     await mockQueryRequest(Authors);
 
     interface Mutations {

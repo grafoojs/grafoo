@@ -13,27 +13,9 @@ export default function createBindings<T = {}, U = {}>(
   updater: () => void
 ): GrafooBindings<T, U> {
   let { query, variables, mutations, skip } = props;
-
-  let writeToCache = data => client.write(query, variables, data);
-  let readFromCache = () => client.read(query, variables);
-
   let cachedState: { data?: {}; objects?: ObjectsMap } = {};
-
-  // tslint:disable-next-line: no-empty
   let unbind = () => {};
-
   let lockUpdate = false;
-
-  function performUpdate(additionalData?) {
-    let { data, objects } = readFromCache();
-
-    cachedState.objects = objects;
-
-    Object.assign(queryResult, data);
-    Object.assign(state, additionalData);
-
-    updater();
-  }
 
   if (query) {
     cachedState = readFromCache();
@@ -48,40 +30,65 @@ export default function createBindings<T = {}, U = {}>(
     });
   }
 
-  let cacheLoaded = cachedState.data && !skip;
-
-  let state: GrafooRenderProps = {
-    client,
-    load,
-    loaded: !!cacheLoaded,
-    loading: !cacheLoaded
-  };
+  let cacheLoaded = !skip && cachedState.data;
+  let state = (query
+    ? { load, loaded: !!cacheLoaded, loading: !cacheLoaded }
+    : {}) as GrafooRenderProps;
   let queryResult = {} as T;
   let mutationFns = {} as GrafooRenderMutations<U>;
 
-  if (cacheLoaded) Object.assign(state, cachedState.data);
+  if (cacheLoaded) Object.assign(queryResult, cachedState.data);
 
   if (mutations) {
     for (let key in mutations) {
       let mutation = mutations[key];
 
       mutationFns[key] = mutationVariables => {
-        if (mutation.optimisticUpdate) {
+        if (query && mutation.optimisticUpdate) {
           writeToCache(mutation.optimisticUpdate(queryResult, mutationVariables));
         }
 
-        return client.request(mutation.query, mutationVariables).then((data: U[typeof key]) => {
-          writeToCache(mutation.update(queryResult, data));
+        return client.request<U[typeof key]>(mutation.query, mutationVariables).then(data => {
+          if (query && mutation.update) {
+            writeToCache(mutation.update(queryResult, data));
+          }
+
+          return data;
         });
       };
     }
   }
 
+  function writeToCache(data) {
+    client.write(query, variables, data);
+  }
+
+  function readFromCache() {
+    return client.read<T>(query, variables);
+  }
+
+  function performUpdate(additionalData?) {
+    let { data, objects } = readFromCache();
+
+    cachedState.objects = objects;
+
+    Object.assign(queryResult, data);
+    Object.assign(state, additionalData);
+
+    updater();
+  }
+
   function getState() {
-    return Object.assign({}, state, queryResult, mutationFns);
+    return Object.assign({ client }, state, queryResult, mutationFns);
   }
 
   function load() {
+    if (!state.loading) {
+      Object.assign(state, { loading: true });
+
+      updater();
+    }
+
     return client
       .request(query, variables)
       .then(response => {
