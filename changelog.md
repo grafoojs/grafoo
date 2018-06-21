@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.1-alpha.13
+
+### Fixes
+
+- [react] fix a bug that was preventing component setState to work within the consumer render function
+
 ## v0.0.1-alpha.12
 
 ### Features
