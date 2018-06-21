@@ -6,10 +6,6 @@ import { ClientInstance } from "@grafoo/types";
 import * as TestRenderer from "react-test-renderer";
 import { Provider, Consumer } from "../src";
 
-// @TODO: investigate why babel is not compiling the tests properly
-// prettier-ignore
-try{graphql}catch(e){}
-
 const AUTHORS = graphql`
   {
     authors {
