@@ -13,11 +13,11 @@ export default function transform({ types: t }) {
         }
 
         if (!opts.schema) {
-          throw new Error("@grafoo/babel-plugin: this `schema` option is required.");
+          throw new Error("@grafoo/babel-plugin: the `schema` option is required.");
         }
 
         if (!opts.idFields) {
-          throw new Error("@grafoo/babel-plugin: this `idFields` option is required.");
+          throw new Error("@grafoo/babel-plugin: the `idFields` option is required.");
         }
 
         if (
@@ -25,7 +25,7 @@ export default function transform({ types: t }) {
           opts.idFields.some(field => typeof field !== "string")
         ) {
           throw new Error(
-            "@grafoo/babel-plugin: this `idFields` option is must be an array of strings."
+            "@grafoo/babel-plugin: the `idFields` option must be declared as an array of strings."
           );
         }
 
