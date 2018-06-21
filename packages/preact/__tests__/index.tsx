@@ -6,47 +6,47 @@ import { h } from "preact";
 import { render } from "preact-render-spy";
 import { Consumer, Provider } from "../src";
 
-const AUTHORS = graphql`
-  {
-    authors {
-      name
-      posts {
-        title
-        body
+describe("@grafoo/preact", () => {
+  const AUTHORS = graphql`
+    {
+      authors {
+        name
+        posts {
+          title
+          body
+        }
       }
     }
-  }
-`;
+  `;
 
-const CREATE_AUTHOR = graphql`
-  mutation($name: String!) {
-    createAuthor(name: $name) {
-      name
-    }
-  }
-`;
-
-const POSTS_AND_AUTHORS = graphql`
-  {
-    posts {
-      title
-      body
-      author {
+  const CREATE_AUTHOR = graphql`
+    mutation($name: String!) {
+      createAuthor(name: $name) {
         name
       }
     }
+  `;
 
-    authors {
-      name
+  const POSTS_AND_AUTHORS = graphql`
+    {
       posts {
         title
         body
+        author {
+          name
+        }
+      }
+
+      authors {
+        name
+        posts {
+          title
+          body
+        }
       }
     }
-  }
-`;
+  `;
 
-describe("@grafoo/preact", () => {
   let client: ClientInstance;
 
   beforeEach(() => {
