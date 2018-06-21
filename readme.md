@@ -210,14 +210,16 @@ const CREATE_POST = gql`
   }
 `;
 
-const createPost = {
-  query: CREATE_POST,
-  optimisticUpdate: ({ allPosts }, variables) => ({
-    allPosts: [{ ...variables, id: "tempID" }, ...allPosts]
-  }),
-  update: ({ allPosts }, data) => ({
-    allPosts: allPosts.map(p => (p.id === "tempID" ? data.createPost : p))
-  })
+const mutations = {
+  createPost: {
+    query: CREATE_POST,
+    optimisticUpdate: ({ allPosts }, variables) => ({
+      allPosts: [{ ...variables, id: "tempID" }, ...allPosts]
+    }),
+    update: ({ allPosts }, data) => ({
+      allPosts: allPosts.map(p => (p.id === "tempID" ? data.createPost : p))
+    })
+  }
 };
 
 const submit = mutate => event => {
@@ -230,7 +232,7 @@ const submit = mutate => event => {
 
 export default function PostForm() {
   return (
-    <Consumer query={ALL_POSTS} mutations={{ createPost }}>
+    <Consumer query={ALL_POSTS} variables={{ orderBy: "createdAt_DESC" }} mutations={mutations}>
       {({ createPost }) => (
         <form onSubmit={submit(createPost)}>
           <input name="title" />
