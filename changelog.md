@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.0.1-alpha.15
+
+### Fixes
+
+- [babel-plugin] fix bug the was preventing fragments to be compiled in babel-plugin `sort-query`
+- [babel-plugin] improve coverage
+
 ## v0.0.1-alpha.14
 
 ### Fixes
