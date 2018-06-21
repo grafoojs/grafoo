@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.1-alpha.14
+
+### Fixes
+
+- [react] same as before but now it's working
+
 ## v0.0.1-alpha.13
 
 ### Fixes
