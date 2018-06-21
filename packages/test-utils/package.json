@@ -7,7 +7,7 @@
     "access": "public"
   },
   "scripts": {
-    "prepare": "babel src --out-dir dist"
+    "prepare": "tsc"
   },
   "dependencies": {
     "@grafoo/types": "^0.0.1-alpha.14"

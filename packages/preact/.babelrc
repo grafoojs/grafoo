@@ -5,6 +5,10 @@
     ["@babel/preset-typescript", { "jsxPragma": "h" }]
   ],
   "plugins": [
-    ["babel-plugin-jsx-pragmatic", { "module": "preact", "export": "h", "import": "h" }]
+    ["babel-plugin-jsx-pragmatic", { "module": "preact", "export": "h", "import": "h" }],
+    [
+      "module:@grafoo/babel-plugin",
+      { "schema": "schema.graphql", "idFields": ["id", "__typename"] }
+    ]
   ]
 }

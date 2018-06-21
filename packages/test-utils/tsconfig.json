@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "strict": false,
+    "lib": ["esnext", "dom"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "checkJs": false,
+    "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "outDir": "./dist",
+    "module": "esnext",
+    "target": "esnext"
+  },
+  "include": ["src"]
+}
