@@ -1,11 +1,5 @@
-import {
-  Authors,
-  Post,
-  Posts,
-  PostsAndAuthors,
-  executeQuery,
-  mockQueryRequest
-} from "@grafoo/test-utils";
+import { executeQuery, mockQueryRequest } from "@grafoo/test-utils";
+import graphql from "@grafoo/core/tag";
 import createClient from "../src";
 import { ClientInstance } from "@grafoo/types";
 
@@ -36,6 +30,62 @@ interface PostsQuery {
   posts: Post[];
 }
 
+const AUTHORS = graphql`
+  {
+    authors {
+      name
+      posts {
+        title
+        body
+      }
+    }
+  }
+`;
+
+const POSTS_AND_AUTHORS = graphql`
+  {
+    posts {
+      title
+      body
+      author {
+        name
+      }
+    }
+
+    authors {
+      name
+      posts {
+        title
+        body
+      }
+    }
+  }
+`;
+
+const POST = graphql`
+  query($id: ID!) {
+    post(id: $id) {
+      title
+      body
+      author {
+        name
+      }
+    }
+  }
+`;
+
+export const POSTS = graphql`
+  {
+    posts {
+      title
+      body
+      author {
+        name
+      }
+    }
+  }
+`;
+
 describe("@grafoo/core", () => {
   let client: ClientInstance;
   beforeEach(() => {
@@ -54,17 +104,17 @@ describe("@grafoo/core", () => {
 
   it("should perform query requests", async () => {
     const { data } = await mockQueryRequest({
-      ...Post,
+      ...POST,
       variables: { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" }
     });
 
     expect(data).toEqual(
-      await client.request(Post, { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" })
+      await client.request(POST, { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" })
     );
   });
 
   it("should write queries to the client", async () => {
-    await mock(PostsAndAuthors, async (data, { query, variables }) => {
+    await mock(POSTS_AND_AUTHORS, async (data, { query, variables }) => {
       client.write(query, variables, data);
 
       const { authors, posts } = data;
@@ -82,7 +132,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should read queries from the client", async () => {
-    await mock(Authors, async (data, { query, variables }) => {
+    await mock(AUTHORS, async (data, { query, variables }) => {
       client.write(query, variables, data);
 
       const result = client.read<AuthorsQuery>(query, variables);
@@ -98,16 +148,16 @@ describe("@grafoo/core", () => {
   });
 
   it("should handle queries with variables", async () => {
-    await mock(Post, async (data, { query, variables }) => {
+    await mock(POST, async (data, { query, variables }) => {
       client.write(query, variables, data);
 
-      expect(client.read(Post, { id: "123" })).toEqual({});
+      expect(client.read(POST, { id: "123" })).toEqual({});
       expect(client.read<PostQuery>(query, variables).data.post.id).toBe(variables.id);
     });
   });
 
   it("should perform update to client", async () => {
-    await mock(Post, async (data, { query, variables }) => {
+    await mock(POST, async (data, { query, variables }) => {
       client.write(query, variables, data);
 
       const {
@@ -123,7 +173,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should reflect updates on queries with shared objects", async () => {
-    await mock([Posts, Post], async ([postsData, postData], [postsRequest, postRequest]) => {
+    await mock([POSTS, POST], async ([postsData, postData], [postsRequest, postRequest]) => {
       client.write(postsRequest.query, postsRequest.variables, postsData);
 
       const { posts } = client.read<PostsQuery>(postsRequest.query, postsRequest.variables).data;
@@ -146,7 +196,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should merge objects in the client when removing or adding properties", async () => {
-    await mock(Post, async (data, { query, variables }) => {
+    await mock(POST, async (data, { query, variables }) => {
       client.write(query, variables, data);
 
       const post = JSON.parse(JSON.stringify(client.read<PostQuery>(query, variables).data.post));
@@ -173,7 +223,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should call client listeners on write with paths objects as arguments", async () => {
-    await mock(Post, async (data, { query, variables }) => {
+    await mock(POST, async (data, { query, variables }) => {
       const listener = jest.fn();
       const listener2 = jest.fn();
 
@@ -198,7 +248,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should be able read from the client with a declared initialState", async () => {
-    await mock(Authors, async (data, { query, variables }) => {
+    await mock(AUTHORS, async (data, { query, variables }) => {
       client.write(query, variables, data);
 
       client = createClient("", { idFields: ["id"], initialState: client.flush() });
@@ -208,7 +258,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should accept `idFields` array in options", async () => {
-    await mock(Authors, async (data, { query, variables }) => {
+    await mock(AUTHORS, async (data, { query, variables }) => {
       const client = createClient("", { idFields: ["__typename", "id"] });
 
       client.write(query, variables, data);

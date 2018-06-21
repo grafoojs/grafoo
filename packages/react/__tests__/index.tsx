@@ -1,9 +1,50 @@
 import * as React from "react";
 import createClient from "@grafoo/core";
-import { Authors, CreateAuthor, mockQueryRequest, PostsAndAuthors } from "@grafoo/test-utils";
-import { ClientInstance, GrafooMutations } from "@grafoo/types";
+import graphql from "@grafoo/core/tag";
+import { mockQueryRequest } from "@grafoo/test-utils";
+import { ClientInstance } from "@grafoo/types";
 import * as TestRenderer from "react-test-renderer";
 import { Provider, Consumer } from "../src";
+
+const AUTHORS = graphql`
+  {
+    authors {
+      name
+      posts {
+        title
+        body
+      }
+    }
+  }
+`;
+
+const CREATE_AUTHOR = graphql`
+  mutation($name: String!) {
+    createAuthor(name: $name) {
+      name
+    }
+  }
+`;
+
+const POSTS_AND_AUTHORS = graphql`
+  {
+    posts {
+      title
+      body
+      author {
+        name
+      }
+    }
+
+    authors {
+      name
+      posts {
+        title
+        body
+      }
+    }
+  }
+`;
 
 describe("@grafoo/react", () => {
   let client: ClientInstance;
@@ -25,13 +66,13 @@ describe("@grafoo/react", () => {
   });
 
   it("should not fetch a query if skip prop is set to true", async () => {
-    await mockQueryRequest(Authors);
+    await mockQueryRequest(AUTHORS);
 
     const spy = jest.spyOn(window, "fetch");
 
     TestRenderer.create(
       <Provider client={client}>
-        <Consumer query={Authors} skip>
+        <Consumer query={AUTHORS} skip>
           {() => null}
         </Consumer>
       </Provider>
@@ -41,13 +82,13 @@ describe("@grafoo/react", () => {
   });
 
   it("should trigger listen on client instance", async () => {
-    await mockQueryRequest(Authors);
+    await mockQueryRequest(AUTHORS);
 
     const spy = jest.spyOn(client, "listen");
 
     TestRenderer.create(
       <Provider client={client}>
-        <Consumer query={Authors} skip>
+        <Consumer query={AUTHORS} skip>
           {() => null}
         </Consumer>
       </Provider>
@@ -59,7 +100,7 @@ describe("@grafoo/react", () => {
   it("should not crash on unmount", () => {
     const testRenderer = TestRenderer.create(
       <Provider client={client}>
-        <Consumer query={Authors} skip>
+        <Consumer query={AUTHORS} skip>
           {() => null}
         </Consumer>
       </Provider>
@@ -73,7 +114,7 @@ describe("@grafoo/react", () => {
 
     TestRenderer.create(
       <Provider client={client}>
-        <Consumer query={Authors} skip>
+        <Consumer query={AUTHORS} skip>
           {mockRender}
         </Consumer>
       </Provider>
@@ -86,7 +127,7 @@ describe("@grafoo/react", () => {
   });
 
   it("should execute render with the right data if a query is specified", async done => {
-    const { data } = await mockQueryRequest(Authors);
+    const { data } = await mockQueryRequest(AUTHORS);
 
     const mockRender = createMockRenderFn(done, [
       props => expect(props).toMatchObject({ loading: true, loaded: false }),
@@ -95,15 +136,15 @@ describe("@grafoo/react", () => {
 
     TestRenderer.create(
       <Provider client={client}>
-        <Consumer query={Authors}>{mockRender}</Consumer>
+        <Consumer query={AUTHORS}>{mockRender}</Consumer>
       </Provider>
     );
   });
 
   it("should not trigger a network request if the query is already cached", async done => {
-    const { data } = await mockQueryRequest(Authors);
+    const { data } = await mockQueryRequest(AUTHORS);
 
-    client.write(Authors, data);
+    client.write(AUTHORS, data);
 
     jest.resetAllMocks();
 
@@ -115,7 +156,7 @@ describe("@grafoo/react", () => {
 
     TestRenderer.create(
       <Provider client={client}>
-        <Consumer query={Authors}>{mockRender}</Consumer>
+        <Consumer query={AUTHORS}>{mockRender}</Consumer>
       </Provider>
     );
 
@@ -125,7 +166,7 @@ describe("@grafoo/react", () => {
   it("should handle simple mutations", async done => {
     const variables = { name: "Bart" };
 
-    const { data } = await mockQueryRequest({ ...CreateAuthor, variables });
+    const { data } = await mockQueryRequest({ ...CREATE_AUTHOR, variables });
 
     const mockRender = createMockRenderFn(done, [
       props => {
@@ -135,7 +176,7 @@ describe("@grafoo/react", () => {
       }
     ]);
 
-    const mutations: GrafooMutations<{}, CreateAuthor> = { createAuthor: { query: CreateAuthor } };
+    const mutations = { createAuthor: { query: CREATE_AUTHOR } };
 
     TestRenderer.create(
       <Provider client={client}>
@@ -145,7 +186,7 @@ describe("@grafoo/react", () => {
   });
 
   it("should handle mutations with cache update", async done => {
-    const { data } = await mockQueryRequest(Authors);
+    const { data } = await mockQueryRequest(AUTHORS);
 
     const mockRender = createMockRenderFn(done, [
       props => {
@@ -155,7 +196,7 @@ describe("@grafoo/react", () => {
       props => {
         expect(props).toMatchObject({ loading: false, loaded: true, ...data });
         const variables = { name: "Homer" };
-        mockQueryRequest({ query: CreateAuthor.query, variables }).then(() => {
+        mockQueryRequest({ query: CREATE_AUTHOR.query, variables }).then(() => {
           props.createAuthor(variables);
         });
       },
@@ -173,10 +214,10 @@ describe("@grafoo/react", () => {
     TestRenderer.create(
       <Provider client={client}>
         <Consumer
-          query={Authors}
+          query={AUTHORS}
           mutations={{
             createAuthor: {
-              query: CreateAuthor,
+              query: CREATE_AUTHOR,
               optimisticUpdate: ({ authors }, variables) => ({
                 authors: [...authors, { ...variables, id: "tempID" }]
               }),
@@ -193,9 +234,9 @@ describe("@grafoo/react", () => {
   });
 
   it("should reflect updates that happen outside of the component", async done => {
-    const { data } = await mockQueryRequest(Authors);
+    const { data } = await mockQueryRequest(AUTHORS);
 
-    client.write(Authors, data);
+    client.write(AUTHORS, data);
 
     const mockRender = createMockRenderFn(done, [
       props => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
@@ -204,19 +245,19 @@ describe("@grafoo/react", () => {
 
     TestRenderer.create(
       <Provider client={client}>
-        <Consumer query={Authors}>{mockRender}</Consumer>
+        <Consumer query={AUTHORS}>{mockRender}</Consumer>
       </Provider>
     );
 
-    client.write(Authors, {
+    client.write(AUTHORS, {
       authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a))
     });
   });
 
   it("should not trigger a network request if a query field is cached", async done => {
-    const { data } = await mockQueryRequest(PostsAndAuthors);
+    const { data } = await mockQueryRequest(POSTS_AND_AUTHORS);
 
-    client.write(PostsAndAuthors, data);
+    client.write(POSTS_AND_AUTHORS, data);
 
     const spy = jest.spyOn(client, "request");
 
@@ -229,7 +270,7 @@ describe("@grafoo/react", () => {
 
     TestRenderer.create(
       <Provider client={client}>
-        <Consumer query={Authors}>{mockRender}</Consumer>
+        <Consumer query={AUTHORS}>{mockRender}</Consumer>
       </Provider>
     );
   });

@@ -1246,19 +1246,13 @@
   version "0.0.39"
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
 
+"@types/graphql@^0.13.1":
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/@types/graphql/-/graphql-0.13.1.tgz#7d39750355c9ecb921816d6f76c080405b5f6bea"
+
 "@types/jest@^23.0.0":
   version "23.0.2"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.0.2.tgz#f03f9e6dd2206cc2a2e8fd033161b0b7cf905db6"
-
-"@types/lodash@*":
-  version "4.14.109"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.109.tgz#b1c4442239730bf35cabaf493c772b18c045886d"
-
-"@types/lowdb@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@types/lowdb/-/lowdb-1.0.2.tgz#e24d8422aed75d79cd71ef12c94fada3647d3d66"
-  dependencies:
-    "@types/lodash" "*"
 
 "@types/node@*":
   version "10.1.4"
