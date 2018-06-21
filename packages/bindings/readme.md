@@ -103,14 +103,13 @@ A mutation object receives the following props:
 
 Each mutation will generate a single function that accepts a GraphQL variables object as argument and return a promise that will resolve with the mutation data or reject with GraphQL `errors`.
 
-
 ```ts
 type MutationFn = (variables: Variables) => Promise<MutationResponse>;
 ```
 
 ### Mutation query dependency
 
-**Important** to notice that to update the cache `update` and `optimistUpdate` hooks depend on a `query` prop (that needs to be passed in the `props` object argument). If you need to perform a mutation but updating the cache is not strictly important you can just use the mutation promise resolved data or use the client instance directly.
+**Important** to notice that to update the cache `update` and `optimistUpdate` hooks depend on a `query` and it's `variables` object props (they need to be passed in the `props` object argument). If you need to perform a mutation but updating the cache is not strictly important you can just use the mutation promise resolved data or use the client instance directly.
 
 ### `update`
 
@@ -132,7 +131,7 @@ If you want to perform an optimitic update you have to make sure that the data y
 
 ### Bindings
 
-The interface returned by `createBindings` has some fixed props.
+The object returned by `createBindings` contains the following props.
 
 | Name    | type     | Descrition                                                   |
 | ------- | -------- | ------------------------------------------------------------ |

@@ -135,18 +135,19 @@ Here is how it would go for you to write a simple react app.
 ```jsx
 import React from "react";
 import ReactDom from "react-dom";
+import createClient from "@grafoo/core";
 import { Provider } from "@grafoo/react";
 
-import client from "./client";
 import Posts from "./Posts";
 
-const App = () => (
+const client = createClient("http://some.graphql/api/");
+
+ReactDom.render(
   <Provider client={client}>
     <Posts />
-  </Provider>
+  </Provider>,
+  document.getElementById("mnt")
 );
-
-ReactDom.render(<App />, document.getElementById("mnt"));
 ```
 
 #### `Posts.js`
@@ -169,7 +170,7 @@ const ALL_POSTS = gql`
 
 export default function Posts() {
   return (
-    <Consumer query={query} variables={{ orderBy: "createdAt_DESC" }}>
+    <Consumer query={ALL_POSTS} variables={{ orderBy: "createdAt_DESC" }}>
       {({ client, load, loading, loaded, errors, allPosts }) => (
         <h1>
           <marquee>👆 do whatever you want with the variables above 👆</marquee>
@@ -222,9 +223,9 @@ const createPost = {
 const submit = mutate => event => {
   event.preventDefault();
 
-  const { elements } = event.target;
+  const { title, content } = event.target.elements;
 
-  mutate({ title: elements.title, content: elements.content });
+  mutate({ title: title.value, content: content.value });
 };
 
 export default function PostForm() {

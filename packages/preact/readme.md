@@ -63,10 +63,12 @@ For documentation please refer to [`@grafoo/react`](https://github.com/grafoojs/
 
 ```jsx
 import { h, render } from "preact";
+import createClient from "@grafoo/core";
 import { Provider } from "@grafoo/preact";
 
-import client from "./client";
 import Posts from "./Posts";
+
+const client = createClient("http://some.graphql/api/");
 
 render(
   <Provider client={client}>
@@ -96,7 +98,7 @@ const ALL_POSTS = gql`
 
 export default function Posts() {
   return (
-    <Consumer query={query} variables={{ orderBy: "createdAt_DESC" }}>
+    <Consumer query={ALL_POSTS} variables={{ orderBy: "createdAt_DESC" }}>
       {({ client, load, loading, loaded, errors, allPosts }) => (
         <h1>
           <marquee>👆 do whatever you want with the variables above 👆</marquee>

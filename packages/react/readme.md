@@ -142,7 +142,7 @@ const ALL_POSTS = gql`
 
 export default function Posts() {
   return (
-    <Consumer query={query} variables={{ orderBy: "createdAt_DESC" }}>
+    <Consumer query={ALL_POSTS} variables={{ orderBy: "createdAt_DESC" }}>
       {({ client, load, loading, loaded, errors, allPosts }) => (
         <h1>
           <marquee>👆 do whatever you want with the variables above 👆</marquee>
@@ -187,7 +187,7 @@ type MutationFn = (variables: Variables) => Promise<MutationResponse>;
 
 ### Mutation query dependency
 
-**Important** to notice that to update the cache `update` and `optimistUpdate` hooks depend on a `query` prop (that needs to be passed to `Consumer` as prop). If you need to perform a mutation but updating the cache is not strictly important you can just use the mutation promise resolved data or use the client instance directly.
+**Important** to notice that to update the cache `update` and `optimistUpdate` hooks depend on a `query` and it's `variables` object props (so they need be declared in the `Consumer`). If you need to perform a mutation but updating the cache is not strictly important you can just use the mutation promise resolved data or use the client instance directly.
 
 ### `update`
 
@@ -236,27 +236,31 @@ const CREATE_POST = gql`
   }
 `;
 
-const createPost = {
-  query: CREATE_POST,
-  optimisticUpdate: ({ allPosts }, variables) => ({
-    allPosts: [{ ...variables, id: "tempID" }, ...allPosts]
-  }),
-  update: ({ allPosts }, data) => ({
-    allPosts: allPosts.map(p => (p.id === "tempID" ? data.createPost : p))
-  })
+const mutations = {
+  createPost: {
+    query: CREATE_POST,
+    optimisticUpdate: ({ allPosts }, variables) => ({
+      allPosts: [{ ...variables, id: "tempID" }, ...allPosts]
+    }),
+    update: ({ allPosts }, data) => ({
+      allPosts: allPosts.map(p => (p.id === "tempID" ? data.createPost : p))
+    })
+  }
 };
 
 const submit = mutate => event => {
   event.preventDefault();
 
-  const { elements } = event.target;
+  const { title, content } = event.target.elements;
 
-  mutate({ title: elements.title, content: elements.content });
+  mutate({ title: title.value, content: content.value }).then(mutationData => {
+    console.log(mutationData);
+  });
 };
 
 export default function PostForm() {
   return (
-    <Consumer query={ALL_POSTS} mutations={{ createPost }}>
+    <Consumer query={ALL_POSTS} mutations={mutations}>
       {({ createPost }) => (
         <form onSubmit={submit(createPost)}>
           <input name="title" />
