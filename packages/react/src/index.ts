@@ -36,11 +36,17 @@ let ctx = createContext({});
 export let Provider: SFC<Context> = props =>
   createElement(ctx.Provider, { value: props.client }, props.children);
 
-class GrafooConsumer extends Component {
+class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
+  state: GrafooRenderProps & T & GrafooRenderMutations<U>;
+
   constructor(props) {
     super(props);
 
-    let { getState, unbind, load } = createBindings(props.client, props, () => this.forceUpdate());
+    let { getState, unbind, load } = createBindings<T, U>(props.client, props, () => {
+      this.setState(getState());
+    });
+
+    this.state = getState();
 
     this.componentDidMount = () => {
       if (props.skip || !props.query || getState().loaded) return;
@@ -51,8 +57,10 @@ class GrafooConsumer extends Component {
     this.componentWillUnmount = () => {
       unbind();
     };
+  }
 
-    this.render = (): ReactNode => props.children(getState());
+  render() {
+    return this.props.children(this.state);
   }
 }
 
@@ -60,7 +68,7 @@ class GrafooConsumer extends Component {
  * T = Query
  * U = Mutations
  */
-export let Consumer: ConsumerType = <T, U>(consumerProps: GrafooReactConsumerProps<T, U>) =>
+export let Consumer: ConsumerType = <T, U>(props: GrafooReactConsumerProps<T, U>) =>
   createElement(ctx.Consumer, null, client =>
-    createElement(GrafooConsumer, Object.assign({ client }, consumerProps))
+    createElement(GrafooConsumer, Object.assign({ client }, props))
   );
