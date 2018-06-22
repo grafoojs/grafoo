@@ -19,7 +19,7 @@
   "scripts": {
     "prepare": "babel src --out-dir dist",
     "test": "jest",
-    "test:coverage": "jest --coverage && codecov"
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@babel/core": "^7.0.0-beta.50",
