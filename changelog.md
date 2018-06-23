@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.1-alpha.17
+
+### Fixes
+
+- [bindings] fix block scope bug due to the use of var instead of let
+
 ## v0.0.1-alpha.16
 
 ### Fixes
