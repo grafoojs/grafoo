@@ -12,13 +12,13 @@ import mapObjects from "./map-objects";
 import { getPathId } from "./util";
 
 export default function createClient(uri: string, options?: ClientOptions): ClientInstance {
-  var { initialState, idFields } = options;
-  var { pathsMap, objectsMap } = initialState || { pathsMap: {}, objectsMap: {} };
-  var listeners: Listener[] = [];
-  var transportRequest = createTransport(uri, options && options.headers);
+  let { initialState, idFields } = options;
+  let { pathsMap, objectsMap } = initialState || { pathsMap: {}, objectsMap: {} };
+  let listeners: Listener[] = [];
+  let transportRequest = createTransport(uri, options && options.headers);
 
   function request<T>({ query, frags }: GrafooObject, variables?: Variables) {
-    if (frags) for (var frag in frags) query += frags[frag];
+    if (frags) for (let frag in frags) query += frags[frag];
 
     return transportRequest<T>(query, variables);
   }
@@ -27,7 +27,7 @@ export default function createClient(uri: string, options?: ClientOptions): Clie
     listeners.push(listener);
 
     return () => {
-      var index = listeners.indexOf(listener);
+      let index = listeners.indexOf(listener);
 
       if (index < 0) return;
 
@@ -38,37 +38,37 @@ export default function createClient(uri: string, options?: ClientOptions): Clie
   function write({ paths }: GrafooObject, variables: Variables | {}, data?: {}) {
     data = data || variables;
 
-    var objects: ObjectsMap = {};
+    let objects: ObjectsMap = {};
 
-    for (var path in paths) {
-      var { name, args } = paths[path];
-      var pathData = { [name]: data[name] };
-      var pathObjects = mapObjects(pathData, idFields);
+    for (let path in paths) {
+      let { name, args } = paths[path];
+      let pathData = { [name]: data[name] };
+      let pathObjects = mapObjects(pathData, idFields);
 
       Object.assign(objects, pathObjects);
 
       pathsMap[getPathId(path, args, variables)] = { data: pathData, objects: pathObjects };
     }
 
-    for (var i in objects) {
+    for (let i in objects) {
       objectsMap[i] = objects[i] = Object.assign({}, objectsMap[i], objects[i]);
     }
 
-    for (var i in listeners) listeners[i](objects);
+    for (let i in listeners) listeners[i](objects);
   }
 
   function read({ paths }: GrafooObject, variables?: Variables) {
-    var data = {};
-    var objects: ObjectsMap = {};
+    let data = {};
+    let objects: ObjectsMap = {};
 
-    for (var path in paths) {
-      var { name, args } = paths[path];
-      var currentPath = pathsMap[getPathId(path, args, variables)];
+    for (let path in paths) {
+      let { name, args } = paths[path];
+      let currentPath = pathsMap[getPathId(path, args, variables)];
 
       if (currentPath) {
         data[name] = currentPath.data[name];
 
-        for (var i in currentPath.objects) objects[i] = currentPath.objects[i];
+        for (let i in currentPath.objects) objects[i] = currentPath.objects[i];
       }
     }
 

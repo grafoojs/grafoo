@@ -1,7 +1,7 @@
 import createBindings from "../src";
 import graphql from "@grafoo/core/tag";
 import createClient from "@grafoo/core";
-import { ClientInstance, GrafooMutations } from "@grafoo/types";
+import { ClientInstance, GrafooMutations, Variables } from "@grafoo/types";
 import { mockQueryRequest } from "@grafoo/test-utils";
 
 interface Post {
@@ -420,5 +420,64 @@ describe("@grafoo/bindings", () => {
     await updateAuthor(variables);
 
     expect(renderFn).toHaveBeenCalled();
+  });
+
+  it("should accept multiple mutations", async () => {
+    const { data } = await mockQueryRequest(AUTHORS);
+    client.write(AUTHORS, data);
+
+    interface Mutations {
+      createAuthor: CreateAuthor;
+      updateAuthor: UpdateAuthor;
+      deleteAuthor: DeleteAuthor;
+    }
+
+    const mutations: GrafooMutations<Authors, Mutations> = {
+      createAuthor: {
+        query: CREATE_AUTHOR,
+        optimisticUpdate: ({ authors }, variables: Author) => ({
+          authors: [{ ...variables, id: "tempID" }, ...authors]
+        }),
+        update: ({ authors }, data: CreateAuthor) => ({
+          authors: authors.map(author => (author.id === "tempID" ? data.createAuthor : author))
+        })
+      },
+      updateAuthor: {
+        query: UPDATE_AUTHOR,
+        optimisticUpdate: ({ authors }, variables: Author) => ({
+          authors: authors.map(author => (author.id === variables.id ? variables : author))
+        })
+      },
+      deleteAuthor: {
+        query: DELETE_AUTHOR,
+        optimisticUpdate: ({ authors }, variables: Author) => ({
+          authors: authors.map(author => (author.id === variables.id ? variables : author))
+        })
+      }
+    };
+
+    const renderFn = jest.fn();
+
+    const bindings = createBindings(client, { query: AUTHORS, mutations }, renderFn);
+    const { createAuthor, updateAuthor, deleteAuthor } = bindings.getState();
+
+    try {
+      let variables: Variables = { name: "mikel" };
+      let { data } = await mockQueryRequest({ ...CREATE_AUTHOR, variables });
+      const { createAuthor: createAuthorData } = await createAuthor(variables);
+      expect(createAuthorData).toEqual(data.createAuthor);
+
+      variables = { ...createAuthorData, name: "miguel" };
+      ({ data } = await mockQueryRequest({ ...UPDATE_AUTHOR, variables }));
+      const { updateAuthor: updateAuthorData } = await updateAuthor(variables);
+      expect(updateAuthorData).toEqual(data.updateAuthor);
+
+      variables = createAuthorData;
+      ({ data } = await mockQueryRequest({ ...DELETE_AUTHOR, variables }));
+      const { deleteAuthor: deleteAuthorData } = await deleteAuthor(createAuthorData);
+      expect(deleteAuthorData).toEqual(data.deleteAuthor);
+    } catch (err) {
+      console.error(err);
+    }
   });
 });

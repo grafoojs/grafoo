@@ -31,9 +31,9 @@ interface ConsumerType extends SFC {
   <T, U>(props: GrafooReactConsumerProps<T, U>): ReactElement<any> | null;
 }
 
-var ctx = createContext({});
+let ctx = createContext({});
 
-export var Provider: SFC<Context> = props =>
+export let Provider: SFC<Context> = props =>
   createElement(ctx.Provider, { value: props.client }, props.children);
 
 class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
@@ -42,7 +42,7 @@ class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
   constructor(props) {
     super(props);
 
-    var { getState, unbind, load } = createBindings<T, U>(props.client, props, () => {
+    let { getState, unbind, load } = createBindings<T, U>(props.client, props, () => {
       this.setState(getState());
     });
 
@@ -68,7 +68,7 @@ class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
  * T = Query
  * U = Mutations
  */
-export var Consumer: ConsumerType = <T, U>(props: GrafooReactConsumerProps<T, U>) =>
+export let Consumer: ConsumerType = <T, U>(props: GrafooReactConsumerProps<T, U>) =>
   createElement(ctx.Consumer, null, client =>
     createElement(GrafooConsumer, Object.assign({ client }, props))
   );
