@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.0.1-alpha.16
+
+- [babel-plugin] fix fragments not being compiled correctly in babel-plugin;
+- [bindings] fix shouldupdate logic in bindings
+
 ## v0.0.1-alpha.15
 
 ### Fixes
