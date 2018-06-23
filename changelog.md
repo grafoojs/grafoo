@@ -2,6 +2,8 @@
 
 ## v0.0.1-alpha.16
 
+### Fixes
+
 - [babel-plugin] fix fragments not being compiled correctly in babel-plugin;
 - [bindings] fix shouldupdate logic in bindings
 
