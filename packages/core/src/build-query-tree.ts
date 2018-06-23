@@ -2,26 +2,26 @@ import { idFromProps, isNotNullObject } from "./util";
 
 export default function buildQueryTree(tree, objects, idFields) {
   // clone resulting query tree
-  let queryTree = JSON.parse(JSON.stringify(tree));
-  let stack = [];
+  var queryTree = tree;
+  var stack = [];
 
   // populates stack with the properties of the query tree and the query tree it self
-  for (let i in queryTree) stack.push([i, queryTree]);
+  for (var i in queryTree) stack.push([i, queryTree]);
 
   // will loop until the stack is empty
   while (stack.length) {
     // pops a stack entry extracting the current key of the tree's branch
     // (eg: a node or an edge) and the branch it self
-    let [key, currentTree] = stack.pop();
+    var [key, currentTree] = stack.pop();
     // assigns nested branch
-    let branch = currentTree[key];
+    var branch = currentTree[key];
     // get node identifier
-    let identifier = idFromProps(branch, idFields);
+    var identifier = idFromProps(branch, idFields);
     // possible node matching object
-    let branchObject = objects[identifier];
+    var branchObject = objects[identifier];
 
     // iterates over the child branch properties
-    for (let i in Object.assign({}, branch, branchObject)) {
+    for (var i in Object.assign({}, branch, branchObject)) {
       // assigns to the child branch all properties retrieved
       // from the corresponding object retrieved from the objects cache
       if (identifier && branchObject) branch[i] = branchObject[i] || branch[i];

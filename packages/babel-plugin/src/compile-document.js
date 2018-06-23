@@ -51,16 +51,7 @@ export default function compileDocument(source, opts) {
     grafooObj.frags = {};
 
     for (const frag of frags) {
-      Object.assign(
-        grafooObj.frags,
-        frag.selectionSet.selections.reduce(
-          (acc, s) =>
-            Object.assign(acc, {
-              [s.name.value]: compress(print(s))
-            }),
-          {}
-        )
-      );
+      grafooObj.frags[frag.name.value] = opts.compress ? compress(print(frag)) : print(frag);
     }
   }
 
