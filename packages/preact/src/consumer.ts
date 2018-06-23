@@ -36,11 +36,11 @@ interface ConsumerType extends Component {
  * U = Mutations
  */
 // @ts-ignore
-export var Consumer: ConsumerType = function GrafooConsumer<T, U>(
+export let Consumer: ConsumerType = function GrafooConsumer<T, U>(
   props: GrafooPreactConsumerProps<T, U>,
   context: Context
 ) {
-  var { load, getState, unbind } = createBindings(context.client, props, () => this.setState(null));
+  let { load, getState, unbind } = createBindings(context.client, props, () => this.setState(null));
 
   this.componentDidMount = () => {
     if (props.skip || !props.query || getState().loaded) return;

@@ -10,13 +10,13 @@ import {
 function shouldUpdate(nextObjects: ObjectsMap, objects?: ObjectsMap) {
   objects = objects || {};
 
-  for (var i in nextObjects) {
+  for (let i in nextObjects) {
     if (!(i in objects)) return 1;
 
-    for (var j in nextObjects[i]) if (nextObjects[i][j] !== objects[i][j]) return 1;
+    for (let j in nextObjects[i]) if (nextObjects[i][j] !== objects[i][j]) return 1;
   }
 
-  for (var i in objects) if (!(i in nextObjects)) return 1;
+  for (let i in objects) if (!(i in nextObjects)) return 1;
 }
 
 export default function createBindings<T = {}, U = {}>(
@@ -24,11 +24,11 @@ export default function createBindings<T = {}, U = {}>(
   props: GrafooConsumerProps<T, U>,
   updater: () => void
 ): GrafooBindings<T, U> {
-  var { query, variables, mutations, skip } = props;
-  var data: {};
-  var objects: ObjectsMap;
-  var unbind = () => {};
-  var lockUpdate = 0;
+  let { query, variables, mutations, skip } = props;
+  let data: {};
+  let objects: ObjectsMap;
+  let unbind = () => {};
+  let lockUpdate = 0;
 
   if (query) {
     ({ data, objects } = readFromCache());
@@ -40,18 +40,18 @@ export default function createBindings<T = {}, U = {}>(
     });
   }
 
-  var cacheLoaded = !skip && data;
-  var state = (query
+  let cacheLoaded = !skip && data;
+  let state = (query
     ? { load, loaded: !!cacheLoaded, loading: !cacheLoaded }
     : {}) as GrafooRenderProps;
-  var queryResult = {} as T;
-  var mutationFns = {} as GrafooRenderMutations<U>;
+  let queryResult = {} as T;
+  let mutationFns = {} as GrafooRenderMutations<U>;
 
   if (cacheLoaded) Object.assign(queryResult, data);
 
   if (mutations) {
-    for (var key in mutations) {
-      var mutation = mutations[key];
+    for (let key in mutations) {
+      let mutation = mutations[key];
 
       mutationFns[key] = mutationVariables => {
         if (query && mutation.optimisticUpdate) {

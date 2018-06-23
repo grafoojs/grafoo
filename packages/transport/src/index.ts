@@ -13,8 +13,8 @@ export default function createTransport(uri: string, headers?: Headers): Transpo
   headers = headers || {};
 
   return <T>(query: string, variables?: Variables): Promise<T> => {
-    var body = JSON.stringify({ query, variables });
-    var init = {
+    let body = JSON.stringify({ query, variables });
+    let init = {
       body,
       method: "POST",
       headers: Object.assign(

@@ -1,21 +1,21 @@
 import { Variables } from "@grafoo/types";
 
-export var idFromProps = (branch, idFields) => {
-  var identifier = "";
+export let idFromProps = (branch, idFields) => {
+  let identifier = "";
 
-  for (var i = 0; i < idFields.length; i++) {
+  for (let i = 0; i < idFields.length; i++) {
     branch[idFields[i]] && (identifier += branch[idFields[i]]);
   }
 
   return identifier;
 };
 
-export var isNotNullObject = obj => obj && typeof obj == "object";
+export let isNotNullObject = obj => obj && typeof obj == "object";
 
-export var getPathId = (path: string, args: string[], variables?: Variables) => {
+export let getPathId = (path: string, args: string[], variables?: Variables) => {
   variables = variables || {};
-  var finalPath = path;
-  var i = args.length;
+  let finalPath = path;
+  let i = args.length;
 
   while (i--) finalPath += ":" + variables[args[i]];
 
