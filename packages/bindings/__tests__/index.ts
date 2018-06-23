@@ -32,27 +32,73 @@ interface CreateAuthor {
   };
 }
 
-const AUTHORS = graphql`
-  {
-    authors {
-      name
-      posts {
-        title
-        body
-      }
-    }
-  }
-`;
+interface DeleteAuthor {
+  deleteAuthor: {
+    name: string;
+    id: string;
+    __typename: string;
+    posts?: Array<Post>;
+  };
+}
 
-const CREATE_AUTHOR = graphql`
-  mutation($name: String!) {
-    createAuthor(name: $name) {
-      name
-    }
-  }
-`;
+interface UpdateAuthor {
+  updateAuthor: {
+    name: string;
+    id: string;
+    __typename: string;
+    posts?: Array<Post>;
+  };
+}
 
 describe("@grafoo/bindings", () => {
+  const AUTHORS = graphql`
+    {
+      authors {
+        name
+        posts {
+          title
+          body
+        }
+      }
+    }
+  `;
+
+  const CREATE_AUTHOR = graphql`
+    mutation($name: String!) {
+      createAuthor(name: $name) {
+        name
+        posts {
+          title
+          body
+        }
+      }
+    }
+  `;
+
+  const DELETE_AUTHOR = graphql`
+    mutation($id: ID!) {
+      deleteAuthor(id: $id) {
+        name
+        posts {
+          title
+          body
+        }
+      }
+    }
+  `;
+
+  const UPDATE_AUTHOR = graphql`
+    mutation($id: ID!, $name: String) {
+      updateAuthor(id: $id, name: $name) {
+        name
+        posts {
+          title
+          body
+        }
+      }
+    }
+  `;
+
   let client: ClientInstance;
   beforeEach(() => {
     jest.resetAllMocks();
@@ -296,5 +342,83 @@ describe("@grafoo/bindings", () => {
     const { authors: modifiedAuthors } = bindings.getState();
 
     expect(update).toHaveBeenCalledWith({ authors: modifiedAuthors }, data);
+  });
+
+  it("should update if query objects has less keys then nextObjects", async () => {
+    const author = (await mockQueryRequest({ ...CREATE_AUTHOR, variables: { name: "gustav" } }))
+      .data.createAuthor;
+    const { data } = await mockQueryRequest(AUTHORS);
+
+    client.write(AUTHORS, data);
+
+    interface Mutations {
+      removeAuthor: DeleteAuthor;
+    }
+
+    const mutations: GrafooMutations<Authors, Mutations> = {
+      removeAuthor: {
+        query: DELETE_AUTHOR,
+        optimisticUpdate: ({ authors }, { id }: Author) => ({
+          authors: authors.filter(author => author.id !== id)
+        })
+      }
+    };
+
+    const renderFn = jest.fn();
+
+    const bindings = createBindings<Authors, Mutations>(
+      client,
+      { query: AUTHORS, mutations },
+      renderFn
+    );
+
+    const { removeAuthor } = bindings.getState();
+
+    const variables = { id: author.id };
+
+    await mockQueryRequest({ ...DELETE_AUTHOR, variables });
+
+    await removeAuthor(variables);
+
+    expect(renderFn).toHaveBeenCalled();
+  });
+
+  it("should update if query objects is modified", async () => {
+    const author = (await mockQueryRequest({ ...CREATE_AUTHOR, variables: { name: "sven" } })).data
+      .createAuthor;
+    const { data } = await mockQueryRequest(AUTHORS);
+
+    client.write(AUTHORS, data);
+
+    interface Mutations {
+      updateAuthor: UpdateAuthor;
+    }
+
+    const mutations: GrafooMutations<Authors, Mutations> = {
+      updateAuthor: {
+        query: UPDATE_AUTHOR,
+        optimisticUpdate: ({ authors }, variables: Author) => ({
+          authors: authors.map(author => (author.id === variables.id ? variables : author))
+        })
+      }
+    };
+
+    const renderFn = jest.fn();
+
+    const bindings = createBindings<Authors, Mutations>(
+      client,
+      { query: AUTHORS, mutations },
+      renderFn
+    );
+
+    const { updateAuthor } = bindings.getState();
+
+    const variables = { ...author, name: "johan" };
+
+    await mockQueryRequest({ ...UPDATE_AUTHOR, variables });
+
+    await updateAuthor(variables);
+
+    expect(renderFn).toHaveBeenCalled();
   });
 });

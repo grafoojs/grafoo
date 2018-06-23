@@ -74,7 +74,23 @@ const POST = graphql`
   }
 `;
 
-export const POSTS = graphql`
+const POST_WITH_FRAGMENT = graphql`
+  query($id: ID!) {
+    post(id: $id) {
+      title
+      body
+      author {
+        ...AuthorInfo
+      }
+    }
+  }
+
+  fragment AuthorInfo on Author {
+    name
+  }
+`;
+
+const POSTS = graphql`
   {
     posts {
       title
@@ -103,14 +119,14 @@ describe("@grafoo/core", () => {
   });
 
   it("should perform query requests", async () => {
-    const { data } = await mockQueryRequest({
-      ...POST,
-      variables: { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" }
-    });
+    const variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
 
-    expect(data).toEqual(
-      await client.request(POST, { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" })
-    );
+    let { query, frags } = POST_WITH_FRAGMENT;
+    if (frags) for (const frag in frags) query += " " + frags[frag];
+
+    const { data } = await mockQueryRequest({ query, variables });
+
+    expect(data).toEqual(await client.request(POST_WITH_FRAGMENT, variables));
   });
 
   it("should write queries to the client", async () => {

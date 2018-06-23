@@ -49,7 +49,7 @@ const Mutation = {
     return db
       .get("authors")
       .find({ id: args.id })
-      .update(args)
+      .assign(args)
       .write();
   },
   deleteAuthor(_, args) {
@@ -83,7 +83,7 @@ const Mutation = {
     return db
       .get("posts")
       .find({ id: args.id })
-      .update(args)
+      .assign(args)
       .write();
   },
   deletePost(_, args) {

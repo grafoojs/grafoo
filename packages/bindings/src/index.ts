@@ -7,41 +7,51 @@ import {
   GrafooRenderMutations
 } from "@grafoo/types";
 
+function shouldUpdate(nextObjects: ObjectsMap, objects?: ObjectsMap) {
+  objects = objects || {};
+
+  for (var i in nextObjects) {
+    if (!(i in objects)) return 1;
+
+    for (var j in nextObjects[i]) if (nextObjects[i][j] !== objects[i][j]) return 1;
+  }
+
+  for (var i in objects) if (!(i in nextObjects)) return 1;
+}
+
 export default function createBindings<T = {}, U = {}>(
   client: ClientInstance,
   props: GrafooConsumerProps<T, U>,
   updater: () => void
 ): GrafooBindings<T, U> {
-  let { query, variables, mutations, skip } = props;
-  let cachedState: { data?: {}; objects?: ObjectsMap } = {};
-  let unbind = () => {};
-  let lockUpdate = false;
+  var { query, variables, mutations, skip } = props;
+  var data: {};
+  var objects: ObjectsMap;
+  var unbind = () => {};
+  var lockUpdate = 0;
 
   if (query) {
-    cachedState = readFromCache();
+    ({ data, objects } = readFromCache());
 
     unbind = client.listen(nextObjects => {
-      if (lockUpdate) return (lockUpdate = false);
+      if (lockUpdate) return (lockUpdate = 0);
 
-      let cachedObjects = cachedState.objects || {};
-
-      for (let i in nextObjects) if (nextObjects[i] !== cachedObjects[i]) return performUpdate();
-      for (let i in cachedObjects) if (!(i in nextObjects)) return performUpdate();
+      if (shouldUpdate(nextObjects, objects)) performUpdate();
     });
   }
 
-  let cacheLoaded = !skip && cachedState.data;
-  let state = (query
+  var cacheLoaded = !skip && data;
+  var state = (query
     ? { load, loaded: !!cacheLoaded, loading: !cacheLoaded }
     : {}) as GrafooRenderProps;
-  let queryResult = {} as T;
-  let mutationFns = {} as GrafooRenderMutations<U>;
+  var queryResult = {} as T;
+  var mutationFns = {} as GrafooRenderMutations<U>;
 
-  if (cacheLoaded) Object.assign(queryResult, cachedState.data);
+  if (cacheLoaded) Object.assign(queryResult, data);
 
   if (mutations) {
-    for (let key in mutations) {
-      let mutation = mutations[key];
+    for (var key in mutations) {
+      var mutation = mutations[key];
 
       mutationFns[key] = mutationVariables => {
         if (query && mutation.optimisticUpdate) {
@@ -67,13 +77,11 @@ export default function createBindings<T = {}, U = {}>(
     return client.read<T>(query, variables);
   }
 
-  function performUpdate(additionalData?) {
-    let { data, objects } = readFromCache();
-
-    cachedState.objects = objects;
+  function performUpdate(stateUpdate?) {
+    ({ data, objects } = readFromCache());
 
     Object.assign(queryResult, data);
-    Object.assign(state, additionalData);
+    Object.assign(state, stateUpdate);
 
     updater();
   }
@@ -92,7 +100,7 @@ export default function createBindings<T = {}, U = {}>(
     return client
       .request(query, variables)
       .then(response => {
-        lockUpdate = true;
+        lockUpdate = 1;
 
         writeToCache(response);
 
