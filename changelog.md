@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.1-alpha.18
+
+### Fixes
+
+- [core] fix objects not being cleaned from the cache on removal
+
 ## v0.0.1-alpha.17
 
 ### Fixes
