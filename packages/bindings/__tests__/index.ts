@@ -402,6 +402,20 @@ describe("@grafoo/bindings", () => {
     expect(renderFn).toHaveBeenCalled();
   });
 
+  it("should not update if query objects is not modified", async () => {
+    const { data } = await mockQueryRequest(AUTHORS);
+
+    client.write(AUTHORS, data);
+
+    const renderFn = jest.fn();
+
+    createBindings(client, { query: AUTHORS }, renderFn);
+
+    client.write(AUTHORS, data);
+
+    expect(renderFn).not.toHaveBeenCalled();
+  });
+
   it("should accept multiple mutations", async () => {
     const { data } = await mockQueryRequest(AUTHORS);
     client.write(AUTHORS, data);
