@@ -362,8 +362,6 @@ describe("@grafoo/bindings", () => {
 
     const variables = { id: author.id };
 
-    console.log(client.flush().objectsMap[author.id + "Author"]);
-
     await removeAuthor(variables);
 
     expect(renderFn).toHaveBeenCalled();
