@@ -11,23 +11,19 @@ const db = setupDB();
 const typeDefs = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "utf-8");
 
 const Query = {
-  author(_, ref) {
-    const id = ref.id;
-
+  author(_, args) {
     return db
       .get("authors")
-      .find({ id: id })
+      .find({ id: args.id })
       .value();
   },
   authors() {
     return db.get("authors").value();
   },
-  post(_, ref) {
-    const id = ref.id;
-
+  post(_, args) {
     return db
       .get("posts")
-      .find({ id: id })
+      .find({ id: args.id })
       .value();
   },
   posts() {
@@ -132,14 +128,17 @@ const resolvers = {
 
 const schema = makeExecutableSchema({ typeDefs: typeDefs, resolvers: resolvers });
 
-export const executeQuery = (ref): Promise<ExecutionResult> => {
-  const query = ref.query;
-  const variables = ref.variables;
+interface ExecuteQueryArg {
+  query: string;
+  variables: {
+    [key: string]: any;
+  };
+}
 
-  return graphql({ schema: schema, source: query, variableValues: variables });
-};
+export const executeQuery = ({ query, variables }: ExecuteQueryArg): Promise<ExecutionResult> =>
+  graphql({ schema: schema, source: query, variableValues: variables });
 
-export function mockQueryRequest(request): Promise<ExecutionResult> {
+export function mockQueryRequest(request: ExecuteQueryArg): Promise<ExecutionResult> {
   fetchMock.reset();
   fetchMock.restore();
 

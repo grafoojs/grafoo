@@ -4,7 +4,7 @@ const { exec } = require("child_process");
 
 const pkgsRoot = join(__dirname, "..", "packages");
 
-const hasDependency = ["test-utils", "core", "react", "preact"];
+const hasDependency = ["core", "react", "preact"];
 const noDependency = readdirSync(pkgsRoot).filter(x => !hasDependency.some(y => y === x));
 
 const command = exec(

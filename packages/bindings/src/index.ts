@@ -51,16 +51,16 @@ export default function createBindings<T = {}, U = {}>(
 
   if (mutations) {
     for (let key in mutations) {
-      let mutation = mutations[key];
+      let { update, optimisticUpdate, query: mutationQuery } = mutations[key];
 
       mutationFns[key] = mutationVariables => {
-        if (query && mutation.optimisticUpdate) {
-          writeToCache(mutation.optimisticUpdate(queryResult, mutationVariables));
+        if (query && optimisticUpdate) {
+          writeToCache(optimisticUpdate(queryResult, mutationVariables));
         }
 
-        return client.request<U[typeof key]>(mutation.query, mutationVariables).then(data => {
-          if (query && mutation.update) {
-            writeToCache(mutation.update(queryResult, data));
+        return client.request<U[typeof key]>(mutationQuery, mutationVariables).then(data => {
+          if (query && update) {
+            writeToCache(update(queryResult, data));
           }
 
           return data;

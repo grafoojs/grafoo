@@ -233,11 +233,9 @@ describe("@grafoo/bindings", () => {
       createAuthor: CreateAuthor;
     }
 
-    const bindings = createBindings<{}, Mutations>(
-      client,
-      { mutations: { createAuthor: { query: CREATE_AUTHOR } } },
-      () => void 0
-    );
+    const mutations: GrafooMutations<{}, Mutations> = { createAuthor: { query: CREATE_AUTHOR } };
+
+    const bindings = createBindings(client, { mutations }, () => void 0);
 
     const props = bindings.getState();
 
@@ -268,11 +266,7 @@ describe("@grafoo/bindings", () => {
 
     const update = jest.spyOn(mutations.createAuthor, "update");
 
-    const bindings = createBindings<Authors, Mutations>(
-      client,
-      { query: AUTHORS, mutations },
-      () => void 0
-    );
+    const bindings = createBindings(client, { query: AUTHORS, mutations }, () => void 0);
 
     const props = bindings.getState();
 
@@ -315,11 +309,7 @@ describe("@grafoo/bindings", () => {
     const optimisticUpdate = jest.spyOn(mutations.createAuthor, "optimisticUpdate");
     const update = jest.spyOn(mutations.createAuthor, "update");
 
-    const bindings = createBindings<Authors, Mutations>(
-      client,
-      { query: AUTHORS, mutations },
-      () => void 0
-    );
+    const bindings = createBindings(client, { query: AUTHORS, mutations }, () => void 0);
 
     const props = bindings.getState();
 
@@ -366,17 +356,11 @@ describe("@grafoo/bindings", () => {
 
     const renderFn = jest.fn();
 
-    const bindings = createBindings<Authors, Mutations>(
-      client,
-      { query: AUTHORS, mutations },
-      renderFn
-    );
+    const bindings = createBindings(client, { query: AUTHORS, mutations }, renderFn);
 
     const { removeAuthor } = bindings.getState();
 
     const variables = { id: author.id };
-
-    await mockQueryRequest({ ...DELETE_AUTHOR, variables });
 
     await removeAuthor(variables);
 
@@ -405,11 +389,7 @@ describe("@grafoo/bindings", () => {
 
     const renderFn = jest.fn();
 
-    const bindings = createBindings<Authors, Mutations>(
-      client,
-      { query: AUTHORS, mutations },
-      renderFn
-    );
+    const bindings = createBindings(client, { query: AUTHORS, mutations }, renderFn);
 
     const { updateAuthor } = bindings.getState();
 
@@ -420,6 +400,20 @@ describe("@grafoo/bindings", () => {
     await updateAuthor(variables);
 
     expect(renderFn).toHaveBeenCalled();
+  });
+
+  it("should not update if query objects is not modified", async () => {
+    const { data } = await mockQueryRequest(AUTHORS);
+
+    client.write(AUTHORS, data);
+
+    const renderFn = jest.fn();
+
+    createBindings(client, { query: AUTHORS }, renderFn);
+
+    client.write(AUTHORS, data);
+
+    expect(renderFn).not.toHaveBeenCalled();
   });
 
   it("should accept multiple mutations", async () => {

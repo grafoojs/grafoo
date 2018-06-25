@@ -42,6 +42,26 @@ const AUTHORS = graphql`
   }
 `;
 
+const SIMPLE_AUTHORS = graphql`
+  {
+    authors {
+      name
+    }
+  }
+`;
+
+// const DELETE_AUTHOR = graphql`
+//   mutation($id: ID!) {
+//     deleteAuthor(id: $id) {
+//       name
+//       posts {
+//         title
+//         body
+//       }
+//     }
+//   }
+// `;
+
 const POSTS_AND_AUTHORS = graphql`
   {
     posts {
@@ -169,6 +189,29 @@ describe("@grafoo/core", () => {
 
       expect(client.read(POST, { id: "123" })).toEqual({});
       expect(client.read<PostQuery>(query, variables).data.post.id).toBe(variables.id);
+    });
+  });
+
+  it("should remove unused objects from objectsMap", async () => {
+    await mock(SIMPLE_AUTHORS, async (data, { query }) => {
+      client.write(query, data);
+
+      const authorToBeRemoved: Author = data.authors[0];
+
+      let ids = Object.keys(client.flush().objectsMap);
+
+      console.log(client.flush().pathsMap);
+
+      expect(ids.some(id => id === authorToBeRemoved.id)).toBe(true);
+
+      client.write(query, {
+        authors: data.authors.filter(author => author.id !== authorToBeRemoved.id)
+      });
+
+      let nextIds = Object.keys(client.flush().objectsMap);
+
+      expect(nextIds.length).toBe(ids.length - 1);
+      expect(nextIds.some(id => id === authorToBeRemoved.id)).toBe(false);
     });
   });
 
