@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.0.1-alpha.18
+## v0.0.1-beta.0
 
 ### Fixes
 
