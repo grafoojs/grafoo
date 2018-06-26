@@ -61,7 +61,7 @@ Many of the work that has been put into this project came from borrowed ideas an
 
 ## Important
 
-The **disclaimer** here is that you should not ditch your current stack for Grafoo for the time being. We are still in **alpha** stage and you'll find ruff edges. But if you are kind enough it would be awesome to receive any feedback! Feel free to open issues, PRs and whatnot.
+The **disclaimer** here is that you should not ditch your current stack for Grafoo for the time being. We are still in **beta** stage and you might find ruff edges. But if you are kind enough it would be awesome to receive any feedback! Feel free to open issues, PRs and whatnot.
 
 ## Example applications
 
