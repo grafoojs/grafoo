@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/babel-plugin",
-  "version": "0.0.1-beta.5",
+  "version": "0.0.1-beta.6",
   "description": "the grafoo client babel plugin",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/babel-plugin",
   "main": "dist/index.js",
@@ -21,15 +21,6 @@
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
-  "dependencies": {
-    "@babel/cli": "^7.0.0-beta.50",
-    "@babel/core": "^7.0.0-beta.50",
-    "@babel/preset-env": "^7.0.0-beta.50",
-    "babel-literal-to-ast": "^2.0.0",
-    "babel-plugin-tester": "^5.0.0",
-    "graphql": "^0.13.1",
-    "graphql-query-compress": "^1.0.0"
-  },
   "jest": {
     "moduleFileExtensions": [
       "ts",
@@ -43,6 +34,17 @@
     "transform": {
       "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
     }
+  },
+  "dependencies": {
+    "babel-literal-to-ast": "^2.0.0",
+    "graphql": "^0.13.1",
+    "graphql-query-compress": "^1.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.50",
+    "@babel/core": "^7.0.0-beta.50",
+    "@babel/preset-env": "^7.0.0-beta.50",
+    "babel-plugin-tester": "^5.0.0"
   },
   "gitHead": "3eee7fd65fe2b16191eb4c721746593986aeea06"
 }

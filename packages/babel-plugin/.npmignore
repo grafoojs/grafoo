@@ -1,3 +1,5 @@
 coverage
-dist
 __tests__
+.rpt2_cache
+.babelrc
+schema.graphql

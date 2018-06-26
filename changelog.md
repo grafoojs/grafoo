@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.0.1-beta.6
+
+### Fixes
+
+- building packages locally
+
+## v0.0.1-beta.5
+
+### Fixes
+
+- last failed attempt to install packages on local install
+
 ## v0.0.1-beta.4
 
 ### Fixes
