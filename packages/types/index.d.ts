@@ -26,11 +26,14 @@ export declare type Headers = (() => {}) | {};
  */
 
 export declare interface ObjectsMap {
-  [key: string]: { [key: string]: any };
+  [key: string]: {};
 }
 
 export declare interface PathsMap {
-  [key: string]: { [key: string]: any };
+  [key: string]: {
+    data: { [key: string]: any };
+    objects: string[];
+  };
 }
 
 export declare type Listener = (objects: ObjectsMap) => void;
