@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.1-beta.2
+
+### Fixes
+
+- [bundle] add mri to package dependecies
+
 ## v0.0.1-beta.1
 
 ### Fixes

@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@grafoo/test-utils",
-  "version": "0.0.1-beta.1",
+  "version": "0.0.1-beta.2",
   "main": "dist/index.js",
   "publishConfig": {
     "access": "public"
@@ -10,6 +10,6 @@
     "prepare": "tsc"
   },
   "dependencies": {
-    "@grafoo/types": "^0.0.1-beta.1"
+    "@grafoo/types": "^0.0.1-beta.2"
   }
 }
