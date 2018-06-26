@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/transport",
-  "description": "the grafoo client standard transport",
+  "description": "grafoo client standard transport",
   "version": "0.0.1-beta.6",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/transport",
   "main": "dist/index.js",

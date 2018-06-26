@@ -35,7 +35,7 @@ describe("@grafoo/transport", () => {
   });
 
   it("should accept fetchObjects as an object", async () => {
-    request = createTransport(fakeAPI, { authorization: "Bearer some-token" });
+    request = createTransport(fakeAPI, { headers: { authorization: "Bearer some-token" } });
 
     await mock(async () => {
       await request(query);
@@ -50,7 +50,7 @@ describe("@grafoo/transport", () => {
   });
 
   it("should accept fetchObjects as a function", async () => {
-    request = createTransport(fakeAPI, () => ({ authorization: "Bearer some-token" }));
+    request = createTransport(fakeAPI, () => ({ headers: { authorization: "Bearer some-token" } }));
 
     await mock(async () => {
       await request(query);

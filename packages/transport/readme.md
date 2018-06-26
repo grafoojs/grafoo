@@ -1,6 +1,6 @@
 # `@grafoo/transport`
 
-<p><i>A Simple HTTP Client to Comunicate With GraphQL Servers</i></p>
+<p><i>A Simple HTTP Client for GraphQL Servers</i></p>
 
 <p>
   <a href=https://circleci.com/gh/grafoojs/grafoo>
@@ -55,13 +55,15 @@ $ npm i @grafoo/transport
 
 ## Usage
 
-`@grafoo/transport` default export is a factory that accepts as arguments `uri` and `headers` (that can be an object or a function):
+`@grafoo/transport` default export is a factory that accepts as arguments `uri` and `fetchOptions` (that can be an object or a function):
 
 ```js
 import createTransport from "@grafoo/transport";
 
 const request = createTransport("http://some.graphql.api", () => ({
-  authorization: storage.getItem("authorization")
+  headers: {
+    authorization: storage.getItem("authorization")
+  }
 }));
 
 const USER_QUERY = `

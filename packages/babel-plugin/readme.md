@@ -1,6 +1,6 @@
 # `@grafoo/babel-plugin`
 
-<p><i>The Grafoo Babel Plugin.</i></p>
+<p><i>Grafoo Babel Plugin</i></p>
 
 <p>
   <a href=https://circleci.com/gh/grafoojs/grafoo>
@@ -41,7 +41,7 @@
   </a>
 </p>
 
-A premise that Grafoo takes is that it should be able to extract an unique identifier from every node on the queries you write. It can be a GraphQL `ID` field, or more fields that together can form one (eg: an incremental integer and the GraphQL meta field `__typename`). It is `@grafoo/babel-plugin`'s responsibility to insert those fields on your queries automatically. If you have already used Apollo this should be very familiar to you, as our `idFields` configuration has the same pourpose of Apollo Cache's `dataIdFromObject`: to normalize your data.
+A premise Grafoo takes is that it should be able to extract an unique identifier from every node on the queries you write. It can be a GraphQL `ID` field, or more fields that together can form one (eg: an incremental integer and the GraphQL meta field `__typename`). It is `@grafoo/babel-plugin`'s responsibility to insert those fields on your queries automatically. If you have already used Apollo this should be very familiar to you, as our `idFields` configuration has the same pourpose of Apollo Cache's `dataIdFromObject`: to normalize your data.
 
 ## Install
 
