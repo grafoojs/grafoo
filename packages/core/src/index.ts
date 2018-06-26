@@ -12,10 +12,10 @@ import mapObjects from "./map-objects";
 import { getPathId } from "./util";
 
 export default function createClient(uri: string, options?: ClientOptions): ClientInstance {
-  let { initialState, idFields } = options;
+  let { initialState, idFields, fetchOptions } = (options || {}) as ClientOptions;
   let { pathsMap, objectsMap } = initialState || { pathsMap: {}, objectsMap: {} };
   let listeners: Listener[] = [];
-  let transportRequest = createTransport(uri, options && options.headers);
+  let transportRequest = createTransport(uri, fetchOptions);
 
   function request<T>({ query, frags }: GrafooObject, variables?: Variables) {
     if (frags) for (let frag in frags) query += frags[frag];

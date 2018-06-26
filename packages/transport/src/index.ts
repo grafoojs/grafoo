@@ -1,4 +1,4 @@
-import { GraphQlError, GraphQlPayload, Headers, TransportRequest, Variables } from "@grafoo/types";
+import { GraphQlError, GraphQlPayload, TransportRequest, Variables } from "@grafoo/types";
 
 class TransportError extends Error {
   errors: GraphQlError[];
@@ -9,19 +9,19 @@ class TransportError extends Error {
   }
 }
 
-export default function createTransport(uri: string, headers?: Headers): TransportRequest {
-  headers = headers || {};
-
+export default function createTransport(
+  uri: string,
+  options?: RequestInit | (() => RequestInit)
+): TransportRequest {
   return <T>(query: string, variables?: Variables): Promise<T> => {
+    options = typeof options == "function" ? options() : options || {};
+
     let body = JSON.stringify({ query, variables });
-    let init = {
+    let init = Object.assign(options, {
       body,
       method: "POST",
-      headers: Object.assign(
-        { "Content-Type": "application/json" },
-        typeof headers == "function" ? headers() : headers
-      )
-    };
+      headers: Object.assign({ "Content-Type": "application/json" }, options.headers)
+    });
 
     return fetch(uri, init)
       .then(res => res.json())

@@ -1,7 +1,7 @@
 {
   "name": "@grafoo/react",
   "version": "0.0.1-beta.6",
-  "description": "the grafoo client react bindings",
+  "description": "grafoo client react bindings",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/react",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

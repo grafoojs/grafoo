@@ -19,8 +19,6 @@ export declare interface Variables {
 
 export declare type TransportRequest = <T>(query: string, variables?: Variables) => Promise<T>;
 
-export declare type Headers = (() => {}) | {};
-
 /**
  * Core
  */
@@ -60,7 +58,7 @@ export declare interface ClientInstance {
 export declare interface ClientOptions {
   initialState?: InitialState;
   idFields?: Array<string>;
-  headers?: Headers;
+  fetchOptions?: RequestInit | (() => RequestInit);
 }
 
 export declare interface GrafooObject {

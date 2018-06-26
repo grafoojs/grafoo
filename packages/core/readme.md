@@ -49,9 +49,9 @@
 
 ## Install
 
-<!-- ```
+```
 $ npm i @grafoo/core && npm i -D @grafoo/babel-plugin
-``` -->
+```
 
 ## Setup
 
@@ -111,30 +111,35 @@ const USER_QUERY = {
 
 | Option       | Type               | Required | Description                                                                           |
 | ------------ | ------------------ | -------- | ------------------------------------------------------------------------------------- |
-| headers      | object \| function | true     | the headers to be sent in every request the client performs                           |
+| fetchOptions | object \| function | true     | fetch options to be sent in every request the client performs                         |
 | idFields     | string[]           | false    | fields Grafoo takes to build unique identifiers                                       |
 | initialState | object             | false    | a initial state to hydrate the cache. It can be produced by the `flush` client method |
 
-### Headers
+### FetchOptions
 
-Set this option to specify what are the headers your server expects from your requests. It can be an object if you already know beforehand which headers to send or a function if you need to update your headers in every request.
+Grafoo uses the [fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) under the hood to make requests to your graphql server. Some options are already set though, those are body and headers content type.
 
 #### Example
 
 ```js
 import createClient from "@grafoo/core";
 
-const clientWithStaticHeaders = createClient("http://some.graphql.api", {
-  headers: {
-    authorization: "Bearer some.token"
+const client = createClient("http://some.graphql.api", {
+  fetchOptions: {
+    cache: "force-cache",
+    headers: {
+      authorization: "Bearer some.token"
+    }
   }
 });
 
 // or
 
-const clientWithDynamicHeaders = createClient("http://some.graphql.api", {
-  headers: () => ({
-    authorization: storage.get("token")
+const client = createClient("http://some.graphql.api", {
+  fetchOptions: () => ({
+    headers: {
+      authorization: storage.get("token")
+    }
   })
 });
 ```
