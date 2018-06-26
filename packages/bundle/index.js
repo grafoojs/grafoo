@@ -1,11 +1,12 @@
 var fs = require("fs");
 var path = require("path");
 var rollup = require("rollup").rollup;
+var buble = require("rollup-plugin-buble");
+var fileSize = require("rollup-plugin-filesize");
+var nodeResolve = require("rollup-plugin-node-resolve");
 var terser = require("rollup-plugin-terser").terser;
 var typescript = require("rollup-plugin-typescript2");
-var buble = require("rollup-plugin-buble");
-var nodeResolve = require("rollup-plugin-node-resolve");
-var fileSize = require("rollup-plugin-filesize");
+var ts = require("typescript");
 
 module.exports = function build(opts) {
   var pkg = JSON.parse(fs.readFileSync(path.join(opts.rootPath, "package.json"), "utf-8"));
@@ -23,7 +24,7 @@ module.exports = function build(opts) {
     plugins: [
       nodeResolve(),
       typescript({
-        typescript: require("typescript"),
+        typescript: ts,
         tsconfigOverride: tsconfig
       }),
       buble({

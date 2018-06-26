@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.1-beta.3
+
+### Fixes
+
+- fix further packages dependencies
+
 ## v0.0.1-beta.2
 
 ### Fixes
