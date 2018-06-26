@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.1-beta.4
+
+### Fixes
+
+- [babel-plugin] add @babel/cli
+
 ## v0.0.1-beta.3
 
 ### Fixes
