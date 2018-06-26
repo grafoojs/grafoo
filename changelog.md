@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.1-beta.1
+
+### Fixes
+
+- add coverage to packages .npmignore
+
 ## v0.0.1-beta.0
 
 ### Fixes
