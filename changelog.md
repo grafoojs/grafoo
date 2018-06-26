@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.1-beta.7
+
+### Features
+
+- [core, transport] allow other fetch options to be set other then headers
+
 ## v0.0.1-beta.6
 
 ### Fixes
