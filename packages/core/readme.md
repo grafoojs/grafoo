@@ -179,7 +179,7 @@ const client = createClient("http://some.graphql.api", {
 });
 ```
 
-## `ClientInstance`
+## `GrafooClient`
 
 the `createClient` factory returns a client instance with some methods:
 
@@ -191,7 +191,7 @@ the `createClient` factory returns a client instance with some methods:
 | listen  | takes a listener callback and notify for cache changes |
 | flush   | dumps the internal state of the instance cache         |
 
-### `ClientInstance.request`
+### `GrafooClient.request`
 
 This method receives as arguments a query object created with the `@grafoo/core/tag` template tag and optionally a GraphQL variables object. It returns a promise that will resolve with the data requested or reject with a list of GraphQL errors.
 
@@ -205,7 +205,7 @@ client.request(USER_QUERY, variables).then(data => {
 });
 ```
 
-### `ClientInstance.write`
+### `GrafooClient.write`
 
 The write method as the name implies writes to the cache. It takes as argumets the query object, an optional variables object and the data to be stored.
 
@@ -217,7 +217,7 @@ client.request(USER_QUERY, variables).then(data => {
 });
 ```
 
-### `ClientInstance.read`
+### `GrafooClient.read`
 
 The read method takes as arguments the query object and optionally a variables object. It returns an object with two properties: `data` which is an tree structured object shaped according to your query tree and `objects`, a flat structured object containing every node on your query indexed by a unique id created with the `idProps` option passed on client instantiation.
 
@@ -241,7 +241,7 @@ client.read(USER_QUERY, variables);
 // }
 ```
 
-### `ClientInstance.listen`
+### `GrafooClient.listen`
 
 `listen` takes a _listener_ callback as argument. Whenever the cache is updated that _listener_ is called with the objects that were inserted, modified or removed.
 
@@ -259,7 +259,7 @@ client.write(USER_QUERY, variables, data);
 unlisten(); // detaches the listener from the client
 ```
 
-### `ClientInstance.flush`
+### `GrafooClient.flush`
 
 The `flush` method dumps all of the data inside the cache in it's raw state, producing a snapshot. It is to be used in mainly on the server producing, a initial state that can be passed as an option to `createClient` on client side.
 

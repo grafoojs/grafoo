@@ -1,8 +1,9 @@
 import createBindings from "../src";
 import graphql from "@grafoo/core/tag";
 import createClient from "@grafoo/core";
-import { ClientInstance, GrafooMutations, Variables } from "@grafoo/types";
+import { GrafooClient, GrafooMutations, Variables } from "@grafoo/types";
 import { mockQueryRequest } from "@grafoo/test-utils";
+import createTransport from "@grafoo/transport";
 
 interface Post {
   title: string;
@@ -99,10 +100,11 @@ describe("@grafoo/bindings", () => {
     }
   `;
 
-  let client: ClientInstance;
+  let client: GrafooClient;
   beforeEach(() => {
     jest.resetAllMocks();
-    client = createClient("https://some.graphql.api/", { idFields: ["id"] });
+    const transport = createTransport("https://some.graphql.api/");
+    client = createClient(transport, { idFields: ["id"] });
   });
 
   it("should be evocable given the minimal props", () => {
@@ -194,7 +196,7 @@ describe("@grafoo/bindings", () => {
   });
 
   it("should stop updating if unbind has been called", async () => {
-    const { data } = await mockQueryRequest(AUTHORS);
+    const { data } = await mockQueryRequest<Authors>(AUTHORS);
 
     const renderFn = jest.fn();
 
@@ -241,14 +243,14 @@ describe("@grafoo/bindings", () => {
 
     const variables = { name: "Bart" };
 
-    const { data } = await mockQueryRequest({ ...CREATE_AUTHOR, variables });
+    const { data } = await mockQueryRequest({ query: CREATE_AUTHOR.query, variables });
 
-    const author = await props.createAuthor(variables);
+    const { data: mutationData } = await props.createAuthor(variables);
 
-    expect(author).toEqual(data);
+    expect(mutationData).toEqual(data);
   });
 
-  it("should perform mutation with cache update", async () => {
+  it("should perform mutation with a cache update", async () => {
     await mockQueryRequest(AUTHORS);
 
     interface Mutations {
@@ -276,14 +278,12 @@ describe("@grafoo/bindings", () => {
 
     const variables = { name: "Homer" };
 
-    const { data } = await mockQueryRequest({ ...CREATE_AUTHOR, variables });
-
-    await props.createAuthor(variables);
+    const { data } = await mockQueryRequest({ query: CREATE_AUTHOR.query, variables });
 
     const { authors } = bindings.getState();
 
-    // the state mutates. update is Actually called without
-    // the createAuthor mutation result
+    await props.createAuthor(variables);
+
     expect(update).toHaveBeenCalledWith({ authors }, data);
   });
 
@@ -319,23 +319,24 @@ describe("@grafoo/bindings", () => {
 
     const variables = { name: "Peter" };
 
-    const { data } = await mockQueryRequest({ ...CREATE_AUTHOR, variables });
-
-    const createAuthorPromise = props.createAuthor(variables);
+    const { data } = await mockQueryRequest({ query: CREATE_AUTHOR.query, variables });
 
     const { authors } = bindings.getState();
 
+    const createAuthorPromise = props.createAuthor(variables);
+
     expect(optimisticUpdate).toHaveBeenCalledWith({ authors }, variables);
 
-    await createAuthorPromise;
-
     const { authors: modifiedAuthors } = bindings.getState();
+
+    await createAuthorPromise;
 
     expect(update).toHaveBeenCalledWith({ authors: modifiedAuthors }, data);
   });
 
   it("should update if query objects has less keys then nextObjects", async () => {
-    const author = (await mockQueryRequest({ ...CREATE_AUTHOR, variables: { name: "gustav" } }))
+    const { query } = CREATE_AUTHOR;
+    const author = (await mockQueryRequest<CreateAuthor>({ query, variables: { name: "gustav" } }))
       .data.createAuthor;
     const { data } = await mockQueryRequest(AUTHORS);
 
@@ -368,8 +369,11 @@ describe("@grafoo/bindings", () => {
   });
 
   it("should update if query objects is modified", async () => {
-    const author = (await mockQueryRequest({ ...CREATE_AUTHOR, variables: { name: "sven" } })).data
-      .createAuthor;
+    const { query } = CREATE_AUTHOR;
+    const author = (await mockQueryRequest<CreateAuthor>({
+      query,
+      variables: { name: "sven" }
+    })).data.createAuthor;
     const { data } = await mockQueryRequest(AUTHORS);
 
     client.write(AUTHORS, data);
@@ -395,7 +399,7 @@ describe("@grafoo/bindings", () => {
 
     const variables = { ...author, name: "johan" };
 
-    await mockQueryRequest({ ...UPDATE_AUTHOR, variables });
+    await mockQueryRequest({ query: UPDATE_AUTHOR.query, variables });
 
     await updateAuthor(variables);
 
@@ -453,23 +457,27 @@ describe("@grafoo/bindings", () => {
     const renderFn = jest.fn();
 
     const bindings = createBindings(client, { query: AUTHORS, mutations }, renderFn);
-    const { createAuthor, updateAuthor, deleteAuthor } = bindings.getState();
+    const props = bindings.getState();
 
     try {
       let variables: Variables = { name: "mikel" };
-      let { data } = await mockQueryRequest({ ...CREATE_AUTHOR, variables });
-      const { createAuthor: createAuthorData } = await createAuthor(variables);
-      expect(createAuthorData).toEqual(data.createAuthor);
+      let { data } = await mockQueryRequest<CreateAuthor>({
+        query: CREATE_AUTHOR.query,
+        variables
+      });
+      expect(await mockQueryRequest({ query: CREATE_AUTHOR.query, variables })).toEqual(
+        await props.createAuthor(variables)
+      );
 
-      variables = { ...createAuthorData, name: "miguel" };
-      ({ data } = await mockQueryRequest({ ...UPDATE_AUTHOR, variables }));
-      const { updateAuthor: updateAuthorData } = await updateAuthor(variables);
-      expect(updateAuthorData).toEqual(data.updateAuthor);
+      variables = { ...data.createAuthor, name: "miguel" };
+      expect(await mockQueryRequest({ query: UPDATE_AUTHOR.query, variables })).toEqual(
+        await props.updateAuthor(variables)
+      );
 
-      variables = createAuthorData;
-      ({ data } = await mockQueryRequest({ ...DELETE_AUTHOR, variables }));
-      const { deleteAuthor: deleteAuthorData } = await deleteAuthor(createAuthorData);
-      expect(deleteAuthorData).toEqual(data.deleteAuthor);
+      variables = data.createAuthor;
+      expect(await mockQueryRequest({ query: DELETE_AUTHOR.query, variables })).toEqual(
+        await props.deleteAuthor(data.createAuthor)
+      );
     } catch (err) {
       console.error(err);
     }

@@ -2,8 +2,8 @@ import createBindings from "@grafoo/bindings";
 import {
   Context,
   GrafooConsumerProps,
-  GrafooRenderProps,
-  GrafooRenderMutations
+  GrafooBoundState,
+  GrafooBoundMutations
 } from "@grafoo/types";
 import { Component, createContext, createElement, ReactElement, ReactNode, SFC } from "react";
 
@@ -12,7 +12,7 @@ import { Component, createContext, createElement, ReactElement, ReactNode, SFC }
  * U = Mutations
  */
 type GrafooRenderFn<T, U> = (
-  renderProps: GrafooRenderProps & T & GrafooRenderMutations<U>
+  renderProps: GrafooBoundState & T & GrafooBoundMutations<U>
 ) => ReactNode;
 
 /**
@@ -37,7 +37,7 @@ export let Provider: SFC<Context> = props =>
   createElement(ctx.Provider, { value: props.client }, props.children);
 
 class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
-  state: GrafooRenderProps & T & GrafooRenderMutations<U>;
+  state: GrafooBoundState & T & GrafooBoundMutations<U>;
 
   constructor(props) {
     super(props);

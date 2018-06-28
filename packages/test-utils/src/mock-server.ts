@@ -1,6 +1,7 @@
+import { GraphQlPayload } from "@grafoo/types";
 import fetchMock from "fetch-mock";
 import fs from "fs";
-import { graphql, ExecutionResult } from "graphql";
+import { graphql } from "graphql";
 import { makeExecutableSchema } from "graphql-tools";
 import path from "path";
 import uuid from "uuid/v4";
@@ -130,19 +131,21 @@ const schema = makeExecutableSchema({ typeDefs: typeDefs, resolvers: resolvers }
 
 interface ExecuteQueryArg {
   query: string;
-  variables: {
+  variables?: {
     [key: string]: any;
   };
 }
 
-export const executeQuery = ({ query, variables }: ExecuteQueryArg): Promise<ExecutionResult> =>
-  graphql({ schema: schema, source: query, variableValues: variables });
+export function executeQuery<T>({ query, variables }: ExecuteQueryArg): Promise<GraphQlPayload<T>> {
+  // @ts-ignore
+  return graphql({ schema: schema, source: query, variableValues: variables });
+}
 
-export function mockQueryRequest(request: ExecuteQueryArg): Promise<ExecutionResult> {
+export function mockQueryRequest<T>(request: ExecuteQueryArg): Promise<GraphQlPayload<T>> {
   fetchMock.reset();
   fetchMock.restore();
 
-  return executeQuery(request).then(function(response) {
+  return executeQuery<T>(request).then(function(response) {
     fetchMock.post("*", response);
 
     return response;

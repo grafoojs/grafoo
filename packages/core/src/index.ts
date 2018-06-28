@@ -1,26 +1,28 @@
-import createTransport from "@grafoo/transport";
 import {
-  ClientInstance,
-  ClientOptions,
+  GrafooClient,
+  GrafooClientOptions,
   GrafooObject,
   Listener,
   ObjectsMap,
-  Variables
+  Variables,
+  GrafooTransport
 } from "@grafoo/types";
 import buildQueryTree from "./build-query-tree";
 import mapObjects from "./map-objects";
 import { getPathId } from "./util";
 
-export default function createClient(uri: string, options?: ClientOptions): ClientInstance {
-  let { initialState, idFields, fetchOptions } = (options || {}) as ClientOptions;
+export default function createClient(
+  transport: GrafooTransport,
+  options?: GrafooClientOptions
+): GrafooClient {
+  let { initialState, idFields } = options;
   let { pathsMap, objectsMap } = initialState || { pathsMap: {}, objectsMap: {} };
   let listeners: Listener[] = [];
-  let transportRequest = createTransport(uri, fetchOptions);
 
-  function request<T>({ query, frags }: GrafooObject, variables?: Variables) {
+  function execute<T>({ query, frags }: GrafooObject, variables?: Variables) {
     if (frags) for (let frag in frags) query += frags[frag];
 
-    return transportRequest<T>(query, variables);
+    return transport<T>(query, variables);
   }
 
   function listen(listener: Listener) {
@@ -36,7 +38,10 @@ export default function createClient(uri: string, options?: ClientOptions): Clie
   }
 
   function write({ paths }: GrafooObject, variables: Variables, data?: {}) {
-    data = data || variables;
+    if (!data) {
+      data = variables;
+      variables = undefined;
+    }
 
     let objects: ObjectsMap = {};
 
@@ -92,5 +97,5 @@ export default function createClient(uri: string, options?: ClientOptions): Clie
     return { objectsMap, pathsMap };
   }
 
-  return { request, listen, write, read, flush };
+  return { execute, listen, write, read, flush };
 }

@@ -47,11 +47,11 @@ This packages purpose is to standardize how view layer integrations are implemen
 
 ### Arguments
 
-| Argument | type           | Description                                           |
-| -------- | -------------- | ----------------------------------------------------- |
-| client   | ClientInstance | a client nstance                                      |
-| props    | object         | a props object passed by the user (description below) |
-| updater  | function       | a callback to notify for data changes                 |
+| Argument | type         | Description                                           |
+| -------- | ------------ | ----------------------------------------------------- |
+| client   | GrafooClient | a client nstance                                      |
+| props    | object       | a props object passed by the user (description below) |
+| updater  | function     | a callback to notify for data changes                 |
 
 #### Example
 

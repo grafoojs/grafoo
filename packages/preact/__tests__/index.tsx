@@ -1,10 +1,30 @@
 import createClient from "@grafoo/core";
 import graphql from "@grafoo/core/tag";
 import { mockQueryRequest } from "@grafoo/test-utils";
-import { ClientInstance } from "@grafoo/types";
+import { GrafooClient } from "@grafoo/types";
 import { h } from "preact";
 import { render } from "preact-render-spy";
 import { Consumer, Provider } from "../src";
+import createTransport from "@grafoo/transport";
+
+interface Post {
+  title: string;
+  content: string;
+  id: string;
+  __typename: string;
+  author: Author;
+}
+
+interface Author {
+  name: string;
+  id: string;
+  __typename: string;
+  posts?: Array<Post>;
+}
+
+interface Authors {
+  authors: Author[];
+}
 
 describe("@grafoo/preact", () => {
   const AUTHORS = graphql`
@@ -47,12 +67,13 @@ describe("@grafoo/preact", () => {
     }
   `;
 
-  let client: ClientInstance;
+  let client: GrafooClient;
 
   beforeEach(() => {
     jest.resetAllMocks();
 
-    client = createClient("https://some.graphql.api/", { idFields: ["id"] });
+    const transport = createTransport("https://some.graphql.api/");
+    client = createClient(transport, { idFields: ["id"] });
   });
 
   describe("<Provider />", () => {
@@ -167,7 +188,7 @@ describe("@grafoo/preact", () => {
 
       jest.resetAllMocks();
 
-      const spy = jest.spyOn(client, "request");
+      const spy = jest.spyOn(client, "execute");
 
       const mockRender = createMockRenderFn(done, [
         props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
@@ -183,9 +204,10 @@ describe("@grafoo/preact", () => {
     });
 
     it("should handle simple mutations", async done => {
+      const { query } = CREATE_AUTHOR;
       const variables = { name: "Bart" };
 
-      const { data } = await mockQueryRequest({ ...CREATE_AUTHOR, variables });
+      const data = await mockQueryRequest({ query, variables });
 
       const mockRender = createMockRenderFn(done, [
         props => {
@@ -203,7 +225,7 @@ describe("@grafoo/preact", () => {
     });
 
     it("should handle mutations with cache update", async done => {
-      const { data } = await mockQueryRequest(AUTHORS);
+      const { data } = await mockQueryRequest<Authors>(AUTHORS);
 
       const mockRender = createMockRenderFn(done, [
         props => {
@@ -251,7 +273,7 @@ describe("@grafoo/preact", () => {
     });
 
     it("should reflect updates that happen outside of the component", async done => {
-      const { data } = await mockQueryRequest(AUTHORS);
+      const { data } = await mockQueryRequest<Authors>(AUTHORS);
 
       client.write(AUTHORS, data);
 
@@ -272,11 +294,11 @@ describe("@grafoo/preact", () => {
     });
 
     it("should not trigger a network request if a query field is cached", async done => {
-      const { data } = await mockQueryRequest(POSTS_AND_AUTHORS);
+      const { data } = await mockQueryRequest<Authors>(POSTS_AND_AUTHORS);
 
       client.write(POSTS_AND_AUTHORS, data);
 
-      const spy = jest.spyOn(client, "request");
+      const spy = jest.spyOn(client, "execute");
 
       const mockRender = createMockRenderFn(done, [
         props => {
