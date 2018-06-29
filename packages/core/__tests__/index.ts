@@ -1,6 +1,6 @@
 import graphql from "@grafoo/core/tag";
 import { executeQuery } from "@grafoo/test-utils";
-import { GrafooClient, GrafooTransport, Variables } from "@grafoo/types";
+import { GrafooClient, Variables } from "@grafoo/types";
 import createClient from "../src";
 
 interface Post {
@@ -121,14 +121,12 @@ function mockTrasport<T>(query: string, variables: Variables) {
 
 describe("@grafoo/core", () => {
   let client: GrafooClient;
-  let transport: GrafooTransport;
   beforeEach(() => {
-    transport = mockTrasport;
-    client = createClient(transport, { idFields: ["id"] });
+    client = createClient(mockTrasport, { idFields: ["id"] });
   });
 
   it("should be instantiable", () => {
-    const client = createClient(transport, { idFields: ["id"] });
+    const client = createClient(mockTrasport, { idFields: ["id"] });
 
     expect(typeof client.execute).toBe("function");
     expect(typeof client.listen).toBe("function");
@@ -315,7 +313,7 @@ describe("@grafoo/core", () => {
 
     client.write(POSTS_AND_AUTHORS, data);
 
-    client = createClient(transport, { idFields: ["id"], initialState: client.flush() });
+    client = createClient(mockTrasport, { idFields: ["id"], initialState: client.flush() });
 
     expect(client.read(POSTS_AND_AUTHORS).data).toEqual(data);
   });
@@ -323,7 +321,7 @@ describe("@grafoo/core", () => {
   it("should accept `idFields` array in options", async () => {
     const { data } = await executeQuery(AUTHORS);
 
-    const client = createClient(transport, { idFields: ["__typename", "id"] });
+    const client = createClient(mockTrasport, { idFields: ["__typename", "id"] });
 
     client.write(AUTHORS, data);
 
