@@ -35,6 +35,31 @@
   "prettier": {
     "printWidth": 100
   },
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended",
+      "plugin:import/errors",
+      "plugin:import/warnings"
+    ],
+    "parser": "babel-eslint",
+    "parserOptions": {
+      "sourceType": "module",
+      "ecmaVersion": 2017,
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+    "plugins": [
+      "import"
+    ],
+    "env": {
+      "browser": true,
+      "commonjs": true,
+      "es6": true,
+      "node": true,
+      "jest": true
+    }
+  },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.50",
     "@babel/core": "^7.0.0-beta.50",

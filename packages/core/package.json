@@ -37,7 +37,6 @@
     }
   },
   "dependencies": {
-    "@grafoo/http-transport": "^0.0.1-beta.7",
     "@grafoo/types": "^0.0.1-beta.7"
   },
   "devDependencies": {

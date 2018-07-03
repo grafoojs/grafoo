@@ -42,6 +42,7 @@
     "react": ">=16.4"
   },
   "dependencies": {
+    "@grafoo/bindings": "^0.0.1-beta.7",
     "@grafoo/types": "^0.0.1-beta.7"
   },
   "devDependencies": {
