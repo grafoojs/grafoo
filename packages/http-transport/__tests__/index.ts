@@ -4,7 +4,7 @@ import createTransport from "../src";
 const fakeAPI = "http://fake-api.com/graphql";
 const query = "{ hello }";
 
-describe("@grafoo/transport", () => {
+describe("@grafoo/http-transport", () => {
   let request;
   beforeEach(() => {
     request = createTransport(fakeAPI);

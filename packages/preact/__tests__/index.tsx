@@ -1,11 +1,11 @@
 import createClient from "@grafoo/core";
 import graphql from "@grafoo/core/tag";
+import createTransport from "@grafoo/http-transport";
 import { mockQueryRequest } from "@grafoo/test-utils";
 import { GrafooClient } from "@grafoo/types";
 import { h } from "preact";
 import { render } from "preact-render-spy";
 import { Consumer, Provider } from "../src";
-import createTransport from "@grafoo/transport";
 
 interface Post {
   title: string;

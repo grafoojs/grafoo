@@ -1,5 +1,5 @@
 {
-  "name": "@grafoo/transport",
+  "name": "@grafoo/http-transport",
   "description": "grafoo client standard transport",
   "version": "0.0.1-beta.7",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/transport",
@@ -16,7 +16,7 @@
     "access": "public"
   },
   "scripts": {
-    "prepare": "grafoo-bundle --input src/index.ts --skip-compression",
+    "prepare": "grafoo-bundle --input src/index.ts",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },

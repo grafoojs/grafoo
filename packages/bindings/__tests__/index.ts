@@ -3,7 +3,7 @@ import graphql from "@grafoo/core/tag";
 import createClient from "@grafoo/core";
 import { GrafooClient, GrafooMutations, Variables } from "@grafoo/types";
 import { mockQueryRequest } from "@grafoo/test-utils";
-import createTransport from "@grafoo/transport";
+import createTransport from "@grafoo/http-transport";
 
 interface Post {
   title: string;

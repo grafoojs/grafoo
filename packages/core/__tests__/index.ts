@@ -126,8 +126,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should be instantiable", () => {
-    const client = createClient(mockTrasport, { idFields: ["id"] });
-
+    expect(() => createClient(mockTrasport, { idFields: ["id"] })).not.toThrow();
     expect(typeof client.execute).toBe("function");
     expect(typeof client.listen).toBe("function");
     expect(typeof client.write).toBe("function");
@@ -203,7 +202,7 @@ describe("@grafoo/core", () => {
 
     const authorToBeRemoved: Author = data.authors[0];
 
-    let ids = Object.keys(client.flush().objectsMap);
+    const ids = Object.keys(client.flush().objectsMap);
 
     expect(ids.some(id => id === authorToBeRemoved.id)).toBe(true);
 
@@ -211,7 +210,7 @@ describe("@grafoo/core", () => {
       authors: data.authors.filter(author => author.id !== authorToBeRemoved.id)
     });
 
-    let nextIds = Object.keys(client.flush().objectsMap);
+    const nextIds = Object.keys(client.flush().objectsMap);
 
     expect(nextIds.length).toBe(ids.length - 1);
     expect(nextIds.some(id => id === authorToBeRemoved.id)).toBe(false);

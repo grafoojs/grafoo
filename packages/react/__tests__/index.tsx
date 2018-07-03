@@ -1,11 +1,11 @@
-import * as React from "react";
 import createClient from "@grafoo/core";
 import graphql from "@grafoo/core/tag";
+import createTrasport from "@grafoo/http-transport";
 import { mockQueryRequest } from "@grafoo/test-utils";
 import { GrafooClient } from "@grafoo/types";
+import * as React from "react";
 import * as TestRenderer from "react-test-renderer";
-import { Provider, Consumer } from "../src";
-import createTrasport from "@grafoo/transport";
+import { Consumer, Provider } from "../src";
 
 interface Post {
   title: string;
