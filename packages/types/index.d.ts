@@ -100,7 +100,6 @@ export interface GrafooBoundState {
   client: GrafooClient;
   errors?: GraphQlError[];
   load?: () => void;
-  loaded?: boolean;
   loading?: boolean;
 }
 
