@@ -107,41 +107,31 @@ const USER_QUERY = {
 
 ### `createClient` factory
 
-`createClient` accepts as arguments `uri` which is the http address to your GraphQL API and an options object. This options are:
+`createClient` accepts as arguments a `transport` function to comunicate with your GraphQL API and an options object. This options are:
 
-| Option       | Type               | Required | Description                                                                           |
-| ------------ | ------------------ | -------- | ------------------------------------------------------------------------------------- |
-| fetchOptions | object \| function | true     | fetch options to be sent in every request the client performs                         |
-| idFields     | string[]           | false    | fields Grafoo takes to build unique identifiers                                       |
-| initialState | object             | false    | a initial state to hydrate the cache. It can be produced by the `flush` client method |
-
-### FetchOptions
-
-Grafoo uses the [fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) under the hood to make requests to your graphql server. Some options are already set though, those are body and headers content type.
+| Option       | Type     | Required | Description                                                                           |
+| ------------ | -------- | -------- | ------------------------------------------------------------------------------------- |
+| idFields     | string[] | false    | fields Grafoo takes to build unique identifiers                                       |
+| initialState | object   | false    | a initial state to hydrate the cache. It can be produced by the `flush` client method |
 
 #### Example
 
 ```js
 import createClient from "@grafoo/core";
 
-const client = createClient("http://some.graphql.api", {
-  fetchOptions: {
-    cache: "force-cache",
+function fetchQuery(query, variables) {
+  const init = {
+    method: "POST",
+    body: JSON.stringify({ query, variables }),
     headers: {
-      authorization: "Bearer some.token"
+      "content-type": "application/json"
     }
-  }
-});
+  };
 
-// or
+  return fetch("http://some.graphql.api", init).then(res => res.json());
+}
 
-const client = createClient("http://some.graphql.api", {
-  fetchOptions: () => ({
-    headers: {
-      authorization: storage.get("token")
-    }
-  })
-});
+const client = createClient(fetchQuery);
 ```
 
 ### IdFields
@@ -174,7 +164,7 @@ Then the client, when caching this data, will use this `id` field to store it.
 #### Example
 
 ```js
-const client = createClient("http://some.graphql.api", {
+const client = createClient(fetchQuery, {
   idFields: ["id", "__typename"]
 });
 ```
@@ -185,13 +175,13 @@ the `createClient` factory returns a client instance with some methods:
 
 | Name    | Description                                            |
 | ------- | ------------------------------------------------------ |
-| request | makes query requests                                   |
+| execute | executes queries                                       |
 | read    | reads queries from the cache                           |
 | write   | writes queries to the cache                            |
 | listen  | takes a listener callback and notify for cache changes |
 | flush   | dumps the internal state of the instance cache         |
 
-### `GrafooClient.request`
+### `GrafooClient.execute`
 
 This method receives as arguments a query object created with the `@grafoo/core/tag` template tag and optionally a GraphQL variables object. It returns a promise that will resolve with the data requested or reject with a list of GraphQL errors.
 
@@ -200,7 +190,7 @@ This method receives as arguments a query object created with the `@grafoo/core/
 ```js
 const variables = { id: 123 };
 
-client.request(USER_QUERY, variables).then(data => {
+client.execute(USER_QUERY, variables).then(data => {
   console.log(data); // { "user": { "name": "John Doe", "id": "123" } }
 });
 ```
@@ -212,7 +202,7 @@ The write method as the name implies writes to the cache. It takes as argumets t
 #### Example
 
 ```js
-client.request(USER_QUERY, variables).then(data => {
+client.execute(USER_QUERY, variables).then(data => {
   client.write(USER_QUERY, variables, data);
 });
 ```
@@ -248,7 +238,7 @@ client.read(USER_QUERY, variables);
 #### Example
 
 ```js
-function listener(object) {
+function listener(objects) {
   console.log(objects);
 }
 
@@ -271,9 +261,8 @@ app.get("/", (req, res) => {
   res.send(`<script>_GRAFOO_INITIAL_STATE_=${JSON.stringify(client.flush())}_</script>`);
 });
 
-// client
-
-const client = createClient("http://some.graphql.api/", {
+// client.js
+const client = createClient(fetchQuery, {
   initialState: window._GRAFOO_INITIAL_STATE_
 });
 ```

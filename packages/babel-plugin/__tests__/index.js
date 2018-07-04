@@ -47,7 +47,7 @@ pluginTester({
     "should throw if during client instatiation options is passed with a type other then object": {
       code: `
         import createClient from "@grafoo/core";
-        const query = createClient("http://gql.api", "I AM ERROR");
+        const query = createClient(someTransport, "I AM ERROR");
       `,
       error: true
     },
@@ -58,7 +58,7 @@ pluginTester({
       },
       code: `
         import createClient from "@grafoo/core";
-        const query = createClient("http://gql.api", "I AM ERROR");
+        const query = createClient(someTransport, "I AM ERROR");
       `,
       error: true
     },
@@ -106,14 +106,14 @@ pluginTester({
     "should include `idFields` in the client instantiation if options are not provided": {
       code: `
         import createClient from "@grafoo/core";
-        const query = createClient("http://gql.api");
+        const query = createClient(someTransport);
       `,
       snapshot: true
     },
     "should include `idFields` in the client instantiation even if options are provided": {
       code: `
         import createClient from "@grafoo/core";
-        const query = createClient("http://gql.api", {
+        const query = createClient(someTransport, {
           headers: () => ({ authorization: "some-token" })
         });
       `,

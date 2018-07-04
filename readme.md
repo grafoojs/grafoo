@@ -107,7 +107,9 @@ function fetchQuery(query, variables) {
   const init = {
     method: "POST",
     body: JSON.stringify({ query, variables }),
-    headers: {}
+    headers: {
+      "content-type": "application/json"
+    }
   };
 
   return fetch("http://some.graphql.api", init).then(res => res.json());
@@ -150,7 +152,9 @@ function fetchQuery(query, variables) {
   const init = {
     method: "POST",
     body: JSON.stringify({ query, variables }),
-    headers: {}
+    headers: {
+      "content-type": "application/json"
+    }
   };
 
   return fetch("http://some.graphql.api", init).then(res => res.json());

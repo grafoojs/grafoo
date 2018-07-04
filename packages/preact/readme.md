@@ -68,7 +68,19 @@ import { Provider } from "@grafoo/preact";
 
 import Posts from "./Posts";
 
-const client = createClient("http://some.graphql/api/");
+function fetchQuery(query, variables) {
+  const init = {
+    method: "POST",
+    body: JSON.stringify({ query, variables }),
+    headers: {
+      "content-type": "application/json"
+    }
+  };
+
+  return fetch("http://some.graphql.api", init).then(res => res.json());
+}
+
+const client = createClient(fetchQuery);
 
 render(
   <Provider client={client}>
