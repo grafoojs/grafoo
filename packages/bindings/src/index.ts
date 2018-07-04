@@ -43,8 +43,7 @@ export default function createBindings<T = {}, U = {}>(
     });
   }
 
-  let cacheLoaded = !skip && !!data;
-  let boundState = query ? { load, loaded: cacheLoaded, loading: !cacheLoaded } : {};
+  let boundState = query ? { load, loading: !skip && !data } : {};
 
   if (mutations) {
     for (let key in mutations) {
@@ -98,7 +97,7 @@ export default function createBindings<T = {}, U = {}>(
         writeToCache(data);
       }
 
-      performUpdate({ errors, loading: false, loaded: true });
+      performUpdate({ errors, loading: false });
     });
   }
 
