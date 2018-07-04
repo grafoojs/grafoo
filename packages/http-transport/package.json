@@ -16,7 +16,7 @@
     "access": "public"
   },
   "scripts": {
-    "prepare": "grafoo-bundle --input src/index.ts",
+    "build": "grafoo-bundle --input src/index.ts",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },

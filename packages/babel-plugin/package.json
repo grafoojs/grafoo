@@ -17,7 +17,7 @@
     "access": "public"
   },
   "scripts": {
-    "prepare": "babel src --out-dir dist",
+    "build": "babel src --out-dir dist",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },

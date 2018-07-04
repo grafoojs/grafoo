@@ -9,8 +9,8 @@ const noDeps = readdirSync(pkgsRoot).filter(x => !withDeps.some(y => y === x));
 
 const command = exec(
   [
-    `lerna run --scope "@grafoo/*(${noDeps.join("|")})" prepare`,
-    `lerna run --scope "@grafoo/*(${withDeps.join("|")})" prepare`
+    `lerna run --scope "@grafoo/*(${noDeps.join("|")})" build`,
+    `lerna run --scope "@grafoo/*(${withDeps.join("|")})" build`
   ].join(" && ")
 );
 
