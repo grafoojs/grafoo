@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.0.1-beta.8
+
+### Features
+
+- [core] transport logic has been removed from core. This is a breaking change and here is the fix:
+
+```diff
+  import createClient from "@grafoo/core";
+
++ function fetchQuery(query, variables) {
++   const init = {
++     method: "POST",
++     body: JSON.stringify({ query, variables }),
++     headers: {
++       "content-type": "application/json"
++     }
++   };
++
++   return fetch("http://some.graphql.api", init).then(res => res.json());
++ }
+
+- const client = createClient("http://some.graphql.api");
++ const client = createClient(fetchQuery);
+```
+
 ## v0.0.1-beta.7
 
 ### Features
