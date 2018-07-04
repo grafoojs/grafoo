@@ -47,11 +47,11 @@ This packages purpose is to standardize how view layer integrations are implemen
 
 ### Arguments
 
-| Argument | type           | Description                                           |
-| -------- | -------------- | ----------------------------------------------------- |
-| client   | ClientInstance | a client nstance                                      |
-| props    | object         | a props object passed by the user (description below) |
-| updater  | function       | a callback to notify for data changes                 |
+| Argument | type         | Description                                           |
+| -------- | ------------ | ----------------------------------------------------- |
+| client   | GrafooClient | a client nstance                                      |
+| props    | object       | a props object passed by the user (description below) |
+| updater  | function     | a callback to notify for data changes                 |
 
 #### Example
 
@@ -59,7 +59,19 @@ This packages purpose is to standardize how view layer integrations are implemen
 import createBindings from "@grafoo/bindings";
 import createClient from "@grafoo/core";
 
-const client = createClient("https://some.graphql.api/");
+function fetchQuery(query, variables) {
+  const init = {
+    method: "POST",
+    body: JSON.stringify({ query, variables }),
+    headers: {
+      "content-type": "application/json"
+    }
+  };
+
+  return fetch("http://some.graphql.api", init).then(res => res.json());
+}
+
+const client = createClient(fetchQuery);
 const props = {};
 const updater = () => {};
 
@@ -104,7 +116,7 @@ A mutation object receives the following props:
 Each mutation will generate a single function that accepts a GraphQL variables object as argument and return a promise that will resolve with the mutation data or reject with GraphQL `errors`.
 
 ```ts
-type MutationFn = (variables: Variables) => Promise<MutationResponse>;
+type MutationFn = (variables: Variables) => Promise<MutationData>;
 ```
 
 ### Mutation query dependency
@@ -114,10 +126,10 @@ type MutationFn = (variables: Variables) => Promise<MutationResponse>;
 ### `update`
 
 ```ts
-type UpdateFn = (query: QueryData, response: MutationResponse) => CacheUpdate;
+type UpdateFn = (query: QueryData, data: MutationData) => CacheUpdate;
 ```
 
-The mutation `update` function is resposible to update the cache when the request is completed. It receives as paremeters an object containing the data from the query it depends upon and the mutation response sent by the server. `update` return type is an object that describes the changes to be made to the cache.
+The mutation `update` function is resposible to update the cache when the request is completed. It receives as paremeters an object containing the data from the query it depends upon and the mutation result. `update` return type is an object that describes the changes to be made to the cache.
 
 ### `optimisticUpdate`
 
@@ -136,9 +148,9 @@ The object returned by `createBindings` contains the following props.
 | Name    | type     | Descrition                                                   |
 | ------- | -------- | ------------------------------------------------------------ |
 | client  | object   | the client instance                                          |
-| load    | function | a method to execute a request with the `query` prop          |
-| loading | boolean  | whether the client is making a request or not                |
-| loaded  | boolean  | whether the query data was already fetched                   |
+| load    | function | a method to execute a query with the `query` prop            |
+| loading | boolean  | whether the client is executing a query or not               |
+| loaded  | boolean  | whether the query data was already been fetched              |
 | errors  | string[] | an array of GraphQL errors from a failed request to your API |
 
 The remaining props are:

@@ -85,8 +85,20 @@ The recommendation for now is to use the [`get-graphql-schema`](https://github.c
   import createClient from "@grafoo/core";
 - import graphql from "@grafoo/core/tag";
 
-- const client = createClient("http://some.graphql.api/");
-+ const client = createClient("http://some.graphql.api/", {
+  function fetchQuery(query, variables) {
+    const init = {
+      method: "POST",
+      body: JSON.stringify({ query, variables }),
+      headers: {
+        "content-type": "application/json"
+      }
+    };
+
+    return fetch("http://some.graphql.api", init).then(res => res.json());
+  }
+
+- const client = createClient(fetchQuery);
++ const client = createClient(fetchQuery, {
 +   idFields: ["id"]
 + });
 

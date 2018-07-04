@@ -37,14 +37,14 @@ const query = {
 exports[`@grafoo/babel-plugin should include \`idFields\` in the client instantiation even if options are provided: should include \`idFields\` in the client instantiation even if options are provided 1`] = `
 "
 import createClient from \\"@grafoo/core\\";
-const query = createClient(\\"http://gql.api\\", {
+const query = createClient(someTransport, {
   headers: () => ({ authorization: \\"some-token\\" })
 });
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
 import createClient from \\"@grafoo/core\\";
-const query = createClient(\\"http://gql.api\\", {
+const query = createClient(someTransport, {
   headers: () => ({ authorization: \\"some-token\\" }),
   idFields: [\\"id\\"]
 });
@@ -54,12 +54,12 @@ const query = createClient(\\"http://gql.api\\", {
 exports[`@grafoo/babel-plugin should include \`idFields\` in the client instantiation if options are not provided: should include \`idFields\` in the client instantiation if options are not provided 1`] = `
 "
 import createClient from \\"@grafoo/core\\";
-const query = createClient(\\"http://gql.api\\");
+const query = createClient(someTransport);
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
 import createClient from \\"@grafoo/core\\";
-const query = createClient(\\"http://gql.api\\", {
+const query = createClient(someTransport, {
   idFields: [\\"id\\"]
 });
 "

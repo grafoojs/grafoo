@@ -103,11 +103,19 @@ From `@grafoo/core` you will import the factory that creates the client instance
 import createClient from "@grafoo/core";
 import gql from "@grafoo/core/tag";
 
-const client = createClient("http://some.graphql.api", {
-  fetchOptions: {
-    /* can also be a function */
-  }
-});
+function fetchQuery(query, variables) {
+  const init = {
+    method: "POST",
+    body: JSON.stringify({ query, variables }),
+    headers: {
+      "content-type": "application/json"
+    }
+  };
+
+  return fetch("http://some.graphql.api", init).then(res => res.json());
+}
+
+const client = createClient(fetchQuery);
 
 const USER_QUERY = gql`
   query($id: ID!) {
@@ -140,7 +148,19 @@ import { Provider } from "@grafoo/react";
 
 import Posts from "./Posts";
 
-const client = createClient("http://some.graphql/api/");
+function fetchQuery(query, variables) {
+  const init = {
+    method: "POST",
+    body: JSON.stringify({ query, variables }),
+    headers: {
+      "content-type": "application/json"
+    }
+  };
+
+  return fetch("http://some.graphql.api", init).then(res => res.json());
+}
+
+const client = createClient(fetchQuery);
 
 ReactDom.render(
   <Provider client={client}>

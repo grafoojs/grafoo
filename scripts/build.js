@@ -4,15 +4,14 @@ const { exec } = require("child_process");
 
 const pkgsRoot = join(__dirname, "..", "packages");
 
-const hasDependency = ["core", "react", "preact"];
-const noDependency = readdirSync(pkgsRoot).filter(x => !hasDependency.some(y => y === x));
+const withDeps = ["react", "preact"];
+const noDeps = readdirSync(pkgsRoot).filter(x => !withDeps.some(y => y === x));
 
 const command = exec(
-  'lerna run --scope "@grafoo/*(' +
-    noDependency.join("|") +
-    ')" prepare && lerna run --scope "@grafoo/*(' +
-    hasDependency.join("|") +
-    ')" prepare'
+  [
+    `lerna run --scope "@grafoo/*(${noDeps.join("|")})" prepare`,
+    `lerna run --scope "@grafoo/*(${withDeps.join("|")})" prepare`
+  ].join(" && ")
 );
 
 command.stdout.pipe(process.stdout);

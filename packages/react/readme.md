@@ -82,7 +82,19 @@ import React from "react";
 import createClient from "@grafoo/core";
 import { Provider } from "@grafoo/react";
 
-const client = createClient("http://some.graphql.api");
+function fetchQuery(query, variables) {
+  const init = {
+    method: "POST",
+    body: JSON.stringify({ query, variables }),
+    headers: {
+      "content-type": "application/json"
+    }
+  };
+
+  return fetch("http://some.graphql.api", init).then(res => res.json());
+}
+
+const client = createClient(fetchQuery);
 
 export default function App() {
   return (
@@ -112,9 +124,9 @@ The `Consumer` render function takes as parameter an object with the following p
 | Name    | type     | Descrition                                                   |
 | ------- | -------- | ------------------------------------------------------------ |
 | client  | object   | the client instance                                          |
-| load    | function | a method to execute a request with the `query` prop          |
-| loading | boolean  | whether the client is making a request or not                |
-| loaded  | boolean  | whether the query data was already fetched                   |
+| load    | function | a method to execute a query with the `query` prop            |
+| loading | boolean  | whether the client is executing a query or not               |
+| loaded  | boolean  | whether the query data was already been fetched              |
 | errors  | string[] | an array of GraphQL errors from a failed request to your API |
 
 The remaining props are:

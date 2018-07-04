@@ -33,7 +33,7 @@ module.exports = function build(opts) {
           dangerousTaggedTemplateString: true
         }
       }),
-      !opts.skipCompress &&
+      !opts.skipCompression &&
         terser({
           sourceMap: true,
           output: { comments: false },

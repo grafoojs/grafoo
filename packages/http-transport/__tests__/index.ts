@@ -4,7 +4,7 @@ import createTransport from "../src";
 const fakeAPI = "http://fake-api.com/graphql";
 const query = "{ hello }";
 
-describe("@grafoo/transport", () => {
+describe("@grafoo/http-transport", () => {
   let request;
   beforeEach(() => {
     request = createTransport(fakeAPI);
@@ -67,12 +67,9 @@ describe("@grafoo/transport", () => {
   it("should handle graphql errors", async () => {
     const response = { data: null, errors: [{ message: "I AM ERROR!" }] };
 
-    await mock(response, async () => {
-      await expect(request(query)).rejects.toMatchObject({
-        message: 'graphql error on request {"query":"{ hello }"}',
-        errors: response.errors
-      });
-    });
+    await mock(response, async () =>
+      expect(request(query)).resolves.toMatchObject({ errors: response.errors })
+    );
   });
 });
 

@@ -1,4 +1,4 @@
-# `@grafoo/transport`
+# `@grafoo/http-transport`
 
 <p><i>A Simple HTTP Client for GraphQL Servers</i></p>
 
@@ -15,21 +15,21 @@
       alt="coverage"
     />
   </a>
-  <a href=https://www.npmjs.com/package/@grafoo/transport>
+  <a href=https://www.npmjs.com/package/@grafoo/http-transport>
     <img
-      src=https://img.shields.io/npm/v/@grafoo/transport.svg
+      src=https://img.shields.io/npm/v/@grafoo/http-transport.svg
       alt=npm
     >
   </a>
-  <a href=https://www.npmjs.com/package/@grafoo/transport>
+  <a href=https://www.npmjs.com/package/@grafoo/http-transport>
     <img
-      src=https://img.shields.io/npm/dm/@grafoo/transport.svg
+      src=https://img.shields.io/npm/dm/@grafoo/http-transport.svg
       alt=downloads
     >
   </a>
   <a href=https://github.com/grafoojs/grafoo>
     <img
-      src=https://img.shields.io/bundlephobia/minzip/@grafoo/transport.svg?label=size
+      src=https://img.shields.io/bundlephobia/minzip/@grafoo/http-transport.svg?label=size
       alt=size
     >
   </a>
@@ -50,15 +50,15 @@
 ## Install
 
 ```
-$ npm i @grafoo/transport
+$ npm i @grafoo/http-transport
 ```
 
 ## Usage
 
-`@grafoo/transport` default export is a factory that accepts as arguments `uri` and `fetchOptions` (that can be an object or a function):
+`@grafoo/http-transport` default export is a factory that accepts as arguments `uri` and `fetchOptions` (that can be an object or a function):
 
 ```js
-import createTransport from "@grafoo/transport";
+import createTransport from "@grafoo/http-transport";
 
 const request = createTransport("http://some.graphql.api", () => ({
   headers: {

@@ -1,8 +1,8 @@
 import createBindings from "@grafoo/bindings";
 import {
   Context,
-  GrafooRenderProps,
-  GrafooRenderMutations,
+  GrafooBoundState,
+  GrafooBoundMutations,
   GrafooConsumerProps
 } from "@grafoo/types";
 import { Component } from "preact";
@@ -12,7 +12,7 @@ import { Component } from "preact";
  * U = Mutations
  */
 type GrafooRenderFn<T, U> = (
-  renderProps: GrafooRenderProps & T & GrafooRenderMutations<U>
+  renderProps: GrafooBoundState & T & GrafooBoundMutations<U>
 ) => JSX.Element;
 
 /**
