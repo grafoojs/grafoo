@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.1-beta.10
+
+### Features
+
+- [bindings, react, preact] revert latest release reintroducing `loaded` prop from bindings
+
 ## v0.0.1-beta.9
 
 ### Features
