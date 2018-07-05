@@ -162,7 +162,7 @@ describe("@grafoo/preact", () => {
 
       const [[call]] = mockRender.mock.calls;
 
-      expect(call).toMatchObject({ loading: false });
+      expect(call).toMatchObject({ loading: false, loaded: false });
       expect(typeof call.load).toBe("function");
     });
 
@@ -170,8 +170,8 @@ describe("@grafoo/preact", () => {
       const { data } = await mockQueryRequest(AUTHORS);
 
       const mockRender = createMockRenderFn(done, [
-        props => expect(props).toMatchObject({ loading: true }),
-        props => expect(props).toMatchObject({ loading: false, ...data })
+        props => expect(props).toMatchObject({ loading: true, loaded: false }),
+        props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
       ]);
 
       render(
@@ -191,7 +191,7 @@ describe("@grafoo/preact", () => {
       const spy = jest.spyOn(client, "execute");
 
       const mockRender = createMockRenderFn(done, [
-        props => expect(props).toMatchObject({ loading: false, ...data })
+        props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
       ]);
 
       render(
@@ -229,11 +229,11 @@ describe("@grafoo/preact", () => {
 
       const mockRender = createMockRenderFn(done, [
         props => {
-          expect(props).toMatchObject({ loading: true });
+          expect(props).toMatchObject({ loading: true, loaded: false });
           expect(typeof props.createAuthor).toBe("function");
         },
         props => {
-          expect(props).toMatchObject({ loading: false, ...data });
+          expect(props).toMatchObject({ loading: false, loaded: true, ...data });
           const variables = { name: "Homer" };
           mockQueryRequest({ query: CREATE_AUTHOR.query, variables }).then(() => {
             props.createAuthor(variables);
@@ -278,7 +278,7 @@ describe("@grafoo/preact", () => {
       client.write(AUTHORS, data);
 
       const mockRender = createMockRenderFn(done, [
-        props => expect(props).toMatchObject({ loading: false, ...data }),
+        props => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
         props => expect(props.authors[0].name).toBe("Homer")
       ]);
 
@@ -302,7 +302,7 @@ describe("@grafoo/preact", () => {
 
       const mockRender = createMockRenderFn(done, [
         props => {
-          expect(props).toMatchObject({ authors: data.authors, loading: false });
+          expect(props).toMatchObject({ authors: data.authors, loading: false, loaded: true });
           expect(spy).not.toHaveBeenCalled();
         }
       ]);

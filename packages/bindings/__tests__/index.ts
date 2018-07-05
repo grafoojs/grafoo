@@ -133,10 +133,12 @@ describe("@grafoo/bindings", () => {
 
     const bindings = createBindings<Authors>(client, { query: AUTHORS }, renderFn);
 
+    expect(bindings.getState()).toMatchObject({ loaded: false, loading: true });
+
     await bindings.load();
 
     expect(renderFn).toHaveBeenCalledTimes(1);
-    expect(bindings.getState()).toMatchObject({ ...data, loading: false });
+    expect(bindings.getState()).toMatchObject({ ...data, loaded: true, loading: false });
   });
 
   it("should notify a loading state", async () => {
@@ -149,7 +151,7 @@ describe("@grafoo/bindings", () => {
     await bindings.load();
 
     expect(renderFn).toHaveBeenCalledTimes(1);
-    expect(bindings.getState()).toMatchObject({ ...data, loading: false });
+    expect(bindings.getState()).toMatchObject({ ...data, loaded: true, loading: false });
 
     const reloadPromise = bindings.load();
 
@@ -167,7 +169,7 @@ describe("@grafoo/bindings", () => {
 
     const bindings = createBindings<Authors>(client, { query: AUTHORS }, () => void 0);
 
-    expect(bindings.getState()).toMatchObject({ ...data, loading: false });
+    expect(bindings.getState()).toMatchObject({ ...data, loaded: true, loading: false });
   });
 
   it("should trigger updater function if the cache has been updated", async () => {

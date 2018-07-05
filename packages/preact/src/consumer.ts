@@ -43,7 +43,7 @@ export let Consumer: ConsumerType = function GrafooConsumer<T, U>(
   let { load, getState, unbind } = createBindings(context.client, props, () => this.setState(null));
 
   this.componentDidMount = () => {
-    if (props.skip || !props.query || !getState().loading) return;
+    if (props.skip || !props.query || getState().loaded) return;
 
     load();
   };

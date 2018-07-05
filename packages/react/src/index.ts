@@ -49,7 +49,7 @@ class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
     this.state = getState();
 
     this.componentDidMount = () => {
-      if (props.skip || !props.query || !getState().loading) return;
+      if (props.skip || !props.query || getState().loaded) return;
 
       load();
     };
