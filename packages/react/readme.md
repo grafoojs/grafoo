@@ -126,6 +126,7 @@ The `Consumer` render function takes as parameter an object with the following p
 | client  | object   | the client instance                                          |
 | load    | function | a method to execute a query with the `query` prop            |
 | loading | boolean  | whether the client is executing a query or not               |
+| loaded  | boolean  | whether the query data is already cached                     |
 | errors  | string[] | an array of GraphQL errors from a failed request to your API |
 
 The remaining props are:
@@ -154,7 +155,7 @@ const ALL_POSTS = gql`
 export default function Posts() {
   return (
     <Consumer query={ALL_POSTS} variables={{ orderBy: "createdAt_DESC" }}>
-      {({ client, load, loading, errors, allPosts }) => (
+      {({ client, load, loaded, loading, errors, allPosts }) => (
         <h1>
           <marquee>👆 do whatever you want with the variables above 👆</marquee>
         </h1>

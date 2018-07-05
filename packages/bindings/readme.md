@@ -150,6 +150,7 @@ The object returned by `createBindings` contains the following props.
 | client  | object   | the client instance                                          |
 | load    | function | a method to execute a query with the `query` prop            |
 | loading | boolean  | whether the client is executing a query or not               |
+| loaded  | boolean  | whether the query data is already cached                     |
 | errors  | string[] | an array of GraphQL errors from a failed request to your API |
 
 The remaining props are:
