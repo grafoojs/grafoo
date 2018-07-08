@@ -52,7 +52,7 @@ interface UpdateAuthor {
 }
 
 const AUTHORS = graphql`
-  {
+  query {
     authors {
       name
       posts {
@@ -64,7 +64,7 @@ const AUTHORS = graphql`
 `;
 
 const POSTS_AND_AUTHORS = graphql`
-  {
+  query {
     posts {
       title
       body
