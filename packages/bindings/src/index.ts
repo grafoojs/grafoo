@@ -17,9 +17,12 @@ export default function createBindings<T = {}, U = {}>(
   let boundMutations = {} as GrafooBoundMutations<U>;
   let unbind = () => {};
   let lockListenUpdate = 0;
+  let loaded = false;
 
   if (query) {
     ({ data, objects } = client.read<T>(query, variables));
+
+    for (let path in query.paths) loaded = !!data && !!data[query.paths[path].name];
 
     unbind = client.listen(nextObjects => {
       if (lockListenUpdate) return (lockListenUpdate = 0);
@@ -43,7 +46,7 @@ export default function createBindings<T = {}, U = {}>(
     });
   }
 
-  let boundState = query ? { load, loaded: !!data, loading: !skip && !data } : {};
+  let boundState = query ? { load, loaded, loading: !skip && !loaded } : {};
 
   if (mutations) {
     for (let key in mutations) {

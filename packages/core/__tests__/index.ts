@@ -36,7 +36,7 @@ interface PostsQuery {
 }
 
 const AUTHORS = graphql`
-  {
+  query {
     authors {
       name
       posts {
@@ -48,7 +48,7 @@ const AUTHORS = graphql`
 `;
 
 const SIMPLE_AUTHORS = graphql`
-  {
+  query {
     authors {
       name
     }
@@ -56,7 +56,7 @@ const SIMPLE_AUTHORS = graphql`
 `;
 
 const POSTS_AND_AUTHORS = graphql`
-  {
+  query {
     posts {
       title
       body
@@ -104,7 +104,7 @@ const POST_WITH_FRAGMENT = graphql`
 `;
 
 const POSTS = graphql`
-  {
+  query {
     posts {
       title
       body
