@@ -209,7 +209,7 @@ client.execute(USER_QUERY, variables).then(data => {
 
 ### `GrafooClient.read`
 
-The read method takes as arguments the query object and optionally a variables object. It returns an object with two properties: `data` which is an tree structured object shaped according to your query tree and `objects`, a flat structured object containing every node on your query indexed by a unique id created with the `idProps` option passed on client instantiation.
+The read method takes as arguments the query object and optionally a variables object. It returns an object with three properties: `data`, a tree structured object shaped according to your query tree, `objects` a flat structured object containing every node on your query indexed by a unique id created with the `idProps` option passed on client instantiation and a `partial` property that flags if the data is partially cached or not.
 
 #### Example
 
@@ -227,7 +227,8 @@ client.read(USER_QUERY, variables);
 //       "name": "John Doe",
 //       "id": "123"
 //     }
-//   }
+//   },
+//   partial: false
 // }
 ```
 

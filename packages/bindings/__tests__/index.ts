@@ -51,55 +51,75 @@ interface UpdateAuthor {
   };
 }
 
+const AUTHORS = graphql`
+  query {
+    authors {
+      name
+      posts {
+        title
+        body
+      }
+    }
+  }
+`;
+
+const POSTS_AND_AUTHORS = graphql`
+  query {
+    posts {
+      title
+      body
+      author {
+        name
+      }
+    }
+
+    authors {
+      name
+      posts {
+        title
+        body
+      }
+    }
+  }
+`;
+
+const CREATE_AUTHOR = graphql`
+  mutation($name: String!) {
+    createAuthor(name: $name) {
+      name
+      posts {
+        title
+        body
+      }
+    }
+  }
+`;
+
+const DELETE_AUTHOR = graphql`
+  mutation($id: ID!) {
+    deleteAuthor(id: $id) {
+      name
+      posts {
+        title
+        body
+      }
+    }
+  }
+`;
+
+const UPDATE_AUTHOR = graphql`
+  mutation($id: ID!, $name: String) {
+    updateAuthor(id: $id, name: $name) {
+      name
+      posts {
+        title
+        body
+      }
+    }
+  }
+`;
+
 describe("@grafoo/bindings", () => {
-  const AUTHORS = graphql`
-    {
-      authors {
-        name
-        posts {
-          title
-          body
-        }
-      }
-    }
-  `;
-
-  const CREATE_AUTHOR = graphql`
-    mutation($name: String!) {
-      createAuthor(name: $name) {
-        name
-        posts {
-          title
-          body
-        }
-      }
-    }
-  `;
-
-  const DELETE_AUTHOR = graphql`
-    mutation($id: ID!) {
-      deleteAuthor(id: $id) {
-        name
-        posts {
-          title
-          body
-        }
-      }
-    }
-  `;
-
-  const UPDATE_AUTHOR = graphql`
-    mutation($id: ID!, $name: String) {
-      updateAuthor(id: $id, name: $name) {
-        name
-        posts {
-          title
-          body
-        }
-      }
-    }
-  `;
-
   let client: GrafooClient;
   beforeEach(() => {
     jest.resetAllMocks();
@@ -170,6 +190,16 @@ describe("@grafoo/bindings", () => {
     const bindings = createBindings<Authors>(client, { query: AUTHORS }, () => void 0);
 
     expect(bindings.getState()).toMatchObject({ ...data, loaded: true, loading: false });
+  });
+
+  it("should provide the data if a query is partialy cached", async () => {
+    const { data } = await mockQueryRequest(AUTHORS);
+
+    client.write(AUTHORS, data);
+
+    const bindings = createBindings<Authors>(client, { query: POSTS_AND_AUTHORS }, () => void 0);
+
+    expect(bindings.getState()).toMatchObject({ ...data, loaded: false, loading: true });
   });
 
   it("should trigger updater function if the cache has been updated", async () => {

@@ -76,6 +76,7 @@ export default function createClient(
   function read({ paths }: GrafooObject, variables?: Variables) {
     let data = {};
     let objects: ObjectsMap = {};
+    let partial = false;
 
     for (let i in paths) {
       let { name, args } = paths[i];
@@ -85,11 +86,13 @@ export default function createClient(
         data[name] = currentPath.data[name];
 
         for (let i of currentPath.objects) objects[i] = objectsMap[i];
+      } else {
+        partial = true;
       }
     }
 
     return Object.keys(data).length
-      ? { data: buildQueryTree(data, objectsMap, idFields), objects }
+      ? { data: buildQueryTree(data, objectsMap, idFields), objects, partial }
       : {};
   }
 

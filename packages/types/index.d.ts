@@ -60,7 +60,7 @@ export interface GrafooClient {
   read: <T>(
     grafooObject: GrafooObject,
     variables?: Variables
-  ) => { data?: T; objects?: ObjectsMap };
+  ) => { data?: T; objects?: ObjectsMap; partial?: boolean };
   flush: () => InitialState;
 }
 
