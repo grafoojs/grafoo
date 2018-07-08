@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/bindings",
-  "version": "0.0.1-beta.10",
+  "version": "0.0.1-beta.11",
   "description": "grafoo client internal helper for building framework bindings",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/bindings",
   "main": "dist/index.js",
@@ -37,10 +37,10 @@
     }
   },
   "dependencies": {
-    "@grafoo/types": "^0.0.1-beta.10"
+    "@grafoo/types": "^0.0.1-beta.11"
   },
   "devDependencies": {
-    "grafoo-bundle": "^0.0.1-beta.10"
+    "grafoo-bundle": "^0.0.1-beta.11"
   },
   "gitHead": "3eee7fd65fe2b16191eb4c721746593986aeea06"
 }

@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.0.1-beta.11
+
+### Features
+
+- [core] return a `partial` property in read to flag if a query result is only partially cached
+
+### Fixes
+
+- [bindings] fix bindings returning `loaded` equals to true if a query is only partially cached
+
 ## v0.0.1-beta.10
 
 ### Features
