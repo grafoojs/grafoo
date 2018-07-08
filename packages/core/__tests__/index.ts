@@ -195,6 +195,14 @@ describe("@grafoo/core", () => {
     expect(client.read<PostQuery>(POST, variables).data.post.id).toBe(variables.id);
   });
 
+  it("should flag if a query result is partial", async () => {
+    const { data } = await executeQuery<PostsQuery>({ query: POSTS.query });
+
+    client.write(POSTS, data);
+
+    expect(client.read<PostsAndAuthorsQuery>(POSTS_AND_AUTHORS).partial).toBe(true);
+  });
+
   it("should remove unused objects from objectsMap", async () => {
     const { data } = await executeQuery<AuthorsQuery>(SIMPLE_AUTHORS);
 
@@ -244,9 +252,7 @@ describe("@grafoo/core", () => {
 
     expect(posts.find(p => p.id === variables.id).title).toBe("Quam odit");
 
-    client.write(POST, variables, {
-      post: { ...postData.post, title: "updated title" }
-    });
+    client.write(POST, variables, { post: { ...postData.post, title: "updated title" } });
 
     const { posts: updatedPosts } = client.read<PostsQuery>(POSTS, variables).data;
 

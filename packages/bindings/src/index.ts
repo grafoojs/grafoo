@@ -18,11 +18,12 @@ export default function createBindings<T = {}, U = {}>(
   let unbind = () => {};
   let lockListenUpdate = 0;
   let loaded = false;
+  let partial = false;
 
   if (query) {
-    ({ data, objects } = client.read<T>(query, variables));
+    ({ data, objects, partial } = client.read<T>(query, variables));
 
-    for (let path in query.paths) loaded = !!data && !!data[query.paths[path].name];
+    loaded = !!data && !partial;
 
     unbind = client.listen(nextObjects => {
       if (lockListenUpdate) return (lockListenUpdate = 0);
