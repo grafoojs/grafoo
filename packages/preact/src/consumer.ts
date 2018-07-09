@@ -5,7 +5,7 @@ import {
   GrafooBoundMutations,
   GrafooConsumerProps
 } from "@grafoo/types";
-import { Component } from "preact";
+import { Component, VNode } from "preact";
 
 /**
  * T = Query
@@ -13,7 +13,7 @@ import { Component } from "preact";
  */
 type GrafooRenderFn<T, U> = (
   renderProps: GrafooBoundState & T & GrafooBoundMutations<U>
-) => JSX.Element;
+) => VNode | null;
 
 /**
  * T = Query
@@ -27,33 +27,28 @@ type GrafooPreactConsumerProps<T = {}, U = {}> = GrafooConsumerProps<T, U> & {
  * T = Query
  * U = Mutations
  */
-interface ConsumerType extends Component {
-  <T, U>(props: GrafooPreactConsumerProps<T, U> & { children?: JSX.Element[] }): JSX.Element;
+export class Consumer<T = {}, U = {}> extends Component<GrafooPreactConsumerProps<T, U>> {
+  constructor(props: GrafooPreactConsumerProps<T, U>, context: Context) {
+    super(props, context);
+
+    let { load, getState, unbind } = createBindings(context.client, props, () =>
+      this.setState(getState())
+    );
+
+    this.state = getState();
+
+    this.componentDidMount = () => {
+      if (props.skip || !props.query || getState().loaded) return;
+
+      load();
+    };
+
+    this.componentWillUnmount = () => {
+      unbind();
+    };
+  }
+
+  render(props, state): VNode | null {
+    return props.children[0](state);
+  }
 }
-
-/**
- * T = Query
- * U = Mutations
- */
-// @ts-ignore
-export let Consumer: ConsumerType = function GrafooConsumer<T, U>(
-  props: GrafooPreactConsumerProps<T, U>,
-  context: Context
-) {
-  let { load, getState, unbind } = createBindings(context.client, props, () => this.setState(null));
-
-  this.componentDidMount = () => {
-    if (props.skip || !props.query || getState().loaded) return;
-
-    load();
-  };
-
-  this.componentWillUnmount = () => {
-    unbind();
-  };
-
-  this.render = () => props.children[0](getState());
-};
-
-// @ts-ignore
-(Consumer.prototype = new Component()).constructor = Consumer;
