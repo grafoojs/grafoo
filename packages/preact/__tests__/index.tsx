@@ -3,7 +3,7 @@ import graphql from "@grafoo/core/tag";
 import createTransport from "@grafoo/http-transport";
 import { mockQueryRequest } from "@grafoo/test-utils";
 import { GrafooClient } from "@grafoo/types";
-import { h } from "preact";
+import { h, FunctionalComponent } from "preact";
 import { render } from "preact-render-spy";
 import { Consumer, Provider } from "../src";
 
@@ -179,6 +179,33 @@ describe("@grafoo/preact", () => {
           <Consumer query={AUTHORS}>{mockRender}</Consumer>
         </Provider>
       );
+    });
+
+    it("should render if skip changed value to true", async done => {
+      const { data } = await mockQueryRequest(AUTHORS);
+
+      const mockRender = createMockRenderFn(done, [
+        props => expect(props).toMatchObject({ loading: false, loaded: false }),
+        props => expect(props).toMatchObject({ loading: true, loaded: false }),
+        props => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
+        props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
+      ]);
+
+      const App: FunctionalComponent<{ skip?: boolean }> = ({ skip = false }) => (
+        <Provider client={client}>
+          <Consumer query={AUTHORS} skip={skip}>
+            {mockRender}
+          </Consumer>
+        </Provider>
+      );
+
+      const ctx = render(<App skip />);
+
+      ctx.render(<App />);
+
+      await new Promise(resolve => setTimeout(resolve, 10));
+
+      ctx.render(<App />);
     });
 
     it("should not trigger a network request if the query is already cached", async done => {

@@ -161,6 +161,33 @@ describe("@grafoo/react", () => {
     );
   });
 
+  it("should render if skip changed value to true", async done => {
+    const { data } = await mockQueryRequest(AUTHORS);
+
+    const mockRender = createMockRenderFn(done, [
+      props => expect(props).toMatchObject({ loading: false, loaded: false }),
+      props => expect(props).toMatchObject({ loading: true, loaded: false }),
+      props => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
+      props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
+    ]);
+
+    const App: React.SFC<{ skip?: boolean }> = ({ skip = false }) => (
+      <Provider client={client}>
+        <Consumer query={AUTHORS} skip={skip}>
+          {mockRender}
+        </Consumer>
+      </Provider>
+    );
+
+    const ctx = TestRenderer.create(<App skip />);
+
+    ctx.update(<App />);
+
+    await new Promise(resolve => setTimeout(resolve, 10));
+
+    ctx.update(<App />);
+  });
+
   it("should not trigger a network request if the query is already cached", async done => {
     const { data } = await mockQueryRequest(AUTHORS);
 

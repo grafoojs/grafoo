@@ -54,6 +54,10 @@ class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
       load();
     };
 
+    this.componentWillReceiveProps = next => {
+      if (!this.state.loaded && !next.skip) load();
+    };
+
     this.componentWillUnmount = () => {
       unbind();
     };
