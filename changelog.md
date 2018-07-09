@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.1-beta.13
+
+- [preact, react] reload query on skip `Consumer` prop change to true
+
 ## v0.0.1-beta.12
 
 ### Fixes
