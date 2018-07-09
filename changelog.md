@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.1-beta.12
+
+### Fixes
+
+- [preact] fix preact not rendering on nested componenents when data have been already received
+
 ## v0.0.1-beta.11
 
 ### Features
