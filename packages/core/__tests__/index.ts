@@ -169,6 +169,12 @@ describe("@grafoo/core", () => {
     expect(posts.every(post => Boolean(objectsMap[post.id]))).toBe(true);
   });
 
+  it("should write queries partially to the client", async () => {
+    const { data } = await executeQuery<PostsQuery>(POSTS);
+
+    expect(() => client.write(POSTS_AND_AUTHORS, data)).not.toThrow();
+  });
+
   it("should read queries from the client", async () => {
     const { data } = await executeQuery<AuthorsQuery>(AUTHORS);
 
