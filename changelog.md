@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.1-beta.15
+
+### Fixes
+
+- [core] fix latest bug that afected also `client.read`
+
 ## v0.0.1-beta.14
 
 ### Fixes

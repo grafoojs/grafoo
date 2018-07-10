@@ -25,7 +25,7 @@ export default function mapObjects(tree, idFields) {
     }
 
     // node identifier
-    let identifier = idFromProps(branch || {}, idFields);
+    let identifier = idFromProps(branch, idFields);
 
     // if branch is a node, assign the value of filtered branch to it
     if (identifier) map[identifier] = Object.assign({}, map[identifier], filteredBranch);

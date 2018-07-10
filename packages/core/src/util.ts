@@ -1,6 +1,7 @@
 import { Variables } from "@grafoo/types";
 
 export let idFromProps = (branch, idFields) => {
+  branch = branch || {};
   let identifier = "";
 
   for (let i = 0; i < idFields.length; i++) {
