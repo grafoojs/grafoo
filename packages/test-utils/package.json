@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@grafoo/test-utils",
-  "version": "0.0.1-beta.15",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "publishConfig": {
     "access": "public"
