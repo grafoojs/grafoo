@@ -32,7 +32,8 @@
     ],
     "transform": {
       "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
-    }
+    },
+    "testURL": "http://localhost/"
   },
   "dependencies": {
     "@grafoo/types": "^0.0.1-beta.15",

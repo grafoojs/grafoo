@@ -35,7 +35,8 @@
     ],
     "transform": {
       "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
-    }
+    },
+    "testURL": "http://localhost/"
   },
   "peerDependencies": {
     "preact": ">=8"

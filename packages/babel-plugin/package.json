@@ -33,7 +33,8 @@
     ],
     "transform": {
       "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
-    }
+    },
+    "testURL": "http://localhost/"
   },
   "dependencies": {
     "babel-literal-to-ast": "^2.0.0",
