@@ -39,7 +39,7 @@
     "testURL": "http://localhost/"
   },
   "peerDependencies": {
-    "preact": ">=8"
+    "preact": ">=8.3"
   },
   "dependencies": {
     "@grafoo/bindings": "^1.0.0",
