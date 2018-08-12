@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+### Fixes
+
+- [preact] correctly type children prop
+
 ## v0.0.1-beta.15
 
 ### Fixes
