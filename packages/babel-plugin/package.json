@@ -47,5 +47,5 @@
     "@babel/preset-env": "^7.0.0-beta.50",
     "babel-plugin-tester": "^5.0.0"
   },
-  "gitHead": "3eee7fd65fe2b16191eb4c721746593986aeea06"
+  "gitHead": "9e3e910889bbb77a039ca804a5333f86f567f748"
 }
