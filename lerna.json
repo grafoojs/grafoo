@@ -5,7 +5,8 @@
   "version": "1.0.6",
   "command": {
     "publish": {
-      "message": "chore(release): publish %s"
+      "message": "chore(release): publish %s",
+      "npmClient": "npm"
     }
   }
 }
