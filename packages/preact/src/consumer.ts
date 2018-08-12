@@ -18,7 +18,7 @@ type GrafooRenderFn<T, U> = (renderProps: GrafooBoundState & T & GrafooBoundMuta
  * U = Mutations
  */
 type GrafooPreactConsumerProps<T = {}, U = {}> = GrafooConsumerProps<T, U> & {
-  children?: [GrafooRenderFn<T, U>];
+  children?: GrafooRenderFn<T, U>;
 };
 
 /**
