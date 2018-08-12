@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/preact",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "grafoo client preact bindings",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/preact",
   "main": "dist/index.js",
@@ -42,11 +42,11 @@
     "preact": ">=8.3"
   },
   "dependencies": {
-    "@grafoo/bindings": "^1.0.5",
-    "@grafoo/types": "^1.0.5"
+    "@grafoo/bindings": "^1.0.6",
+    "@grafoo/types": "^1.0.6"
   },
   "devDependencies": {
-    "grafoo-bundle": "^1.0.5"
+    "grafoo-bundle": "^1.0.6"
   },
   "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974"
 }
