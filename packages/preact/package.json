@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/preact",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "grafoo client preact bindings",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/preact",
   "main": "dist/index.js",
