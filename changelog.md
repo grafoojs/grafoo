@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.8
+
+### Fixes
+
+- [bindings] for safety reusing `props` argument to avoid declaration of new variables
+
 ## 1.0.7
 
 ### Fixes

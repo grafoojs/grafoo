@@ -12,7 +12,8 @@
     "prepare": "node scripts/build.js",
     "clean": "rimraf packages/**/dist",
     "prepush": "yarn test",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "deploy": "lerna publish --force-publish"
   },
   "workspaces": [
     "packages/*"
