@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.7
+
+### Fixes
+
+- [react, preact] reload when variables change
+
 ## 1.0.6
 
 ### Fixes
