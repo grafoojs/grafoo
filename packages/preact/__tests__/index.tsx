@@ -195,6 +195,7 @@ describe("@grafoo/preact", () => {
       const mockRender = createMockRenderFn(done, [
         props => expect(props).toMatchObject({ loading: false, loaded: false }),
         props => expect(props).toMatchObject({ loading: true, loaded: false }),
+        props => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
         props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
       ]);
 
@@ -207,6 +208,10 @@ describe("@grafoo/preact", () => {
       );
 
       const ctx = render(<App skip />);
+
+      ctx.render(<App />);
+
+      await new Promise(resolve => setTimeout(resolve, 10));
 
       ctx.render(<App />);
     });
