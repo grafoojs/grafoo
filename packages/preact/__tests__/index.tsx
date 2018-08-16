@@ -3,7 +3,7 @@ import graphql from "@grafoo/core/tag";
 import createTransport from "@grafoo/http-transport";
 import { mockQueryRequest } from "@grafoo/test-utils";
 import { GrafooClient } from "@grafoo/types";
-import { h, FunctionalComponent } from "preact";
+import { h, FunctionalComponent, Component } from "preact";
 import { render } from "preact-render-spy";
 import { Consumer, Provider } from "../src";
 
@@ -26,47 +26,55 @@ interface Authors {
   authors: Author[];
 }
 
-describe("@grafoo/preact", () => {
-  const AUTHORS = graphql`
-    {
-      authors {
-        name
-        posts {
-          title
-          body
-        }
-      }
+const AUTHOR = graphql`
+  query($id: ID!) {
+    author(id: $id) {
+      name
     }
-  `;
+  }
+`;
 
-  const CREATE_AUTHOR = graphql`
-    mutation($name: String!) {
-      createAuthor(name: $name) {
-        name
-      }
-    }
-  `;
-
-  const POSTS_AND_AUTHORS = graphql`
-    {
+const AUTHORS = graphql`
+  {
+    authors {
+      name
       posts {
         title
         body
-        author {
-          name
-        }
-      }
-
-      authors {
-        name
-        posts {
-          title
-          body
-        }
       }
     }
-  `;
+  }
+`;
 
+const CREATE_AUTHOR = graphql`
+  mutation($name: String!) {
+    createAuthor(name: $name) {
+      name
+    }
+  }
+`;
+
+const POSTS_AND_AUTHORS = graphql`
+  {
+    posts {
+      title
+      body
+      author {
+        name
+      }
+    }
+
+    authors {
+      name
+      posts {
+        title
+        body
+      }
+    }
+  }
+`;
+
+describe("@grafoo/preact", () => {
   let client: GrafooClient;
 
   beforeEach(() => {
@@ -187,7 +195,6 @@ describe("@grafoo/preact", () => {
       const mockRender = createMockRenderFn(done, [
         props => expect(props).toMatchObject({ loading: false, loaded: false }),
         props => expect(props).toMatchObject({ loading: true, loaded: false }),
-        props => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
         props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
       ]);
 
@@ -202,10 +209,57 @@ describe("@grafoo/preact", () => {
       const ctx = render(<App skip />);
 
       ctx.render(<App />);
+    });
 
-      await new Promise(resolve => setTimeout(resolve, 10));
+    it("should rerender if variables prop has changed", async done => {
+      const { data } = await mockQueryRequest<Authors>(AUTHORS);
 
-      ctx.render(<App />);
+      const mock = async variables => {
+        return (await mockQueryRequest<{ author: Author }>({
+          query: AUTHOR.query,
+          variables
+        })).data.author;
+      };
+
+      const firstVariables = { id: data.authors[0].id };
+      const secondVariables = { id: data.authors[1].id };
+      const firstAuthor = await mock(firstVariables);
+      let secondAuthor;
+
+      const mockRender = createMockRenderFn(done, [
+        props => expect(props).toMatchObject({ loading: true, loaded: false }),
+        props => expect(props.author).toMatchObject(firstAuthor),
+        props => expect(props).toMatchObject({ loading: true, loaded: true, author: firstAuthor }),
+        props => expect(props.author).toMatchObject(secondAuthor)
+      ]);
+
+      class AuthorComponent extends Component {
+        constructor(props, context) {
+          super(props, context);
+
+          this.state = firstVariables;
+
+          setTimeout(async () => {
+            secondAuthor = await mock(secondVariables);
+
+            this.setState(secondVariables);
+          }, 100);
+        }
+
+        render({}, variables) {
+          return (
+            <Consumer query={AUTHOR} variables={variables}>
+              {mockRender}
+            </Consumer>
+          );
+        }
+      }
+
+      render(
+        <Provider client={client}>
+          <AuthorComponent />
+        </Provider>
+      );
     });
 
     it("should not trigger a network request if the query is already cached", async done => {
