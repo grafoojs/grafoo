@@ -1,6 +1,6 @@
 {
   "name": "grafoo-bundle",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "bin": "cli.js",
   "main": "index.js",
   "dependencies": {
