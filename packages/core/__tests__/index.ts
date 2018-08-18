@@ -173,7 +173,8 @@ describe("@grafoo/core", () => {
     const { data } = await executeQuery<PostsQuery>(POSTS);
 
     expect(() => client.write(POSTS_AND_AUTHORS, data)).not.toThrow();
-    expect(() => client.read(POSTS_AND_AUTHORS)).not.toThrow();
+    expect(() => client.read(POSTS)).not.toThrow();
+    expect(() => client.read(AUTHORS)).not.toThrow();
   });
 
   it("should read queries from the client", async () => {
