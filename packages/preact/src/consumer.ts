@@ -31,26 +31,25 @@ export class Consumer<T = {}, U = {}> extends Component<GrafooPreactConsumerProp
   constructor(props: GrafooPreactConsumerProps<T, U>, context: Context) {
     super(props, context);
 
-    let { load, getState, unbind } = createBindings<T, U>(context.client, props, () =>
-      this.setState(getState())
-    );
+    let bindings = createBindings<T, U>(context.client, props, () => {
+      this.setState(bindings.getState());
+    });
 
-    this.state = getState();
+    this.state = bindings.getState();
 
     this.componentDidMount = () => {
-      if (props.skip || !props.query || getState().loaded) return;
+      if (props.skip || !props.query || this.state.loaded) return;
 
-      load();
+      this.state.load();
     };
 
     this.componentWillReceiveProps = next => {
-      if ((!this.state.loaded && !next.skip) || props.variables !== next.variables) {
-        load();
-      }
+      if ((!this.state.loaded && !next.skip) || props.variables !== next.variables)
+        this.state.load();
     };
 
     this.componentWillUnmount = () => {
-      unbind();
+      bindings.unbind();
     };
   }
 

@@ -3,7 +3,8 @@ import {
   GrafooBindings,
   GrafooBoundMutations,
   GrafooConsumerProps,
-  ObjectsMap
+  ObjectsMap,
+  Variables
 } from "@grafoo/types";
 
 export default function createBindings<T = {}, U = {}>(
@@ -11,6 +12,7 @@ export default function createBindings<T = {}, U = {}>(
   props: GrafooConsumerProps<T, U>,
   updater: () => void
 ): GrafooBindings<T, U> {
+  let { variables } = props;
   let data: T;
   let objects: ObjectsMap;
   let boundMutations = {} as GrafooBoundMutations<U>;
@@ -20,7 +22,7 @@ export default function createBindings<T = {}, U = {}>(
   let partial = false;
 
   if (props.query) {
-    ({ data, objects, partial } = client.read<T>(props.query, props.variables));
+    ({ data, objects, partial } = client.read<T>(props.query, variables));
 
     loaded = !!data && !partial;
 
@@ -71,11 +73,11 @@ export default function createBindings<T = {}, U = {}>(
   }
 
   function writeToCache(dataUpdate: T) {
-    client.write(props.query, props.variables, dataUpdate);
+    client.write(props.query, variables, dataUpdate);
   }
 
   function performUpdate(boundStateUpdate?) {
-    ({ data, objects } = client.read<T>(props.query, props.variables));
+    ({ data, objects } = client.read<T>(props.query, variables));
 
     Object.assign(boundState, boundStateUpdate);
 
@@ -86,14 +88,18 @@ export default function createBindings<T = {}, U = {}>(
     return Object.assign({ client }, boundState, boundMutations, data);
   }
 
-  function load() {
+  function load(nextVariables?: Variables) {
+    if (nextVariables) {
+      variables = nextVariables;
+    }
+
     if (!boundState.loading) {
       Object.assign(boundState, { loading: true });
 
       updater();
     }
 
-    return client.execute<T>(props.query, props.variables).then(({ data, errors }) => {
+    return client.execute<T>(props.query, variables).then(({ data, errors }) => {
       if (data) {
         lockListenUpdate = 1;
 

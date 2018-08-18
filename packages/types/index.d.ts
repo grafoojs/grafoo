@@ -93,13 +93,13 @@ export interface GrafooObject {
 export interface GrafooBindings<T, U> {
   getState(): GrafooBoundState & T & GrafooBoundMutations<U>;
   unbind(): void;
-  load(): void;
+  load(variables?: Variables): void;
 }
 
 export interface GrafooBoundState {
   client: GrafooClient;
   errors?: GraphQlError[];
-  load?: () => void;
+  load?: (variables?: Variables) => void;
   loaded?: boolean;
   loading?: boolean;
 }

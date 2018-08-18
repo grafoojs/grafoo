@@ -63,6 +63,18 @@ const AUTHORS = graphql`
   }
 `;
 
+const AUTHOR = graphql`
+  query($id: ID!) {
+    author(id: $id) {
+      name
+      posts {
+        title
+        body
+      }
+    }
+  }
+`;
+
 const POSTS_AND_AUTHORS = graphql`
   query {
     posts {
@@ -157,7 +169,6 @@ describe("@grafoo/bindings", () => {
 
     await bindings.load();
 
-    expect(renderFn).toHaveBeenCalledTimes(1);
     expect(bindings.getState()).toMatchObject({ ...data, loaded: true, loading: false });
   });
 
@@ -513,5 +524,31 @@ describe("@grafoo/bindings", () => {
     } catch (err) {
       console.error(err);
     }
+  });
+
+  it("should update variables when new variables are passed", async () => {
+    const {
+      data: { authors }
+    } = await mockQueryRequest<Authors>(AUTHORS);
+
+    const [author1, author2] = authors;
+    const author1Variables = { id: author1.id };
+    const author2Variables = { id: author2.id };
+
+    const bindings = createBindings<{ author: Author }>(
+      client,
+      { query: AUTHOR, variables: author1Variables },
+      () => {}
+    );
+
+    await mockQueryRequest({ query: AUTHOR.query, variables: author1Variables });
+    await bindings.load();
+    expect(bindings.getState().author).toMatchObject(author1);
+    expect(client.read<{ author: Author }>(AUTHOR, author1Variables).data.author).toEqual(author1);
+
+    await mockQueryRequest({ query: AUTHOR.query, variables: author2Variables });
+    await bindings.load(author2Variables);
+    expect(bindings.getState().author).toMatchObject(author2);
+    expect(client.read<{ author: Author }>(AUTHOR, author2Variables).data.author).toEqual(author2);
   });
 });
