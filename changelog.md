@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+- [bindings] enable load method to receive and update variables
+
 ## 1.0.9
 
 ### Fixes

@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/core",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "description": "grafoo client core",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/core",
   "main": "dist/index.js",
@@ -38,10 +38,10 @@
     "testURL": "http://localhost/"
   },
   "dependencies": {
-    "@grafoo/types": "^1.0.10"
+    "@grafoo/types": "^1.1.0"
   },
   "devDependencies": {
-    "grafoo-bundle": "^1.0.10"
+    "grafoo-bundle": "^1.1.0"
   },
   "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974"
 }
