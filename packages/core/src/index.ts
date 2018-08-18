@@ -37,7 +37,7 @@ export default function createClient(
     };
   }
 
-  function write({ paths }: GrafooObject, variables: Variables, data?: {}) {
+  function write({ paths }: GrafooObject, variables: Variables, data?: { data?: {} }) {
     if (!data) {
       data = variables;
       variables = undefined;
@@ -47,7 +47,7 @@ export default function createClient(
 
     for (let i in paths) {
       let { name, args } = paths[i];
-      let pathData = { [name]: data[name] };
+      let pathData = { [name]: data.data && name !== "data" ? data.data[name] : data[name] };
       let pathObjects = mapObjects(pathData, idFields);
 
       Object.assign(objects, pathObjects);

@@ -54,8 +54,8 @@ export interface GrafooClient {
   execute: <T>(grafooObject: GrafooObject, variables?: Variables) => Promise<GraphQlPayload<T>>;
   listen: (listener: Listener) => () => void;
   write: {
-    (grafooObject: GrafooObject, variables: Variables, data: {}): void;
-    (grafooObject: GrafooObject, data: {}): void;
+    (grafooObject: GrafooObject, variables: Variables, data: { data?: {} }): void;
+    (grafooObject: GrafooObject, data: { data?: {} }): void;
   };
   read: <T>(
     grafooObject: GrafooObject,
