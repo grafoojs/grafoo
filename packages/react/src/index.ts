@@ -42,26 +42,26 @@ class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
   constructor(props) {
     super(props);
 
-    let { getState, unbind, load } = createBindings<T, U>(props.client, props, () => {
-      this.setState(getState());
+    let bindings = createBindings<T, U>(props.client, props, () => {
+      this.setState(bindings.getState());
     });
 
-    this.state = getState();
+    this.state = bindings.getState();
 
     this.componentDidMount = () => {
-      if (props.skip || !props.query || getState().loaded) return;
+      if (props.skip || !props.query || this.state.loaded) return;
 
-      load();
+      bindings.load();
     };
 
     this.componentWillReceiveProps = next => {
       if ((!this.state.loaded && !next.skip) || props.variables !== next.variables) {
-        load();
+        bindings.load(next.variables);
       }
     };
 
     this.componentWillUnmount = () => {
-      unbind();
+      bindings.unbind();
     };
   }
 
