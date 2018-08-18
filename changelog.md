@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.9
+
+### Fixes
+
+- [core] fix bug preventing write to work when graphql payload wasn't destructured beforehand
+
 ## 1.0.8
 
 ### Fixes
