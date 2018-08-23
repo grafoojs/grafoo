@@ -76,8 +76,8 @@ const USER_QUERY = `
 
 const variables = { id: 123 };
 
-request(USER_QUERY, variables).then(({ user }) => {
-  console.log(user);
+request(USER_QUERY, variables).then(({ data }) => {
+  console.log(data.user);
 });
 ```
 
