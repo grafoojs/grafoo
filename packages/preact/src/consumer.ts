@@ -45,7 +45,7 @@ export class Consumer<T = {}, U = {}> extends Component<GrafooPreactConsumerProp
 
     this.componentWillReceiveProps = next => {
       if ((!this.state.loaded && !next.skip) || props.variables !== next.variables)
-        this.state.load();
+        this.state.load(next.variables);
     };
 
     this.componentWillUnmount = () => {
