@@ -1,6 +1,14 @@
 # Changelog
 
+## 1.1.1
+
+### Fixes
+
+- [preact] fix variables not being updated
+
 ## 1.1.0
+
+### Features
 
 - [bindings] enable load method to receive and update variables
 
