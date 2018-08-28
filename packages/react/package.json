@@ -46,8 +46,5 @@
     "@grafoo/bindings": "^1.1.1",
     "@grafoo/types": "^1.1.1"
   },
-  "devDependencies": {
-    "grafoo-bundle": "^1.1.1"
-  },
   "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974"
 }
