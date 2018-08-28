@@ -13,9 +13,9 @@ pluginTester({
       code: 'import { gql } from "@grafoo/core/tag";',
       error: true
     },
-    "should throw if a schema is not specified": {
+    "should throw if a schema is not present on the root directory": {
       pluginOptions: {
-        schema: undefined
+        idFields: ["id"]
       },
       code: `
         import gql from "@grafoo/core/tag";

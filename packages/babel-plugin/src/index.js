@@ -12,10 +12,6 @@ export default function transform({ types: t }) {
           opts.compress = process.env.NODE_ENV === "production";
         }
 
-        if (!opts.schema) {
-          throw new Error("@grafoo/babel-plugin: the `schema` option is required.");
-        }
-
         if (!opts.idFields) {
           throw new Error("@grafoo/babel-plugin: the `idFields` option is required.");
         }
@@ -102,7 +98,13 @@ export default function transform({ types: t }) {
 
                 path.replaceWith(parseLiteral(compileDocument(source, opts)));
               } catch (error) {
-                if (error.code === "ENOENT") throw error;
+                if (error.code === "ENOENT") {
+                  throw new Error(
+                    "Could not find a schema in the root directory! " +
+                      "Please use the `schema` option to specify your schema path, " +
+                      "or the `schemaUrl` to specify your graphql endpoint."
+                  );
+                }
 
                 throw path.buildCodeFrameError(error.message);
               }

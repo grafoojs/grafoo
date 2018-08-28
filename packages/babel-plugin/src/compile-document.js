@@ -10,7 +10,23 @@ function getSchema(schemaPath) {
   if (schema) return schema;
 
   try {
-    const fullPath = path.join(process.cwd(), schemaPath);
+    let fullPath;
+
+    if (!schemaPath) {
+      const schemaJson = path.join(process.cwd(), "schema.json");
+      const schemaGraphql = path.join(process.cwd(), "schema.graphql");
+      const schemaGql = path.join(process.cwd(), "schema.gql");
+
+      fullPath = fs.existsSync(schemaJson)
+        ? schemaJson
+        : fs.existsSync(schemaGraphql)
+          ? schemaGraphql
+          : fs.existsSync(schemaGql)
+            ? schemaGql
+            : undefined;
+    } else {
+      fullPath = path.join(process.cwd(), schemaPath);
+    }
 
     fs.accessSync(fullPath, fs.F_OK);
 

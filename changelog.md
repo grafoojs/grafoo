@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+### Features
+
+- [babel-plugin] allow schema to be omited on config
+
 ## 1.1.1
 
 ### Fixes
