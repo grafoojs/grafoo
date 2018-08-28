@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.0
+
+### Features
+
+- [babel-plugin] allow schema to be omited on config
+
+### Fixes
+
+- [babel-plugin] fix client factory throwing when called with a variable as the second argument
+
 ## 1.1.1
 
 ### Fixes

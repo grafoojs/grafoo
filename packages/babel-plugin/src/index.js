@@ -12,10 +12,6 @@ export default function transform({ types: t }) {
           opts.compress = process.env.NODE_ENV === "production";
         }
 
-        if (!opts.schema) {
-          throw new Error("@grafoo/babel-plugin: the `schema` option is required.");
-        }
-
         if (!opts.idFields) {
           throw new Error("@grafoo/babel-plugin: the `idFields` option is required.");
         }
@@ -68,7 +64,29 @@ export default function transform({ types: t }) {
                 args[1] = t.objectExpression([clientObjectAst]);
               }
 
-              if (t.isObjectExpression(args[1])) {
+              if (t.isIdentifier(args[1])) {
+                const name = args[1].name;
+                const { init } = path.scope.bindings[name].path.node;
+
+                if (path.scope.hasBinding(name)) {
+                  if (t.isObjectExpression(init)) {
+                    const idFieldsProp = init.properties.find(arg => arg.key.name === "idFields");
+
+                    if (idFieldsProp) {
+                      idFieldsProp.value = idFieldsArrayAst;
+                    } else {
+                      init.properties.push(clientObjectAst);
+                    }
+                  } else {
+                    throw path.buildCodeFrameError(
+                      callee.name +
+                        " second argument must be of type object, instead got " +
+                        args[1].type +
+                        "."
+                    );
+                  }
+                }
+              } else if (t.isObjectExpression(args[1])) {
                 const idFieldsProp = args[1].properties.find(arg => arg.key.name === "idFields");
 
                 if (idFieldsProp) {
@@ -102,7 +120,13 @@ export default function transform({ types: t }) {
 
                 path.replaceWith(parseLiteral(compileDocument(source, opts)));
               } catch (error) {
-                if (error.code === "ENOENT") throw error;
+                if (error.code === "ENOENT") {
+                  throw new Error(
+                    "Could not find a schema in the root directory! " +
+                      "Please use the `schema` option to specify your schema path, " +
+                      "or the `schemaUrl` to specify your graphql endpoint."
+                  );
+                }
 
                 throw path.buildCodeFrameError(error.message);
               }
