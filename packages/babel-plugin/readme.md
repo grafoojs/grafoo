@@ -51,7 +51,7 @@ $ npm i @grafoo/core && npm i -D @grafoo/babel-plugin
 
 ## Configuration
 
-To configure the plugin is required to specify a `schema`, which is a path to a GraphQL schema in your file system relative to the root of your project, and `idFields`, an array of strings that represent the fields that Grafoo will use to build object identifiers:
+To configure the plugin is required to specify the option `idFields`, an array of strings that represent the fields that Grafoo will use to build object identifiers. The option `schema`, is a path to a GraphQL schema in your file system relative to the root of your project, if not specified the plugin will look for the schema in the root of your project:
 
 ```json
 {
@@ -66,8 +66,6 @@ To configure the plugin is required to specify a `schema`, which is a path to a 
   ]
 }
 ```
-
-_At the moment if you are using babel 7, you'll have to declare the plugin as `module:@grafoo/babel-plugin`, because of the naming rules babel has._
 
 ## How to get my schema?
 
