@@ -41,13 +41,5 @@
     "graphql": "^0.13.1",
     "graphql-query-compress": "^1.0.0"
   },
-  "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974",
-  "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.50",
-    "@babel/core": "^7.0.0-beta.50",
-    "@babel/preset-env": "^7.0.0-beta.50",
-    "@babel/preset-react": "^7.0.0-beta.50",
-    "@babel/preset-typescript": "^7.0.0-beta.50",
-    "@babel/register": "^7.0.0-beta.50"
-  }
+  "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974"
 }
