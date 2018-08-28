@@ -58,7 +58,7 @@ pluginTester({
       },
       code: `
         import createClient from "@grafoo/core";
-        const query = createClient(someTransport, "I AM ERROR");
+        const query = createClient(someTransport);
       `,
       error: true
     },
@@ -109,6 +109,37 @@ pluginTester({
         const query = createClient(someTransport);
       `,
       snapshot: true
+    },
+    "should include `idFields` in the client instantiation if not present in options": {
+      code: `
+        import createClient from "@grafoo/core";
+        const query = createClient(someTransport, {});
+      `,
+      snapshot: true
+    },
+    "should include `idFields` in the client instantiation if options is a variable": {
+      code: `
+        import createClient from "@grafoo/core";
+        const options = {};
+        const query = createClient(someTransport, options);
+      `,
+      snapshot: true
+    },
+    "should overide `idFields` in the client instantiation if options is a variable": {
+      code: `
+        import createClient from "@grafoo/core";
+        const options = { idFields: ["err"] };
+        const query = createClient(someTransport, options);
+      `,
+      snapshot: true
+    },
+    "should throw if `idFields` in the client instantiation if options is not an object variable": {
+      code: `
+        import createClient from "@grafoo/core";
+        const options = [];
+        const query = createClient(someTransport, options);
+      `,
+      error: true
     },
     "should include `idFields` in the client instantiation even if options are provided": {
       code: `

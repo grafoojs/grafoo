@@ -64,7 +64,29 @@ export default function transform({ types: t }) {
                 args[1] = t.objectExpression([clientObjectAst]);
               }
 
-              if (t.isObjectExpression(args[1])) {
+              if (t.isIdentifier(args[1])) {
+                const name = args[1].name;
+                const { init } = path.scope.bindings[name].path.node;
+
+                if (path.scope.hasBinding(name)) {
+                  if (t.isObjectExpression(init)) {
+                    const idFieldsProp = init.properties.find(arg => arg.key.name === "idFields");
+
+                    if (idFieldsProp) {
+                      idFieldsProp.value = idFieldsArrayAst;
+                    } else {
+                      init.properties.push(clientObjectAst);
+                    }
+                  } else {
+                    throw path.buildCodeFrameError(
+                      callee.name +
+                        " second argument must be of type object, instead got " +
+                        args[1].type +
+                        "."
+                    );
+                  }
+                }
+              } else if (t.isObjectExpression(args[1])) {
                 const idFieldsProp = args[1].properties.find(arg => arg.key.name === "idFields");
 
                 if (idFieldsProp) {
