@@ -188,9 +188,7 @@ export default function Posts() {
   return (
     <Consumer query={ALL_POSTS} variables={{ orderBy: "createdAt_DESC" }}>
       {({ client, load, loaded, loading, errors, allPosts }) => (
-        <h1>
-          <marquee>👆 do whatever you want with the variables above 👆</marquee>
-        </h1>
+        <marquee>👆 do whatever you want with the variables above 👆</marquee>
       )}
     </Consumer>
   );
