@@ -20,10 +20,10 @@ function getSchema(schemaPath) {
       fullPath = fs.existsSync(schemaJson)
         ? schemaJson
         : fs.existsSync(schemaGraphql)
-          ? schemaGraphql
-          : fs.existsSync(schemaGql)
-            ? schemaGql
-            : undefined;
+        ? schemaGraphql
+        : fs.existsSync(schemaGql)
+        ? schemaGql
+        : undefined;
     } else {
       fullPath = path.join(process.cwd(), schemaPath);
     }
@@ -56,7 +56,12 @@ export default function compileDocument(source, opts) {
         Object.assign(acc, {
           [compress(print(s))]: {
             name: s.name.value,
-            args: s.arguments.map(a => a.name.value)
+            args: s.arguments.map(a => {
+              if (a.value && a.value.kind === "Variable") {
+                a = a.value;
+              }
+              return a.name.value;
+            })
           }
         }),
       {}
