@@ -47,20 +47,18 @@ export default function insertFields(schemaStr, documentAst, idFields) {
       );
 
       for (const field of idFields) {
-        const fieldIsNotDeclared = selections.some(_ => _.name.value !== field);
-        const fieldIsTypename = field === "__typename";
+        if (selections.some(_ => _.name && _.name.value === field)) {
+          continue; // Skip already declared fields
+        }
+
         const typeHasField = typeFields.some(_ => _ === field);
         const typeInterfacesHasField = typeInterfacesFields.some(_ => _ === field);
 
-        if (fieldIsTypename && fieldIsNotDeclared && !isFragment) {
-          insertField(selections, field);
-        }
-
-        if (fieldIsNotDeclared && typeInterfacesHasField && !isFragment) {
-          insertField(selections, field);
-        }
-
-        if (fieldIsNotDeclared && typeHasField) {
+        if (
+          typeHasField ||
+          (field === "__typename" && !isFragment) ||
+          (typeInterfacesHasField && !isFragment)
+        ) {
           insertField(selections, field);
         }
       }
