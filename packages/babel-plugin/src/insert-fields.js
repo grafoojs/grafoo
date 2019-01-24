@@ -34,6 +34,11 @@ export default function insertFields(schemaStr, documentAst, idFields) {
       }
 
       const type = getType(typeInfo);
+
+      if (type.astNode.kind === "UnionTypeDefinition") {
+        return;
+      }
+
       const typeFields = Object.keys(type.getFields());
       const typeInterfaces = type.getInterfaces ? type.getInterfaces() : [];
       const typeInterfacesFields = typeInterfaces.reduce(
