@@ -102,5 +102,10 @@ export default function createClient(
     return { objectsMap, pathsMap };
   }
 
-  return { execute, listen, write, read, flush };
+  function reset() {
+    pathsMap = {};
+    objectsMap = {};
+  }
+
+  return { execute, listen, write, read, flush, reset };
 }
