@@ -217,6 +217,36 @@ const cases = [
     idFields: ["bio"]
   },
   {
+    should: "should insert fields in inline fragments while leaving unions",
+    input: `
+      {
+        viewer {
+          ...on Visitor {
+            ip
+          }
+          ...on User {
+            username
+          }
+        }
+      }
+    `,
+    expectedOutput: `
+      {
+        viewer {
+          ...on Visitor {
+            ip
+            id
+          }
+          ...on User {
+            username
+            id
+          }
+        }
+      }
+    `,
+    idFields: ["id"]
+  },
+  {
     should: "should not insert `__typename` in an operation definition",
     input: `
       mutation createPost($title: Int!, $body: Int!, $id: ID! $authors: [ID!]!) {

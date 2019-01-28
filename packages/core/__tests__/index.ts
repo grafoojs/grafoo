@@ -76,8 +76,8 @@ const POSTS_AND_AUTHORS = graphql`
 `;
 
 const POST = graphql`
-  query($id: ID!) {
-    post(id: $id) {
+  query($postId: ID!) {
+    post(id: $postId) {
       title
       body
       author {
@@ -88,8 +88,8 @@ const POST = graphql`
 `;
 
 const POST_WITH_FRAGMENT = graphql`
-  query($id: ID!) {
-    post(id: $id) {
+  query($postId: ID!) {
+    post(id: $postId) {
       title
       body
       author {
@@ -132,10 +132,11 @@ describe("@grafoo/core", () => {
     expect(typeof client.write).toBe("function");
     expect(typeof client.read).toBe("function");
     expect(typeof client.flush).toBe("function");
+    expect(typeof client.reset).toBe("function");
   });
 
   it("should perform query requests", async () => {
-    const variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    const variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
 
     let { query, frags } = POST_WITH_FRAGMENT;
     if (frags) for (const frag in frags) query += " " + frags[frag];
@@ -194,13 +195,30 @@ describe("@grafoo/core", () => {
   });
 
   it("should handle queries with variables", async () => {
-    const variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    const variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
     const { data } = await executeQuery<PostQuery>({ query: POST.query, variables });
 
     client.write(POST, variables, data);
 
-    expect(client.read(POST, { id: "123" })).toEqual({});
-    expect(client.read<PostQuery>(POST, variables).data.post.id).toBe(variables.id);
+    expect(client.read(POST, { postId: "123" })).toEqual({});
+    expect(client.read<PostQuery>(POST, variables).data.post.id).toBe(variables.postId);
+  });
+
+  it("should distinguish between calls to the same query with different variables", async () => {
+    const v1 = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    const v2 = { postId: "77c483dd-6529-4c72-9bb6-bbfd69f65682" };
+
+    const { data: d1 } = await executeQuery<PostQuery>({ query: POST.query, variables: v1 });
+    client.write(POST, v1, d1);
+
+    expect(client.read(POST, { postId: "not found" })).toEqual({});
+    expect(client.read<PostQuery>(POST, v1).data.post.id).toBe(v1.postId);
+
+    const d2 = await executeQuery<PostQuery>({ query: POST.query, variables: v2 });
+    client.write(POST, v2, d2);
+
+    expect(client.read<PostQuery>(POST, v1).data.post.id).toBe(v1.postId);
+    expect(client.read<PostQuery>(POST, v2).data.post.id).toBe(v2.postId);
   });
 
   it("should flag if a query result is partial", async () => {
@@ -233,7 +251,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should perform update to client", async () => {
-    const variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    const variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
     const { data } = await executeQuery<PostQuery>({ query: POST.query, variables });
 
     client.write(POST, variables, data);
@@ -250,7 +268,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should reflect updates on queries with shared objects", async () => {
-    const variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    const variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
     const postData = (await executeQuery<PostQuery>({ query: POST.query, variables })).data;
     const postsData = (await executeQuery<PostsQuery>({ query: POSTS.query, variables })).data;
 
@@ -258,17 +276,17 @@ describe("@grafoo/core", () => {
 
     const { posts } = client.read<PostsQuery>(POSTS).data;
 
-    expect(posts.find(p => p.id === variables.id).title).toBe("Quam odit");
+    expect(posts.find(p => p.id === variables.postId).title).toBe("Quam odit");
 
     client.write(POST, variables, { post: { ...postData.post, title: "updated title" } });
 
     const { posts: updatedPosts } = client.read<PostsQuery>(POSTS, variables).data;
 
-    expect(updatedPosts.find(p => p.id === variables.id).title).toBe("updated title");
+    expect(updatedPosts.find(p => p.id === variables.postId).title).toBe("updated title");
   });
 
   it("should merge objects in the client when removing or adding properties", async () => {
-    const variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    const variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
     const data = (await executeQuery<PostQuery>({ query: POST.query, variables })).data;
 
     client.write(POST, variables, data);
@@ -296,7 +314,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should call client listeners on write with paths objects as arguments", async () => {
-    const variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    const variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
     const data = (await executeQuery<PostQuery>({ query: POST.query, variables })).data;
 
     const listener = jest.fn();
@@ -329,6 +347,18 @@ describe("@grafoo/core", () => {
     client = createClient(mockTrasport, { idFields: ["id"], initialState: client.flush() });
 
     expect(client.read(POSTS_AND_AUTHORS).data).toEqual(data);
+  });
+
+  it("should allow cache to be cleared using reset()", () => {
+    const data = { authors: [{ name: "deleteme" }] };
+    client.write(SIMPLE_AUTHORS, data);
+    expect(client.read(SIMPLE_AUTHORS).data).toEqual(data);
+    client.reset();
+    expect(client.read(SIMPLE_AUTHORS).data).toEqual(undefined);
+    expect(client.flush()).toEqual({
+      objectsMap: {},
+      pathsMap: {}
+    });
   });
 
   it("should accept `idFields` array in options", async () => {
