@@ -123,11 +123,19 @@ const USER_QUERY = gql`
 
 const variables = { id: 123 };
 
-client.request(USER_QUERY, variables).then(data => {
+client.execute(USER_QUERY, variables).then(data => {
+  // Write to cache
   client.write(USER_QUERY, variables, data);
 
+  // Do whatever with returned data
+  console.log(data);
+
+  // Read from cache at a later stage
   console.log(client.read(USER_QUERY, variables));
 });
+
+// If you wish to reset (clear) the cache:
+client.reset();
 ```
 
 ### With a framework
