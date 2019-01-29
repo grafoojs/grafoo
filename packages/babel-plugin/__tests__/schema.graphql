@@ -28,7 +28,10 @@ type Query {
   users(start: Int!, offset: Int!): [User]
   user(id: ID!): User
   me: User
+  viewer: Viewer
 }
+
+union Viewer = Visitor | User
 
 type Tag {
   id: ID!
@@ -50,4 +53,9 @@ type Author implements User {
   name: String
   bio: String
   posts: [Post!]!
+}
+
+type Visitor {
+  id: ID!
+  ip: String!
 }

@@ -43,4 +43,33 @@ describe("compile document", () => {
 
     expect(() => transform(program)).not.toThrow();
   });
+
+  it("should accept named queries", () => {
+    const program = `
+      import gql from "@grafoo/core/tag";
+      const query = gql\`
+        query NamedQuery {
+          me { id }
+        }
+      \`;
+    `;
+
+    expect(() => transform(program)).not.toThrow();
+  });
+
+  it("should accept named queries with arguments", () => {
+    const program = `
+      import gql from "@grafoo/core/tag";
+      const query = gql\`
+        query NamedQuery($var: ID!) {
+          post(id: $var) {
+            id
+            title
+          }
+        }
+      \`;
+    `;
+
+    expect(() => transform(program)).not.toThrow();
+  });
 });

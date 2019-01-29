@@ -62,6 +62,7 @@ export interface GrafooClient {
     variables?: Variables
   ) => { data?: T; objects?: ObjectsMap; partial?: boolean };
   flush: () => InitialState;
+  reset: () => void;
 }
 
 export interface GrafooClientOptions {
