@@ -1,4 +1,16 @@
-# Changelog
+# CHANGELOG
+
+## 1.3.0
+
+### Features
+
+- [core] add reset method to client to clear the cache.
+
+### Fixes
+
+- [babel-plugin] Correctly identify variables in arguments
+- [babel-plugin] Don't throw error when encountering a Union node
+- [babel-plugin] Prevent multiple instances of idFields to be added to the same node in a query
 
 ## 1.2.0
 
