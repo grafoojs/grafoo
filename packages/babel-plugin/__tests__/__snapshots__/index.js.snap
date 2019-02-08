@@ -45,7 +45,9 @@ const query = createClient(someTransport, {
 
 import createClient from \\"@grafoo/core\\";
 const query = createClient(someTransport, {
-  headers: () => ({ authorization: \\"some-token\\" }),
+  headers: () => ({
+    authorization: \\"some-token\\"
+  }),
   idFields: [\\"id\\"]
 });
 "
@@ -104,7 +106,9 @@ const query = createClient(someTransport, options);
       ↓ ↓ ↓ ↓ ↓ ↓
 
 import createClient from \\"@grafoo/core\\";
-const options = { idFields: [\\"id\\"] };
+const options = {
+  idFields: [\\"id\\"]
+};
 const query = createClient(someTransport, options);
 "
 `;
