@@ -1,13 +1,13 @@
 import createClient from "@grafoo/core";
 import graphql from "@grafoo/core/tag";
-import createTrasport from "@grafoo/http-transport";
+import createTransport from "@grafoo/http-transport";
 import { mockQueryRequest } from "@grafoo/test-utils";
 import { GrafooClient } from "@grafoo/types";
 import * as React from "react";
 import * as TestRenderer from "react-test-renderer";
 import { Consumer, Provider } from "../src";
 
-interface Post {
+export interface Post {
   title: string;
   content: string;
   id: string;
@@ -15,18 +15,18 @@ interface Post {
   author: Author;
 }
 
-interface Author {
+export interface Author {
   name: string;
   id: string;
   __typename: string;
   posts?: Array<Post>;
 }
 
-interface Authors {
+export interface Authors {
   authors: Author[];
 }
 
-const AUTHORS = graphql`
+export const AUTHORS = graphql`
   {
     authors {
       name
@@ -38,7 +38,7 @@ const AUTHORS = graphql`
   }
 `;
 
-const AUTHOR = graphql`
+export const AUTHOR = graphql`
   query($id: ID!) {
     author(id: $id) {
       name
@@ -46,7 +46,7 @@ const AUTHOR = graphql`
   }
 `;
 
-const CREATE_AUTHOR = graphql`
+export const CREATE_AUTHOR = graphql`
   mutation($name: String!) {
     createAuthor(name: $name) {
       name
@@ -54,7 +54,7 @@ const CREATE_AUTHOR = graphql`
   }
 `;
 
-const POSTS_AND_AUTHORS = graphql`
+export const POSTS_AND_AUTHORS = graphql`
   {
     posts {
       title
@@ -79,7 +79,7 @@ describe("@grafoo/react", () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
-    const transport = createTrasport("https://some.graphql.api/");
+    const transport = createTransport("https://some.graphql.api/");
     client = createClient(transport, { idFields: ["id"] });
   });
 
@@ -387,7 +387,7 @@ function createMockRenderFn(done, assertionsFns) {
   return props => {
     const assert = assertionsFns[currentRender];
 
-    if (assert) assertionsFns[currentRender](props);
+    if (assert) assert(props);
 
     if (currentRender++ === assertionsFns.length - 1) done();
 

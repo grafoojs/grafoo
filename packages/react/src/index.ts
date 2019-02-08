@@ -3,7 +3,8 @@ import {
   Context,
   GrafooConsumerProps,
   GrafooBoundState,
-  GrafooBoundMutations
+  GrafooBoundMutations,
+  GrafooClient
 } from "@grafoo/types";
 import { Component, createContext, createElement, ReactElement, ReactNode, SFC } from "react";
 
@@ -31,7 +32,7 @@ interface ConsumerType extends SFC {
   <T, U>(props: GrafooReactConsumerProps<T, U>): ReactElement<any> | null;
 }
 
-let ctx = createContext({});
+export let ctx = createContext<GrafooClient>(null);
 
 export let Provider: SFC<Context> = props =>
   createElement(ctx.Provider, { value: props.client }, props.children);
