@@ -173,13 +173,15 @@ const client = createClient(fetchQuery, {
 
 the `createClient` factory returns a client instance with some methods:
 
-| Name    | Description                                            |
-| ------- | ------------------------------------------------------ |
-| execute | executes queries                                       |
-| read    | reads queries from the cache                           |
-| write   | writes queries to the cache                            |
-| listen  | takes a listener callback and notify for cache changes |
-| flush   | dumps the internal state of the instance cache         |
+| Name      | Description                                                |
+| --------- | ---------------------------------------------------------- |
+| execute   | executes queries                                           |
+| read      | reads queries from the cache                               |
+| readByKey | reads an item from cache using key specified in `idFields` |
+| write     | writes queries to the cache                                |
+| listen    | takes a listener callback and notify for cache changes     |
+| reset     | clears cache                                               |
+| flush     | dumps the internal state of the instance cache             |
 
 ### `GrafooClient.execute`
 
@@ -232,6 +234,20 @@ client.read(USER_QUERY, variables);
 // }
 ```
 
+### `GrafooClient.readByKey`
+
+`readByKey` takes a key specified in `idFields` and returns a cached object if it exists, otherwise `undefined`. It serves as a tool for building custom behaviors (which often require imperative cache access) in order to avoid bloating `grafoo` packages with edge case features.
+
+#### Example
+
+```js
+// if idFields is ["id"]
+client.readByKey("123");
+
+// if idFields is ["id", "__typename"]
+client.readByKey("123User");
+```
+
 ### `GrafooClient.listen`
 
 `listen` takes a _listener_ callback as argument. Whenever the cache is updated that _listener_ is called with the objects that were inserted, modified or removed.
@@ -248,6 +264,16 @@ const unlisten = client.listen();
 client.write(USER_QUERY, variables, data);
 
 unlisten(); // detaches the listener from the client
+```
+
+### `GrafooClient.reset`
+
+`reset` method clears the cache. It **does not** call active listeners.
+
+#### Example
+
+```js
+client.reset();
 ```
 
 ### `GrafooClient.flush`

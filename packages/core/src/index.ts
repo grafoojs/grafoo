@@ -98,6 +98,10 @@ export default function createClient(
       : {};
   }
 
+  function readByKey(key: string) {
+    return objectsMap[key];
+  }
+
   function flush() {
     return { objectsMap, pathsMap };
   }
@@ -107,5 +111,5 @@ export default function createClient(
     objectsMap = {};
   }
 
-  return { execute, listen, write, read, flush, reset };
+  return { execute, listen, write, read, readByKey, flush, reset };
 }

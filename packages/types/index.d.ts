@@ -61,6 +61,7 @@ export interface GrafooClient {
     grafooObject: GrafooObject,
     variables?: Variables
   ) => { data?: T; objects?: ObjectsMap; partial?: boolean };
+  readByKey: (key: string) => {} | undefined;
   flush: () => InitialState;
   reset: () => void;
 }

@@ -349,6 +349,24 @@ describe("@grafoo/core", () => {
     expect(client.read(POSTS_AND_AUTHORS).data).toEqual(data);
   });
 
+  it("should be able to read from objectsMap by key", async () => {
+    const variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    const { data } = await executeQuery<PostQuery>({ query: POST.query, variables });
+
+    client.write(POST, variables, data);
+
+    const existingKey = "2c969ce7-02ae-42b1-a94d-7d0a38804c85";
+    expect(client.readByKey(existingKey)).toEqual({
+      __typename: "Post",
+      body: "Ducimus harum delectus consectetur.",
+      id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85",
+      title: "Quam odit"
+    });
+
+    const nonExistentKey = "id-that-doesnt-exist-in-cache";
+    expect(client.readByKey(nonExistentKey)).toEqual(undefined);
+  });
+
   it("should allow cache to be cleared using reset()", () => {
     const data = { authors: [{ name: "deleteme" }] };
     client.write(SIMPLE_AUTHORS, data);
