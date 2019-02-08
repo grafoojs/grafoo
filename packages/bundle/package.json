@@ -5,12 +5,12 @@
   "main": "index.js",
   "dependencies": {
     "mri": "^1.1.1",
-    "rollup": "^0.59.4",
+    "rollup": "^1.1.2",
     "rollup-plugin-buble": "^0.19.2",
-    "rollup-plugin-filesize": "^1.5.0",
-    "rollup-plugin-node-resolve": "^3.3.0",
-    "rollup-plugin-terser": "^1.0.1",
-    "rollup-plugin-typescript2": "^0.15.0",
+    "rollup-plugin-filesize": "^6.0.1",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-terser": "^4.0.4",
+    "rollup-plugin-typescript2": "^0.19.2",
     "typescript": "^3.0.1"
   },
   "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974"
