@@ -19,6 +19,7 @@ const query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 const query = {
+  \\"id\\": \\"04b0684748bc044e1f86d366ecbc70dd6e59b99c65671e853f9ecd0b836eaeaf\\",
   \\"query\\": \\"query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}\\",
   \\"paths\\": {
     \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {
@@ -142,6 +143,7 @@ const query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 const query = {
+  \\"id\\": \\"04b0684748bc044e1f86d366ecbc70dd6e59b99c65671e853f9ecd0b836eaeaf\\",
   \\"query\\": \\"query ($id: ID!, $offset: Int!, $start: Int!) {\\\\n  posts(offset: $offset, start: $start) {\\\\n    authors {\\\\n      id\\\\n      name\\\\n      username\\\\n    }\\\\n    body\\\\n    createdAt\\\\n    id\\\\n    tags {\\\\n      id\\\\n      name\\\\n    }\\\\n    title\\\\n  }\\\\n  user(id: $id) {\\\\n    id\\\\n    name\\\\n    username\\\\n  }\\\\n}\\",
   \\"paths\\": {
     \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {

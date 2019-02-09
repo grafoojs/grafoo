@@ -39,7 +39,8 @@
   "dependencies": {
     "babel-literal-to-ast": "^2.0.0",
     "graphql": "^14.1.1",
-    "graphql-query-compress": "^1.0.0"
+    "graphql-query-compress": "^1.0.0",
+    "hash.js": "^1.1.7"
   },
   "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974",
   "devDependencies": {

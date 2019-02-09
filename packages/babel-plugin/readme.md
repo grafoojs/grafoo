@@ -111,6 +111,7 @@ The recommendation for now is to use the [`get-graphql-schema`](https://github.c
 -   }
 - `;
 + const USER_QUERY = {
++   id: "f333c47eac309ba042dfc0cbd0293e210f5cd48f9d7015d988bcb621b61207d5",
 +   query: "query($id: ID!) { user(id: $id) { id name posts { id title } } }",
 +   paths: {
 +     "user(id:$id){id name posts{id title}}": {

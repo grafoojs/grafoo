@@ -19,10 +19,10 @@ export default function createClient(
   let { pathsMap, objectsMap } = initialState || { pathsMap: {}, objectsMap: {} };
   let listeners: Listener[] = [];
 
-  function execute<T>({ query, frags }: GrafooObject, variables?: Variables) {
+  function execute<T>({ query, frags, id }: GrafooObject, variables?: Variables) {
     if (frags) for (let frag in frags) query += frags[frag];
 
-    return transport<T>(query, variables);
+    return transport<T>(query, variables, id);
   }
 
   function listen(listener: Listener) {

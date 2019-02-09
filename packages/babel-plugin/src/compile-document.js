@@ -1,6 +1,7 @@
 import fs from "fs";
 import { parse, print } from "graphql";
 import compress from "graphql-query-compress";
+import sha256 from "hash.js/lib/hash/sha/256";
 import path from "path";
 import insertFields from "./insert-fields";
 import sortDocument from "./sort-query";
@@ -40,20 +41,36 @@ function getSchema(schemaPath) {
 
 export default function compileDocument(source, opts) {
   const schema = getSchema(opts.schema);
-  const document = sortDocument(insertFields(schema, parse(source), opts.idFields));
-  const oprs = document.definitions.filter(d => d.kind === "OperationDefinition");
-  const frags = document.definitions.filter(d => d.kind === "FragmentDefinition");
+  const doc = sortDocument(insertFields(schema, parse(source), opts.idFields));
+  const oprs = doc.definitions.filter(d => d.kind === "OperationDefinition");
+  const frags = doc.definitions.filter(d => d.kind === "FragmentDefinition");
 
   if (oprs.length > 1) {
     throw new Error("@grafoo/core/tag: only one operation definition is accepted per tag.");
   }
 
-  const grafooObj = { query: opts.compress ? compress(print(oprs[0])) : print(oprs[0]) };
+  let grafooObj = {};
 
   if (oprs.length) {
+    const printed = print(oprs[0]);
+    const compressed = compress(printed);
+
+    // Use compressed version to get same hash even if
+    // query has different whitespaces, newlines, etc
+    // Document is also sorted by "sortDocument" therefore
+    // selections, fields, etc order shouldn't matter either
+    const hash = sha256()
+      .update(compressed)
+      .digest("hex");
+
+    grafooObj.id = hash;
+    grafooObj.query = opts.compress ? compressed : printed;
+
     grafooObj.paths = oprs[0].selectionSet.selections.reduce(
       (acc, s) =>
         Object.assign(acc, {
+          // TODO: generate hashes as well
+          // based on compress(print(s))?
           [compress(print(s))]: {
             name: s.name.value,
             args: s.arguments.map(a => {
