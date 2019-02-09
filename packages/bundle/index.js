@@ -18,6 +18,8 @@ module.exports = function build(opts) {
   tsconfig.compilerOptions.declaration = true;
   tsconfig.compilerOptions.outDir = path.join(opts.rootPath, "dist");
 
+  var filename = path.basename(opts.input);
+
   return rollup({
     input: path.join(opts.rootPath, opts.input),
     external: Object.keys(peerDependencies),
@@ -46,7 +48,7 @@ module.exports = function build(opts) {
     ].filter(Boolean)
   }).then(function(bundle) {
     return bundle.write({
-      file: path.join(opts.rootPath, "dist/index.js"),
+      file: path.join(opts.rootPath, "dist", filename.replace(path.extname(filename), "") + ".js"),
       sourcemap: true,
       format: opts.format || "esm",
       treeshake: {

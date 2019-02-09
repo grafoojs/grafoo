@@ -20,7 +20,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "grafoo-bundle --input src/index.ts",
+    "build": "grafoo-bundle --input src/index.ts && grafoo-bundle --input src/hooks.ts",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "tsc": "tsc --noEmit"
