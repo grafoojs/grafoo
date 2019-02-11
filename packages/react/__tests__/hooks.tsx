@@ -122,7 +122,7 @@ describe("@grafoo/react/hooks", () => {
     );
   });
 
-  it("should render if skip changed value to true", async done => {
+  it.skip("should render if skip changed value to true", async done => {
     let { data } = await mockQueryRequest(AUTHORS);
     let useAssertions = createAssertions(done, [
       state => expect(state).toMatchObject({ loading: false, loaded: false }),
