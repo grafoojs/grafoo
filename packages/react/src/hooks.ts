@@ -12,7 +12,6 @@ export default function useGrafoo<T, U>(config: GrafooConsumerProps<T, U>) {
       setState(bindings.getState());
     })
   );
-
   let [state, setState] = useState(bindings.getState());
   let { loaded } = state;
 

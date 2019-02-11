@@ -186,13 +186,7 @@ describe("@grafoo/react", () => {
       </Provider>
     );
 
-    const ctx = TestRenderer.create(<App skip />);
-
-    ctx.update(<App />);
-
-    await new Promise(resolve => setTimeout(resolve, 10));
-
-    ctx.update(<App />);
+    TestRenderer.create(<App skip />).update(<App />);
   });
 
   it("should rerender if variables prop has changed", async done => {

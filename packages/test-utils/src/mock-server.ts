@@ -145,7 +145,7 @@ export function mockQueryRequest<T>(request: ExecuteQueryArg): Promise<GraphQlPa
   fetchMock.reset();
   fetchMock.restore();
 
-  return executeQuery<T>(request).then(function(response) {
+  return executeQuery<T>(request).then(response => {
     fetchMock.post("*", response);
 
     return response;

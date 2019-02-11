@@ -4,9 +4,9 @@ import { GrafooClient } from "@grafoo/types";
 import { mockQueryRequest } from "@grafoo/test-utils";
 import { Provider } from "../src";
 import useGrafoo from "../src/hooks";
-import * as React from "react";
 import * as TestRenderer from "react-test-renderer";
-import { AUTHORS } from ".";
+import * as React from "react";
+import { AUTHORS, Authors } from ".";
 
 describe("@grafoo/react/hooks", () => {
   let client: GrafooClient;
@@ -102,31 +102,55 @@ describe("@grafoo/react/hooks", () => {
     );
   });
 
-  // it("should execute render with the right data if a query is specified", async done => {
-  //   let { data } = await mockQueryRequest(AUTHORS);
+  it("should execute render with the right data if a query is specified", async done => {
+    let { data } = await mockQueryRequest<Authors>(AUTHORS);
 
-  //   let Comp = () => {
-  //     let state = useGrafoo({ query: AUTHORS });
+    let useAssertions = createAssertions(done, [
+      state => expect(state).toMatchObject({ loading: true, loaded: false }),
+      state => expect(state).toMatchObject({ loading: false, loaded: true, authors: data.authors })
+    ]);
 
-  //     useAssertions(done, [
-  //       () => expect(state).toMatchObject({ loading: true, loaded: false }),
-  //       () => expect(state).toMatchObject({ loading: false, loaded: true, ...data })
-  //     ]);
+    let Comp = () => {
+      useAssertions(useGrafoo({ query: AUTHORS }));
+      return null;
+    };
 
-  //     return null;
-  //   };
+    TestRenderer.create(
+      <Provider client={client}>
+        <Comp />
+      </Provider>
+    );
+  });
 
-  //   TestRenderer.create(
-  //     <Provider client={client}>
-  //       <Comp />
-  //     </Provider>
-  //   );
-  // });
+  it("should render if skip changed value to true", async done => {
+    let { data } = await mockQueryRequest(AUTHORS);
+    let useAssertions = createAssertions(done, [
+      state => expect(state).toMatchObject({ loading: false, loaded: false }),
+      state => expect(state).toMatchObject({ loading: true, loaded: false }),
+      state => expect(state).toMatchObject({ loading: false, loaded: true, authors: data.authors })
+    ]);
+
+    let Comp = ({ skip }) => {
+      useAssertions(useGrafoo({ query: AUTHORS, skip }));
+      return null;
+    };
+
+    let App = ({ skip = false }) => (
+      <Provider client={client}>
+        <Comp skip={skip} />
+      </Provider>
+    );
+
+    TestRenderer.create(<App skip />).update(<App />);
+  });
 });
 
-// function useAssertions(done: jest.DoneCallback, fns: (() => void)[]) {
-//   let { current: i } = React.useRef(0);
-//   let assert = fns[i];
-//   if (assert) assert();
-//   if (i++ === fns.length - 1) done();
-// }
+function createAssertions(done: jest.DoneCallback, assertions: ((state: any) => any)[]) {
+  let i = 0;
+
+  return (state: any) => {
+    let assert = assertions[i];
+    if (assert) assert(state);
+    if (i++ === assertions.length - 1) done();
+  };
+}
