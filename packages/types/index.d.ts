@@ -25,7 +25,8 @@ export interface Variables {
  */
 export type GrafooTransport = <T>(
   query: string,
-  variables?: Variables
+  variables?: Variables,
+  id?: string
 ) => Promise<GraphQlPayload<T>>;
 
 /**
@@ -81,6 +82,7 @@ export interface GrafooObject {
     };
   };
   query: string;
+  id?: string;
 }
 
 /**

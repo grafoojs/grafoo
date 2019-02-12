@@ -60,7 +60,8 @@ To configure the plugin is required to specify the option `idFields`, an array o
       "@grafoo/babel-plugin",
       {
         "schema": "schema.graphql",
-        "idFields": ["id"]
+        "idFields": ["id"],
+        "generateIds": false
       }
     ]
   ]
@@ -111,6 +112,7 @@ The recommendation for now is to use the [`get-graphql-schema`](https://github.c
 -   }
 - `;
 + const USER_QUERY = {
++   id: "d4b567cd2a8891aa4cd1840f1a53002e", // only if option "generateIds" is true
 +   query: "query($id: ID!) { user(id: $id) { id name posts { id title } } }",
 +   paths: {
 +     "user(id:$id){id name posts{id title}}": {

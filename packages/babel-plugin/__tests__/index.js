@@ -103,6 +103,51 @@ pluginTester({
       `,
       snapshot: true
     },
+    "should generate md5 hash and add it to object if the option generateIds is specified": {
+      pluginOptions: {
+        schema: "__tests__/schema.graphql",
+        idFields: ["id"],
+        generateIds: true
+      },
+      code: `
+        import gql from "@grafoo/core/tag";
+        const query = gql\`
+          query($start: Int!, $offset: Int!, $id: ID!) {
+            posts(start: $start, offset: $offset) {
+              title
+              body
+              createdAt
+              tags { name }
+              authors { name username }
+            }
+            user(id: $id) { name username }
+          }
+        \`;
+      `,
+      snapshot: true
+    },
+    "should not generate md5 hash and add it to object if the option generateIds is falsey": {
+      pluginOptions: {
+        schema: "__tests__/schema.graphql",
+        idFields: ["id"]
+      },
+      code: `
+        import gql from "@grafoo/core/tag";
+        const query = gql\`
+          query($start: Int!, $offset: Int!, $id: ID!) {
+            posts(start: $start, offset: $offset) {
+              title
+              body
+              createdAt
+              tags { name }
+              authors { name username }
+            }
+            user(id: $id) { name username }
+          }
+        \`;
+      `,
+      snapshot: true
+    },
     "should include `idFields` in the client instantiation if options are not provided": {
       code: `
         import createClient from "@grafoo/core";
