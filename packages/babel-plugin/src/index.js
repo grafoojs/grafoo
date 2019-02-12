@@ -12,6 +12,10 @@ export default function transform({ types: t }) {
           opts.compress = process.env.NODE_ENV === "production";
         }
 
+        if (typeof opts.generateIds !== "boolean") {
+          opts.generateIds = false;
+        }
+
         if (!opts.idFields) {
           throw new Error("@grafoo/babel-plugin: the `idFields` option is required.");
         }

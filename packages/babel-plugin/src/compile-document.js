@@ -1,7 +1,7 @@
 import fs from "fs";
 import { parse, print } from "graphql";
 import compress from "graphql-query-compress";
-import sha256 from "hash.js/lib/hash/sha/256";
+import md5Hash from "crypto-js/md5";
 import path from "path";
 import insertFields from "./insert-fields";
 import sortDocument from "./sort-query";
@@ -59,11 +59,10 @@ export default function compileDocument(source, opts) {
     // query has different whitespaces, newlines, etc
     // Document is also sorted by "sortDocument" therefore
     // selections, fields, etc order shouldn't matter either
-    const hash = sha256()
-      .update(compressed)
-      .digest("hex");
+    if (opts.generateIds) {
+      grafooObj.id = md5Hash(compressed).toString();
+    }
 
-    grafooObj.id = hash;
     grafooObj.query = opts.compress ? compressed : printed;
 
     grafooObj.paths = oprs[0].selectionSet.selections.reduce(

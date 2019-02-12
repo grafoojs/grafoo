@@ -19,8 +19,42 @@ const query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 const query = {
-  \\"id\\": \\"04b0684748bc044e1f86d366ecbc70dd6e59b99c65671e853f9ecd0b836eaeaf\\",
   \\"query\\": \\"query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}\\",
+  \\"paths\\": {
+    \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {
+      \\"name\\": \\"posts\\",
+      \\"args\\": [\\"offset\\", \\"start\\"]
+    },
+    \\"user(id:$id){id name username}\\": {
+      \\"name\\": \\"user\\",
+      \\"args\\": [\\"id\\"]
+    }
+  }
+};
+"
+`;
+
+exports[`@grafoo/babel-plugin should generate md5 hash and add it to object if the option generateIds is specified: should generate md5 hash and add it to object if the option generateIds is specified 1`] = `
+"
+import gql from \\"@grafoo/core/tag\\";
+const query = gql\`
+  query($start: Int!, $offset: Int!, $id: ID!) {
+    posts(start: $start, offset: $offset) {
+      title
+      body
+      createdAt
+      tags { name }
+      authors { name username }
+    }
+    user(id: $id) { name username }
+  }
+\`;
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+const query = {
+  \\"id\\": \\"6e0697df8f2453f2643bbd1e8a39c348\\",
+  \\"query\\": \\"query ($id: ID!, $offset: Int!, $start: Int!) {\\\\n  posts(offset: $offset, start: $start) {\\\\n    authors {\\\\n      id\\\\n      name\\\\n      username\\\\n    }\\\\n    body\\\\n    createdAt\\\\n    id\\\\n    tags {\\\\n      id\\\\n      name\\\\n    }\\\\n    title\\\\n  }\\\\n  user(id: $id) {\\\\n    id\\\\n    name\\\\n    username\\\\n  }\\\\n}\\",
   \\"paths\\": {
     \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {
       \\"name\\": \\"posts\\",
@@ -98,6 +132,40 @@ const query = createClient(someTransport, options);
 "
 `;
 
+exports[`@grafoo/babel-plugin should not generate md5 hash and add it to object if the option generateIds is falsey: should not generate md5 hash and add it to object if the option generateIds is falsey 1`] = `
+"
+import gql from \\"@grafoo/core/tag\\";
+const query = gql\`
+  query($start: Int!, $offset: Int!, $id: ID!) {
+    posts(start: $start, offset: $offset) {
+      title
+      body
+      createdAt
+      tags { name }
+      authors { name username }
+    }
+    user(id: $id) { name username }
+  }
+\`;
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+const query = {
+  \\"query\\": \\"query ($id: ID!, $offset: Int!, $start: Int!) {\\\\n  posts(offset: $offset, start: $start) {\\\\n    authors {\\\\n      id\\\\n      name\\\\n      username\\\\n    }\\\\n    body\\\\n    createdAt\\\\n    id\\\\n    tags {\\\\n      id\\\\n      name\\\\n    }\\\\n    title\\\\n  }\\\\n  user(id: $id) {\\\\n    id\\\\n    name\\\\n    username\\\\n  }\\\\n}\\",
+  \\"paths\\": {
+    \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {
+      \\"name\\": \\"posts\\",
+      \\"args\\": [\\"offset\\", \\"start\\"]
+    },
+    \\"user(id:$id){id name username}\\": {
+      \\"name\\": \\"user\\",
+      \\"args\\": [\\"id\\"]
+    }
+  }
+};
+"
+`;
+
 exports[`@grafoo/babel-plugin should overide \`idFields\` in the client instantiation if options is a variable: should overide \`idFields\` in the client instantiation if options is a variable 1`] = `
 "
 import createClient from \\"@grafoo/core\\";
@@ -143,7 +211,6 @@ const query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 const query = {
-  \\"id\\": \\"04b0684748bc044e1f86d366ecbc70dd6e59b99c65671e853f9ecd0b836eaeaf\\",
   \\"query\\": \\"query ($id: ID!, $offset: Int!, $start: Int!) {\\\\n  posts(offset: $offset, start: $start) {\\\\n    authors {\\\\n      id\\\\n      name\\\\n      username\\\\n    }\\\\n    body\\\\n    createdAt\\\\n    id\\\\n    tags {\\\\n      id\\\\n      name\\\\n    }\\\\n    title\\\\n  }\\\\n  user(id: $id) {\\\\n    id\\\\n    name\\\\n    username\\\\n  }\\\\n}\\",
   \\"paths\\": {
     \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {
