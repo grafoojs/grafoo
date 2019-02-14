@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 1.4.0
+
+### Features
+
+- [babel-plugin, core] adds an option to babel-plugin to generate an id side by side with the query in Grafoo Object. This feature will enable persistent queries in the future.
+
+### Contributors:
+
+- @[adjourn](/adjourn)
+
 ## 1.3.0
 
 ### Features
@@ -11,6 +21,10 @@
 - [babel-plugin] Correctly identify variables in arguments
 - [babel-plugin] Don't throw error when encountering a Union node
 - [babel-plugin] Prevent multiple instances of idFields to be added to the same node in a query
+
+### Contributors:
+
+- @[mogelbrod](/mogelbrod)
 
 ## 1.2.0
 
