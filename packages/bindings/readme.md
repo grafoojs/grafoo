@@ -39,6 +39,12 @@
       alt="mantained with: lerna"
     />
   </a>
+  <a href=https://grafoo-slack.herokuapp.com>
+    <img
+      src=https://grafoo-slack.herokuapp.com/badge.svg
+      alt="slack"
+    />
+  </a>
 </p>
 
 This packages purpose is to standardize how view layer integrations are implemented for Grafoo. `@grafoo/bindings` has only a default export that is a `createBindings` factory function that returns an interface that provides data and notify for changes.

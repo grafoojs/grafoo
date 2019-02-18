@@ -12,7 +12,7 @@ If you're not sure where to start? You'll probably want to learn a bit about a f
 
 ## Chat
 
-Have read this contributing guide and still need some help? Feel free to ping me on twitter, I can be found as [@miguel_albernaz](https://twitter.com/miguel_albernaz).
+Have read this contributing guide and still need some help? Feel free join our [slack channel](https://grafoo-slack.herokuapp.com).
 
 ## Disclaimer
 

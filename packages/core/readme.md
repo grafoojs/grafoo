@@ -45,6 +45,12 @@
       alt="mantained with: lerna"
     />
   </a>
+  <a href=https://grafoo-slack.herokuapp.com>
+    <img
+      src=https://grafoo-slack.herokuapp.com/badge.svg
+      alt="slack"
+    />
+  </a>
 </p>
 
 ## Install

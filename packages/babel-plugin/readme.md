@@ -39,6 +39,12 @@
       alt="mantained with: lerna"
     />
   </a>
+  <a href=https://grafoo-slack.herokuapp.com>
+    <img
+      src=https://grafoo-slack.herokuapp.com/badge.svg
+      alt="slack"
+    />
+  </a>
 </p>
 
 A premise Grafoo takes is that it should be able to extract an unique identifier from every node on the queries you write. It can be a GraphQL `ID` field, or more fields that together can form one (eg: an incremental integer and the GraphQL meta field `__typename`). It is `@grafoo/babel-plugin`'s responsibility to insert those fields on your queries automatically. If you have already used Apollo this should be very familiar to you, as our `idFields` configuration has the same pourpose of Apollo Cache's `dataIdFromObject`: to normalize your data.

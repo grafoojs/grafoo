@@ -44,6 +44,12 @@
       alt="mantained with: lerna"
     />
   </a>
+  <a href=https://grafoo-slack.herokuapp.com>
+    <img
+      src=https://grafoo-slack.herokuapp.com/badge.svg
+      alt="slack"
+    />
+  </a>
 </p>
 
 Grafoo is a GraphQL client that tries to be different by adopting a **simpler API**, without giving up of a **good caching strategy**.
