@@ -34,7 +34,7 @@ export type GrafooTransport = <T>(
  */
 
 export interface ObjectsMap {
-  [key: string]: {};
+  [key: string]: Record<string, unknown>;
 }
 
 export interface PathsMap {

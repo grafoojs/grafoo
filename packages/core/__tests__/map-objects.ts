@@ -45,9 +45,9 @@ const idFields = ["id"];
 
 describe("map-objects", () => {
   it("should return the correct map of objects", () => {
-    const objects = mapObjects(tree, idFields);
+    let objects = mapObjects(tree, idFields);
 
-    const expected = {
+    let expected = {
       "1": { title: "foo", id: "1", __typename: "Post", content: "a post content" },
       "2": { name: "miguel", id: "2", __typename: "Author", lastName: "albernaz" },
       "3": { title: "bar", __typename: "Post", id: "3" },
@@ -60,7 +60,7 @@ describe("map-objects", () => {
   });
 
   it("should accept null values", () => {
-    const result = {
+    let result = {
       data: {
         me: {
           id: "5a3ab7e93f662a108d978a6e",
@@ -76,11 +76,11 @@ describe("map-objects", () => {
   });
 
   it("should build an object identifier based on the `idFields` cache option", () => {
-    const idFields = ["__typename", "id"];
+    let idFields = ["__typename", "id"];
 
-    const objects = mapObjects(tree, idFields);
+    let objects = mapObjects(tree, idFields);
 
-    const expected = ["Post1", "Author2", "Post3", "Author4", "Post5", "Author6"];
+    let expected = ["Post1", "Author2", "Post3", "Author4", "Post5", "Author6"];
 
     expect(Object.keys(objects).every((obj) => expected.some((exp) => exp === obj))).toBe(true);
   });

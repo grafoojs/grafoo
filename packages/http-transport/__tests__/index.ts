@@ -1,4 +1,4 @@
-import fetchMock from "fetch-mock";
+import * as fetchMock from "fetch-mock";
 import createTransport from "../src";
 
 const fakeAPI = "http://fake-api.com/graphql";
@@ -14,7 +14,7 @@ describe("@grafoo/http-transport", () => {
     await mock(async () => {
       await request(query);
 
-      const [, { body, headers, method }] = fetchMock.lastCall();
+      let [, { body, headers, method }] = fetchMock.lastCall();
 
       expect(method).toBe("POST");
       expect(body).toBe(JSON.stringify({ query }));
@@ -24,13 +24,13 @@ describe("@grafoo/http-transport", () => {
 
   it("should perform a request with variables", async () => {
     await mock(async () => {
-      const variables = { some: "variable" };
+      let variables = { some: "variable" };
 
       await request(query, variables);
 
-      const [, { body }] = fetchMock.lastCall();
+      let [, { body }] = fetchMock.lastCall();
 
-      expect(JSON.parse(body).variables).toEqual(variables);
+      expect(JSON.parse(body as string).variables).toEqual(variables);
     });
   });
 
@@ -40,7 +40,7 @@ describe("@grafoo/http-transport", () => {
     await mock(async () => {
       await request(query);
 
-      const [, { headers }] = fetchMock.lastCall();
+      let [, { headers }] = fetchMock.lastCall();
 
       expect(headers).toEqual({
         authorization: "Bearer some-token",
@@ -55,7 +55,7 @@ describe("@grafoo/http-transport", () => {
     await mock(async () => {
       await request(query);
 
-      const [, { headers }] = fetchMock.lastCall();
+      let [, { headers }] = fetchMock.lastCall();
 
       expect(headers).toEqual({
         authorization: "Bearer some-token",
@@ -65,7 +65,7 @@ describe("@grafoo/http-transport", () => {
   });
 
   it("should handle graphql errors", async () => {
-    const response = { data: null, errors: [{ message: "I AM ERROR!" }] };
+    let response = { data: null, errors: [{ message: "I AM ERROR!" }] };
 
     await mock(response, async () =>
       expect(request(query)).resolves.toMatchObject({ errors: response.errors })

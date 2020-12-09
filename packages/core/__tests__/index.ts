@@ -136,29 +136,29 @@ describe("@grafoo/core", () => {
   });
 
   it("should perform query requests", async () => {
-    const variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
 
     let { query, frags } = POST_WITH_FRAGMENT;
-    if (frags) for (const frag in frags) query += " " + frags[frag];
+    if (frags) for (let frag in frags) query += " " + frags[frag];
 
-    const data = await executeQuery({ query, variables });
+    let data = await executeQuery({ query, variables });
 
     expect(data).toEqual(await client.execute(POST_WITH_FRAGMENT, variables));
   });
 
   it("should perform query requests with fragments", async () => {
-    const data = await executeQuery({ query: SIMPLE_AUTHORS.query });
+    let data = await executeQuery({ query: SIMPLE_AUTHORS.query });
 
     expect(data).toEqual(await client.execute(SIMPLE_AUTHORS));
   });
 
   it("should write queries to the client", async () => {
-    const data = await executeQuery<PostsAndAuthorsQuery>(POSTS_AND_AUTHORS);
+    let data = await executeQuery<PostsAndAuthorsQuery>(POSTS_AND_AUTHORS);
 
     client.write(POSTS_AND_AUTHORS, data);
 
-    const { authors, posts } = data.data;
-    const { objectsMap, pathsMap } = client.flush();
+    let { authors, posts } = data.data;
+    let { objectsMap, pathsMap } = client.flush();
 
     expect(authors).toEqual(
       pathsMap["authors{__typename id name posts{__typename body id title}}"].data.authors
@@ -171,7 +171,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should write queries partially to the client", async () => {
-    const { data } = await executeQuery<PostsQuery>(POSTS);
+    let { data } = await executeQuery<PostsQuery>(POSTS);
 
     expect(() => client.write(POSTS_AND_AUTHORS, data)).not.toThrow();
     expect(() => client.read(POSTS)).not.toThrow();
@@ -179,13 +179,13 @@ describe("@grafoo/core", () => {
   });
 
   it("should read queries from the client", async () => {
-    const { data } = await executeQuery<AuthorsQuery>(AUTHORS);
+    let { data } = await executeQuery<AuthorsQuery>(AUTHORS);
 
     client.write(AUTHORS, data);
 
-    const result = client.read<AuthorsQuery>(AUTHORS);
+    let result = client.read<AuthorsQuery>(AUTHORS);
 
-    const { authors } = data;
+    let { authors } = data;
 
     expect(authors).toEqual(result.data.authors);
     expect(authors.every((author) => Boolean(result.objects[author.id]))).toBe(true);
@@ -195,8 +195,8 @@ describe("@grafoo/core", () => {
   });
 
   it("should handle queries with variables", async () => {
-    const variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    const { data } = await executeQuery<PostQuery>({ query: POST.query, variables });
+    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let { data } = await executeQuery<PostQuery>({ query: POST.query, variables });
 
     client.write(POST, variables, data);
 
@@ -205,16 +205,16 @@ describe("@grafoo/core", () => {
   });
 
   it("should distinguish between calls to the same query with different variables", async () => {
-    const v1 = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    const v2 = { postId: "77c483dd-6529-4c72-9bb6-bbfd69f65682" };
+    let v1 = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let v2 = { postId: "77c483dd-6529-4c72-9bb6-bbfd69f65682" };
 
-    const { data: d1 } = await executeQuery<PostQuery>({ query: POST.query, variables: v1 });
+    let { data: d1 } = await executeQuery<PostQuery>({ query: POST.query, variables: v1 });
     client.write(POST, v1, d1);
 
     expect(client.read(POST, { postId: "not found" })).toEqual({});
     expect(client.read<PostQuery>(POST, v1).data.post.id).toBe(v1.postId);
 
-    const d2 = await executeQuery<PostQuery>({ query: POST.query, variables: v2 });
+    let d2 = await executeQuery<PostQuery>({ query: POST.query, variables: v2 });
     client.write(POST, v2, d2);
 
     expect(client.read<PostQuery>(POST, v1).data.post.id).toBe(v1.postId);
@@ -222,7 +222,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should flag if a query result is partial", async () => {
-    const { data } = await executeQuery<PostsQuery>({ query: POSTS.query });
+    let { data } = await executeQuery<PostsQuery>({ query: POSTS.query });
 
     client.write(POSTS, data);
 
@@ -230,13 +230,13 @@ describe("@grafoo/core", () => {
   });
 
   it("should remove unused objects from objectsMap", async () => {
-    const { data } = await executeQuery<AuthorsQuery>(SIMPLE_AUTHORS);
+    let { data } = await executeQuery<AuthorsQuery>(SIMPLE_AUTHORS);
 
     client.write(SIMPLE_AUTHORS, data);
 
-    const authorToBeRemoved: Author = data.authors[0];
+    let authorToBeRemoved: Author = data.authors[0];
 
-    const ids = Object.keys(client.flush().objectsMap);
+    let ids = Object.keys(client.flush().objectsMap);
 
     expect(ids.some((id) => id === authorToBeRemoved.id)).toBe(true);
 
@@ -244,19 +244,19 @@ describe("@grafoo/core", () => {
       authors: data.authors.filter((author) => author.id !== authorToBeRemoved.id),
     });
 
-    const nextIds = Object.keys(client.flush().objectsMap);
+    let nextIds = Object.keys(client.flush().objectsMap);
 
     expect(nextIds.length).toBe(ids.length - 1);
     expect(nextIds.some((id) => id === authorToBeRemoved.id)).toBe(false);
   });
 
   it("should perform update to client", async () => {
-    const variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    const { data } = await executeQuery<PostQuery>({ query: POST.query, variables });
+    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let { data } = await executeQuery<PostQuery>({ query: POST.query, variables });
 
     client.write(POST, variables, data);
 
-    const {
+    let {
       data: { post },
     } = client.read<PostQuery>(POST, variables);
 
@@ -268,30 +268,30 @@ describe("@grafoo/core", () => {
   });
 
   it("should reflect updates on queries with shared objects", async () => {
-    const variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    const postData = (await executeQuery<PostQuery>({ query: POST.query, variables })).data;
-    const postsData = (await executeQuery<PostsQuery>({ query: POSTS.query, variables })).data;
+    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let postData = (await executeQuery<PostQuery>({ query: POST.query, variables })).data;
+    let postsData = (await executeQuery<PostsQuery>({ query: POSTS.query, variables })).data;
 
     client.write(POSTS, postsData);
 
-    const { posts } = client.read<PostsQuery>(POSTS).data;
+    let { posts } = client.read<PostsQuery>(POSTS).data;
 
     expect(posts.find((p) => p.id === variables.postId).title).toBe("Quam odit");
 
     client.write(POST, variables, { post: { ...postData.post, title: "updated title" } });
 
-    const { posts: updatedPosts } = client.read<PostsQuery>(POSTS, variables).data;
+    let { posts: updatedPosts } = client.read<PostsQuery>(POSTS, variables).data;
 
     expect(updatedPosts.find((p) => p.id === variables.postId).title).toBe("updated title");
   });
 
   it("should merge objects in the client when removing or adding properties", async () => {
-    const variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    const data = (await executeQuery<PostQuery>({ query: POST.query, variables })).data;
+    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let data = (await executeQuery<PostQuery>({ query: POST.query, variables })).data;
 
     client.write(POST, variables, data);
 
-    const post = JSON.parse(JSON.stringify(client.read<PostQuery>(POST, variables).data.post));
+    let post = JSON.parse(JSON.stringify(client.read<PostQuery>(POST, variables).data.post));
 
     delete post.__typename;
 
@@ -314,13 +314,13 @@ describe("@grafoo/core", () => {
   });
 
   it("should call client listeners on write with paths objects as arguments", async () => {
-    const variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    const data = (await executeQuery<PostQuery>({ query: POST.query, variables })).data;
+    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let data = (await executeQuery<PostQuery>({ query: POST.query, variables })).data;
 
-    const listener = jest.fn();
-    const listener2 = jest.fn();
+    let listener = jest.fn();
+    let listener2 = jest.fn();
 
-    const unlisten = client.listen(listener);
+    let unlisten = client.listen(listener);
     client.listen(listener2);
 
     client.write(POST, variables, data);
@@ -340,7 +340,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should be able read from the client with a declared initialState", async () => {
-    const { data } = await executeQuery(POSTS_AND_AUTHORS);
+    let { data } = await executeQuery(POSTS_AND_AUTHORS);
 
     client.write(POSTS_AND_AUTHORS, data);
 
@@ -350,7 +350,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should allow cache to be cleared using reset()", () => {
-    const data = { authors: [{ name: "deleteme" }] };
+    let data = { authors: [{ name: "deleteme" }] };
     client.write(SIMPLE_AUTHORS, data);
     expect(client.read(SIMPLE_AUTHORS).data).toEqual(data);
     client.reset();
@@ -362,13 +362,13 @@ describe("@grafoo/core", () => {
   });
 
   it("should accept `idFields` array in options", async () => {
-    const { data } = await executeQuery(AUTHORS);
+    let { data } = await executeQuery(AUTHORS);
 
-    const client = createClient(mockTrasport, { idFields: ["__typename", "id"] });
+    let client = createClient(mockTrasport, { idFields: ["__typename", "id"] });
 
     client.write(AUTHORS, data);
 
-    const cachedIds = Object.keys(client.flush().objectsMap);
+    let cachedIds = Object.keys(client.flush().objectsMap);
 
     expect(cachedIds.every((key) => /(Post|Author)/.test(key))).toBe(true);
   });

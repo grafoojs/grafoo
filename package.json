@@ -24,8 +24,7 @@
   "lint-staged": {
     "*.{js,ts,tsx,json,graphql,md}": [
       "eslint --fix",
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   },
   "prettier": {
@@ -59,7 +58,8 @@
     "rules": {
       "prefer-const": 0,
       "prefer-let/prefer-let": 2,
-      "@typescript-eslint/ban-ts-comment": 1
+      "@typescript-eslint/ban-ts-comment": 1,
+      "@typescript-eslint/no-empty-function": 1
     },
     "ignorePatterns": [
       "packages/bundle",
@@ -97,7 +97,7 @@
     "react": "^16.8.2",
     "react-test-renderer": "^16.8.2",
     "rimraf": "^3.0.2",
-    "typescript": "^3.0.1",
+    "typescript": "^4.1.2",
     "uuid": "^8.3.2"
   },
   "dependencies": {

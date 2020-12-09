@@ -7,7 +7,7 @@ import {
   Variables,
 } from "@grafoo/types";
 
-export default function createBindings<T = {}, U = {}>(
+export default function createBindings<T = unknown, U = unknown>(
   client: GrafooClient,
   props: GrafooConsumerProps<T, U>,
   updater: () => void
