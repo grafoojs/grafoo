@@ -3,7 +3,7 @@ import {
   Context,
   GrafooBoundState,
   GrafooBoundMutations,
-  GrafooConsumerProps
+  GrafooConsumerProps,
 } from "@grafoo/types";
 import { Component, VNode } from "preact";
 
@@ -17,7 +17,7 @@ type GrafooRenderFn<T, U> = (renderProps: GrafooBoundState & T & GrafooBoundMuta
  * T = Query
  * U = Mutations
  */
-type GrafooPreactConsumerProps<T = {}, U = {}> = GrafooConsumerProps<T, U> & {
+type GrafooPreactConsumerProps<T = unknown, U = unknown> = GrafooConsumerProps<T, U> & {
   children?: GrafooRenderFn<T, U>;
 };
 
@@ -25,7 +25,7 @@ type GrafooPreactConsumerProps<T = {}, U = {}> = GrafooConsumerProps<T, U> & {
  * T = Query
  * U = Mutations
  */
-export class Consumer<T = {}, U = {}> extends Component<GrafooPreactConsumerProps<T, U>> {
+export class Consumer<T = unknown, U = unknown> extends Component<GrafooPreactConsumerProps<T, U>> {
   state: GrafooBoundState & T & GrafooBoundMutations<U>;
 
   constructor(props: GrafooPreactConsumerProps<T, U>, context: Context) {
@@ -43,7 +43,7 @@ export class Consumer<T = {}, U = {}> extends Component<GrafooPreactConsumerProp
       this.state.load();
     };
 
-    this.componentWillReceiveProps = next => {
+    this.componentWillReceiveProps = (next) => {
       if ((!this.state.loaded && !next.skip) || props.variables !== next.variables)
         this.state.load(next.variables);
     };

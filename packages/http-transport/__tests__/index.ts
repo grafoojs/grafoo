@@ -1,20 +1,26 @@
-import fetchMock from "fetch-mock";
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 import createTransport from "../src";
 
-const fakeAPI = "http://fake-api.com/graphql";
-const query = "{ hello }";
+jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
+let fetchMock = require("node-fetch");
+global.fetch = fetchMock;
+
+let fakeAPI = "http://fake-api.com/graphql";
+let query = "{ hello }";
 
 describe("@grafoo/http-transport", () => {
   let request;
   beforeEach(() => {
     request = createTransport(fakeAPI);
+    fetchMock.restore();
   });
 
   it("should perform a simple request", async () => {
     await mock(async () => {
       await request(query);
 
-      const [, { body, headers, method }] = fetchMock.lastCall();
+      let [, { body, headers, method }] = fetchMock.lastCall();
 
       expect(method).toBe("POST");
       expect(body).toBe(JSON.stringify({ query }));
@@ -24,13 +30,13 @@ describe("@grafoo/http-transport", () => {
 
   it("should perform a request with variables", async () => {
     await mock(async () => {
-      const variables = { some: "variable" };
+      let variables = { some: "variable" };
 
       await request(query, variables);
 
-      const [, { body }] = fetchMock.lastCall();
+      let [, { body }] = fetchMock.lastCall();
 
-      expect(JSON.parse(body).variables).toEqual(variables);
+      expect(JSON.parse(body as string).variables).toEqual(variables);
     });
   });
 
@@ -40,11 +46,11 @@ describe("@grafoo/http-transport", () => {
     await mock(async () => {
       await request(query);
 
-      const [, { headers }] = fetchMock.lastCall();
+      let [, { headers }] = fetchMock.lastCall();
 
       expect(headers).toEqual({
         authorization: "Bearer some-token",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       });
     });
   });
@@ -55,32 +61,27 @@ describe("@grafoo/http-transport", () => {
     await mock(async () => {
       await request(query);
 
-      const [, { headers }] = fetchMock.lastCall();
+      let [, { headers }] = fetchMock.lastCall();
 
       expect(headers).toEqual({
         authorization: "Bearer some-token",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       });
     });
   });
 
   it("should handle graphql errors", async () => {
-    const response = { data: null, errors: [{ message: "I AM ERROR!" }] };
+    let response = { data: null, errors: [{ message: "I AM ERROR!" }] };
 
-    await mock(response, async () =>
-      expect(request(query)).resolves.toMatchObject({ errors: response.errors })
+    await mock(
+      async () => expect(request(query)).resolves.toMatchObject({ errors: response.errors }),
+      response
     );
   });
 });
 
-async function mock(...args) {
-  let [response, testFn] = args;
-
-  if (args.length === 1) [testFn, response] = [response, { data: { hello: "world" } }];
-
-  fetchMock.mock(fakeAPI, response);
+async function mock(testFn, response?: any) {
+  fetchMock.mock(fakeAPI, response || { data: { hello: "world" } });
 
   await testFn();
-
-  fetchMock.restore();
 }

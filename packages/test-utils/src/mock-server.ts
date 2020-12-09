@@ -1,138 +1,99 @@
 import { GraphQlPayload } from "@grafoo/types";
-import fetchMock from "fetch-mock";
+import fetchMock from "fetch-mock-jest";
 import fs from "fs";
 import { graphql } from "graphql";
 import { makeExecutableSchema } from "graphql-tools";
 import path from "path";
-import uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 import setupDB from "./db";
 
-const db = setupDB();
+let db = setupDB();
 
-const typeDefs = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "utf-8");
+let typeDefs = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "utf-8");
 
-const Query = {
+let Query = {
   author(_, args) {
-    return db
-      .get("authors")
-      .find({ id: args.id })
-      .value();
+    return db.get("authors").find({ id: args.id }).value();
   },
   authors() {
     return db.get("authors").value();
   },
   post(_, args) {
-    return db
-      .get("posts")
-      .find({ id: args.id })
-      .value();
+    return db.get("posts").find({ id: args.id }).value();
   },
   posts() {
     return db.get("posts").value();
-  }
+  },
 };
 
-const Mutation = {
+let Mutation = {
   createAuthor(_, args) {
-    const newAuthor = Object.assign({}, args, { id: uuid() });
+    let newAuthor = Object.assign({}, args, { id: uuid() });
 
-    db.get("authors")
-      .push(newAuthor)
-      .write();
+    db.get("authors").push(newAuthor).write();
 
     return newAuthor;
   },
   updateAuthor(_, args) {
-    return db
-      .get("authors")
-      .find({ id: args.id })
-      .assign(args)
-      .write();
+    return db.get("authors").find({ id: args.id }).assign(args).write();
   },
   deleteAuthor(_, args) {
-    const author = db
-      .get("authors")
-      .find(args)
-      .value();
+    let author = db.get("authors").find(args).value();
 
-    db.get("authors")
-      .find(args)
-      .remove()
-      .write();
+    db.get("authors").find(args).remove().write();
 
-    db.get("posts")
-      .find({ author: args.id })
-      .remove()
-      .write();
+    db.get("posts").find({ author: args.id }).remove().write();
 
     return author;
   },
   createPost(_, args) {
-    const newPost = Object.assign({}, args, { id: uuid() });
+    let newPost = Object.assign({}, args, { id: uuid() });
 
-    db.get("posts")
-      .push(newPost)
-      .write();
+    db.get("posts").push(newPost).write();
 
     return newPost;
   },
   updatePost(_, args) {
-    return db
-      .get("posts")
-      .find({ id: args.id })
-      .assign(args)
-      .write();
+    return db.get("posts").find({ id: args.id }).assign(args).write();
   },
   deletePost(_, args) {
-    const post = db
-      .get("posts")
-      .find(args)
-      .value();
+    let post = db.get("posts").find(args).value();
 
-    db.get("posts")
-      .find(args)
-      .remove()
-      .write();
+    db.get("posts").find(args).remove().write();
 
     return post;
-  }
+  },
 };
 
-const Author = {
+let Author = {
   posts(author) {
     return author.posts
-      ? author.posts.map(function(id) {
-          return db
-            .get("posts")
-            .find({ id: id })
-            .value();
+      ? author.posts.map(function (id) {
+          return db.get("posts").find({ id: id }).value();
         })
       : null;
-  }
+  },
 };
 
-const Post = {
+let Post = {
   author(post) {
-    return db
-      .get("authors")
-      .find({ id: post.author })
-      .value();
-  }
+    return db.get("authors").find({ id: post.author }).value();
+  },
 };
 
-const resolvers = {
+let resolvers = {
   Query: Query,
   Mutation: Mutation,
   Author: Author,
-  Post: Post
+  Post: Post,
 };
 
-const schema = makeExecutableSchema({ typeDefs: typeDefs, resolvers: resolvers });
+let schema = makeExecutableSchema({ typeDefs: typeDefs, resolvers: resolvers });
 
 interface ExecuteQueryArg {
   query: string;
   variables?: {
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -145,7 +106,7 @@ export function mockQueryRequest<T>(request: ExecuteQueryArg): Promise<GraphQlPa
   fetchMock.reset();
   fetchMock.restore();
 
-  return executeQuery<T>(request).then(function(response) {
+  return executeQuery<T>(request).then(function (response) {
     fetchMock.post("*", response);
 
     return response;

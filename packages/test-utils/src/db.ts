@@ -4,10 +4,10 @@ import MemoryAdapter from "lowdb/adapters/Memory";
 
 casual.seed(666);
 
-const times = (t, fn) => Array.from(Array(t), fn);
+let times = (t, fn) => Array.from(Array(t), fn);
 
 export default function setupDB() {
-  const db = low(new MemoryAdapter(""));
+  let db = low(new MemoryAdapter(""));
 
   db.defaults({ posts: [], authors: [] }).write();
 
@@ -16,7 +16,7 @@ export default function setupDB() {
       .get("authors")
       .push({
         id: casual.uuid,
-        name: casual.first_name + " " + casual.last_name
+        name: casual.first_name + " " + casual.last_name,
       })
       .write()
   );
@@ -31,21 +31,18 @@ export default function setupDB() {
             author: id,
             id: casual.uuid,
             title: casual.title,
-            body: casual.short_description
+            body: casual.short_description,
           })
           .write()
       );
 
-      const posts = db
+      let posts = db
         .get("posts")
-        .filter(post => post.author === id)
-        .map(post => post.id)
+        .filter((post) => post.author === id)
+        .map((post) => post.id)
         .value();
 
-      db.get("authors")
-        .find({ id })
-        .set("posts", posts)
-        .write();
+      db.get("authors").find({ id }).set("posts", posts).write();
     });
 
   return db;

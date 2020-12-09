@@ -11,7 +11,7 @@ export let idFromProps = (branch, idFields) => {
   return identifier;
 };
 
-export let isNotNullObject = obj => obj && typeof obj == "object";
+export let isNotNullObject = (obj) => obj && typeof obj == "object";
 
 export let getPathId = (path: string, args: string[], variables?: Variables) => {
   variables = variables || {};

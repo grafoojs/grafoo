@@ -21,37 +21,37 @@ module.exports = function build(opts) {
   return rollup({
     input: path.join(opts.rootPath, opts.input),
     external: Object.keys(peerDependencies),
+    sourcemap: true,
     plugins: [
       nodeResolve(),
       typescript({
         typescript: ts,
-        tsconfigOverride: tsconfig
+        tsconfigOverride: tsconfig,
       }),
       buble({
         transforms: {
           dangerousForOf: true,
-          dangerousTaggedTemplateString: true
-        }
+          dangerousTaggedTemplateString: true,
+        },
       }),
       !opts.skipCompression &&
         terser({
-          sourcemap: true,
           output: { comments: false },
           compress: { keep_infinity: true, pure_getters: true },
           warnings: true,
           toplevel: true,
-          mangle: {}
+          mangle: {},
         }),
-      fileSize()
-    ].filter(Boolean)
-  }).then(function(bundle) {
+      fileSize(),
+    ].filter(Boolean),
+  }).then(function (bundle) {
     return bundle.write({
       file: path.join(opts.rootPath, "dist/index.js"),
       sourcemap: true,
       format: opts.format || "esm",
       treeshake: {
-        propertyReadSideEffects: false
-      }
+        propertyReadSideEffects: false,
+      },
     });
   });
 };

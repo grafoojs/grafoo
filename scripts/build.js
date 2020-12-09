@@ -1,16 +1,16 @@
-const { readdirSync } = require("fs");
-const { join } = require("path");
-const { exec } = require("child_process");
+let { readdirSync } = require("fs");
+let { join } = require("path");
+let { exec } = require("child_process");
 
-const pkgsRoot = join(__dirname, "..", "packages");
+let pkgsRoot = join(__dirname, "..", "packages");
 
-const withDeps = ["react", "preact"];
-const noDeps = readdirSync(pkgsRoot).filter(x => !withDeps.some(y => y === x));
+let withDeps = ["react", "preact"];
+let noDeps = readdirSync(pkgsRoot).filter((x) => !withDeps.some((y) => y === x));
 
-const command = exec(
+let command = exec(
   [
     `lerna run --scope "@grafoo/*(${noDeps.join("|")})" build`,
-    `lerna run --scope "@grafoo/*(${withDeps.join("|")})" build`
+    `lerna run --scope "@grafoo/*(${withDeps.join("|")})" build`,
   ].join(" && ")
 );
 

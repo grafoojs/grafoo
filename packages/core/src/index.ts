@@ -5,7 +5,7 @@ import {
   Listener,
   ObjectsMap,
   Variables,
-  GrafooTransport
+  GrafooTransport,
 } from "@grafoo/types";
 import buildQueryTree from "./build-query-tree";
 import mapObjects from "./map-objects";
@@ -48,7 +48,7 @@ export default function createClient(
     for (let i in paths) {
       let { name, args } = paths[i];
       let pathData = {
-        [name]: (data as { data: T }).data ? (data as { data: T }).data[name] : data[name]
+        [name]: (data as { data: T }).data ? (data as { data: T }).data[name] : data[name],
       };
       let pathObjects = mapObjects(pathData, idFields);
 
@@ -56,7 +56,7 @@ export default function createClient(
 
       pathsMap[getPathId(i, args, variables)] = {
         data: pathData,
-        objects: Object.keys(pathObjects)
+        objects: Object.keys(pathObjects),
       };
     }
 

@@ -34,7 +34,7 @@ export type GrafooTransport = <T>(
  */
 
 export interface ObjectsMap {
-  [key: string]: {};
+  [key: string]: Record<string, unknown>;
 }
 
 export interface PathsMap {
@@ -128,7 +128,7 @@ export type GrafooMutations<T, U> = {
     query: GrafooObject;
     optimisticUpdate?: OptimisticUpdateFn<T>;
     update?: UpdateFn<T, U[V]>;
-  }
+  };
 };
 
 export interface Context {
@@ -140,7 +140,7 @@ export interface Context {
  * U = keyof Mutations
  */
 export type GrafooBoundMutations<T> = {
-  [U in keyof T]: (variables?: Variables) => Promise<GraphQlPayload<T[U]>>
+  [U in keyof T]: (variables?: Variables) => Promise<GraphQlPayload<T[U]>>;
 };
 
 /**
