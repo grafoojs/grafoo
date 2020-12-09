@@ -64,7 +64,11 @@
     "rules": {
       "prefer-const": 0,
       "prefer-let/prefer-let": 2
-    }
+    },
+    "ignorePatterns": [
+      "packages/bundle",
+      "scripts"
+    ]
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
