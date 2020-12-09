@@ -1,5 +1,3 @@
-// @ts-check
-
 import { visit } from "graphql";
 
 function sort(array, fn) {
