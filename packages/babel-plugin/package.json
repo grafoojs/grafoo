@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "babel-literal-to-ast": "^2.1.0",
-    "crypto-js": "^3.1.9-1",
+    "crypto-js": "^4.0.0",
     "graphql": "^14.1.1",
     "graphql-query-compress": "^1.0.0"
   },

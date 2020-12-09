@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`@grafoo/babel-plugin should compress the query string if the option compress is specified: should compress the query string if the option compress is specified 1`] = `
-"
-import gql from \\"@grafoo/core/tag\\";
+
+import gql from "@grafoo/core/tag";
 const query = gql\`
   query($start: Int!, $offset: Int!, $id: ID!) {
     posts(start: $start, offset: $offset) {
@@ -19,24 +19,26 @@ const query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 const query = {
-  \\"query\\": \\"query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}\\",
-  \\"paths\\": {
-    \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {
-      \\"name\\": \\"posts\\",
-      \\"args\\": [\\"offset\\", \\"start\\"]
+  query:
+    "query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}",
+  paths: {
+    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}": {
+      name: "posts",
+      args: ["offset", "start"],
     },
-    \\"user(id:$id){id name username}\\": {
-      \\"name\\": \\"user\\",
-      \\"args\\": [\\"id\\"]
-    }
-  }
+    "user(id:$id){id name username}": {
+      name: "user",
+      args: ["id"],
+    },
+  },
 };
-"
+
+
 `;
 
 exports[`@grafoo/babel-plugin should generate md5 hash and add it to object if the option generateIds is specified: should generate md5 hash and add it to object if the option generateIds is specified 1`] = `
-"
-import gql from \\"@grafoo/core/tag\\";
+
+import gql from "@grafoo/core/tag";
 const query = gql\`
   query($start: Int!, $offset: Int!, $id: ID!) {
     posts(start: $start, offset: $offset) {
@@ -53,88 +55,94 @@ const query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 const query = {
-  \\"id\\": \\"6e0697df8f2453f2643bbd1e8a39c348\\",
-  \\"query\\": \\"query ($id: ID!, $offset: Int!, $start: Int!) {\\\\n  posts(offset: $offset, start: $start) {\\\\n    authors {\\\\n      id\\\\n      name\\\\n      username\\\\n    }\\\\n    body\\\\n    createdAt\\\\n    id\\\\n    tags {\\\\n      id\\\\n      name\\\\n    }\\\\n    title\\\\n  }\\\\n  user(id: $id) {\\\\n    id\\\\n    name\\\\n    username\\\\n  }\\\\n}\\",
-  \\"paths\\": {
-    \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {
-      \\"name\\": \\"posts\\",
-      \\"args\\": [\\"offset\\", \\"start\\"]
+  id: "6e0697df8f2453f2643bbd1e8a39c348",
+  query:
+    "query ($id: ID!, $offset: Int!, $start: Int!) {\\n  posts(offset: $offset, start: $start) {\\n    authors {\\n      id\\n      name\\n      username\\n    }\\n    body\\n    createdAt\\n    id\\n    tags {\\n      id\\n      name\\n    }\\n    title\\n  }\\n  user(id: $id) {\\n    id\\n    name\\n    username\\n  }\\n}",
+  paths: {
+    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}": {
+      name: "posts",
+      args: ["offset", "start"],
     },
-    \\"user(id:$id){id name username}\\": {
-      \\"name\\": \\"user\\",
-      \\"args\\": [\\"id\\"]
-    }
-  }
+    "user(id:$id){id name username}": {
+      name: "user",
+      args: ["id"],
+    },
+  },
 };
-"
+
+
 `;
 
 exports[`@grafoo/babel-plugin should include \`idFields\` in the client instantiation even if options are provided: should include \`idFields\` in the client instantiation even if options are provided 1`] = `
-"
-import createClient from \\"@grafoo/core\\";
+
+import createClient from "@grafoo/core";
 const query = createClient(someTransport, {
-  headers: () => ({ authorization: \\"some-token\\" })
+  headers: () => ({ authorization: "some-token" })
 });
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import createClient from \\"@grafoo/core\\";
+import createClient from "@grafoo/core";
 const query = createClient(someTransport, {
   headers: () => ({
-    authorization: \\"some-token\\"
+    authorization: "some-token",
   }),
-  idFields: [\\"id\\"]
+  idFields: ["id"],
 });
-"
+
+
 `;
 
 exports[`@grafoo/babel-plugin should include \`idFields\` in the client instantiation if not present in options: should include \`idFields\` in the client instantiation if not present in options 1`] = `
-"
-import createClient from \\"@grafoo/core\\";
+
+import createClient from "@grafoo/core";
 const query = createClient(someTransport, {});
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import createClient from \\"@grafoo/core\\";
+import createClient from "@grafoo/core";
 const query = createClient(someTransport, {
-  idFields: [\\"id\\"]
+  idFields: ["id"],
 });
-"
+
+
 `;
 
 exports[`@grafoo/babel-plugin should include \`idFields\` in the client instantiation if options are not provided: should include \`idFields\` in the client instantiation if options are not provided 1`] = `
-"
-import createClient from \\"@grafoo/core\\";
+
+import createClient from "@grafoo/core";
 const query = createClient(someTransport);
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import createClient from \\"@grafoo/core\\";
+import createClient from "@grafoo/core";
 const query = createClient(someTransport, {
-  idFields: [\\"id\\"]
+  idFields: ["id"],
 });
-"
+
+
 `;
 
 exports[`@grafoo/babel-plugin should include \`idFields\` in the client instantiation if options is a variable: should include \`idFields\` in the client instantiation if options is a variable 1`] = `
-"
-import createClient from \\"@grafoo/core\\";
+
+import createClient from "@grafoo/core";
 const options = {};
 const query = createClient(someTransport, options);
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import createClient from \\"@grafoo/core\\";
+import createClient from "@grafoo/core";
 const options = {
-  idFields: [\\"id\\"]
+  idFields: ["id"],
 };
 const query = createClient(someTransport, options);
-"
+
+
 `;
 
 exports[`@grafoo/babel-plugin should not generate md5 hash and add it to object if the option generateIds is falsey: should not generate md5 hash and add it to object if the option generateIds is falsey 1`] = `
-"
-import gql from \\"@grafoo/core/tag\\";
+
+import gql from "@grafoo/core/tag";
 const query = gql\`
   query($start: Int!, $offset: Int!, $id: ID!) {
     posts(start: $start, offset: $offset) {
@@ -151,50 +159,53 @@ const query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 const query = {
-  \\"query\\": \\"query ($id: ID!, $offset: Int!, $start: Int!) {\\\\n  posts(offset: $offset, start: $start) {\\\\n    authors {\\\\n      id\\\\n      name\\\\n      username\\\\n    }\\\\n    body\\\\n    createdAt\\\\n    id\\\\n    tags {\\\\n      id\\\\n      name\\\\n    }\\\\n    title\\\\n  }\\\\n  user(id: $id) {\\\\n    id\\\\n    name\\\\n    username\\\\n  }\\\\n}\\",
-  \\"paths\\": {
-    \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {
-      \\"name\\": \\"posts\\",
-      \\"args\\": [\\"offset\\", \\"start\\"]
+  query:
+    "query ($id: ID!, $offset: Int!, $start: Int!) {\\n  posts(offset: $offset, start: $start) {\\n    authors {\\n      id\\n      name\\n      username\\n    }\\n    body\\n    createdAt\\n    id\\n    tags {\\n      id\\n      name\\n    }\\n    title\\n  }\\n  user(id: $id) {\\n    id\\n    name\\n    username\\n  }\\n}",
+  paths: {
+    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}": {
+      name: "posts",
+      args: ["offset", "start"],
     },
-    \\"user(id:$id){id name username}\\": {
-      \\"name\\": \\"user\\",
-      \\"args\\": [\\"id\\"]
-    }
-  }
+    "user(id:$id){id name username}": {
+      name: "user",
+      args: ["id"],
+    },
+  },
 };
-"
+
+
 `;
 
 exports[`@grafoo/babel-plugin should overide \`idFields\` in the client instantiation if options is a variable: should overide \`idFields\` in the client instantiation if options is a variable 1`] = `
-"
-import createClient from \\"@grafoo/core\\";
-const options = { idFields: [\\"err\\"] };
+
+import createClient from "@grafoo/core";
+const options = { idFields: ["err"] };
 const query = createClient(someTransport, options);
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import createClient from \\"@grafoo/core\\";
+import createClient from "@grafoo/core";
 const options = {
-  idFields: [\\"id\\"]
+  idFields: ["id"],
 };
 const query = createClient(someTransport, options);
-"
+
+
 `;
 
 exports[`@grafoo/babel-plugin should remove the imported path: should remove the imported path 1`] = `
-"
-import gql from \\"@grafoo/core/tag\\";
+
+import gql from "@grafoo/core/tag";
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
 
-"
+
 `;
 
 exports[`@grafoo/babel-plugin should replace a tagged template literal with the compiled grafoo object: should replace a tagged template literal with the compiled grafoo object 1`] = `
-"
-import gql from \\"@grafoo/core/tag\\";
+
+import gql from "@grafoo/core/tag";
 const query = gql\`
   query($start: Int!, $offset: Int!, $id: ID!) {
     posts(start: $start, offset: $offset) {
@@ -211,17 +222,19 @@ const query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 const query = {
-  \\"query\\": \\"query ($id: ID!, $offset: Int!, $start: Int!) {\\\\n  posts(offset: $offset, start: $start) {\\\\n    authors {\\\\n      id\\\\n      name\\\\n      username\\\\n    }\\\\n    body\\\\n    createdAt\\\\n    id\\\\n    tags {\\\\n      id\\\\n      name\\\\n    }\\\\n    title\\\\n  }\\\\n  user(id: $id) {\\\\n    id\\\\n    name\\\\n    username\\\\n  }\\\\n}\\",
-  \\"paths\\": {
-    \\"posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}\\": {
-      \\"name\\": \\"posts\\",
-      \\"args\\": [\\"offset\\", \\"start\\"]
+  query:
+    "query ($id: ID!, $offset: Int!, $start: Int!) {\\n  posts(offset: $offset, start: $start) {\\n    authors {\\n      id\\n      name\\n      username\\n    }\\n    body\\n    createdAt\\n    id\\n    tags {\\n      id\\n      name\\n    }\\n    title\\n  }\\n  user(id: $id) {\\n    id\\n    name\\n    username\\n  }\\n}",
+  paths: {
+    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}": {
+      name: "posts",
+      args: ["offset", "start"],
     },
-    \\"user(id:$id){id name username}\\": {
-      \\"name\\": \\"user\\",
-      \\"args\\": [\\"id\\"]
-    }
-  }
+    "user(id:$id){id name username}": {
+      name: "user",
+      args: ["id"],
+    },
+  },
 };
-"
+
+
 `;
