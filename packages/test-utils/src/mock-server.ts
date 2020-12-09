@@ -93,7 +93,7 @@ const schema = makeExecutableSchema({ typeDefs: typeDefs, resolvers: resolvers }
 interface ExecuteQueryArg {
   query: string;
   variables?: {
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 

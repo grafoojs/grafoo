@@ -7,7 +7,7 @@ casual.seed(666);
 const times = (t, fn) => Array.from(Array(t), fn);
 
 export default function setupDB() {
-  const db = low(new MemoryAdapter(""));
+  let db = low(new MemoryAdapter(""));
 
   db.defaults({ posts: [], authors: [] }).write();
 
@@ -36,7 +36,7 @@ export default function setupDB() {
           .write()
       );
 
-      const posts = db
+      let posts = db
         .get("posts")
         .filter((post) => post.author === id)
         .map((post) => post.id)
