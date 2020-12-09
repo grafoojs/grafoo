@@ -5,7 +5,7 @@ import {
   GrafooBoundState,
   GrafooBoundMutations
 } from "@grafoo/types";
-import { Component, createContext, createElement, ReactElement, ReactNode, SFC } from "react";
+import { Component, createContext, createElement, ReactElement, ReactNode, FC } from "react";
 
 /**
  * T = Query
@@ -19,7 +19,7 @@ type GrafooRenderFn<T, U> = (
  * T = Query
  * U = Mutations
  */
-type GrafooReactConsumerProps<T = {}, U = {}> = GrafooConsumerProps<T, U> & {
+type GrafooReactConsumerProps<T = unknown, U = unknown> = GrafooConsumerProps<T, U> & {
   children: GrafooRenderFn<T, U>;
 };
 
@@ -27,13 +27,13 @@ type GrafooReactConsumerProps<T = {}, U = {}> = GrafooConsumerProps<T, U> & {
  * T = Query
  * U = Mutations
  */
-interface ConsumerType extends SFC {
-  <T, U>(props: GrafooReactConsumerProps<T, U>): ReactElement<any> | null;
+interface ConsumerType extends FC {
+  <T, U>(props: GrafooReactConsumerProps<T, U>): ReactElement | null;
 }
 
 let ctx = createContext({});
 
-export let Provider: SFC<Context> = props =>
+export let Provider: FC<Context> = props =>
   createElement(ctx.Provider, { value: props.client }, props.children);
 
 class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
