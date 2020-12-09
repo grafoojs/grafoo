@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:14
 
     steps:
       - checkout
@@ -28,5 +28,3 @@ jobs:
       - run:
           name: Run tests
           command: yarn test:coverage
-
-
