@@ -16,7 +16,7 @@ export default function setupDB() {
       .get("authors")
       .push({
         id: casual.uuid,
-        name: casual.first_name + " " + casual.last_name
+        name: casual.first_name + " " + casual.last_name,
       })
       .write()
   );
@@ -31,21 +31,18 @@ export default function setupDB() {
             author: id,
             id: casual.uuid,
             title: casual.title,
-            body: casual.short_description
+            body: casual.short_description,
           })
           .write()
       );
 
       const posts = db
         .get("posts")
-        .filter(post => post.author === id)
-        .map(post => post.id)
+        .filter((post) => post.author === id)
+        .map((post) => post.id)
         .value();
 
-      db.get("authors")
-        .find({ id })
-        .set("posts", posts)
-        .write();
+      db.get("authors").find({ id }).set("posts", posts).write();
     });
 
   return db;

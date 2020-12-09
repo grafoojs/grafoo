@@ -44,7 +44,7 @@ describe("@grafoo/http-transport", () => {
 
       expect(headers).toEqual({
         authorization: "Bearer some-token",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       });
     });
   });
@@ -59,7 +59,7 @@ describe("@grafoo/http-transport", () => {
 
       expect(headers).toEqual({
         authorization: "Bearer some-token",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       });
     });
   });

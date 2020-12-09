@@ -13,118 +13,79 @@ const typeDefs = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "
 
 const Query = {
   author(_, args) {
-    return db
-      .get("authors")
-      .find({ id: args.id })
-      .value();
+    return db.get("authors").find({ id: args.id }).value();
   },
   authors() {
     return db.get("authors").value();
   },
   post(_, args) {
-    return db
-      .get("posts")
-      .find({ id: args.id })
-      .value();
+    return db.get("posts").find({ id: args.id }).value();
   },
   posts() {
     return db.get("posts").value();
-  }
+  },
 };
 
 const Mutation = {
   createAuthor(_, args) {
     const newAuthor = Object.assign({}, args, { id: uuid() });
 
-    db.get("authors")
-      .push(newAuthor)
-      .write();
+    db.get("authors").push(newAuthor).write();
 
     return newAuthor;
   },
   updateAuthor(_, args) {
-    return db
-      .get("authors")
-      .find({ id: args.id })
-      .assign(args)
-      .write();
+    return db.get("authors").find({ id: args.id }).assign(args).write();
   },
   deleteAuthor(_, args) {
-    const author = db
-      .get("authors")
-      .find(args)
-      .value();
+    const author = db.get("authors").find(args).value();
 
-    db.get("authors")
-      .find(args)
-      .remove()
-      .write();
+    db.get("authors").find(args).remove().write();
 
-    db.get("posts")
-      .find({ author: args.id })
-      .remove()
-      .write();
+    db.get("posts").find({ author: args.id }).remove().write();
 
     return author;
   },
   createPost(_, args) {
     const newPost = Object.assign({}, args, { id: uuid() });
 
-    db.get("posts")
-      .push(newPost)
-      .write();
+    db.get("posts").push(newPost).write();
 
     return newPost;
   },
   updatePost(_, args) {
-    return db
-      .get("posts")
-      .find({ id: args.id })
-      .assign(args)
-      .write();
+    return db.get("posts").find({ id: args.id }).assign(args).write();
   },
   deletePost(_, args) {
-    const post = db
-      .get("posts")
-      .find(args)
-      .value();
+    const post = db.get("posts").find(args).value();
 
-    db.get("posts")
-      .find(args)
-      .remove()
-      .write();
+    db.get("posts").find(args).remove().write();
 
     return post;
-  }
+  },
 };
 
 const Author = {
   posts(author) {
     return author.posts
-      ? author.posts.map(function(id) {
-          return db
-            .get("posts")
-            .find({ id: id })
-            .value();
+      ? author.posts.map(function (id) {
+          return db.get("posts").find({ id: id }).value();
         })
       : null;
-  }
+  },
 };
 
 const Post = {
   author(post) {
-    return db
-      .get("authors")
-      .find({ id: post.author })
-      .value();
-  }
+    return db.get("authors").find({ id: post.author }).value();
+  },
 };
 
 const resolvers = {
   Query: Query,
   Mutation: Mutation,
   Author: Author,
-  Post: Post
+  Post: Post,
 };
 
 const schema = makeExecutableSchema({ typeDefs: typeDefs, resolvers: resolvers });
@@ -145,7 +106,7 @@ export function mockQueryRequest<T>(request: ExecuteQueryArg): Promise<GraphQlPa
   fetchMock.reset();
   fetchMock.restore();
 
-  return executeQuery<T>(request).then(function(response) {
+  return executeQuery<T>(request).then(function (response) {
     fetchMock.post("*", response);
 
     return response;

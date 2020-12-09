@@ -12,8 +12,8 @@ export default function createTransport(
       Object.assign(options, {
         body: JSON.stringify({ query, variables }),
         method: "POST",
-        headers: Object.assign({ "Content-Type": "application/json" }, options.headers)
+        headers: Object.assign({ "Content-Type": "application/json" }, options.headers),
       })
-    ).then(response => response.json());
+    ).then((response) => response.json());
   };
 }

@@ -4,7 +4,7 @@ import {
   GrafooBoundMutations,
   GrafooConsumerProps,
   ObjectsMap,
-  Variables
+  Variables,
 } from "@grafoo/types";
 
 export default function createBindings<T = {}, U = {}>(
@@ -26,7 +26,7 @@ export default function createBindings<T = {}, U = {}>(
 
     loaded = !!data && !partial;
 
-    unbind = client.listen(nextObjects => {
+    unbind = client.listen((nextObjects) => {
       if (lockListenUpdate) return (lockListenUpdate = 0);
 
       objects = objects || {};
@@ -54,14 +54,14 @@ export default function createBindings<T = {}, U = {}>(
     for (let key in props.mutations) {
       let { update, optimisticUpdate, query: mutationQuery } = props.mutations[key];
 
-      boundMutations[key] = mutationVariables => {
+      boundMutations[key] = (mutationVariables) => {
         if (props.query && optimisticUpdate) {
           writeToCache(optimisticUpdate(data, mutationVariables));
         }
 
         return client
           .execute<U[typeof key]>(mutationQuery, mutationVariables)
-          .then(mutationResponse => {
+          .then((mutationResponse) => {
             if (props.query && update && mutationResponse.data) {
               writeToCache(update(data, mutationResponse.data));
             }

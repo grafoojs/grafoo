@@ -3,7 +3,7 @@ import {
   Context,
   GrafooConsumerProps,
   GrafooBoundState,
-  GrafooBoundMutations
+  GrafooBoundMutations,
 } from "@grafoo/types";
 import { Component, createContext, createElement, ReactElement, ReactNode, FC } from "react";
 
@@ -33,7 +33,7 @@ interface ConsumerType extends FC {
 
 let ctx = createContext({});
 
-export let Provider: FC<Context> = props =>
+export let Provider: FC<Context> = (props) =>
   createElement(ctx.Provider, { value: props.client }, props.children);
 
 class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
@@ -54,7 +54,7 @@ class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
       bindings.load();
     };
 
-    this.componentWillReceiveProps = next => {
+    this.componentWillReceiveProps = (next) => {
       if ((!this.state.loaded && !next.skip) || props.variables !== next.variables) {
         bindings.load(next.variables);
       }
@@ -75,6 +75,6 @@ class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
  * U = Mutations
  */
 export let Consumer: ConsumerType = <T, U>(props: GrafooReactConsumerProps<T, U>) =>
-  createElement(ctx.Consumer, null, client =>
+  createElement(ctx.Consumer, null, (client) =>
     createElement(GrafooConsumer, Object.assign({ client }, props))
   );

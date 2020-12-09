@@ -20,25 +20,25 @@ const tree = {
               name: "miguel",
               lastName: "albernaz",
               id: "2",
-              __typename: "Author"
-            }
-          }
-        ]
-      }
+              __typename: "Author",
+            },
+          },
+        ],
+      },
     },
     {
       title: "bar",
       id: "3",
       __typename: "Post",
-      author: { name: "vicente", id: "4", __typename: "Author" }
+      author: { name: "vicente", id: "4", __typename: "Author" },
     },
     {
       title: "baz",
       id: "5",
       __typename: "Post",
-      author: { name: "laura", id: "6", __typename: "Author" }
-    }
-  ]
+      author: { name: "laura", id: "6", __typename: "Author" },
+    },
+  ],
 };
 
 const idFields = ["id"];
@@ -53,7 +53,7 @@ describe("map-objects", () => {
       "3": { title: "bar", __typename: "Post", id: "3" },
       "4": { name: "vicente", id: "4", __typename: "Author" },
       "5": { title: "baz", __typename: "Post", id: "5" },
-      "6": { name: "laura", id: "6", __typename: "Author" }
+      "6": { name: "laura", id: "6", __typename: "Author" },
     };
 
     expect(objects).toEqual(expected);
@@ -67,9 +67,9 @@ describe("map-objects", () => {
           username: "malbernaz",
           email: "albernazmiguel@gmail.com",
           name: null,
-          bio: null
-        }
-      }
+          bio: null,
+        },
+      },
     };
 
     expect(() => mapObjects(result, idFields)).not.toThrow();
@@ -82,6 +82,6 @@ describe("map-objects", () => {
 
     const expected = ["Post1", "Author2", "Post3", "Author4", "Post5", "Author6"];
 
-    expect(Object.keys(objects).every(obj => expected.some(exp => exp === obj))).toBe(true);
+    expect(Object.keys(objects).every((obj) => expected.some((exp) => exp === obj))).toBe(true);
   });
 });

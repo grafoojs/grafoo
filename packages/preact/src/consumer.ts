@@ -3,7 +3,7 @@ import {
   Context,
   GrafooBoundState,
   GrafooBoundMutations,
-  GrafooConsumerProps
+  GrafooConsumerProps,
 } from "@grafoo/types";
 import { Component, VNode } from "preact";
 
@@ -43,7 +43,7 @@ export class Consumer<T = {}, U = {}> extends Component<GrafooPreactConsumerProp
       this.state.load();
     };
 
-    this.componentWillReceiveProps = next => {
+    this.componentWillReceiveProps = (next) => {
       if ((!this.state.loaded && !next.skip) || props.variables !== next.variables)
         this.state.load(next.variables);
     };

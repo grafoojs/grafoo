@@ -143,7 +143,7 @@ describe("@grafoo/bindings", () => {
     let bindings;
     expect(() => (bindings = createBindings(client, {}, () => void 0))).not.toThrow();
 
-    Object.keys(bindings).forEach(fn => {
+    Object.keys(bindings).forEach((fn) => {
       expect(typeof bindings[fn]).toBe("function");
     });
 
@@ -250,7 +250,7 @@ describe("@grafoo/bindings", () => {
     bindings.unbind();
 
     client.write(AUTHORS, {
-      authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a))
+      authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a)),
     });
 
     expect(client.read<Authors>(AUTHORS).data.authors[0].name).toBe("Homer");
@@ -304,9 +304,9 @@ describe("@grafoo/bindings", () => {
       createAuthor: {
         query: CREATE_AUTHOR,
         update: ({ authors }, data) => ({
-          authors: [data.createAuthor, ...authors]
-        })
-      }
+          authors: [data.createAuthor, ...authors],
+        }),
+      },
     };
 
     const update = jest.spyOn(mutations.createAuthor, "update");
@@ -341,12 +341,12 @@ describe("@grafoo/bindings", () => {
       createAuthor: {
         query: CREATE_AUTHOR,
         optimisticUpdate: ({ authors }, variables: Author) => ({
-          authors: [{ ...variables, id: "tempID" }, ...authors]
+          authors: [{ ...variables, id: "tempID" }, ...authors],
         }),
         update: ({ authors }, data) => ({
-          authors: authors.map(p => (p.id === "tempID" ? data.createAuthor : p))
-        })
-      }
+          authors: authors.map((p) => (p.id === "tempID" ? data.createAuthor : p)),
+        }),
+      },
     };
 
     const optimisticUpdate = jest.spyOn(mutations.createAuthor, "optimisticUpdate");
@@ -393,9 +393,9 @@ describe("@grafoo/bindings", () => {
       removeAuthor: {
         query: DELETE_AUTHOR,
         optimisticUpdate: ({ authors }, { id }: Author) => ({
-          authors: authors.filter(author => author.id !== id)
-        })
-      }
+          authors: authors.filter((author) => author.id !== id),
+        }),
+      },
     };
 
     const renderFn = jest.fn();
@@ -413,10 +413,12 @@ describe("@grafoo/bindings", () => {
 
   it("should update if query objects is modified", async () => {
     const { query } = CREATE_AUTHOR;
-    const author = (await mockQueryRequest<CreateAuthor>({
-      query,
-      variables: { name: "sven" }
-    })).data.createAuthor;
+    const author = (
+      await mockQueryRequest<CreateAuthor>({
+        query,
+        variables: { name: "sven" },
+      })
+    ).data.createAuthor;
     const { data } = await mockQueryRequest(AUTHORS);
 
     client.write(AUTHORS, data);
@@ -429,9 +431,9 @@ describe("@grafoo/bindings", () => {
       updateAuthor: {
         query: UPDATE_AUTHOR,
         optimisticUpdate: ({ authors }, variables: Author) => ({
-          authors: authors.map(author => (author.id === variables.id ? variables : author))
-        })
-      }
+          authors: authors.map((author) => (author.id === variables.id ? variables : author)),
+        }),
+      },
     };
 
     const renderFn = jest.fn();
@@ -477,24 +479,24 @@ describe("@grafoo/bindings", () => {
       createAuthor: {
         query: CREATE_AUTHOR,
         optimisticUpdate: ({ authors }, variables: Author) => ({
-          authors: [{ ...variables, id: "tempID" }, ...authors]
+          authors: [{ ...variables, id: "tempID" }, ...authors],
         }),
         update: ({ authors }, data: CreateAuthor) => ({
-          authors: authors.map(author => (author.id === "tempID" ? data.createAuthor : author))
-        })
+          authors: authors.map((author) => (author.id === "tempID" ? data.createAuthor : author)),
+        }),
       },
       updateAuthor: {
         query: UPDATE_AUTHOR,
         optimisticUpdate: ({ authors }, variables: Author) => ({
-          authors: authors.map(author => (author.id === variables.id ? variables : author))
-        })
+          authors: authors.map((author) => (author.id === variables.id ? variables : author)),
+        }),
       },
       deleteAuthor: {
         query: DELETE_AUTHOR,
         optimisticUpdate: ({ authors }, variables: Author) => ({
-          authors: authors.map(author => (author.id === variables.id ? variables : author))
-        })
-      }
+          authors: authors.map((author) => (author.id === variables.id ? variables : author)),
+        }),
+      },
     };
 
     const renderFn = jest.fn();
@@ -506,7 +508,7 @@ describe("@grafoo/bindings", () => {
       let variables: Variables = { name: "mikel" };
       let { data } = await mockQueryRequest<CreateAuthor>({
         query: CREATE_AUTHOR.query,
-        variables
+        variables,
       });
       expect(await mockQueryRequest({ query: CREATE_AUTHOR.query, variables })).toEqual(
         await props.createAuthor(variables)
@@ -528,7 +530,7 @@ describe("@grafoo/bindings", () => {
 
   it("should update variables when new variables are passed", async () => {
     const {
-      data: { authors }
+      data: { authors },
     } = await mockQueryRequest<Authors>(AUTHORS);
 
     const [author1, author2] = authors;

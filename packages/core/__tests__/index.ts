@@ -166,8 +166,8 @@ describe("@grafoo/core", () => {
     expect(posts).toEqual(
       pathsMap["posts{__typename author{__typename id name}body id title}"].data.posts
     );
-    expect(authors.every(author => Boolean(objectsMap[author.id]))).toBe(true);
-    expect(posts.every(post => Boolean(objectsMap[post.id]))).toBe(true);
+    expect(authors.every((author) => Boolean(objectsMap[author.id]))).toBe(true);
+    expect(posts.every((post) => Boolean(objectsMap[post.id]))).toBe(true);
   });
 
   it("should write queries partially to the client", async () => {
@@ -188,9 +188,9 @@ describe("@grafoo/core", () => {
     const { authors } = data;
 
     expect(authors).toEqual(result.data.authors);
-    expect(authors.every(author => Boolean(result.objects[author.id]))).toBe(true);
+    expect(authors.every((author) => Boolean(result.objects[author.id]))).toBe(true);
     expect(
-      authors.every(author => author.posts.every(post => Boolean(result.objects[post.id])))
+      authors.every((author) => author.posts.every((post) => Boolean(result.objects[post.id])))
     ).toBe(true);
   });
 
@@ -238,16 +238,16 @@ describe("@grafoo/core", () => {
 
     const ids = Object.keys(client.flush().objectsMap);
 
-    expect(ids.some(id => id === authorToBeRemoved.id)).toBe(true);
+    expect(ids.some((id) => id === authorToBeRemoved.id)).toBe(true);
 
     client.write(SIMPLE_AUTHORS, {
-      authors: data.authors.filter(author => author.id !== authorToBeRemoved.id)
+      authors: data.authors.filter((author) => author.id !== authorToBeRemoved.id),
     });
 
     const nextIds = Object.keys(client.flush().objectsMap);
 
     expect(nextIds.length).toBe(ids.length - 1);
-    expect(nextIds.some(id => id === authorToBeRemoved.id)).toBe(false);
+    expect(nextIds.some((id) => id === authorToBeRemoved.id)).toBe(false);
   });
 
   it("should perform update to client", async () => {
@@ -257,7 +257,7 @@ describe("@grafoo/core", () => {
     client.write(POST, variables, data);
 
     const {
-      data: { post }
+      data: { post },
     } = client.read<PostQuery>(POST, variables);
 
     expect(post.title).toBe("Quam odit");
@@ -276,13 +276,13 @@ describe("@grafoo/core", () => {
 
     const { posts } = client.read<PostsQuery>(POSTS).data;
 
-    expect(posts.find(p => p.id === variables.postId).title).toBe("Quam odit");
+    expect(posts.find((p) => p.id === variables.postId).title).toBe("Quam odit");
 
     client.write(POST, variables, { post: { ...postData.post, title: "updated title" } });
 
     const { posts: updatedPosts } = client.read<PostsQuery>(POSTS, variables).data;
 
-    expect(updatedPosts.find(p => p.id === variables.postId).title).toBe("updated title");
+    expect(updatedPosts.find((p) => p.id === variables.postId).title).toBe("updated title");
   });
 
   it("should merge objects in the client when removing or adding properties", async () => {
@@ -304,12 +304,12 @@ describe("@grafoo/core", () => {
       author: {
         __typename: "Author",
         id: "a1d3a2bc-e503-4640-9178-23cbd36b542c",
-        name: "Murphy Abshire"
+        name: "Murphy Abshire",
       },
       body: "Ducimus harum delectus consectetur.",
       id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85",
       title: "Quam odit",
-      foo: "bar"
+      foo: "bar",
     });
   });
 
@@ -357,7 +357,7 @@ describe("@grafoo/core", () => {
     expect(client.read(SIMPLE_AUTHORS).data).toEqual(undefined);
     expect(client.flush()).toEqual({
       objectsMap: {},
-      pathsMap: {}
+      pathsMap: {},
     });
   });
 
@@ -370,6 +370,6 @@ describe("@grafoo/core", () => {
 
     const cachedIds = Object.keys(client.flush().objectsMap);
 
-    expect(cachedIds.every(key => /(Post|Author)/.test(key))).toBe(true);
+    expect(cachedIds.every((key) => /(Post|Author)/.test(key))).toBe(true);
   });
 });

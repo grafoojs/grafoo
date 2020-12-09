@@ -154,12 +154,12 @@ describe("@grafoo/react", () => {
     expect(typeof call.load).toBe("function");
   });
 
-  it("should execute render with the right data if a query is specified", async done => {
+  it("should execute render with the right data if a query is specified", async (done) => {
     const { data } = await mockQueryRequest(AUTHORS);
 
     const mockRender = createMockRenderFn(done, [
-      props => expect(props).toMatchObject({ loading: true, loaded: false }),
-      props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
+      (props) => expect(props).toMatchObject({ loading: true, loaded: false }),
+      (props) => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
     ]);
 
     TestRenderer.create(
@@ -169,13 +169,13 @@ describe("@grafoo/react", () => {
     );
   });
 
-  it("should render if skip changed value to true", async done => {
+  it("should render if skip changed value to true", async (done) => {
     const { data } = await mockQueryRequest(AUTHORS);
 
     const mockRender = createMockRenderFn(done, [
-      props => expect(props).toMatchObject({ loading: false, loaded: false }),
-      props => expect(props).toMatchObject({ loading: true, loaded: false }),
-      props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
+      (props) => expect(props).toMatchObject({ loading: false, loaded: false }),
+      (props) => expect(props).toMatchObject({ loading: true, loaded: false }),
+      (props) => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
     ]);
 
     const App: React.SFC<{ skip?: boolean }> = ({ skip = false }) => (
@@ -190,19 +190,21 @@ describe("@grafoo/react", () => {
 
     ctx.update(<App />);
 
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise((resolve) => setTimeout(resolve, 10));
 
     ctx.update(<App />);
   });
 
-  it("should rerender if variables prop has changed", async done => {
+  it("should rerender if variables prop has changed", async (done) => {
     const { data } = await mockQueryRequest<Authors>(AUTHORS);
 
-    const mock = async variables => {
-      return (await mockQueryRequest<{ author: Author }>({
-        query: AUTHOR.query,
-        variables
-      })).data.author;
+    const mock = async (variables) => {
+      return (
+        await mockQueryRequest<{ author: Author }>({
+          query: AUTHOR.query,
+          variables,
+        })
+      ).data.author;
     };
 
     const firstVariables = { id: data.authors[0].id };
@@ -211,10 +213,10 @@ describe("@grafoo/react", () => {
     let secondAuthor;
 
     const mockRender = createMockRenderFn(done, [
-      props => expect(props).toMatchObject({ loading: true, loaded: false }),
-      props => expect(props.author).toMatchObject(firstAuthor),
-      props => expect(props).toMatchObject({ loading: true, loaded: true, author: firstAuthor }),
-      props => expect(props.author).toMatchObject(secondAuthor)
+      (props) => expect(props).toMatchObject({ loading: true, loaded: false }),
+      (props) => expect(props.author).toMatchObject(firstAuthor),
+      (props) => expect(props).toMatchObject({ loading: true, loaded: true, author: firstAuthor }),
+      (props) => expect(props.author).toMatchObject(secondAuthor),
     ]);
 
     class AuthorComponent extends React.Component {
@@ -246,7 +248,7 @@ describe("@grafoo/react", () => {
     );
   });
 
-  it("should not trigger a network request if the query is already cached", async done => {
+  it("should not trigger a network request if the query is already cached", async (done) => {
     const { data } = await mockQueryRequest(AUTHORS);
 
     client.write(AUTHORS, data);
@@ -256,7 +258,7 @@ describe("@grafoo/react", () => {
     const spy = jest.spyOn(client, "execute");
 
     const mockRender = createMockRenderFn(done, [
-      props => expect(props).toMatchObject({ loading: false, loaded: true, ...data })
+      (props) => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
     ]);
 
     TestRenderer.create(
@@ -268,17 +270,17 @@ describe("@grafoo/react", () => {
     expect(spy).not.toHaveBeenCalled();
   });
 
-  it("should handle simple mutations", async done => {
+  it("should handle simple mutations", async (done) => {
     const variables = { name: "Bart" };
 
     const data = await mockQueryRequest({ query: CREATE_AUTHOR.query, variables });
 
     const mockRender = createMockRenderFn(done, [
-      props => {
-        props.createAuthor(variables).then(res => {
+      (props) => {
+        props.createAuthor(variables).then((res) => {
           expect(res).toEqual(data);
         });
-      }
+      },
     ]);
 
     const mutations = { createAuthor: { query: CREATE_AUTHOR } };
@@ -290,30 +292,30 @@ describe("@grafoo/react", () => {
     );
   });
 
-  it("should handle mutations with cache update", async done => {
+  it("should handle mutations with cache update", async (done) => {
     const { data } = await mockQueryRequest<Authors>(AUTHORS);
 
     const mockRender = createMockRenderFn(done, [
-      props => {
+      (props) => {
         expect(props).toMatchObject({ loading: true, loaded: false });
         expect(typeof props.createAuthor).toBe("function");
       },
-      props => {
+      (props) => {
         expect(props).toMatchObject({ loading: false, loaded: true, ...data });
         const variables = { name: "Homer" };
         mockQueryRequest({ query: CREATE_AUTHOR.query, variables }).then(() => {
           props.createAuthor(variables);
         });
       },
-      props => {
+      (props) => {
         expect(props.authors.length).toBe(data.authors.length + 1);
-        const newAuthor = props.authors.find(a => a.id === "tempID");
+        const newAuthor = props.authors.find((a) => a.id === "tempID");
         expect(newAuthor).toMatchObject({ name: "Homer", id: "tempID" });
       },
-      props => {
-        expect(props.authors.find(a => a.id === "tempID")).toBeUndefined();
-        expect(props.authors.find(a => a.name === "Homer")).toBeTruthy();
-      }
+      (props) => {
+        expect(props.authors.find((a) => a.id === "tempID")).toBeUndefined();
+        expect(props.authors.find((a) => a.name === "Homer")).toBeTruthy();
+      },
     ]);
 
     TestRenderer.create(
@@ -324,12 +326,12 @@ describe("@grafoo/react", () => {
             createAuthor: {
               query: CREATE_AUTHOR,
               optimisticUpdate: ({ authors }, variables) => ({
-                authors: [...authors, { ...variables, id: "tempID" }]
+                authors: [...authors, { ...variables, id: "tempID" }],
               }),
               update: ({ authors }, data) => ({
-                authors: authors.map(a => (a.id === "tempID" ? data.createAuthor : a))
-              })
-            }
+                authors: authors.map((a) => (a.id === "tempID" ? data.createAuthor : a)),
+              }),
+            },
           }}
         >
           {mockRender}
@@ -338,14 +340,14 @@ describe("@grafoo/react", () => {
     );
   });
 
-  it("should reflect updates that happen outside of the component", async done => {
+  it("should reflect updates that happen outside of the component", async (done) => {
     const { data } = await mockQueryRequest<Authors>(AUTHORS);
 
     client.write(AUTHORS, data);
 
     const mockRender = createMockRenderFn(done, [
-      props => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
-      props => expect(props.authors[0].name).toBe("Homer")
+      (props) => expect(props).toMatchObject({ loading: false, loaded: true, ...data }),
+      (props) => expect(props.authors[0].name).toBe("Homer"),
     ]);
 
     TestRenderer.create(
@@ -355,11 +357,11 @@ describe("@grafoo/react", () => {
     );
 
     client.write(AUTHORS, {
-      authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a))
+      authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a)),
     });
   });
 
-  it("should not trigger a network request if a query field is cached", async done => {
+  it("should not trigger a network request if a query field is cached", async (done) => {
     const { data } = await mockQueryRequest<Authors>(POSTS_AND_AUTHORS);
 
     client.write(POSTS_AND_AUTHORS, data);
@@ -367,10 +369,10 @@ describe("@grafoo/react", () => {
     const spy = jest.spyOn(client, "execute");
 
     const mockRender = createMockRenderFn(done, [
-      props => {
+      (props) => {
         expect(props).toMatchObject({ authors: data.authors, loading: false, loaded: true });
         expect(spy).not.toHaveBeenCalled();
-      }
+      },
     ]);
 
     TestRenderer.create(
@@ -384,7 +386,7 @@ describe("@grafoo/react", () => {
 function createMockRenderFn(done, assertionsFns) {
   let currentRender = 0;
 
-  return props => {
+  return (props) => {
     const assert = assertionsFns[currentRender];
 
     if (assert) assertionsFns[currentRender](props);
