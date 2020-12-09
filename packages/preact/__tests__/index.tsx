@@ -26,7 +26,7 @@ interface Authors {
   authors: Author[];
 }
 
-const AUTHOR = graphql`
+let AUTHOR = graphql`
   query($id: ID!) {
     author(id: $id) {
       name
@@ -34,7 +34,7 @@ const AUTHOR = graphql`
   }
 `;
 
-const AUTHORS = graphql`
+let AUTHORS = graphql`
   {
     authors {
       name
@@ -46,7 +46,7 @@ const AUTHORS = graphql`
   }
 `;
 
-const CREATE_AUTHOR = graphql`
+let CREATE_AUTHOR = graphql`
   mutation($name: String!) {
     createAuthor(name: $name) {
       name
@@ -54,7 +54,7 @@ const CREATE_AUTHOR = graphql`
   }
 `;
 
-const POSTS_AND_AUTHORS = graphql`
+let POSTS_AND_AUTHORS = graphql`
   {
     posts {
       title

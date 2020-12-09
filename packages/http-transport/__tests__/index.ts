@@ -1,13 +1,19 @@
-import * as fetchMock from "fetch-mock";
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 import createTransport from "../src";
 
-const fakeAPI = "http://fake-api.com/graphql";
-const query = "{ hello }";
+jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
+let fetchMock = require("node-fetch");
+global.fetch = fetchMock;
+
+let fakeAPI = "http://fake-api.com/graphql";
+let query = "{ hello }";
 
 describe("@grafoo/http-transport", () => {
   let request;
   beforeEach(() => {
     request = createTransport(fakeAPI);
+    fetchMock.restore();
   });
 
   it("should perform a simple request", async () => {
@@ -67,20 +73,15 @@ describe("@grafoo/http-transport", () => {
   it("should handle graphql errors", async () => {
     let response = { data: null, errors: [{ message: "I AM ERROR!" }] };
 
-    await mock(response, async () =>
-      expect(request(query)).resolves.toMatchObject({ errors: response.errors })
+    await mock(
+      async () => expect(request(query)).resolves.toMatchObject({ errors: response.errors }),
+      response
     );
   });
 });
 
-async function mock(...args) {
-  let [response, testFn] = args;
-
-  if (args.length === 1) [testFn, response] = [response, { data: { hello: "world" } }];
-
-  fetchMock.mock(fakeAPI, response);
+async function mock(testFn, response?: any) {
+  fetchMock.mock(fakeAPI, response || { data: { hello: "world" } });
 
   await testFn();
-
-  fetchMock.restore();
 }

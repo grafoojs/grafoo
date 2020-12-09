@@ -35,7 +35,7 @@ interface PostsQuery {
   posts: Post[];
 }
 
-const AUTHORS = graphql`
+let AUTHORS = graphql`
   query {
     authors {
       name
@@ -47,7 +47,7 @@ const AUTHORS = graphql`
   }
 `;
 
-const SIMPLE_AUTHORS = graphql`
+let SIMPLE_AUTHORS = graphql`
   query {
     authors {
       name
@@ -55,7 +55,7 @@ const SIMPLE_AUTHORS = graphql`
   }
 `;
 
-const POSTS_AND_AUTHORS = graphql`
+let POSTS_AND_AUTHORS = graphql`
   query {
     posts {
       title
@@ -75,7 +75,7 @@ const POSTS_AND_AUTHORS = graphql`
   }
 `;
 
-const POST = graphql`
+let POST = graphql`
   query($postId: ID!) {
     post(id: $postId) {
       title
@@ -87,7 +87,7 @@ const POST = graphql`
   }
 `;
 
-const POST_WITH_FRAGMENT = graphql`
+let POST_WITH_FRAGMENT = graphql`
   query($postId: ID!) {
     post(id: $postId) {
       title
@@ -103,7 +103,7 @@ const POST_WITH_FRAGMENT = graphql`
   }
 `;
 
-const POSTS = graphql`
+let POSTS = graphql`
   query {
     posts {
       title

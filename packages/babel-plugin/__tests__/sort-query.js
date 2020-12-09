@@ -1,7 +1,7 @@
 import { parse, print as graphqlPrint } from "graphql";
 import sortQuery from "../src/sort-query";
 
-const gql = String.raw;
+let gql = String.raw;
 
 function print(query, sort = false) {
   return sort ? graphqlPrint(sortQuery(parse(query))) : graphqlPrint(parse(query));

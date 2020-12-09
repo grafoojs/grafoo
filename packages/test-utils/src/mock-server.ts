@@ -1,5 +1,5 @@
 import { GraphQlPayload } from "@grafoo/types";
-import fetchMock from "fetch-mock";
+import fetchMock from "fetch-mock-jest";
 import fs from "fs";
 import { graphql } from "graphql";
 import { makeExecutableSchema } from "graphql-tools";
@@ -7,11 +7,11 @@ import path from "path";
 import { v4 as uuid } from "uuid";
 import setupDB from "./db";
 
-const db = setupDB();
+let db = setupDB();
 
-const typeDefs = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "utf-8");
+let typeDefs = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "utf-8");
 
-const Query = {
+let Query = {
   author(_, args) {
     return db.get("authors").find({ id: args.id }).value();
   },
@@ -26,7 +26,7 @@ const Query = {
   },
 };
 
-const Mutation = {
+let Mutation = {
   createAuthor(_, args) {
     let newAuthor = Object.assign({}, args, { id: uuid() });
 
@@ -65,7 +65,7 @@ const Mutation = {
   },
 };
 
-const Author = {
+let Author = {
   posts(author) {
     return author.posts
       ? author.posts.map(function (id) {
@@ -75,20 +75,20 @@ const Author = {
   },
 };
 
-const Post = {
+let Post = {
   author(post) {
     return db.get("authors").find({ id: post.author }).value();
   },
 };
 
-const resolvers = {
+let resolvers = {
   Query: Query,
   Mutation: Mutation,
   Author: Author,
   Post: Post,
 };
 
-const schema = makeExecutableSchema({ typeDefs: typeDefs, resolvers: resolvers });
+let schema = makeExecutableSchema({ typeDefs: typeDefs, resolvers: resolvers });
 
 interface ExecuteQueryArg {
   query: string;

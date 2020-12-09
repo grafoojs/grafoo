@@ -4,7 +4,7 @@ import MemoryAdapter from "lowdb/adapters/Memory";
 
 casual.seed(666);
 
-const times = (t, fn) => Array.from(Array(t), fn);
+let times = (t, fn) => Array.from(Array(t), fn);
 
 export default function setupDB() {
   let db = low(new MemoryAdapter(""));

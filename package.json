@@ -82,7 +82,7 @@
     "casual": "^1.5.19",
     "codecov": "^3.2.0",
     "eslint": "^7.15.0",
-    "fetch-mock": "^9.11.0",
+    "fetch-mock-jest": "^1.5.1",
     "graphql": "^15.4.0",
     "graphql-tools": "^7.0.2",
     "husky": "^4.3.5",

@@ -3,9 +3,9 @@ import { parse, print } from "graphql";
 import path from "path";
 import insertFields from "../src/insert-fields";
 
-const schema = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8");
+let schema = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8");
 
-const cases = [
+let cases = [
   {
     should: "should insert a field",
     input: "{ author { name } }",

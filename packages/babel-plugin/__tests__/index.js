@@ -19,14 +19,14 @@ pluginTester({
       },
       code: `
         import gql from "@grafoo/core/tag";
-        const query = gql\`{ hello }\`;
+        let query = gql\`{ hello }\`;
       `,
       error: true,
     },
     "should throw if a tagged template string literal has expressions in it": {
       code: `
         import gql from "@grafoo/core/tag";
-        const query = gql\`{ user(id: "\${1}") { name } }\`;
+        let query = gql\`{ user(id: "\${1}") { name } }\`;
       `,
       error: true,
     },
@@ -40,14 +40,14 @@ pluginTester({
       },
       code: `
         import gql from "@grafoo/core/tag";
-        const query = gql\`{ hello }\`;
+        let query = gql\`{ hello }\`;
       `,
       error: true,
     },
     "should throw if during client instatiation options is passed with a type other then object": {
       code: `
         import createClient from "@grafoo/core";
-        const query = createClient(someTransport, "I AM ERROR");
+        let query = createClient(someTransport, "I AM ERROR");
       `,
       error: true,
     },
@@ -58,14 +58,14 @@ pluginTester({
       },
       code: `
         import createClient from "@grafoo/core";
-        const query = createClient(someTransport);
+        let query = createClient(someTransport);
       `,
       error: true,
     },
     "should replace a tagged template literal with the compiled grafoo object": {
       code: `
         import gql from "@grafoo/core/tag";
-        const query = gql\`
+        let query = gql\`
           query($start: Int!, $offset: Int!, $id: ID!) {
             posts(start: $start, offset: $offset) {
               title
@@ -88,7 +88,7 @@ pluginTester({
       },
       code: `
         import gql from "@grafoo/core/tag";
-        const query = gql\`
+        let query = gql\`
           query($start: Int!, $offset: Int!, $id: ID!) {
             posts(start: $start, offset: $offset) {
               title
@@ -111,7 +111,7 @@ pluginTester({
       },
       code: `
         import gql from "@grafoo/core/tag";
-        const query = gql\`
+        let query = gql\`
           query($start: Int!, $offset: Int!, $id: ID!) {
             posts(start: $start, offset: $offset) {
               title
@@ -133,7 +133,7 @@ pluginTester({
       },
       code: `
         import gql from "@grafoo/core/tag";
-        const query = gql\`
+        let query = gql\`
           query($start: Int!, $offset: Int!, $id: ID!) {
             posts(start: $start, offset: $offset) {
               title
@@ -151,45 +151,45 @@ pluginTester({
     "should include `idFields` in the client instantiation if options are not provided": {
       code: `
         import createClient from "@grafoo/core";
-        const query = createClient(someTransport);
+        let query = createClient(someTransport);
       `,
       snapshot: true,
     },
     "should include `idFields` in the client instantiation if not present in options": {
       code: `
         import createClient from "@grafoo/core";
-        const query = createClient(someTransport, {});
+        let query = createClient(someTransport, {});
       `,
       snapshot: true,
     },
     "should include `idFields` in the client instantiation if options is a variable": {
       code: `
         import createClient from "@grafoo/core";
-        const options = {};
-        const query = createClient(someTransport, options);
+        let options = {};
+        let query = createClient(someTransport, options);
       `,
       snapshot: true,
     },
     "should overide `idFields` in the client instantiation if options is a variable": {
       code: `
         import createClient from "@grafoo/core";
-        const options = { idFields: ["err"] };
-        const query = createClient(someTransport, options);
+        let options = { idFields: ["err"] };
+        let query = createClient(someTransport, options);
       `,
       snapshot: true,
     },
     "should throw if `idFields` in the client instantiation if options is not an object variable": {
       code: `
         import createClient from "@grafoo/core";
-        const options = [];
-        const query = createClient(someTransport, options);
+        let options = [];
+        let query = createClient(someTransport, options);
       `,
       error: true,
     },
     "should include `idFields` in the client instantiation even if options are provided": {
       code: `
         import createClient from "@grafoo/core";
-        const query = createClient(someTransport, {
+        let query = createClient(someTransport, {
           headers: () => ({ authorization: "some-token" })
         });
       `,

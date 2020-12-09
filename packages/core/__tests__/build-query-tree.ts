@@ -1,6 +1,6 @@
 import buildQueryTree from "../src/build-query-tree";
 
-const tree = {
+let tree = {
   posts: [
     {
       title: "foo",
@@ -26,7 +26,7 @@ const tree = {
   ],
 };
 
-const idFields = ["id"];
+let idFields = ["id"];
 
 describe("build-query-tree", () => {
   it("should update values of a resulting query tree", () => {

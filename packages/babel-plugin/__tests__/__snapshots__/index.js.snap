@@ -3,7 +3,7 @@
 exports[`@grafoo/babel-plugin should compress the query string if the option compress is specified: should compress the query string if the option compress is specified 1`] = `
 
 import gql from "@grafoo/core/tag";
-const query = gql\`
+let query = gql\`
   query($start: Int!, $offset: Int!, $id: ID!) {
     posts(start: $start, offset: $offset) {
       title
@@ -18,7 +18,7 @@ const query = gql\`
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-const query = {
+let query = {
   query:
     "query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}",
   paths: {
@@ -39,7 +39,7 @@ const query = {
 exports[`@grafoo/babel-plugin should generate md5 hash and add it to object if the option generateIds is specified: should generate md5 hash and add it to object if the option generateIds is specified 1`] = `
 
 import gql from "@grafoo/core/tag";
-const query = gql\`
+let query = gql\`
   query($start: Int!, $offset: Int!, $id: ID!) {
     posts(start: $start, offset: $offset) {
       title
@@ -54,7 +54,7 @@ const query = gql\`
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-const query = {
+let query = {
   id: "6e0697df8f2453f2643bbd1e8a39c348",
   query:
     "query ($id: ID!, $offset: Int!, $start: Int!) {\\n  posts(offset: $offset, start: $start) {\\n    authors {\\n      id\\n      name\\n      username\\n    }\\n    body\\n    createdAt\\n    id\\n    tags {\\n      id\\n      name\\n    }\\n    title\\n  }\\n  user(id: $id) {\\n    id\\n    name\\n    username\\n  }\\n}",
@@ -76,14 +76,14 @@ const query = {
 exports[`@grafoo/babel-plugin should include \`idFields\` in the client instantiation even if options are provided: should include \`idFields\` in the client instantiation even if options are provided 1`] = `
 
 import createClient from "@grafoo/core";
-const query = createClient(someTransport, {
+let query = createClient(someTransport, {
   headers: () => ({ authorization: "some-token" })
 });
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
 import createClient from "@grafoo/core";
-const query = createClient(someTransport, {
+let query = createClient(someTransport, {
   headers: () => ({
     authorization: "some-token",
   }),
@@ -96,12 +96,12 @@ const query = createClient(someTransport, {
 exports[`@grafoo/babel-plugin should include \`idFields\` in the client instantiation if not present in options: should include \`idFields\` in the client instantiation if not present in options 1`] = `
 
 import createClient from "@grafoo/core";
-const query = createClient(someTransport, {});
+let query = createClient(someTransport, {});
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
 import createClient from "@grafoo/core";
-const query = createClient(someTransport, {
+let query = createClient(someTransport, {
   idFields: ["id"],
 });
 
@@ -111,12 +111,12 @@ const query = createClient(someTransport, {
 exports[`@grafoo/babel-plugin should include \`idFields\` in the client instantiation if options are not provided: should include \`idFields\` in the client instantiation if options are not provided 1`] = `
 
 import createClient from "@grafoo/core";
-const query = createClient(someTransport);
+let query = createClient(someTransport);
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
 import createClient from "@grafoo/core";
-const query = createClient(someTransport, {
+let query = createClient(someTransport, {
   idFields: ["id"],
 });
 
@@ -126,16 +126,16 @@ const query = createClient(someTransport, {
 exports[`@grafoo/babel-plugin should include \`idFields\` in the client instantiation if options is a variable: should include \`idFields\` in the client instantiation if options is a variable 1`] = `
 
 import createClient from "@grafoo/core";
-const options = {};
-const query = createClient(someTransport, options);
+let options = {};
+let query = createClient(someTransport, options);
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
 import createClient from "@grafoo/core";
-const options = {
+let options = {
   idFields: ["id"],
 };
-const query = createClient(someTransport, options);
+let query = createClient(someTransport, options);
 
 
 `;
@@ -143,7 +143,7 @@ const query = createClient(someTransport, options);
 exports[`@grafoo/babel-plugin should not generate md5 hash and add it to object if the option generateIds is falsey: should not generate md5 hash and add it to object if the option generateIds is falsey 1`] = `
 
 import gql from "@grafoo/core/tag";
-const query = gql\`
+let query = gql\`
   query($start: Int!, $offset: Int!, $id: ID!) {
     posts(start: $start, offset: $offset) {
       title
@@ -158,7 +158,7 @@ const query = gql\`
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-const query = {
+let query = {
   query:
     "query ($id: ID!, $offset: Int!, $start: Int!) {\\n  posts(offset: $offset, start: $start) {\\n    authors {\\n      id\\n      name\\n      username\\n    }\\n    body\\n    createdAt\\n    id\\n    tags {\\n      id\\n      name\\n    }\\n    title\\n  }\\n  user(id: $id) {\\n    id\\n    name\\n    username\\n  }\\n}",
   paths: {
@@ -179,16 +179,16 @@ const query = {
 exports[`@grafoo/babel-plugin should overide \`idFields\` in the client instantiation if options is a variable: should overide \`idFields\` in the client instantiation if options is a variable 1`] = `
 
 import createClient from "@grafoo/core";
-const options = { idFields: ["err"] };
-const query = createClient(someTransport, options);
+let options = { idFields: ["err"] };
+let query = createClient(someTransport, options);
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
 import createClient from "@grafoo/core";
-const options = {
+let options = {
   idFields: ["id"],
 };
-const query = createClient(someTransport, options);
+let query = createClient(someTransport, options);
 
 
 `;
@@ -206,7 +206,7 @@ import gql from "@grafoo/core/tag";
 exports[`@grafoo/babel-plugin should replace a tagged template literal with the compiled grafoo object: should replace a tagged template literal with the compiled grafoo object 1`] = `
 
 import gql from "@grafoo/core/tag";
-const query = gql\`
+let query = gql\`
   query($start: Int!, $offset: Int!, $id: ID!) {
     posts(start: $start, offset: $offset) {
       title
@@ -221,7 +221,7 @@ const query = gql\`
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-const query = {
+let query = {
   query:
     "query ($id: ID!, $offset: Int!, $start: Int!) {\\n  posts(offset: $offset, start: $start) {\\n    authors {\\n      id\\n      name\\n      username\\n    }\\n    body\\n    createdAt\\n    id\\n    tags {\\n      id\\n      name\\n    }\\n    title\\n  }\\n  user(id: $id) {\\n    id\\n    name\\n    username\\n  }\\n}",
   paths: {

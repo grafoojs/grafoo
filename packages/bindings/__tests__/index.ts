@@ -51,7 +51,7 @@ interface UpdateAuthor {
   };
 }
 
-const AUTHORS = graphql`
+let AUTHORS = graphql`
   query {
     authors {
       name
@@ -63,7 +63,7 @@ const AUTHORS = graphql`
   }
 `;
 
-const AUTHOR = graphql`
+let AUTHOR = graphql`
   query($id: ID!) {
     author(id: $id) {
       name
@@ -75,7 +75,7 @@ const AUTHOR = graphql`
   }
 `;
 
-const POSTS_AND_AUTHORS = graphql`
+let POSTS_AND_AUTHORS = graphql`
   query {
     posts {
       title
@@ -95,7 +95,7 @@ const POSTS_AND_AUTHORS = graphql`
   }
 `;
 
-const CREATE_AUTHOR = graphql`
+let CREATE_AUTHOR = graphql`
   mutation($name: String!) {
     createAuthor(name: $name) {
       name
@@ -107,7 +107,7 @@ const CREATE_AUTHOR = graphql`
   }
 `;
 
-const DELETE_AUTHOR = graphql`
+let DELETE_AUTHOR = graphql`
   mutation($id: ID!) {
     deleteAuthor(id: $id) {
       name
@@ -119,7 +119,7 @@ const DELETE_AUTHOR = graphql`
   }
 `;
 
-const UPDATE_AUTHOR = graphql`
+let UPDATE_AUTHOR = graphql`
   mutation($id: ID!, $name: String) {
     updateAuthor(id: $id, name: $name) {
       name

@@ -1,6 +1,6 @@
 import mapObjects from "../src/map-objects";
 
-const tree = {
+let tree = {
   posts: [
     {
       title: "foo",
@@ -41,7 +41,7 @@ const tree = {
   ],
 };
 
-const idFields = ["id"];
+let idFields = ["id"];
 
 describe("map-objects", () => {
   it("should return the correct map of objects", () => {
