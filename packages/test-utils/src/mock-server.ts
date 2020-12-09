@@ -4,7 +4,7 @@ import fs from "fs";
 import { graphql } from "graphql";
 import { makeExecutableSchema } from "graphql-tools";
 import path from "path";
-import uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 import setupDB from "./db";
 
 const db = setupDB();
@@ -28,7 +28,7 @@ const Query = {
 
 const Mutation = {
   createAuthor(_, args) {
-    const newAuthor = Object.assign({}, args, { id: uuid() });
+    let newAuthor = Object.assign({}, args, { id: uuid() });
 
     db.get("authors").push(newAuthor).write();
 
@@ -38,7 +38,7 @@ const Mutation = {
     return db.get("authors").find({ id: args.id }).assign(args).write();
   },
   deleteAuthor(_, args) {
-    const author = db.get("authors").find(args).value();
+    let author = db.get("authors").find(args).value();
 
     db.get("authors").find(args).remove().write();
 
@@ -47,7 +47,7 @@ const Mutation = {
     return author;
   },
   createPost(_, args) {
-    const newPost = Object.assign({}, args, { id: uuid() });
+    let newPost = Object.assign({}, args, { id: uuid() });
 
     db.get("posts").push(newPost).write();
 
@@ -57,7 +57,7 @@ const Mutation = {
     return db.get("posts").find({ id: args.id }).assign(args).write();
   },
   deletePost(_, args) {
-    const post = db.get("posts").find(args).value();
+    let post = db.get("posts").find(args).value();
 
     db.get("posts").find(args).remove().write();
 

@@ -100,9 +100,9 @@
     "prettier": "^2.2.1",
     "react": "^16.8.2",
     "react-test-renderer": "^16.8.2",
-    "rimraf": "^2.6.2",
+    "rimraf": "^3.0.2",
     "typescript": "^3.0.1",
-    "uuid": "^3.2.1"
+    "uuid": "^8.3.2"
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^4.9.1",
