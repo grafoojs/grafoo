@@ -58,7 +58,8 @@
     },
     "rules": {
       "prefer-const": 0,
-      "prefer-let/prefer-let": 2
+      "prefer-let/prefer-let": 2,
+      "@typescript-eslint/ban-ts-comment": 1
     },
     "ignorePatterns": [
       "packages/bundle",
