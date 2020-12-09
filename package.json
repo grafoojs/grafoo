@@ -22,16 +22,11 @@
     "packages/*"
   ],
   "lint-staged": {
-    "linters": {
-      "**/!(packages/build|scripts)/*.js": [
-        "eslint --fix",
-        "git add"
-      ],
-      "*.{js,ts,tsx,json,graphql,md}": [
-        "prettier --write",
-        "git add"
-      ]
-    }
+    "*.{js,ts,tsx,json,graphql,md}": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ]
   },
   "prettier": {
     "printWidth": 100
