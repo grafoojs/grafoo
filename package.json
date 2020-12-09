@@ -22,15 +22,12 @@
     "packages/*"
   ],
   "lint-staged": {
-    "ignore": [
-      "examples/**/*"
-    ],
     "linters": {
-      "**/*.js": [
-        "eslint",
+      "**/!(packages/build|scripts)/*.js": [
+        "eslint --fix",
         "git add"
       ],
-      "**/*.{js,ts,tsx,json,graphql,md}": [
+      "*.{js,ts,tsx,json,graphql,md}": [
         "prettier --write",
         "git add"
       ]
@@ -105,6 +102,7 @@
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^4.9.1",
-    "@typescript-eslint/parser": "^4.9.1"
+    "@typescript-eslint/parser": "^4.9.1",
+    "eslint-plugin-prefer-let": "^1.1.0"
   }
 }

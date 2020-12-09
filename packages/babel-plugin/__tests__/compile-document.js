@@ -4,13 +4,13 @@ import plugin from "../src";
 const transform = (program, opts) =>
   babel.transform(program, {
     plugins: [
-      [plugin, Object.assign({ schema: "__tests__/schema.graphql", idFields: ["id"] }, opts)]
-    ]
+      [plugin, Object.assign({ schema: "__tests__/schema.graphql", idFields: ["id"] }, opts)],
+    ],
   });
 
 describe("compile document", () => {
   it("should throw if a schema path points to a inexistent file", () => {
-    const program = `
+    let program = `
       import gql from "@grafoo/core/tag";
       const query = gql\`{ hello }\`;
     `;
@@ -19,7 +19,7 @@ describe("compile document", () => {
   });
 
   it("should throw if more then one operation is specified", () => {
-    const program = `
+    let program = `
       import gql from "@grafoo/core/tag";
       const query = gql\`
         { hello }
@@ -31,7 +31,7 @@ describe("compile document", () => {
   });
 
   it("should accept fragments", () => {
-    const program = `
+    let program = `
       import gql from "@grafoo/core/tag";
       const query = gql\`
         fragment UserInfo on User {
@@ -45,7 +45,7 @@ describe("compile document", () => {
   });
 
   it("should accept named queries", () => {
-    const program = `
+    let program = `
       import gql from "@grafoo/core/tag";
       const query = gql\`
         query NamedQuery {
@@ -58,7 +58,7 @@ describe("compile document", () => {
   });
 
   it("should accept named queries with arguments", () => {
-    const program = `
+    let program = `
       import gql from "@grafoo/core/tag";
       const query = gql\`
         query NamedQuery($var: ID!) {

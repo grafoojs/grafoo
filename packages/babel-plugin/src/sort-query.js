@@ -3,7 +3,7 @@
 import { visit } from "graphql";
 
 function sort(array, fn) {
-  fn = fn || (obj => obj.name.value);
+  fn = fn || ((obj) => obj.name.value);
 
   return (
     array &&
@@ -19,16 +19,16 @@ export default function sortQuery(document) {
   return visit(document, {
     Document(node) {
       node.definitions = [
-        ...sort(node.definitions.filter(def => def.kind === "FragmentDefinition")),
-        ...node.definitions.filter(def => def.kind !== "FragmentDefinition")
+        ...sort(node.definitions.filter((def) => def.kind === "FragmentDefinition")),
+        ...node.definitions.filter((def) => def.kind !== "FragmentDefinition"),
       ];
     },
     OperationDefinition(node) {
       sort(node.directives);
-      sort(node.variableDefinitions, _ => _.variable.name.value);
+      sort(node.variableDefinitions, (_) => _.variable.name.value);
     },
     SelectionSet(node) {
-      sort(node.selections, _ => (_.alias || _.name || _.typeCondition.name).value);
+      sort(node.selections, (_) => (_.alias || _.name || _.typeCondition.name).value);
     },
     Field(node) {
       sort(node.directives);
@@ -45,6 +45,6 @@ export default function sortQuery(document) {
     },
     Directive(node) {
       sort(node.arguments);
-    }
+    },
   });
 }

@@ -1,2 +1,4 @@
 dist/
 flow-typed/
+scripts/
+packages/bundle

@@ -9,7 +9,7 @@ function print(query, sort = false) {
 
 describe("sort-query", () => {
   it("should sort fields, variable declarations and arguments", () => {
-    const query = gql`
+    let query = gql`
       query($f: ID, $e: ID, $d: ID, $c: ID, $b: ID, $a: ID) {
         f
         e
@@ -33,7 +33,7 @@ describe("sort-query", () => {
       }
     `;
 
-    const expected = gql`
+    let expected = gql`
       query($a: ID, $b: ID, $c: ID, $d: ID, $e: ID, $f: ID) {
         a(a: $a, b: $b, c: $c, d: $d, e: $e, f: $f) {
           a(a: $a, b: $b, c: $c, d: $d, e: $e, f: $f) {
@@ -61,7 +61,7 @@ describe("sort-query", () => {
   });
 
   it("should sort fragments", () => {
-    const query = gql`
+    let query = gql`
       query {
         user {
           posts {
@@ -82,7 +82,7 @@ describe("sort-query", () => {
       }
     `;
 
-    const expected = gql`
+    let expected = gql`
       fragment PostInfo on Post {
         content
         title
@@ -107,7 +107,7 @@ describe("sort-query", () => {
   });
 
   it("should sort inline fragments", () => {
-    const query = gql`
+    let query = gql`
       query {
         user {
           posts {
@@ -125,7 +125,7 @@ describe("sort-query", () => {
       }
     `;
 
-    const expected = gql`
+    let expected = gql`
       {
         user {
           ... on User {
@@ -147,13 +147,13 @@ describe("sort-query", () => {
   });
 
   it("should sort directives", () => {
-    const query = gql`
+    let query = gql`
       query($c: ID, $b: ID, $a: ID) {
         someField @c(c: $c) @a(a: $a) @b(c: $b)
       }
     `;
 
-    const expected = gql`
+    let expected = gql`
       query($a: ID, $b: ID, $c: ID) {
         someField @a(a: $a) @b(c: $b) @c(c: $c)
       }

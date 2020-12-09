@@ -11,12 +11,12 @@ function insertField(selections, value) {
 }
 
 export default function insertFields(schemaStr, documentAst, idFields) {
-  const typeInfo = new TypeInfo(buildASTSchema(parse(schemaStr)));
+  let typeInfo = new TypeInfo(buildASTSchema(parse(schemaStr)));
 
   let isOperationDefinition = false;
   let isFragment = false;
 
-  const visitor = {
+  let visitor = {
     OperationDefinition() {
       isOperationDefinition = true;
     },
@@ -33,26 +33,26 @@ export default function insertFields(schemaStr, documentAst, idFields) {
         return;
       }
 
-      const type = getType(typeInfo);
+      let type = getType(typeInfo);
 
       if (type.astNode.kind === "UnionTypeDefinition") {
         return;
       }
 
-      const typeFields = Object.keys(type.getFields());
-      const typeInterfaces = type.getInterfaces ? type.getInterfaces() : [];
-      const typeInterfacesFields = typeInterfaces.reduce(
+      let typeFields = Object.keys(type.getFields());
+      let typeInterfaces = type.getInterfaces ? type.getInterfaces() : [];
+      let typeInterfacesFields = typeInterfaces.reduce(
         (acc, next) => acc.concat(Object.keys(next.getFields())),
         []
       );
 
-      for (const field of idFields) {
-        if (selections.some(_ => _.name && _.name.value === field)) {
+      for (let field of idFields) {
+        if (selections.some((_) => _.name && _.name.value === field)) {
           continue; // Skip already declared fields
         }
 
-        const typeHasField = typeFields.some(_ => _ === field);
-        const typeInterfacesHasField = typeInterfacesFields.some(_ => _ === field);
+        let typeHasField = typeFields.some((_) => _ === field);
+        let typeInterfacesHasField = typeInterfacesFields.some((_) => _ === field);
 
         if (
           typeHasField ||
@@ -64,7 +64,7 @@ export default function insertFields(schemaStr, documentAst, idFields) {
       }
 
       isFragment = false;
-    }
+    },
   };
 
   return visit(documentAst, visitWithTypeInfo(typeInfo, visitor));

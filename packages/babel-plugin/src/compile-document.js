@@ -10,40 +10,36 @@ let schema;
 function getSchema(schemaPath) {
   if (schema) return schema;
 
-  try {
-    let fullPath;
+  let fullPath;
 
-    if (!schemaPath) {
-      const schemaJson = path.join(process.cwd(), "schema.json");
-      const schemaGraphql = path.join(process.cwd(), "schema.graphql");
-      const schemaGql = path.join(process.cwd(), "schema.gql");
+  if (!schemaPath) {
+    let schemaJson = path.join(process.cwd(), "schema.json");
+    let schemaGraphql = path.join(process.cwd(), "schema.graphql");
+    let schemaGql = path.join(process.cwd(), "schema.gql");
 
-      fullPath = fs.existsSync(schemaJson)
-        ? schemaJson
-        : fs.existsSync(schemaGraphql)
-        ? schemaGraphql
-        : fs.existsSync(schemaGql)
-        ? schemaGql
-        : undefined;
-    } else {
-      fullPath = path.join(process.cwd(), schemaPath);
-    }
-
-    fs.accessSync(fullPath, fs.F_OK);
-
-    schema = fs.readFileSync(fullPath, "utf-8");
-
-    return schema;
-  } catch (err) {
-    throw err;
+    fullPath = fs.existsSync(schemaJson)
+      ? schemaJson
+      : fs.existsSync(schemaGraphql)
+      ? schemaGraphql
+      : fs.existsSync(schemaGql)
+      ? schemaGql
+      : undefined;
+  } else {
+    fullPath = path.join(process.cwd(), schemaPath);
   }
+
+  fs.accessSync(fullPath, fs.F_OK);
+
+  schema = fs.readFileSync(fullPath, "utf-8");
+
+  return schema;
 }
 
 export default function compileDocument(source, opts) {
-  const schema = getSchema(opts.schema);
-  const doc = sortDocument(insertFields(schema, parse(source), opts.idFields));
-  const oprs = doc.definitions.filter(d => d.kind === "OperationDefinition");
-  const frags = doc.definitions.filter(d => d.kind === "FragmentDefinition");
+  let schema = getSchema(opts.schema);
+  let doc = sortDocument(insertFields(schema, parse(source), opts.idFields));
+  let oprs = doc.definitions.filter((d) => d.kind === "OperationDefinition");
+  let frags = doc.definitions.filter((d) => d.kind === "FragmentDefinition");
 
   if (oprs.length > 1) {
     throw new Error("@grafoo/core/tag: only one operation definition is accepted per tag.");
@@ -52,8 +48,8 @@ export default function compileDocument(source, opts) {
   let grafooObj = {};
 
   if (oprs.length) {
-    const printed = print(oprs[0]);
-    const compressed = compress(printed);
+    let printed = print(oprs[0]);
+    let compressed = compress(printed);
 
     // Use compressed version to get same hash even if
     // query has different whitespaces, newlines, etc
@@ -72,13 +68,13 @@ export default function compileDocument(source, opts) {
           // based on compress(print(s))?
           [compress(print(s))]: {
             name: s.name.value,
-            args: s.arguments.map(a => {
+            args: s.arguments.map((a) => {
               if (a.value && a.value.kind === "Variable") {
                 a = a.value;
               }
               return a.name.value;
-            })
-          }
+            }),
+          },
         }),
       {}
     );
@@ -87,7 +83,7 @@ export default function compileDocument(source, opts) {
   if (frags.length) {
     grafooObj.frags = {};
 
-    for (const frag of frags) {
+    for (let frag of frags) {
       grafooObj.frags[frag.name.value] = opts.compress ? compress(print(frag)) : print(frag);
     }
   }

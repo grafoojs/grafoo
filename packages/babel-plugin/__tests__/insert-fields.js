@@ -10,19 +10,19 @@ const cases = [
     should: "should insert a field",
     input: "{ author { name } }",
     expectedOutput: "{ author { name id } }",
-    idFields: ["id"]
+    idFields: ["id"],
   },
   {
     should: "should insert more then a field if specified",
     input: "{ author { name } }",
     expectedOutput: "{ author { name username email id } }",
-    idFields: ["username", "email", "id"]
+    idFields: ["username", "email", "id"],
   },
   {
     should: "should insert `__typename` if specified",
     input: "{ author { name } }",
     expectedOutput: "{ author { name __typename } }",
-    idFields: ["__typename"]
+    idFields: ["__typename"],
   },
   {
     should: "should insert props in queries with fragments",
@@ -56,7 +56,7 @@ const cases = [
         }
       }
     `,
-    idFields: ["id"]
+    idFields: ["id"],
   },
   {
     should: "should insert props in queries with inline fragments",
@@ -88,7 +88,7 @@ const cases = [
         }
       }
     `,
-    idFields: ["id", "__typename"]
+    idFields: ["id", "__typename"],
   },
   {
     should: "should not insert `__typename` inside fragments",
@@ -122,7 +122,7 @@ const cases = [
         }
       }
     `,
-    idFields: ["__typename"]
+    idFields: ["__typename"],
   },
   {
     should: "should not insert `__typename` inside inline fragments",
@@ -152,7 +152,7 @@ const cases = [
         }
       }
     `,
-    idFields: ["__typename"]
+    idFields: ["__typename"],
   },
   {
     should: "should insert field present on a fragment",
@@ -185,7 +185,7 @@ const cases = [
         bio
       }
     `,
-    idFields: ["bio"]
+    idFields: ["bio"],
   },
   {
     should: "should insert field present in an inline fragment",
@@ -214,7 +214,7 @@ const cases = [
         }
       }
     `,
-    idFields: ["bio"]
+    idFields: ["bio"],
   },
   {
     should: "should insert fields in inline fragments while leaving unions",
@@ -244,7 +244,7 @@ const cases = [
         }
       }
     `,
-    idFields: ["id"]
+    idFields: ["id"],
   },
   {
     should: "should not insert `__typename` in an operation definition",
@@ -272,12 +272,12 @@ const cases = [
         }
       }
     `,
-    idFields: ["id", "__typename"]
-  }
+    idFields: ["id", "__typename"],
+  },
 ];
 
 describe("insert-fields", () => {
-  for (const { should, input, expectedOutput, idFields } of cases) {
+  for (let { should, input, expectedOutput, idFields } of cases) {
     it(should, () => {
       expect(print(insertFields(schema, parse(input), idFields))).toBe(
         print(parse(expectedOutput))
