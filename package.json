@@ -22,7 +22,7 @@
     "packages/*"
   ],
   "lint-staged": {
-    "*.{js,ts,tsx,json,graphql,md}": [
+    "*.{js,ts,tsx,json,graphql}": [
       "eslint --fix",
       "prettier --write"
     ]
