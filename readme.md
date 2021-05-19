@@ -1,9 +1,8 @@
-<h1 align=center style="margin: 80px 0">
-  <picture>
-    <source srcset="https://raw.githubusercontent.com/grafoojs/grafoo/master/logo-light.svg" media="(prefers-color-scheme: light) or (prefers-color-scheme: no-preference)" />
-    <source srcset="https://raw.githubusercontent.com/grafoojs/grafoo/master/logo-dark.svg" media="(prefers-color-scheme: dark)" />
-    <img src="https://raw.githubusercontent.com/grafoojs/grafoo/master/logo-light.svg" alt=Grafoo />
-  </picture>
+<h1 align=center>
+  <br />
+  <img src="https://raw.githubusercontent.com/grafoojs/grafoo/master/logo.svg" alt=Grafoo />
+  <br />
+  <br />
 </h1>
 
 <p align=center><i>A GraphQL Client and Toolkit</i></p>
