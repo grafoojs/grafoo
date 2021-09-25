@@ -22,10 +22,11 @@ let query = {
   query:
     "query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}",
   paths: {
-    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}": {
-      name: "posts",
-      args: ["offset", "start"],
-    },
+    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
+      {
+        name: "posts",
+        args: ["offset", "start"],
+      },
     "user(id:$id){id name username}": {
       name: "user",
       args: ["id"],
@@ -59,10 +60,11 @@ let query = {
   query:
     "query ($id: ID!, $offset: Int!, $start: Int!) {\\n  posts(offset: $offset, start: $start) {\\n    authors {\\n      id\\n      name\\n      username\\n    }\\n    body\\n    createdAt\\n    id\\n    tags {\\n      id\\n      name\\n    }\\n    title\\n  }\\n  user(id: $id) {\\n    id\\n    name\\n    username\\n  }\\n}",
   paths: {
-    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}": {
-      name: "posts",
-      args: ["offset", "start"],
-    },
+    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
+      {
+        name: "posts",
+        args: ["offset", "start"],
+      },
     "user(id:$id){id name username}": {
       name: "user",
       args: ["id"],
@@ -162,10 +164,11 @@ let query = {
   query:
     "query ($id: ID!, $offset: Int!, $start: Int!) {\\n  posts(offset: $offset, start: $start) {\\n    authors {\\n      id\\n      name\\n      username\\n    }\\n    body\\n    createdAt\\n    id\\n    tags {\\n      id\\n      name\\n    }\\n    title\\n  }\\n  user(id: $id) {\\n    id\\n    name\\n    username\\n  }\\n}",
   paths: {
-    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}": {
-      name: "posts",
-      args: ["offset", "start"],
-    },
+    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
+      {
+        name: "posts",
+        args: ["offset", "start"],
+      },
     "user(id:$id){id name username}": {
       name: "user",
       args: ["id"],
@@ -225,10 +228,11 @@ let query = {
   query:
     "query ($id: ID!, $offset: Int!, $start: Int!) {\\n  posts(offset: $offset, start: $start) {\\n    authors {\\n      id\\n      name\\n      username\\n    }\\n    body\\n    createdAt\\n    id\\n    tags {\\n      id\\n      name\\n    }\\n    title\\n  }\\n  user(id: $id) {\\n    id\\n    name\\n    username\\n  }\\n}",
   paths: {
-    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}": {
-      name: "posts",
-      args: ["offset", "start"],
-    },
+    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
+      {
+        name: "posts",
+        args: ["offset", "start"],
+      },
     "user(id:$id){id name username}": {
       name: "user",
       args: ["id"],
