@@ -1,49 +1,39 @@
 import casual from "casual";
-import low from "lowdb";
-import MemoryAdapter from "lowdb/adapters/Memory";
+import { Low, Memory } from "lowdb";
 
 casual.seed(666);
 
-let times = (t, fn) => Array.from(Array(t), fn);
+let times = (t: number, fn: (i: number) => void) => Array.from(Array(t), fn);
 
 export default function setupDB() {
-  let db = low(new MemoryAdapter(""));
+  let db = new Low<{ posts: any[]; authors: any[] }>(new Memory());
 
-  db.defaults({ posts: [], authors: [] }).write();
+  db.data = { posts: [], authors: [] };
 
+  db.read;
   times(2, () =>
-    db
-      .get("authors")
-      .push({
-        id: casual.uuid,
-        name: casual.first_name + " " + casual.last_name,
-      })
-      .write()
+    db.data.authors.push({
+      id: casual.uuid,
+      name: casual.first_name + " " + casual.last_name,
+    })
   );
 
-  db.get("authors")
-    .value()
-    .forEach(({ id }) => {
-      times(4, () =>
-        db
-          .get("posts")
-          .push({
-            author: id,
-            id: casual.uuid,
-            title: casual.title,
-            body: casual.short_description,
-          })
-          .write()
-      );
+  db.data.authors.forEach(({ id }) => {
+    times(4, () =>
+      db.data.posts.push({
+        author: id,
+        id: casual.uuid,
+        title: casual.title,
+        body: casual.short_description,
+      })
+    );
 
-      let posts = db
-        .get("posts")
-        .filter((post) => post.author === id)
-        .map((post) => post.id)
-        .value();
+    let posts = db.data.posts.filter((post) => post.author === id).map((post) => post.id);
 
-      db.get("authors").find({ id }).set("posts", posts).write();
-    });
+    db.data.authors.find((author) => author.id === id).posts = posts;
+  });
+
+  db.write();
 
   return db;
 }

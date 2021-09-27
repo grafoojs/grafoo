@@ -25,13 +25,13 @@ let query = {
     "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
       {
         name: "posts",
-        args: ["offset", "start"],
+        args: ["offset", "start"]
       },
     "user(id:$id){id name username}": {
       name: "user",
-      args: ["id"],
-    },
-  },
+      args: ["id"]
+    }
+  }
 };
 
 
@@ -63,13 +63,13 @@ let query = {
     "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
       {
         name: "posts",
-        args: ["offset", "start"],
+        args: ["offset", "start"]
       },
     "user(id:$id){id name username}": {
       name: "user",
-      args: ["id"],
-    },
-  },
+      args: ["id"]
+    }
+  }
 };
 
 
@@ -87,9 +87,9 @@ let query = createClient(someTransport, {
 import createClient from "@grafoo/core";
 let query = createClient(someTransport, {
   headers: () => ({
-    authorization: "some-token",
+    authorization: "some-token"
   }),
-  idFields: ["id"],
+  idFields: ["id"]
 });
 
 
@@ -104,7 +104,7 @@ let query = createClient(someTransport, {});
 
 import createClient from "@grafoo/core";
 let query = createClient(someTransport, {
-  idFields: ["id"],
+  idFields: ["id"]
 });
 
 
@@ -119,7 +119,7 @@ let query = createClient(someTransport);
 
 import createClient from "@grafoo/core";
 let query = createClient(someTransport, {
-  idFields: ["id"],
+  idFields: ["id"]
 });
 
 
@@ -135,7 +135,7 @@ let query = createClient(someTransport, options);
 
 import createClient from "@grafoo/core";
 let options = {
-  idFields: ["id"],
+  idFields: ["id"]
 };
 let query = createClient(someTransport, options);
 
@@ -167,13 +167,13 @@ let query = {
     "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
       {
         name: "posts",
-        args: ["offset", "start"],
+        args: ["offset", "start"]
       },
     "user(id:$id){id name username}": {
       name: "user",
-      args: ["id"],
-    },
-  },
+      args: ["id"]
+    }
+  }
 };
 
 
@@ -189,7 +189,7 @@ let query = createClient(someTransport, options);
 
 import createClient from "@grafoo/core";
 let options = {
-  idFields: ["id"],
+  idFields: ["id"]
 };
 let query = createClient(someTransport, options);
 
@@ -231,13 +231,13 @@ let query = {
     "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
       {
         name: "posts",
-        args: ["offset", "start"],
+        args: ["offset", "start"]
       },
     "user(id:$id){id name username}": {
       name: "user",
-      args: ["id"],
-    },
-  },
+      args: ["id"]
+    }
+  }
 };
 
 
