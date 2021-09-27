@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
+import { GrafooTransport } from "@grafoo/types";
 import createTransport from "../src";
 
-jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
+jest.mock("node-fetch", () => require("fetch-mock").sandbox());
 let fetchMock = require("node-fetch");
 global.fetch = fetchMock;
 
@@ -10,7 +11,7 @@ let fakeAPI = "http://fake-api.com/graphql";
 let query = "{ hello }";
 
 describe("@grafoo/http-transport", () => {
-  let request;
+  let request: GrafooTransport;
   beforeEach(() => {
     request = createTransport(fakeAPI);
     fetchMock.restore();
@@ -50,7 +51,7 @@ describe("@grafoo/http-transport", () => {
 
       expect(headers).toEqual({
         authorization: "Bearer some-token",
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       });
     });
   });
@@ -65,7 +66,7 @@ describe("@grafoo/http-transport", () => {
 
       expect(headers).toEqual({
         authorization: "Bearer some-token",
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       });
     });
   });

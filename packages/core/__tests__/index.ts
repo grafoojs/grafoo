@@ -76,7 +76,7 @@ let POSTS_AND_AUTHORS = graphql`
 `;
 
 let POST = graphql`
-  query($postId: ID!) {
+  query ($postId: ID!) {
     post(id: $postId) {
       title
       body
@@ -88,7 +88,7 @@ let POST = graphql`
 `;
 
 let POST_WITH_FRAGMENT = graphql`
-  query($postId: ID!) {
+  query ($postId: ID!) {
     post(id: $postId) {
       title
       body
@@ -241,7 +241,7 @@ describe("@grafoo/core", () => {
     expect(ids.some((id) => id === authorToBeRemoved.id)).toBe(true);
 
     client.write(SIMPLE_AUTHORS, {
-      authors: data.authors.filter((author) => author.id !== authorToBeRemoved.id),
+      authors: data.authors.filter((author) => author.id !== authorToBeRemoved.id)
     });
 
     let nextIds = Object.keys(client.flush().objectsMap);
@@ -257,7 +257,7 @@ describe("@grafoo/core", () => {
     client.write(POST, variables, data);
 
     let {
-      data: { post },
+      data: { post }
     } = client.read<PostQuery>(POST, variables);
 
     expect(post.title).toBe("Quam odit");
@@ -304,12 +304,12 @@ describe("@grafoo/core", () => {
       author: {
         __typename: "Author",
         id: "a1d3a2bc-e503-4640-9178-23cbd36b542c",
-        name: "Murphy Abshire",
+        name: "Murphy Abshire"
       },
       body: "Ducimus harum delectus consectetur.",
       id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85",
       title: "Quam odit",
-      foo: "bar",
+      foo: "bar"
     });
   });
 
@@ -357,7 +357,7 @@ describe("@grafoo/core", () => {
     expect(client.read(SIMPLE_AUTHORS).data).toEqual(undefined);
     expect(client.flush()).toEqual({
       objectsMap: {},
-      pathsMap: {},
+      pathsMap: {}
     });
   });
 

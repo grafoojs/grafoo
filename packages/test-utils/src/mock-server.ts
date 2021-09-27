@@ -1,8 +1,8 @@
 import { GraphQlPayload } from "@grafoo/types";
-import fetchMock from "fetch-mock-jest";
+import fetchMock from "fetch-mock";
 import fs from "fs";
 import { graphql } from "graphql";
-import { makeExecutableSchema } from "graphql-tools";
+import { makeExecutableSchema } from "@graphql-tools/schema";
 import path from "path";
 import { v4 as uuid } from "uuid";
 import setupDB from "./db";
@@ -13,79 +13,100 @@ let typeDefs = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "ut
 
 let Query = {
   author(_, args) {
-    return db.get("authors").find({ id: args.id }).value();
+    return db.data.authors.find((author) => author.id === args.id);
   },
   authors() {
-    return db.get("authors").value();
+    return db.data.authors;
   },
   post(_, args) {
-    return db.get("posts").find({ id: args.id }).value();
+    return db.data.posts.find((author) => author.id === args.id);
   },
   posts() {
-    return db.get("posts").value();
-  },
+    return db.data.posts;
+  }
 };
 
 let Mutation = {
   createAuthor(_, args) {
     let newAuthor = Object.assign({}, args, { id: uuid() });
 
-    db.get("authors").push(newAuthor).write();
+    db.data.authors.push(newAuthor);
+
+    db.write();
 
     return newAuthor;
   },
   updateAuthor(_, args) {
-    return db.get("authors").find({ id: args.id }).assign(args).write();
+    let author = Object.assign(
+      db.data.authors.find((author) => author.id === args.id),
+      args
+    );
+
+    db.write();
+
+    return author;
   },
   deleteAuthor(_, args) {
-    let author = db.get("authors").find(args).value();
+    let author = db.data.authors.find(args);
 
-    db.get("authors").find(args).remove().write();
+    db.data.authors = db.data.authors.filter((a) => a.id !== author.id);
+    db.data.posts = db.data.posts.filter((p) => p.author !== author.id);
 
-    db.get("posts").find({ author: args.id }).remove().write();
+    db.write();
 
     return author;
   },
   createPost(_, args) {
     let newPost = Object.assign({}, args, { id: uuid() });
 
-    db.get("posts").push(newPost).write();
+    db.data.posts.push(newPost);
+
+    db.write();
 
     return newPost;
   },
   updatePost(_, args) {
-    return db.get("posts").find({ id: args.id }).assign(args).write();
-  },
-  deletePost(_, args) {
-    let post = db.get("posts").find(args).value();
+    let post = Object.assign(
+      db.data.posts.find((author) => author.id === args.id),
+      args
+    );
 
-    db.get("posts").find(args).remove().write();
+    db.write();
 
     return post;
   },
+  deletePost(_, args) {
+    let post = db.data.posts.find(args);
+
+    db.data.posts = db.data.posts.filter((p) => p.id !== args.id);
+
+    db.write();
+
+    return post;
+  }
 };
 
 let Author = {
   posts(author) {
-    return author.posts
-      ? author.posts.map(function (id) {
-          return db.get("posts").find({ id: id }).value();
-        })
+    let s = author.posts
+      ? author.posts.map((id) => db.data.posts.find((post) => post.id === id))
       : null;
-  },
+
+    return s;
+  }
 };
 
 let Post = {
   author(post) {
-    return db.get("authors").find({ id: post.author }).value();
-  },
+    return db.data.authors.find((author) => author.id === post.author);
+  }
 };
 
 let resolvers = {
   Query: Query,
   Mutation: Mutation,
   Author: Author,
-  Post: Post,
+  Post: Post
 };
 
 let schema = makeExecutableSchema({ typeDefs: typeDefs, resolvers: resolvers });
@@ -102,13 +123,12 @@ export function executeQuery<T>({ query, variables }: ExecuteQueryArg): Promise<
   return graphql({ schema: schema, source: query, variableValues: variables });
 }
 
-export function mockQueryRequest<T>(request: ExecuteQueryArg): Promise<GraphQlPayload<T>> {
+export async function mockQueryRequest<T>(request: ExecuteQueryArg): Promise<GraphQlPayload<T>> {
   fetchMock.reset();
   fetchMock.restore();
 
-  return executeQuery<T>(request).then(function (response) {
-    fetchMock.post("*", response);
+  let response = await executeQuery<T>(request);
+  fetchMock.post("*", response);
 
-    return response;
-  });
+  return response;
 }

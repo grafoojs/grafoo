@@ -21,19 +21,13 @@
     "test:coverage": "jest --coverage"
   },
   "jest": {
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "json"
-    ],
-    "testMatch": [
-      "**/__tests__/*.+(ts|tsx|js)"
-    ],
     "transform": {
       "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
     },
-    "testURL": "http://localhost/"
+    "resolver": "<rootDir>/../../scripts/resolver.js",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(lowdb|steno|node-fetch|fetch-blob)/)"
+    ]
   },
   "dependencies": {
     "@grafoo/types": "^1.4.1",
