@@ -46,25 +46,25 @@ export default function insertFields(schemaStr, documentAst, idFields) {
         []
       );
 
-      for (let field of idFields) {
-        if (selections.some((_) => _.name && _.name.value === field)) {
+      for (let id of idFields) {
+        if (selections.some((s) => s.name && s.name.value === id)) {
           continue; // Skip already declared fields
         }
 
-        let typeHasField = typeFields.some((_) => _ === field);
-        let typeInterfacesHasField = typeInterfacesFields.some((_) => _ === field);
+        let typeHasId = typeFields.some((s) => s === id);
+        let typeInterfacesHasId = typeInterfacesFields.some((s) => s === id);
 
         if (
-          typeHasField ||
-          (field === "__typename" && !isFragment) ||
-          (typeInterfacesHasField && !isFragment)
+          typeHasId ||
+          (id === "__typename" && !isFragment) ||
+          (typeInterfacesHasId && !isFragment)
         ) {
-          insertField(selections, field);
+          insertField(selections, id);
         }
       }
 
       isFragment = false;
-    },
+    }
   };
 
   return visit(documentAst, visitWithTypeInfo(typeInfo, visitor));

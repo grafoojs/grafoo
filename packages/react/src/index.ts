@@ -4,6 +4,7 @@ import {
   GrafooConsumerProps,
   GrafooBoundState,
   GrafooBoundMutations,
+  GrafooClient
 } from "@grafoo/types";
 import { Component, createContext, createElement, ReactElement, ReactNode, FC } from "react";
 
@@ -39,7 +40,7 @@ export let Provider: FC<Context> = (props) =>
 class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
   state: GrafooBoundState & T & GrafooBoundMutations<U>;
 
-  constructor(props) {
+  constructor(props: GrafooReactConsumerProps<T, U>) {
     super(props);
 
     let bindings = createBindings<T, U>(props.client, props, () => {
@@ -75,6 +76,6 @@ class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
  * U = Mutations
  */
 export let Consumer: ConsumerType = <T, U>(props: GrafooReactConsumerProps<T, U>) =>
-  createElement(ctx.Consumer, null, (client) =>
+  createElement(ctx.Consumer, null, (client: GrafooClient) =>
     createElement(GrafooConsumer, Object.assign({ client }, props))
   );

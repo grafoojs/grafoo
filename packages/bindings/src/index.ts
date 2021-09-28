@@ -5,6 +5,8 @@ import {
   GrafooConsumerProps,
   ObjectsMap,
   Variables,
+  GraphQlError,
+  GraphQlPayload
 } from "@grafoo/types";
 
 export default function createBindings<T = unknown, U = unknown>(
@@ -54,20 +56,21 @@ export default function createBindings<T = unknown, U = unknown>(
     for (let key in props.mutations) {
       let { update, optimisticUpdate, query: mutationQuery } = props.mutations[key];
 
-      boundMutations[key] = (mutationVariables) => {
+      boundMutations[key] = async (
+        mutationVariables
+      ): Promise<GraphQlPayload<U[Extract<keyof U, string>]>> => {
         if (props.query && optimisticUpdate) {
           writeToCache(optimisticUpdate(data, mutationVariables));
         }
 
-        return client
-          .execute<U[typeof key]>(mutationQuery, mutationVariables)
-          .then((mutationResponse) => {
-            if (props.query && update && mutationResponse.data) {
-              writeToCache(update(data, mutationResponse.data));
-            }
-
-            return mutationResponse;
-          });
+        let mutationResponse = await client.execute<U[typeof key]>(
+          mutationQuery,
+          mutationVariables
+        );
+        if (props.query && update && mutationResponse.data) {
+          writeToCache(update(data, mutationResponse.data));
+        }
+        return mutationResponse;
       };
     }
   }
@@ -76,7 +79,11 @@ export default function createBindings<T = unknown, U = unknown>(
     client.write(props.query, variables, dataUpdate);
   }
 
-  function performUpdate(boundStateUpdate?) {
+  function performUpdate(boundStateUpdate?: {
+    errors: GraphQlError[];
+    loaded: boolean;
+    loading: boolean;
+  }) {
     ({ data, objects } = client.read<T>(props.query, variables));
 
     Object.assign(boundState, boundStateUpdate);
@@ -88,7 +95,7 @@ export default function createBindings<T = unknown, U = unknown>(
     return Object.assign({ client }, boundState, boundMutations, data);
   }
 
-  function load(nextVariables?: Variables) {
+  async function load(nextVariables?: Variables): Promise<void> {
     if (nextVariables) {
       variables = nextVariables;
     }
@@ -99,15 +106,13 @@ export default function createBindings<T = unknown, U = unknown>(
       updater();
     }
 
-    return client.execute<T>(props.query, variables).then(({ data, errors }) => {
-      if (data) {
-        lockListenUpdate = 1;
+    let { data, errors } = await client.execute<T>(props.query, variables);
+    if (data) {
+      lockListenUpdate = 1;
 
-        writeToCache(data);
-      }
-
-      performUpdate({ errors, loaded: !!data, loading: false });
-    });
+      writeToCache(data);
+    }
+    performUpdate({ errors, loaded: !!data, loading: false });
   }
 
   return { getState, unbind, load };

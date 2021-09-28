@@ -33,9 +33,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/eslint-recommended",
-      "plugin:@typescript-eslint/recommended"
+      "eslint:recommended"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -46,7 +44,6 @@
       }
     },
     "plugins": [
-      "@typescript-eslint",
       "prefer-let"
     ],
     "env": {
@@ -58,9 +55,7 @@
     },
     "rules": {
       "prefer-const": 0,
-      "prefer-let/prefer-let": 2,
-      "@typescript-eslint/ban-ts-comment": 1,
-      "@typescript-eslint/no-empty-function": 1
+      "prefer-let/prefer-let": 2
     },
     "ignorePatterns": [
       "packages/bundle",
@@ -81,7 +76,6 @@
     "@types/react-test-renderer": "^17.0.1",
     "@types/uuid": "^8.3.1",
     "@types/ws": "^8.2.0",
-    "@typescript-eslint/eslint-plugin": "^4.9.1",
     "@typescript-eslint/parser": "^4.9.1",
     "babel-plugin-jsx-pragmatic": "^1.0.2",
     "babel-plugin-tester": "^10.0.0",

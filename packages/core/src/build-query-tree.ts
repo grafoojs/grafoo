@@ -1,6 +1,7 @@
+import { ObjectsMap } from "@grafoo/types";
 import { idFromProps, isNotNullObject } from "./util";
 
-export default function buildQueryTree(tree, objects, idFields) {
+export default function buildQueryTree<T>(tree: T, objects: ObjectsMap, idFields: string[]): T {
   // clone resulting query tree
   let queryTree = tree;
   let stack = [];

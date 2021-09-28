@@ -6,8 +6,10 @@ function sort(array, fn) {
   return (
     array &&
     array.sort((prev, next) => {
-      if (fn(prev) < fn(next)) return -1;
-      if (fn(prev) > fn(next)) return 1;
+      let a = fn(prev);
+      let b = fn(next);
+      if (a < b) return -1;
+      if (a > b) return 1;
       return 0;
     })
   );
@@ -18,7 +20,7 @@ export default function sortQuery(document) {
     Document(node) {
       node.definitions = [
         ...sort(node.definitions.filter((def) => def.kind === "FragmentDefinition")),
-        ...node.definitions.filter((def) => def.kind !== "FragmentDefinition"),
+        ...node.definitions.filter((def) => def.kind !== "FragmentDefinition")
       ];
     },
     OperationDefinition(node) {
@@ -43,6 +45,6 @@ export default function sortQuery(document) {
     },
     Directive(node) {
       sort(node.arguments);
-    },
+    }
   });
 }

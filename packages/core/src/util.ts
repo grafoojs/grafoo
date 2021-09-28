@@ -1,6 +1,6 @@
 import { Variables } from "@grafoo/types";
 
-export let idFromProps = (branch, idFields) => {
+export let idFromProps = (branch: { [key: string]: string }, idFields: string | any[]): string => {
   branch = branch || {};
   let identifier = "";
 
@@ -11,9 +11,9 @@ export let idFromProps = (branch, idFields) => {
   return identifier;
 };
 
-export let isNotNullObject = (obj) => obj && typeof obj == "object";
+export let isNotNullObject = (obj: any): boolean => obj && typeof obj == "object";
 
-export let getPathId = (path: string, args: string[], variables?: Variables) => {
+export let getPathId = (path: string, args: string[], variables?: Variables): string => {
   variables = variables || {};
   let finalPath = path;
   let i = args.length;

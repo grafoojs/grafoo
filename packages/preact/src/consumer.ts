@@ -3,7 +3,7 @@ import {
   Context,
   GrafooBoundState,
   GrafooBoundMutations,
-  GrafooConsumerProps,
+  GrafooConsumerProps
 } from "@grafoo/types";
 import { Component, VNode } from "preact";
 
@@ -53,7 +53,10 @@ export class Consumer<T = unknown, U = unknown> extends Component<GrafooPreactCo
     };
   }
 
-  render(props, state): VNode {
+  render(
+    props: GrafooPreactConsumerProps<T, U>,
+    state: GrafooBoundState & T & GrafooBoundMutations<U>
+  ): VNode {
     return props.children[0](state);
   }
 }

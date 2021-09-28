@@ -17,7 +17,7 @@ export interface GraphQlPayload<T> {
 }
 
 export interface Variables {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -39,8 +39,9 @@ export interface ObjectsMap {
 
 export interface PathsMap {
   [key: string]: {
-    data: { [key: string]: any };
+    data: { [key: string]: unknown };
     objects: string[];
+    partial?: boolean;
   };
 }
 
@@ -148,6 +149,7 @@ export type GrafooBoundMutations<T> = {
  * U = Mutations
  */
 export interface GrafooConsumerProps<T, U> {
+  client: GrafooClient;
   query?: GrafooObject;
   variables?: Variables;
   mutations?: GrafooMutations<T, U>;

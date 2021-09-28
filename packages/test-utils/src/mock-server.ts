@@ -111,12 +111,12 @@ let resolvers = {
 
 let schema = makeExecutableSchema({ typeDefs: typeDefs, resolvers: resolvers });
 
-interface ExecuteQueryArg {
+type ExecuteQueryArg = {
   query: string;
   variables?: {
     [key: string]: unknown;
   };
-}
+};
 
 export function executeQuery<T>({ query, variables }: ExecuteQueryArg): Promise<GraphQlPayload<T>> {
   // @ts-ignore
