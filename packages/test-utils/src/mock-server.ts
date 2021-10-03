@@ -1,4 +1,4 @@
-import { GraphQlPayload } from "@grafoo/types";
+import { GraphQlPayload } from "@grafoo/core";
 import fetchMock from "fetch-mock";
 import fs from "fs";
 import { graphql } from "graphql";

@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
-import { GrafooTransport } from "@grafoo/types";
+import { GrafooTransport } from "@grafoo/core";
 import createTransport from "../src";
 
 jest.mock("node-fetch", () => require("fetch-mock").sandbox());

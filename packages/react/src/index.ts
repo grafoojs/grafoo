@@ -1,11 +1,4 @@
 import createBindings from "@grafoo/bindings";
-import {
-  Context,
-  GrafooConsumerProps,
-  GrafooBoundState,
-  GrafooBoundMutations,
-  GrafooClient
-} from "@grafoo/types";
 import { Component, createContext, createElement, ReactElement, ReactNode, FC } from "react";
 
 /**
@@ -43,7 +36,7 @@ class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
   constructor(props: GrafooReactConsumerProps<T, U>) {
     super(props);
 
-    let bindings = createBindings<T, U>(props.client, props, () => {
+    let bindings = createBindings(props.client, props, () => {
       this.setState(bindings.getState());
     });
 

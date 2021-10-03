@@ -1,7 +1,7 @@
-import { ObjectsMap } from "@grafoo/types";
+import { GrafooObjectsMap } from ".";
 import { isNotNullObject, idFromProps } from "./util";
 
-export default function mapObjects<T>(tree: T, idFields: string[]): ObjectsMap {
+export default function mapObjects<T>(tree: T, idFields: string[]): GrafooObjectsMap {
   // map in which objects will be stored
   // having their extracted ids from props as key
   let map = {};

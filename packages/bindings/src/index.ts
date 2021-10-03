@@ -1,35 +1,57 @@
 import {
   GrafooClient,
-  GrafooBindings,
-  GrafooBoundMutations,
-  GrafooConsumerProps,
-  ObjectsMap,
-  Variables,
+  GrafooObjectsMap,
   GraphQlError,
-  GraphQlPayload
-} from "@grafoo/types";
+  GraphQlPayload,
+  GrafooObject
+} from "@grafoo/core";
 
-export default function createBindings<T = unknown, U = unknown>(
+export type GrafooMutation<T extends GrafooObject, U extends GrafooObject> = {
+  query: T;
+  update?: (props: U["_queryType"], data: T["_queryType"]) => T["_queryType"];
+  optimisticUpdate?: (props: U["_queryType"], variables: T["_variablesType"]) => T["_queryType"];
+};
+
+export type GrafooMutations<T extends GrafooObject> = {
+  [k: string]: GrafooMutation<GrafooObject, T>;
+};
+
+export type GrafooBountMutations<T extends GrafooObject, U extends GrafooMutations<T>> = {
+  [V in keyof U]: (
+    variables: U[V]["query"]["_variablesType"]
+  ) => Promise<GraphQlPayload<U[V]["query"]["_queryType"]>>;
+};
+
+export type GrafooConsumerProps<T extends GrafooObject, U extends GrafooMutations<T>> = {
+  query?: T;
+  variables?: T["_variablesType"];
+  mutations?: U;
+  skip?: boolean;
+};
+
+export default function createBindings<T extends GrafooObject, U extends GrafooMutations<T>>(
   client: GrafooClient,
-  props: GrafooConsumerProps<T, U>,
-  updater: () => void
-): GrafooBindings<T, U> {
+  updater: () => void,
+  props: GrafooConsumerProps<T, U>
+) {
+  type CP = GrafooConsumerProps<T, U>;
+
   let { variables } = props;
-  let data: T;
-  let objects: ObjectsMap;
-  let boundMutations = {} as GrafooBoundMutations<U>;
-  let unbind = () => {};
-  let lockListenUpdate = 0;
-  let loaded = false;
+  let data: CP["query"]["_queryType"];
+  let objects: GrafooObjectsMap;
   let partial = false;
+  let boundMutations = {} as GrafooBountMutations<CP["query"], CP["mutations"]>;
+  let unbind = () => {};
+  let lockListenUpdate = false;
+  let loaded = false;
 
   if (props.query) {
-    ({ data, objects, partial } = client.read<T>(props.query, variables));
+    ({ data, objects, partial } = client.read(props.query, variables));
 
     loaded = !!data && !partial;
 
     unbind = client.listen((nextObjects) => {
-      if (lockListenUpdate) return (lockListenUpdate = 0);
+      if (lockListenUpdate) return (lockListenUpdate = false);
 
       objects = objects || {};
 
@@ -56,26 +78,23 @@ export default function createBindings<T = unknown, U = unknown>(
     for (let key in props.mutations) {
       let { update, optimisticUpdate, query: mutationQuery } = props.mutations[key];
 
-      boundMutations[key] = async (
-        mutationVariables
-      ): Promise<GraphQlPayload<U[Extract<keyof U, string>]>> => {
+      boundMutations[key] = (mutationVariables) => {
         if (props.query && optimisticUpdate) {
           writeToCache(optimisticUpdate(data, mutationVariables));
         }
 
-        let mutationResponse = await client.execute<U[typeof key]>(
-          mutationQuery,
-          mutationVariables
-        );
-        if (props.query && update && mutationResponse.data) {
-          writeToCache(update(data, mutationResponse.data));
-        }
-        return mutationResponse;
+        return client.execute(mutationQuery, mutationVariables).then((mutationResponse) => {
+          if (props.query && update && mutationResponse.data) {
+            writeToCache(update(data, mutationResponse.data));
+          }
+
+          return mutationResponse;
+        });
       };
     }
   }
 
-  function writeToCache(dataUpdate: T) {
+  function writeToCache(dataUpdate: CP["query"]["_queryType"]) {
     client.write(props.query, variables, dataUpdate);
   }
 
@@ -84,7 +103,7 @@ export default function createBindings<T = unknown, U = unknown>(
     loaded: boolean;
     loading: boolean;
   }) {
-    ({ data, objects } = client.read<T>(props.query, variables));
+    ({ data, objects } = client.read(props.query, variables));
 
     Object.assign(boundState, boundStateUpdate);
 
@@ -95,7 +114,7 @@ export default function createBindings<T = unknown, U = unknown>(
     return Object.assign({ client }, boundState, boundMutations, data);
   }
 
-  async function load(nextVariables?: Variables): Promise<void> {
+  function load(nextVariables?: CP["query"]["_variablesType"]) {
     if (nextVariables) {
       variables = nextVariables;
     }
@@ -106,13 +125,14 @@ export default function createBindings<T = unknown, U = unknown>(
       updater();
     }
 
-    let { data, errors } = await client.execute<T>(props.query, variables);
-    if (data) {
-      lockListenUpdate = 1;
+    return client.execute(props.query, variables).then(({ data, errors }) => {
+      if (data) {
+        lockListenUpdate = true;
 
-      writeToCache(data);
-    }
-    performUpdate({ errors, loaded: !!data, loading: false });
+        writeToCache(data);
+      }
+      performUpdate({ errors, loaded: !!data, loading: false });
+    });
   }
 
   return { getState, unbind, load };

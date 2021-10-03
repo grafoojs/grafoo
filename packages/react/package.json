@@ -41,5 +41,11 @@
     "@grafoo/bindings": "^1.4.1",
     "@grafoo/types": "^1.4.1"
   },
-  "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974"
+  "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974",
+  "devDependencies": {
+    "@types/node": "^16.10.2",
+    "@types/react": "^17.0.26",
+    "@typescript-eslint/parser": "^4.32.0",
+    "jest": "^27.2.4"
+  }
 }

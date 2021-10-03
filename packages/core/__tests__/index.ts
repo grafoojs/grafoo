@@ -1,41 +1,27 @@
 import graphql from "@grafoo/core/tag";
 import { executeQuery } from "@grafoo/test-utils";
-import { GrafooClient, Variables } from "@grafoo/types";
-import createClient from "../src";
+import createClient, { GrafooClient } from "../src";
 
-interface Post {
+type Post = {
   title: string;
   content: string;
   id: string;
   __typename: string;
   author: Author;
-}
+};
 
-interface Author {
+type Author = {
   name: string;
   id: string;
   __typename: string;
   posts?: Array<Post>;
-}
+};
 
-interface AuthorsQuery {
+type AuthorsQuery = {
   authors: Author[];
-}
+};
 
-interface PostQuery {
-  post: Post;
-}
-
-interface PostsAndAuthorsQuery {
-  authors: Author[];
-  posts: Post[];
-}
-
-interface PostsQuery {
-  posts: Post[];
-}
-
-let AUTHORS = graphql`
+let AUTHORS = graphql<AuthorsQuery>`
   query {
     authors {
       name
@@ -47,7 +33,7 @@ let AUTHORS = graphql`
   }
 `;
 
-let SIMPLE_AUTHORS = graphql`
+let SIMPLE_AUTHORS = graphql<AuthorsQuery>`
   query {
     authors {
       name
@@ -55,7 +41,12 @@ let SIMPLE_AUTHORS = graphql`
   }
 `;
 
-let POSTS_AND_AUTHORS = graphql`
+type PostsAndAuthorsQuery = {
+  authors: Author[];
+  posts: Post[];
+};
+
+let POSTS_AND_AUTHORS = graphql<PostsAndAuthorsQuery>`
   query {
     posts {
       title
@@ -75,7 +66,15 @@ let POSTS_AND_AUTHORS = graphql`
   }
 `;
 
-let POST = graphql`
+type PostQuery = {
+  post: Post;
+};
+
+type PostQueryArgs = {
+  postId: string;
+};
+
+let POST = graphql<PostQuery, PostQueryArgs>`
   query ($postId: ID!) {
     post(id: $postId) {
       title
@@ -87,7 +86,7 @@ let POST = graphql`
   }
 `;
 
-let POST_WITH_FRAGMENT = graphql`
+let POST_WITH_FRAGMENT = graphql<PostQuery, PostQueryArgs>`
   query ($postId: ID!) {
     post(id: $postId) {
       title
@@ -103,7 +102,11 @@ let POST_WITH_FRAGMENT = graphql`
   }
 `;
 
-let POSTS = graphql`
+type PostsQuery = {
+  posts: Post[];
+};
+
+let POSTS = graphql<PostsQuery>`
   query {
     posts {
       title
@@ -115,7 +118,7 @@ let POSTS = graphql`
   }
 `;
 
-function mockTransport<T>(query: string, variables: Variables) {
+function mockTransport<T>(query, variables) {
   return executeQuery<T>({ query, variables });
 }
 
@@ -136,7 +139,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should perform query requests", async () => {
-    let data = await executeQuery({ query: SIMPLE_AUTHORS.query });
+    let data = await client.execute(SIMPLE_AUTHORS);
     expect(data).toEqual(await client.execute(SIMPLE_AUTHORS));
   });
 
@@ -152,7 +155,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should write queries to the client", async () => {
-    let data = await executeQuery<PostsAndAuthorsQuery>(POSTS_AND_AUTHORS);
+    let data = await client.execute(POSTS_AND_AUTHORS);
 
     client.write(POSTS_AND_AUTHORS, data);
 
@@ -170,19 +173,19 @@ describe("@grafoo/core", () => {
   });
 
   it("should write queries partially to the client", async () => {
-    let { data } = await executeQuery<PostsQuery>(POSTS);
+    let data = await client.execute(POSTS);
 
-    expect(() => client.write(POSTS_AND_AUTHORS, data)).not.toThrow();
+    expect(() => client.write(POSTS_AND_AUTHORS, data as any)).not.toThrow();
     expect(() => client.read(POSTS)).not.toThrow();
     expect(() => client.read(AUTHORS)).not.toThrow();
   });
 
   it("should read queries from the client", async () => {
-    let { data } = await executeQuery<AuthorsQuery>(AUTHORS);
+    let { data } = await client.execute(AUTHORS);
 
     client.write(AUTHORS, data);
 
-    let result = client.read<AuthorsQuery>(AUTHORS);
+    let result = client.read(AUTHORS);
 
     let { authors } = data;
 
@@ -195,45 +198,45 @@ describe("@grafoo/core", () => {
 
   it("should handle queries with variables", async () => {
     let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    let { data } = await executeQuery<PostQuery>({ query: POST.query, variables });
+    let { data } = await client.execute(POST, variables);
 
     client.write(POST, variables, data);
 
     expect(client.read(POST, { postId: "123" })).toEqual({});
-    expect(client.read<PostQuery>(POST, variables).data.post.id).toBe(variables.postId);
+    expect(client.read(POST, variables).data.post.id).toBe(variables.postId);
   });
 
   it("should distinguish between calls to the same query with different variables", async () => {
     let v1 = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
     let v2 = { postId: "77c483dd-6529-4c72-9bb6-bbfd69f65682" };
 
-    let { data: d1 } = await executeQuery<PostQuery>({ query: POST.query, variables: v1 });
+    let { data: d1 } = await client.execute(POST, v1);
     client.write(POST, v1, d1);
 
     expect(client.read(POST, { postId: "not found" })).toEqual({});
-    expect(client.read<PostQuery>(POST, v1).data.post.id).toBe(v1.postId);
+    expect(client.read(POST, v1).data.post.id).toBe(v1.postId);
 
-    let d2 = await executeQuery<PostQuery>({ query: POST.query, variables: v2 });
+    let d2 = await client.execute(POST, v2);
     client.write(POST, v2, d2);
 
-    expect(client.read<PostQuery>(POST, v1).data.post.id).toBe(v1.postId);
-    expect(client.read<PostQuery>(POST, v2).data.post.id).toBe(v2.postId);
+    expect(client.read(POST, v1).data.post.id).toBe(v1.postId);
+    expect(client.read(POST, v2).data.post.id).toBe(v2.postId);
   });
 
   it("should flag if a query result is partial", async () => {
-    let { data } = await executeQuery<PostsQuery>({ query: POSTS.query });
+    let { data } = await client.execute(POSTS);
 
     client.write(POSTS, data);
 
-    expect(client.read<PostsAndAuthorsQuery>(POSTS_AND_AUTHORS).partial).toBe(true);
+    expect(client.read(POSTS_AND_AUTHORS).partial).toBe(true);
   });
 
   it("should remove unused objects from objectsMap", async () => {
-    let { data } = await executeQuery<AuthorsQuery>(SIMPLE_AUTHORS);
+    let { data } = await client.execute(SIMPLE_AUTHORS);
 
     client.write(SIMPLE_AUTHORS, data);
 
-    let authorToBeRemoved: Author = data.authors[0];
+    let authorToBeRemoved = data.authors[0];
 
     let ids = Object.keys(client.flush().objectsMap);
 
@@ -251,46 +254,46 @@ describe("@grafoo/core", () => {
 
   it("should perform update to client", async () => {
     let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    let { data } = await executeQuery<PostQuery>({ query: POST.query, variables });
+    let { data } = await client.execute(POST, variables);
 
     client.write(POST, variables, data);
 
     let {
       data: { post }
-    } = client.read<PostQuery>(POST, variables);
+    } = client.read(POST, variables);
 
     expect(post.title).toBe("Quam odit");
 
     client.write(POST, variables, { post: { ...post, title: "updated title" } });
 
-    expect(client.read<PostQuery>(POST, variables).data.post.title).toBe("updated title");
+    expect(client.read(POST, variables).data.post.title).toBe("updated title");
   });
 
   it("should reflect updates on queries with shared objects", async () => {
     let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    let postData = (await executeQuery<PostQuery>({ query: POST.query, variables })).data;
-    let postsData = (await executeQuery<PostsQuery>({ query: POSTS.query, variables })).data;
+    let { data: postData } = await client.execute(POST, variables);
+    let { data: postsData } = await client.execute(POSTS, variables);
 
     client.write(POSTS, postsData);
 
-    let { posts } = client.read<PostsQuery>(POSTS).data;
+    let { posts } = client.read(POSTS).data;
 
     expect(posts.find((p) => p.id === variables.postId).title).toBe("Quam odit");
 
     client.write(POST, variables, { post: { ...postData.post, title: "updated title" } });
 
-    let { posts: updatedPosts } = client.read<PostsQuery>(POSTS, variables).data;
+    let { posts: updatedPosts } = client.read(POSTS, variables).data;
 
     expect(updatedPosts.find((p) => p.id === variables.postId).title).toBe("updated title");
   });
 
   it("should merge objects in the client when removing or adding properties", async () => {
     let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    let data = (await executeQuery<PostQuery>({ query: POST.query, variables })).data;
+    let { data } = await client.execute(POST, variables);
 
     client.write(POST, variables, data);
 
-    let post = JSON.parse(JSON.stringify(client.read<PostQuery>(POST, variables).data.post));
+    let post = JSON.parse(JSON.stringify(client.read(POST, variables).data.post));
 
     delete post.__typename;
 
@@ -298,7 +301,7 @@ describe("@grafoo/core", () => {
 
     client.write(POST, variables, { post });
 
-    expect(client.read<PostQuery>(POST, variables).data.post).toEqual({
+    expect(client.read(POST, variables).data.post).toEqual({
       __typename: "Post",
       author: {
         __typename: "Author",
@@ -314,7 +317,7 @@ describe("@grafoo/core", () => {
 
   it("should call client listeners on write with paths objects as arguments", async () => {
     let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    let data = (await executeQuery<PostQuery>({ query: POST.query, variables })).data;
+    let { data } = await client.execute(POST, variables);
 
     let listener = jest.fn();
     let listener2 = jest.fn();
@@ -339,9 +342,9 @@ describe("@grafoo/core", () => {
   });
 
   it("should be able read from the client with a declared initialState", async () => {
-    let { data } = await executeQuery(POSTS_AND_AUTHORS);
+    let { data } = await client.execute(POSTS_AND_AUTHORS);
 
-    client.write(POSTS_AND_AUTHORS, data);
+    client.write(POSTS_AND_AUTHORS, data as any);
 
     client = createClient(mockTransport, { idFields: ["id"], initialState: client.flush() });
 
@@ -350,7 +353,7 @@ describe("@grafoo/core", () => {
 
   it("should allow cache to be cleared using reset()", () => {
     let data = { authors: [{ name: "deleteme" }] };
-    client.write(SIMPLE_AUTHORS, data);
+    client.write(SIMPLE_AUTHORS, data as any);
     expect(client.read(SIMPLE_AUTHORS).data).toEqual(data);
     client.reset();
     expect(client.read(SIMPLE_AUTHORS).data).toEqual(undefined);
@@ -361,11 +364,10 @@ describe("@grafoo/core", () => {
   });
 
   it("should accept `idFields` array in options", async () => {
-    let { data } = await executeQuery(AUTHORS);
-
     let client = createClient(mockTransport, { idFields: ["__typename", "id"] });
+    let { data } = await client.execute(AUTHORS);
 
-    client.write(AUTHORS, data);
+    client.write(AUTHORS, data as any);
 
     let cachedIds = Object.keys(client.flush().objectsMap);
 

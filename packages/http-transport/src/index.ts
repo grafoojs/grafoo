@@ -1,10 +1,7 @@
-import { GraphQlPayload, GrafooTransport, Variables } from "@grafoo/types";
+import { GraphQlPayload } from "@grafoo/core";
 
-export default function createTransport(
-  url: string,
-  options?: RequestInit | (() => RequestInit)
-): GrafooTransport {
-  return <T>(query: string, variables?: Variables): Promise<GraphQlPayload<T>> => {
+export default function createTransport(url: string, options?: RequestInit | (() => RequestInit)) {
+  return <T>(query: string, variables?: unknown): Promise<GraphQlPayload<T>> => {
     options = typeof options == "function" ? options() : options || {};
 
     return fetch(
@@ -12,7 +9,7 @@ export default function createTransport(
       Object.assign(options, {
         body: JSON.stringify({ query, variables }),
         method: "POST",
-        headers: Object.assign({ "Content-Type": "application/json" }, options.headers),
+        headers: Object.assign({ "Content-Type": "application/json" }, options.headers)
       })
     ).then((response) => response.json());
   };

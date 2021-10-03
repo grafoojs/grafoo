@@ -1,15 +1,94 @@
-import {
-  GrafooClient,
-  GrafooClientOptions,
-  GrafooObject,
-  Listener,
-  ObjectsMap,
-  Variables,
-  GrafooTransport
-} from "@grafoo/types";
 import buildQueryTree from "./build-query-tree";
 import mapObjects from "./map-objects";
 import { getPathId } from "./util";
+
+export type GraphQlError = {
+  message: string;
+  locations: { line: number; column: number }[];
+  path: string[];
+};
+
+/**
+ * T = QueryData
+ */
+export type GraphQlPayload<T> = {
+  data: T;
+  errors?: GraphQlError[];
+};
+
+/**
+ * T = QueryData
+ */
+export type GrafooTransport = <T>(
+  query: string,
+  variables?: unknown,
+  id?: string
+) => Promise<GraphQlPayload<T>>;
+
+export type GrafooObjectsMap = {
+  [key: string]: Record<string, unknown>;
+};
+
+export type GrafooPathsMap = {
+  [key: string]: {
+    data: { [key: string]: unknown };
+    objects: string[];
+    partial?: boolean;
+  };
+};
+
+export type GrafooListener = (objects: GrafooObjectsMap) => void;
+
+export type GrafooInitialState = {
+  objectsMap: GrafooObjectsMap;
+  pathsMap: GrafooPathsMap;
+};
+
+export type GrafooObject<T = unknown, U = unknown> = {
+  frags?: {
+    [key: string]: string;
+  };
+  paths: {
+    [key: string]: {
+      name: string;
+      args: string[];
+    };
+  };
+  query: string;
+  id?: string;
+  _queryType: T;
+  _variablesType: U;
+};
+
+export type GrafooClient = {
+  execute: <T extends GrafooObject>(
+    grafooObject: T,
+    variables?: T["_variablesType"]
+  ) => Promise<GraphQlPayload<T["_queryType"]>>;
+  listen: (listener: GrafooListener) => () => void;
+  write: {
+    <T extends GrafooObject>(
+      grafooObject: T,
+      variables: T["_variablesType"],
+      data: T["_queryType"] | { data: T["_queryType"] }
+    ): void;
+    <T extends GrafooObject>(
+      grafooObject: T,
+      data: T["_queryType"] | { data: T["_queryType"] }
+    ): void;
+  };
+  read: <T extends GrafooObject>(
+    grafooObject: T,
+    variables?: T["_variablesType"]
+  ) => { data?: T["_queryType"]; objects?: GrafooObjectsMap; partial?: boolean };
+  flush: () => GrafooInitialState;
+  reset: () => void;
+};
+
+export type GrafooClientOptions = {
+  initialState?: GrafooInitialState;
+  idFields?: Array<string>;
+};
 
 export default function createClient(
   transport: GrafooTransport,
@@ -17,15 +96,18 @@ export default function createClient(
 ): GrafooClient {
   let { initialState, idFields } = options;
   let { pathsMap, objectsMap } = initialState || { pathsMap: {}, objectsMap: {} };
-  let listeners: Listener[] = [];
+  let listeners: GrafooListener[] = [];
 
-  function execute<T>({ query, frags, id }: GrafooObject, variables?: Variables) {
+  function execute<T extends GrafooObject>(
+    { query, frags, id }: T,
+    variables?: T["_variablesType"]
+  ) {
     if (frags) for (let frag in frags) query += frags[frag];
 
     return transport<T>(query, variables, id);
   }
 
-  function listen(listener: Listener) {
+  function listen(listener: GrafooListener) {
     listeners.push(listener);
 
     return () => {
@@ -37,13 +119,17 @@ export default function createClient(
     };
   }
 
-  function write<T>({ paths }: GrafooObject, variables: Variables, data?: T | { data: T }) {
+  function write<T extends GrafooObject>(
+    { paths }: T,
+    variables: T["_variablesType"],
+    data?: T["_queryType"] | { data: T["_queryType"] }
+  ) {
     if (!data) {
       data = variables as typeof data;
       variables = undefined;
     }
 
-    let objects: ObjectsMap = {};
+    let objects: GrafooObjectsMap = {};
 
     for (let i in paths) {
       let { name, args } = paths[i];
@@ -75,13 +161,12 @@ export default function createClient(
     for (let i in listeners) listeners[i](objects);
   }
 
-  function read<T>(
-    { paths }: GrafooObject,
-    variables?: Variables
-  ): { data?: T; objects?: ObjectsMap; partial?: boolean } {
-    // @ts-ignore
-    let data: T = {};
-    let objects: ObjectsMap = {};
+  function read<T extends GrafooObject>(
+    { paths }: T,
+    variables?: T["_variablesType"]
+  ): { data?: T["_queryType"]; objects?: GrafooObjectsMap; partial?: boolean } {
+    let data: T["_queryType"] = {};
+    let objects: GrafooObjectsMap = {};
     let partial = false;
 
     for (let i in paths) {
