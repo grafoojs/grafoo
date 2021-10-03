@@ -115,18 +115,18 @@ let POSTS = graphql`
   }
 `;
 
-function mockTrasport<T>(query: string, variables: Variables) {
+function mockTransport<T>(query: string, variables: Variables) {
   return executeQuery<T>({ query, variables });
 }
 
 describe("@grafoo/core", () => {
   let client: GrafooClient;
   beforeEach(() => {
-    client = createClient(mockTrasport, { idFields: ["id"] });
+    client = createClient(mockTransport, { idFields: ["id"] });
   });
 
   it("should be instantiable", () => {
-    expect(() => createClient(mockTrasport, { idFields: ["id"] })).not.toThrow();
+    expect(() => createClient(mockTransport, { idFields: ["id"] })).not.toThrow();
     expect(typeof client.execute).toBe("function");
     expect(typeof client.listen).toBe("function");
     expect(typeof client.write).toBe("function");
@@ -136,20 +136,19 @@ describe("@grafoo/core", () => {
   });
 
   it("should perform query requests", async () => {
-    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let data = await executeQuery({ query: SIMPLE_AUTHORS.query });
+    expect(data).toEqual(await client.execute(SIMPLE_AUTHORS));
+  });
 
+  it("should perform query requests with fragments", async () => {
+    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
     let { query, frags } = POST_WITH_FRAGMENT;
+
     if (frags) for (let frag in frags) query += " " + frags[frag];
 
     let data = await executeQuery({ query, variables });
 
     expect(data).toEqual(await client.execute(POST_WITH_FRAGMENT, variables));
-  });
-
-  it("should perform query requests with fragments", async () => {
-    let data = await executeQuery({ query: SIMPLE_AUTHORS.query });
-
-    expect(data).toEqual(await client.execute(SIMPLE_AUTHORS));
   });
 
   it("should write queries to the client", async () => {
@@ -344,7 +343,7 @@ describe("@grafoo/core", () => {
 
     client.write(POSTS_AND_AUTHORS, data);
 
-    client = createClient(mockTrasport, { idFields: ["id"], initialState: client.flush() });
+    client = createClient(mockTransport, { idFields: ["id"], initialState: client.flush() });
 
     expect(client.read(POSTS_AND_AUTHORS).data).toEqual(data);
   });
@@ -364,7 +363,7 @@ describe("@grafoo/core", () => {
   it("should accept `idFields` array in options", async () => {
     let { data } = await executeQuery(AUTHORS);
 
-    let client = createClient(mockTrasport, { idFields: ["__typename", "id"] });
+    let client = createClient(mockTransport, { idFields: ["__typename", "id"] });
 
     client.write(AUTHORS, data);
 

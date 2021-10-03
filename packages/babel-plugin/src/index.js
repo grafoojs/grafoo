@@ -111,33 +111,31 @@ export default function transform({ types: t }) {
 
           TaggedTemplateExpression(path) {
             if (tagIdentifiers.some((name) => t.isIdentifier(path.node.tag, { name }))) {
+              let quasi = path.get("quasi");
+
+              if (quasi.get("expressions").length) {
+                throw path.buildCodeFrameError(
+                  "@grafoo/core/tag: interpolation is not supported in a graphql tagged template literal."
+                );
+              }
+
               try {
-                let quasi = path.get("quasi");
-
-                if (quasi.get("expressions").length) {
-                  throw path.buildCodeFrameError(
-                    "@grafoo/core/tag: interpolation is not supported in a graphql tagged template literal."
-                  );
-                }
-
                 let source = quasi.node.quasis.reduce((src, q) => src + q.value.raw, "");
-
                 path.replaceWith(parseLiteral(compileDocument(source, opts)));
               } catch (error) {
                 if (error.code === "ENOENT") {
                   throw new Error(
                     "Could not find a schema in the root directory! " +
-                      "Please use the `schema` option to specify your schema path, " +
-                      "or the `schemaUrl` to specify your graphql endpoint."
+                      "Please use the `schema` option to specify your schema path"
                   );
                 }
 
-                throw path.buildCodeFrameError(error.message);
+                throw path.buildCodeFrameError(error);
               }
             }
-          },
+          }
         });
-      },
-    },
+      }
+    }
   };
 }

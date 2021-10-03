@@ -19,7 +19,7 @@ let Query = {
     return db.data.authors;
   },
   post(_, args) {
-    return db.data.posts.find((author) => author.id === args.id);
+    return db.data.posts.find((post) => post.id === args.id);
   },
   posts() {
     return db.data.posts;
