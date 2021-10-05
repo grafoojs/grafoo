@@ -1,7 +1,6 @@
 var fs = require("fs");
 var path = require("path");
 var rollup = require("rollup").rollup;
-var buble = require("rollup-plugin-buble");
 var fileSize = require("rollup-plugin-filesize");
 var nodeResolve = require("rollup-plugin-node-resolve");
 var terser = require("rollup-plugin-terser").terser;
@@ -27,12 +26,6 @@ module.exports = function build(opts) {
       typescript({
         typescript: ts,
         tsconfigOverride: tsconfig
-      }),
-      buble({
-        transforms: {
-          dangerousForOf: true,
-          dangerousTaggedTemplateString: true
-        }
       }),
       !opts.skipCompression &&
         terser({

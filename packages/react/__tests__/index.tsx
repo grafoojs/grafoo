@@ -6,8 +6,7 @@ import fetch from "node-fetch";
 import * as React from "react";
 import graphql from "@grafoo/core/tag";
 import createClient from "@grafoo/core";
-import createTrasport from "@grafoo/http-transport";
-import { mockQueryRequest } from "@grafoo/test-utils";
+import { mockQueryRequest, createTransport } from "@grafoo/test-utils";
 import { renderHook, act } from "@testing-library/react-hooks";
 
 import { GrafooProvider, useGrafoo } from "../src";
@@ -127,7 +126,7 @@ describe("@grafoo/react", () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
-    let transport = createTrasport("https://some.graphql.api/");
+    let transport = createTransport("https://some.graphql.api/");
     client = createClient(transport, { idFields: ["id"] });
     wrapper = (props) => <GrafooProvider client={client}>{props.children}</GrafooProvider>;
   });

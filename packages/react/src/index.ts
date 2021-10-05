@@ -1,11 +1,15 @@
 import * as React from "react";
-import createBindings, { GrafooConsumerProps } from "@grafoo/bindings";
 import { GrafooClient, GrafooObject } from "@grafoo/core";
+import createBindings, {
+  GrafooConsumerProps,
+  GrafooBoundState,
+  GrafooBoundMutations
+} from "@grafoo/bindings";
 
 // @ts-ignore
 export let GrafooContext = React.createContext<GrafooClient>({});
 
-type GrafooProviderProps = {
+export type GrafooProviderProps = {
   client: GrafooClient;
 };
 
@@ -14,7 +18,7 @@ export let GrafooProvider: React.FC<GrafooProviderProps> = (props) =>
 
 export function useGrafoo<T extends GrafooObject, U extends Record<string, GrafooObject>>(
   props: GrafooConsumerProps<T, U>
-) {
+): GrafooBoundState & T["_queryType"] & GrafooBoundMutations<U> {
   let client = React.useContext(GrafooContext);
   let update = React.useCallback(() => setState(bindings.getState()), []);
   let bindings = React.useMemo(() => createBindings(client, update, props), []);

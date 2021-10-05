@@ -2,8 +2,7 @@ import createBindings from "../src";
 import fetch from "node-fetch";
 import graphql from "@grafoo/core/tag";
 import createClient, { GrafooClient } from "@grafoo/core";
-import { mockQueryRequest } from "@grafoo/test-utils";
-import createTransport from "@grafoo/http-transport";
+import { mockQueryRequest, createTransport } from "@grafoo/test-utils";
 
 // @ts-ignore
 globalThis.fetch = fetch;
