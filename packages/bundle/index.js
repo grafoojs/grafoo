@@ -1,16 +1,16 @@
-var fs = require("fs");
-var path = require("path");
-var rollup = require("rollup").rollup;
-var fileSize = require("rollup-plugin-filesize");
-var nodeResolve = require("rollup-plugin-node-resolve");
-var terser = require("rollup-plugin-terser").terser;
-var typescript = require("rollup-plugin-typescript2");
-var ts = require("typescript");
+let fs = require("fs");
+let path = require("path");
+let rollup = require("rollup").rollup;
+let fileSize = require("rollup-plugin-filesize");
+let nodeResolve = require("rollup-plugin-node-resolve");
+let terser = require("rollup-plugin-terser").terser;
+let typescript = require("rollup-plugin-typescript2");
+let ts = require("typescript");
 
 module.exports = function build(opts) {
-  var pkg = JSON.parse(fs.readFileSync(path.join(opts.rootPath, "package.json"), "utf-8"));
-  var tsconfig = JSON.parse(fs.readFileSync(path.join(opts.rootPath, "tsconfig.json"), "utf-8"));
-  var peerDependencies = pkg.peerDependencies || {};
+  let pkg = JSON.parse(fs.readFileSync(path.join(opts.rootPath, "package.json"), "utf-8"));
+  let tsconfig = JSON.parse(fs.readFileSync(path.join(opts.rootPath, "tsconfig.json"), "utf-8"));
+  let peerDependencies = pkg.peerDependencies || {};
 
   tsconfig.compilerOptions.target = "esnext";
   tsconfig.compilerOptions.module = "esnext";
@@ -37,7 +37,7 @@ module.exports = function build(opts) {
         }),
       fileSize()
     ].filter(Boolean)
-  }).then(function (bundle) {
+  }).then((bundle) => {
     return bundle.write({
       file: path.join(opts.rootPath, "dist/index.js"),
       sourcemap: true,
