@@ -12,14 +12,14 @@ type Post = {
   title: string;
   content: string;
   id: string;
-  __typename: string;
+  __typename?: string;
   author: Author;
 };
 
 type Author = {
   name: string;
   id: string;
-  __typename: string;
+  __typename?: string;
   posts?: Array<Post>;
 };
 
@@ -185,7 +185,7 @@ describe("@grafoo/bindings", () => {
 
     let props = bindings.getState();
 
-    expect(props).toEqual({ client });
+    expect(props).toEqual({ loaded: false, loading: false });
   });
 
   it("should execute a query", async () => {
@@ -450,7 +450,7 @@ describe("@grafoo/bindings", () => {
     let mutations = {
       updateAuthor: {
         query: UPDATE_AUTHOR,
-        optimisticUpdate: ({ authors }, variables: Author) => ({
+        optimisticUpdate: ({ authors }, variables) => ({
           authors: authors.map((author) => (author.id === variables.id ? variables : author))
         })
       }

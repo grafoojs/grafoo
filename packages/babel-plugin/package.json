@@ -32,8 +32,5 @@
     "graphql": "^15.4.0",
     "graphql-query-compress": "^1.0.0"
   },
-  "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974",
-  "devDependencies": {
-    "graphql": "^15.4.0"
-  }
+  "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974"
 }

@@ -6,47 +6,49 @@ import {
   GrafooObject
 } from "@grafoo/core";
 
+export type GrafooBoundMutations<T extends Record<string, GrafooObject>> = {
+  [U in keyof T]: (
+    variables: T[U]["_variablesType"]
+  ) => Promise<GraphQlPayload<T[U]["_queryType"]>>;
+};
+
+export type GrafooBoundState = {
+  loaded?: boolean;
+  loading?: boolean;
+  errors?: GraphQlError[];
+};
+
 export type GrafooMutation<T extends GrafooObject, U extends GrafooObject> = {
-  query: T;
-  update?: (props: U["_queryType"], data: T["_queryType"]) => T["_queryType"];
-  optimisticUpdate?: (props: U["_queryType"], variables: T["_variablesType"]) => T["_queryType"];
+  query: U;
+  update?: (props: T["_queryType"], data: U["_queryType"]) => T["_queryType"];
+  optimisticUpdate?: (props: T["_queryType"], variables: U["_variablesType"]) => T["_queryType"];
 };
 
-export type GrafooMutations<T extends GrafooObject> = {
-  [k: string]: GrafooMutation<GrafooObject, T>;
-};
-
-export type GrafooBountMutations<T extends GrafooObject, U extends GrafooMutations<T>> = {
-  [V in keyof U]: (
-    variables: U[V]["query"]["_variablesType"]
-  ) => Promise<GraphQlPayload<U[V]["query"]["_queryType"]>>;
-};
-
-export type GrafooConsumerProps<T extends GrafooObject, U extends GrafooMutations<T>> = {
+export type GrafooConsumerProps<T extends GrafooObject, U extends Record<string, GrafooObject>> = {
   query?: T;
   variables?: T["_variablesType"];
-  mutations?: U;
+  mutations?: {
+    [V in keyof U]: GrafooMutation<T, U[V]>;
+  };
   skip?: boolean;
 };
 
-export default function createBindings<T extends GrafooObject, U extends GrafooMutations<T>>(
-  client: GrafooClient,
-  updater: () => void,
-  props: GrafooConsumerProps<T, U>
-) {
+export default function createBindings<
+  T extends GrafooObject,
+  U extends Record<string, GrafooObject>
+>(client: GrafooClient, updater: () => void, props: GrafooConsumerProps<T, U>) {
   type CP = GrafooConsumerProps<T, U>;
-
-  let { variables } = props;
+  let { query, variables, mutations, skip } = props;
   let data: CP["query"]["_queryType"];
+  let boundMutations = {} as GrafooBoundMutations<U>;
   let objects: GrafooObjectsMap;
   let partial = false;
-  let boundMutations = {} as GrafooBountMutations<CP["query"], CP["mutations"]>;
   let unbind = () => {};
   let lockListenUpdate = false;
   let loaded = false;
 
-  if (props.query) {
-    ({ data, objects, partial } = client.read(props.query, variables));
+  if (query) {
+    ({ data, objects, partial } = client.read(query, variables));
 
     loaded = !!data && !partial;
 
@@ -72,19 +74,19 @@ export default function createBindings<T extends GrafooObject, U extends GrafooM
     });
   }
 
-  let boundState = props.query ? { load, loaded, loading: !props.skip && !loaded } : {};
+  let boundState: GrafooBoundState = { loaded, loading: !!query && !skip && !loaded };
 
-  if (props.mutations) {
-    for (let key in props.mutations) {
-      let { update, optimisticUpdate, query: mutationQuery } = props.mutations[key];
+  if (mutations) {
+    for (let key in mutations) {
+      let { update, optimisticUpdate, query: mutationQuery } = mutations[key];
 
       boundMutations[key] = (mutationVariables) => {
-        if (props.query && optimisticUpdate) {
+        if (query && optimisticUpdate) {
           writeToCache(optimisticUpdate(data, mutationVariables));
         }
 
         return client.execute(mutationQuery, mutationVariables).then((mutationResponse) => {
-          if (props.query && update && mutationResponse.data) {
+          if (query && update && mutationResponse.data) {
             writeToCache(update(data, mutationResponse.data));
           }
 
@@ -95,23 +97,18 @@ export default function createBindings<T extends GrafooObject, U extends GrafooM
   }
 
   function writeToCache(dataUpdate: CP["query"]["_queryType"]) {
-    client.write(props.query, variables, dataUpdate);
+    client.write(query, variables, dataUpdate);
   }
 
-  function performUpdate(boundStateUpdate?: {
-    errors: GraphQlError[];
-    loaded: boolean;
-    loading: boolean;
-  }) {
-    ({ data, objects } = client.read(props.query, variables));
+  function performUpdate(boundStateUpdate?: GrafooBoundState) {
+    ({ data, objects } = client.read(query, variables));
 
     Object.assign(boundState, boundStateUpdate);
-
     updater();
   }
 
   function getState() {
-    return Object.assign({ client }, boundState, boundMutations, data);
+    return Object.assign({}, boundState, boundMutations, data);
   }
 
   function load(nextVariables?: CP["query"]["_variablesType"]) {
@@ -121,17 +118,16 @@ export default function createBindings<T extends GrafooObject, U extends GrafooM
 
     if (!boundState.loading) {
       Object.assign(boundState, { loading: true });
-
       updater();
     }
 
-    return client.execute(props.query, variables).then(({ data, errors }) => {
+    return client.execute(query, variables).then(({ data, errors }) => {
       if (data) {
         lockListenUpdate = true;
-
         writeToCache(data);
       }
-      performUpdate({ errors, loaded: !!data, loading: false });
+
+      performUpdate(Object.assign({ loaded: !!data, loading: false }, errors && { errors }));
     });
   }
 

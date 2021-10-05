@@ -35,8 +35,9 @@ export default function transform({ types: t }) {
 
             if (source.value === "@grafoo/core") {
               let defaultSpecifier = specifiers.find((s) => t.isImportDefaultSpecifier(s));
-
-              clientFactoryIdentifiers.push(defaultSpecifier.local.name);
+              if (defaultSpecifier) {
+                clientFactoryIdentifiers.push(defaultSpecifier.local.name);
+              }
             }
 
             if (source.value === "@grafoo/core/tag") {

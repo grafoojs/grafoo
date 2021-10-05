@@ -1,74 +1,61 @@
-import createBindings from "@grafoo/bindings";
-import { Component, createContext, createElement, ReactElement, ReactNode, FC } from "react";
+import * as React from "react";
+import createBindings, { GrafooConsumerProps } from "@grafoo/bindings";
+import { GrafooClient, GrafooObject } from "@grafoo/core";
 
-/**
- * T = Query
- * U = Mutations
- */
-type GrafooRenderFn<T, U> = (
-  renderProps: GrafooBoundState & T & GrafooBoundMutations<U>
-) => ReactNode;
+// @ts-ignore
+export let GrafooContext = React.createContext<GrafooClient>({});
 
-/**
- * T = Query
- * U = Mutations
- */
-type GrafooReactConsumerProps<T = unknown, U = unknown> = GrafooConsumerProps<T, U> & {
-  children: GrafooRenderFn<T, U>;
+type GrafooProviderProps = {
+  client: GrafooClient;
 };
 
-/**
- * T = Query
- * U = Mutations
- */
-interface ConsumerType extends FC {
-  <T, U>(props: GrafooReactConsumerProps<T, U>): ReactElement | null;
-}
+export let GrafooProvider: React.FC<GrafooProviderProps> = (props) =>
+  React.createElement(GrafooContext.Provider, { value: props.client }, props.children);
 
-let ctx = createContext({});
+export function useGrafoo<T extends GrafooObject, U extends Record<string, GrafooObject>>(
+  props: GrafooConsumerProps<T, U>
+) {
+  let client = React.useContext(GrafooContext);
+  let update = React.useCallback(() => setState(bindings.getState()), []);
+  let bindings = React.useMemo(() => createBindings(client, update, props), []);
+  let [state, setState] = React.useState(() => bindings.getState());
+  let variables = React.useRef(props.variables);
 
-export let Provider: FC<Context> = (props) =>
-  createElement(ctx.Provider, { value: props.client }, props.children);
-
-class GrafooConsumer<T, U> extends Component<GrafooReactConsumerProps<T, U>> {
-  state: GrafooBoundState & T & GrafooBoundMutations<U>;
-
-  constructor(props: GrafooReactConsumerProps<T, U>) {
-    super(props);
-
-    let bindings = createBindings(props.client, props, () => {
-      this.setState(bindings.getState());
-    });
-
-    this.state = bindings.getState();
-
-    this.componentDidMount = () => {
-      if (props.skip || !props.query || this.state.loaded) return;
-
+  React.useEffect(() => {
+    if (!props.skip && props.query && !state.loaded) {
       bindings.load();
-    };
+    }
 
-    this.componentWillReceiveProps = (next) => {
-      if ((!this.state.loaded && !next.skip) || props.variables !== next.variables) {
-        bindings.load(next.variables);
-      }
-    };
-
-    this.componentWillUnmount = () => {
+    return () => {
       bindings.unbind();
     };
-  }
+  }, []);
 
-  render() {
-    return this.props.children(this.state);
-  }
+  React.useEffect(() => {
+    if (
+      (!props.skip && props.query && !state.loaded) ||
+      !deepEqual(variables.current, props.variables)
+    ) {
+      variables.current = props.variables;
+      bindings.load(props.variables);
+    }
+  }, [props.skip, props.variables]);
+
+  return state;
 }
 
-/**
- * T = Query
- * U = Mutations
- */
-export let Consumer: ConsumerType = <T, U>(props: GrafooReactConsumerProps<T, U>) =>
-  createElement(ctx.Consumer, null, (client: GrafooClient) =>
-    createElement(GrafooConsumer, Object.assign({ client }, props))
-  );
+let deepEqual = (x: any, y: any) => {
+  if (x === y) return true;
+
+  if (isPrimitive(x) && isPrimitive(y)) return x === y;
+
+  if (Object.keys(x).length !== Object.keys(y).length) return false;
+
+  for (let i in x) {
+    if (!(i in y) || !deepEqual(x[i], y[i])) return false;
+  }
+
+  return true;
+};
+
+let isPrimitive = (obj: any) => obj !== Object(obj);

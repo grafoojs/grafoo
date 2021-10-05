@@ -26,13 +26,13 @@ module.exports = function build(opts) {
       nodeResolve(),
       typescript({
         typescript: ts,
-        tsconfigOverride: tsconfig,
+        tsconfigOverride: tsconfig
       }),
       buble({
         transforms: {
           dangerousForOf: true,
-          dangerousTaggedTemplateString: true,
-        },
+          dangerousTaggedTemplateString: true
+        }
       }),
       !opts.skipCompression &&
         terser({
@@ -40,18 +40,18 @@ module.exports = function build(opts) {
           compress: { keep_infinity: true, pure_getters: true },
           warnings: true,
           toplevel: true,
-          mangle: {},
+          mangle: {}
         }),
-      fileSize(),
-    ].filter(Boolean),
+      fileSize()
+    ].filter(Boolean)
   }).then(function (bundle) {
     return bundle.write({
       file: path.join(opts.rootPath, "dist/index.js"),
       sourcemap: true,
       format: opts.format || "esm",
       treeshake: {
-        propertyReadSideEffects: false,
-      },
+        propertyReadSideEffects: false
+      }
     });
   });
 };
