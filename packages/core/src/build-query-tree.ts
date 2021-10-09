@@ -1,11 +1,7 @@
-import { GrafooObjectsMap } from ".";
-import { idFromProps, isNotNullObject } from "./util";
+import { GrafooRecords } from ".";
+import { idFromBranch, isNotNullObject } from "./util";
 
-export default function buildQueryTree<T>(
-  tree: T,
-  objects: GrafooObjectsMap,
-  idFields: string[]
-): T {
+export default function buildQueryTree<T>(tree: T, records: GrafooRecords, idFields: string[]): T {
   // clone resulting query tree
   let queryTree = tree;
   let stack = [];
@@ -21,15 +17,15 @@ export default function buildQueryTree<T>(
     // assigns nested branch
     let branch = currentTree[key];
     // get node identifier
-    let identifier = idFromProps(branch, idFields);
-    // possible node matching object
-    let branchObject = objects[identifier];
+    let identifier = idFromBranch(branch, idFields);
+    // possible node matching stored record
+    let possibleBranchRecord = records[identifier];
 
     // iterates over the child branch properties
-    for (let i in Object.assign({}, branch, branchObject)) {
+    for (let i in Object.assign({}, branch, possibleBranchRecord)) {
       // assigns to the child branch all properties retrieved
-      // from the corresponding object retrieved from the objects cache
-      if (identifier && branchObject) branch[i] = branchObject[i] || branch[i];
+      // from the corresponding record retrieved from the records cache
+      if (identifier && possibleBranchRecord) branch[i] = possibleBranchRecord[i] || branch[i];
 
       // pushes properties of the child branch and the branch it self to the stack
       if (isNotNullObject(branch[i])) stack.push([i, branch]);

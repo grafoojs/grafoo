@@ -45,7 +45,7 @@ export default function compileDocument(source, opts) {
     throw new Error("@grafoo/core/tag: only one operation definition is accepted per tag.");
   }
 
-  let grafooObj = {};
+  let grafooQuery = {};
 
   if (oprs.length) {
     let printed = print(oprs[0]);
@@ -56,12 +56,12 @@ export default function compileDocument(source, opts) {
     // Document is also sorted by "sortDocument" therefore
     // selections, fields, etc order shouldn't matter either
     if (opts.generateIds) {
-      grafooObj.id = md5Hash(compressed).toString();
+      grafooQuery.id = md5Hash(compressed).toString();
     }
 
-    grafooObj.query = opts.compress ? compressed : printed;
+    grafooQuery.query = opts.compress ? compressed : printed;
 
-    grafooObj.paths = oprs[0].selectionSet.selections.reduce(
+    grafooQuery.paths = oprs[0].selectionSet.selections.reduce(
       (acc, s) =>
         Object.assign(acc, {
           // TODO: generate hashes as well
@@ -73,20 +73,20 @@ export default function compileDocument(source, opts) {
                 a = a.value;
               }
               return a.name.value;
-            }),
-          },
+            })
+          }
         }),
       {}
     );
   }
 
   if (frags.length) {
-    grafooObj.frags = {};
+    grafooQuery.frags = {};
 
     for (let frag of frags) {
-      grafooObj.frags[frag.name.value] = opts.compress ? compress(print(frag)) : print(frag);
+      grafooQuery.frags[frag.name.value] = opts.compress ? compress(print(frag)) : print(frag);
     }
   }
 
-  return grafooObj;
+  return grafooQuery;
 }

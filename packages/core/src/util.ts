@@ -1,4 +1,4 @@
-export let idFromProps = (branch: { [key: string]: string }, idFields: string | any[]): string => {
+export let idFromBranch = (branch: { [key: string]: string }, idFields: string | any[]): string => {
   branch = branch || {};
   let identifier = "";
 

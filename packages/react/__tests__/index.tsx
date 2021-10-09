@@ -5,7 +5,7 @@
 import fetch from "node-fetch";
 import * as React from "react";
 import graphql from "@grafoo/core/tag";
-import createClient from "@grafoo/core";
+import createClient, { GrafooClient } from "@grafoo/core";
 import { mockQueryRequest, createTransport } from "@grafoo/test-utils";
 import { renderHook, act } from "@testing-library/react-hooks";
 
@@ -121,7 +121,7 @@ let CREATE_AUTHOR = graphql<CreateAuthorMutation, CreateAuthorInput>`
 `;
 
 describe("@grafoo/react", () => {
-  let client;
+  let client: GrafooClient;
   let wrapper: React.FC;
 
   beforeEach(() => {
@@ -218,14 +218,14 @@ describe("@grafoo/react", () => {
   });
 
   it("should not try to load a query if it's already cached", async () => {
-    let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
+    let data = await mockQueryRequest<AuthorsQuery>(AUTHORS);
     client.write(AUTHORS, data);
     jest.resetAllMocks();
 
     let spy = jest.spyOn(client, "execute");
     let { result } = renderHook(() => useGrafoo({ query: AUTHORS }), { wrapper });
 
-    expect(result.current).toEqual({ loading: false, loaded: true, ...data });
+    expect(result.current).toEqual({ loading: false, loaded: true, ...data.data });
     expect(spy).not.toHaveBeenCalled();
   });
 
@@ -287,17 +287,19 @@ describe("@grafoo/react", () => {
   });
 
   it("should reflect updates that happen outside of the component", async () => {
-    let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
+    let data = await mockQueryRequest<AuthorsQuery>(AUTHORS);
 
     client.write(AUTHORS, data);
 
     let { result } = renderHook(() => useGrafoo({ query: AUTHORS }), { wrapper });
 
-    expect(result.current).toEqual({ loading: false, loaded: true, ...data });
+    expect(result.current).toEqual({ loading: false, loaded: true, ...data.data });
 
     act(() => {
       client.write(AUTHORS, {
-        authors: data.authors.map((a, i) => (!i ? { ...a, name: "Lisa" } : a))
+        data: {
+          authors: data.data.authors.map((a, i) => (!i ? { ...a, name: "Lisa" } : a))
+        }
       });
     });
 
@@ -305,7 +307,7 @@ describe("@grafoo/react", () => {
   });
 
   it("should not trigger a network request if a query field is cached", async () => {
-    let { data } = await mockQueryRequest<PostsAndAuthorsQuery>(POSTS_AND_AUTHORS);
+    let data = await mockQueryRequest<PostsAndAuthorsQuery>(POSTS_AND_AUTHORS);
 
     client.write(POSTS_AND_AUTHORS, data);
 
@@ -313,7 +315,7 @@ describe("@grafoo/react", () => {
 
     let spy = jest.spyOn(client, "execute");
 
-    expect(result.current).toEqual({ authors: data.authors, loading: false, loaded: true });
+    expect(result.current).toEqual({ authors: data.data.authors, loading: false, loaded: true });
     expect(spy).not.toHaveBeenCalled();
   });
 });

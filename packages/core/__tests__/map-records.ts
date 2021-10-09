@@ -1,4 +1,4 @@
-import mapObjects from "../src/map-objects";
+import mapRecords from "../src/map-records";
 
 let tree = {
   posts: [
@@ -7,7 +7,7 @@ let tree = {
       id: "1",
       __typename: "Post",
       author: {
-        name: "miguel",
+        name: "homer",
         id: "2",
         __typename: "Author",
         posts: [
@@ -17,46 +17,46 @@ let tree = {
             __typename: "Post",
             content: "a post content",
             author: {
-              name: "miguel",
-              lastName: "albernaz",
+              name: "homer",
+              lastName: "simpson",
               id: "2",
-              __typename: "Author",
-            },
-          },
-        ],
-      },
+              __typename: "Author"
+            }
+          }
+        ]
+      }
     },
     {
       title: "bar",
       id: "3",
       __typename: "Post",
-      author: { name: "vicente", id: "4", __typename: "Author" },
+      author: { name: "bart", id: "4", __typename: "Author" }
     },
     {
       title: "baz",
       id: "5",
       __typename: "Post",
-      author: { name: "laura", id: "6", __typename: "Author" },
-    },
-  ],
+      author: { name: "lisa", id: "6", __typename: "Author" }
+    }
+  ]
 };
 
 let idFields = ["id"];
 
 describe("map-objects", () => {
-  it("should return the correct map of objects", () => {
-    let objects = mapObjects(tree, idFields);
+  it("should return the correct map of records", () => {
+    let records = mapRecords(tree, idFields);
 
     let expected = {
       "1": { title: "foo", id: "1", __typename: "Post", content: "a post content" },
-      "2": { name: "miguel", id: "2", __typename: "Author", lastName: "albernaz" },
+      "2": { name: "homer", id: "2", __typename: "Author", lastName: "simpson" },
       "3": { title: "bar", __typename: "Post", id: "3" },
-      "4": { name: "vicente", id: "4", __typename: "Author" },
+      "4": { name: "bart", id: "4", __typename: "Author" },
       "5": { title: "baz", __typename: "Post", id: "5" },
-      "6": { name: "laura", id: "6", __typename: "Author" },
+      "6": { name: "lisa", id: "6", __typename: "Author" }
     };
 
-    expect(objects).toEqual(expected);
+    expect(records).toEqual(expected);
   });
 
   it("should accept null values", () => {
@@ -64,24 +64,24 @@ describe("map-objects", () => {
       data: {
         me: {
           id: "5a3ab7e93f662a108d978a6e",
-          username: "malbernaz",
-          email: "albernazmiguel@gmail.com",
+          username: "hsimpson",
+          email: "simpsonhomer@gmail.com",
           name: null,
-          bio: null,
-        },
-      },
+          bio: null
+        }
+      }
     };
 
-    expect(() => mapObjects(result, idFields)).not.toThrow();
+    expect(() => mapRecords(result, idFields)).not.toThrow();
   });
 
   it("should build an object identifier based on the `idFields` cache option", () => {
     let idFields = ["__typename", "id"];
 
-    let objects = mapObjects(tree, idFields);
+    let records = mapRecords(tree, idFields);
 
     let expected = ["Post1", "Author2", "Post3", "Author4", "Post5", "Author6"];
 
-    expect(Object.keys(objects).every((obj) => expected.some((exp) => exp === obj))).toBe(true);
+    expect(Object.keys(records).every((obj) => expected.some((exp) => exp === obj))).toBe(true);
   });
 });

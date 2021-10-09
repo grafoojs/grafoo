@@ -1,5 +1,5 @@
 import buildQueryTree from "./build-query-tree";
-import mapObjects from "./map-objects";
+import mapRecords from "./map-records";
 import { getPathId } from "./util";
 
 export type GraphQlError = {
@@ -8,79 +8,61 @@ export type GraphQlError = {
   path: string[];
 };
 
-/**
- * T = QueryData
- */
 export type GraphQlPayload<T> = {
   data: T;
   errors?: GraphQlError[];
 };
 
-/**
- * T = QueryData
- */
 export type GrafooTransport = <T>(
   query: string,
   variables?: unknown,
   id?: string
 ) => Promise<GraphQlPayload<T>>;
 
-export type GrafooObjectsMap = {
-  [key: string]: Record<string, unknown>;
-};
+export type GrafooRecords = Record<string, Record<string, unknown>>;
 
-export type GrafooPathsMap = {
-  [key: string]: {
-    data: { [key: string]: unknown };
-    objects: string[];
+export type GrafooPaths = Record<
+  string,
+  {
+    data: Record<string, unknown>;
+    records: string[];
     partial?: boolean;
-  };
-};
+  }
+>;
 
-export type GrafooListener = (objects: GrafooObjectsMap) => void;
+export type GrafooListener = (objects: GrafooRecords) => void;
 
 export type GrafooInitialState = {
-  objectsMap: GrafooObjectsMap;
-  pathsMap: GrafooPathsMap;
+  records: GrafooRecords;
+  paths: GrafooPaths;
 };
 
-export type GrafooObject<T = unknown, U = unknown> = {
-  frags?: {
-    [key: string]: string;
-  };
-  paths: {
-    [key: string]: {
-      name: string;
-      args: string[];
-    };
-  };
+export type GrafooQuery<T = unknown, U = unknown> = {
   query: string;
-  id?: string;
+  frags?: Record<string, string>;
+  paths: Record<string, { name: string; args: string[] }>;
   _queryType: T;
   _variablesType: U;
 };
 
 export type GrafooClient = {
-  execute: <T extends GrafooObject>(
-    grafooObject: T,
+  execute: <T extends GrafooQuery>(
+    query: T,
     variables?: T["_variablesType"]
   ) => Promise<GraphQlPayload<T["_queryType"]>>;
   listen: (listener: GrafooListener) => () => void;
   write: {
-    <T extends GrafooObject>(
-      grafooObject: T,
+    <T extends GrafooQuery>(
+      query: T,
       variables: T["_variablesType"],
-      data: T["_queryType"] | { data: T["_queryType"] }
+      payload: { data: T["_queryType"] }
     ): void;
-    <T extends GrafooObject>(
-      grafooObject: T,
-      data: T["_queryType"] | { data: T["_queryType"] }
-    ): void;
+    <T extends GrafooQuery>(query: T, payload: { data: T["_queryType"] }): void;
   };
-  read: <T extends GrafooObject>(
-    grafooObject: T,
+  read: <T extends GrafooQuery>(
+    query: T,
     variables?: T["_variablesType"]
-  ) => { data?: T["_queryType"]; objects?: GrafooObjectsMap; partial?: boolean };
+  ) => { data?: T["_queryType"]; records?: GrafooRecords; partial?: boolean };
   flush: () => GrafooInitialState;
   reset: () => void;
 };
@@ -95,16 +77,13 @@ export default function createClient(
   options?: GrafooClientOptions
 ): GrafooClient {
   let { initialState, idFields } = options;
-  let { pathsMap, objectsMap } = initialState || { pathsMap: {}, objectsMap: {} };
+  let { paths, records } = initialState || { paths: {}, records: {} };
   let listeners: GrafooListener[] = [];
 
-  function execute<T extends GrafooObject>(
-    { query, frags, id }: T,
-    variables?: T["_variablesType"]
-  ) {
+  function execute<T extends GrafooQuery>({ query, frags }: T, variables?: T["_variablesType"]) {
     if (frags) for (let frag in frags) query += frags[frag];
 
-    return transport<T>(query, variables, id);
+    return transport<T>(query, variables);
   }
 
   function listen(listener: GrafooListener) {
@@ -119,81 +98,81 @@ export default function createClient(
     };
   }
 
-  function write<T extends GrafooObject>(
-    { paths }: T,
+  function write<T extends GrafooQuery>(
+    query: T,
     variables: T["_variablesType"],
-    data?: T["_queryType"] | { data: T["_queryType"] }
+    payload?: { data: T["_queryType"] }
   ) {
-    if (!data) {
-      data = variables as typeof data;
+    if (!payload) {
+      payload = variables as { data: T["_queryType"] };
       variables = undefined;
     }
 
-    let objects: GrafooObjectsMap = {};
+    let queryRecords: GrafooRecords = {};
 
-    for (let i in paths) {
-      let { name, args } = paths[i];
+    for (let i in query.paths) {
+      let { name, args } = query.paths[i];
       let pathData = {
-        [name]: (data as { data: T }).data ? (data as { data: T }).data[name] : data[name]
+        [name]: payload.data[name]
       };
-      let pathObjects = mapObjects(pathData, idFields);
+      let pathRecords = mapRecords(pathData, idFields);
 
-      Object.assign(objects, pathObjects);
+      Object.assign(queryRecords, pathRecords);
 
-      pathsMap[getPathId(i, args, variables)] = {
+      paths[getPathId(i, args, variables)] = {
         data: pathData,
-        objects: Object.keys(pathObjects)
+        records: Object.keys(pathRecords)
       };
     }
 
     // assign new values to objects in objectsMap
-    for (let i in objects) {
-      objectsMap[i] = objects[i] = Object.assign({}, objectsMap[i], objects[i]);
+    for (let i in queryRecords) {
+      records[i] = queryRecords[i] = Object.assign({}, records[i], queryRecords[i]);
     }
 
     // clean cache
-    let pathsObjects = [];
-    for (let i in pathsMap) pathsObjects = pathsObjects.concat(pathsMap[i].objects);
-    let allObjects = new Set(pathsObjects);
-    for (let i in objectsMap) if (!allObjects.has(i)) delete objectsMap[i];
+    let idsList: string[] = [];
+    for (let i in paths) idsList = idsList.concat(paths[i].records);
+    let allIds = new Set(idsList);
+    for (let i in records) if (!allIds.has(i)) delete records[i];
 
     // run listeners
-    for (let i in listeners) listeners[i](objects);
+    for (let i in listeners) listeners[i](queryRecords);
   }
 
-  function read<T extends GrafooObject>(
-    { paths }: T,
+  function read<T extends GrafooQuery>(
+    query: T,
     variables?: T["_variablesType"]
-  ): { data?: T["_queryType"]; objects?: GrafooObjectsMap; partial?: boolean } {
+  ): { data?: T["_queryType"]; records?: GrafooRecords; partial?: boolean } {
     let data: T["_queryType"] = {};
-    let objects: GrafooObjectsMap = {};
+    let queryRecords: GrafooRecords = {};
     let partial = false;
 
-    for (let i in paths) {
-      let { name, args } = paths[i];
-      let currentPath = pathsMap[getPathId(i, args, variables)];
+    for (let i in query.paths) {
+      let { name, args } = query.paths[i];
+      let currentPath = paths[getPathId(i, args, variables)];
 
       if (currentPath) {
         data[name] = currentPath.data[name];
 
-        for (let i of currentPath.objects) objects[i] = objectsMap[i];
+        for (let i of currentPath.records) queryRecords[i] = records[i];
       } else {
         partial = true;
       }
     }
 
     return Object.keys(data).length
-      ? { data: buildQueryTree(data, objectsMap, idFields), objects, partial }
+      ? { data: buildQueryTree(data, records, idFields), records: queryRecords, partial }
       : {};
   }
 
   function flush() {
-    return { objectsMap, pathsMap };
+    return { records, paths };
   }
 
   function reset() {
-    pathsMap = {};
-    objectsMap = {};
+    paths = {};
+    records = {};
   }
 
   return { execute, listen, write, read, flush, reset };

@@ -223,27 +223,27 @@ describe("@grafoo/bindings", () => {
   });
 
   it("should provide the data if the query is already cached", async () => {
-    let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
+    let data = await mockQueryRequest<AuthorsQuery>(AUTHORS);
 
     client.write(AUTHORS, data);
 
     let bindings = createBindings(client, () => {}, { query: AUTHORS });
 
-    expect(bindings.getState()).toMatchObject({ ...data, loaded: true, loading: false });
+    expect(bindings.getState()).toMatchObject({ ...data.data, loaded: true, loading: false });
   });
 
   it("should provide the data if a query is partialy cached", async () => {
-    let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
+    let data = await mockQueryRequest<AuthorsQuery>(AUTHORS);
 
     client.write(AUTHORS, data);
 
     let bindings = createBindings(client, () => {}, { query: POSTS_AND_AUTHORS });
 
-    expect(bindings.getState()).toMatchObject({ ...data, loaded: false, loading: true });
+    expect(bindings.getState()).toMatchObject({ ...data.data, loaded: false, loading: true });
   });
 
   it("should trigger updater function if the cache has been updated", async () => {
-    let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
+    let data = await mockQueryRequest<AuthorsQuery>(AUTHORS);
 
     let renderFn = jest.fn();
 
@@ -252,11 +252,11 @@ describe("@grafoo/bindings", () => {
     client.write(AUTHORS, data);
 
     expect(renderFn).toHaveBeenCalled();
-    expect(bindings.getState()).toMatchObject(data);
+    expect(bindings.getState()).toMatchObject(data.data);
   });
 
   it("should provide the state for a cached query", async () => {
-    let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
+    let data = await mockQueryRequest<AuthorsQuery>(AUTHORS);
 
     client.write(AUTHORS, data);
 
@@ -264,7 +264,7 @@ describe("@grafoo/bindings", () => {
 
     let bindings = createBindings(client, renderFn, { query: AUTHORS });
 
-    expect(bindings.getState()).toMatchObject(data);
+    expect(bindings.getState()).toMatchObject(data.data);
   });
 
   it("should stop updating if unbind has been called", async () => {
@@ -279,7 +279,9 @@ describe("@grafoo/bindings", () => {
     bindings.unbind();
 
     client.write(AUTHORS, {
-      authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a))
+      data: {
+        authors: data.authors.map((a, i) => (!i ? { ...a, name: "Homer" } : a))
+      }
     });
 
     expect(client.read(AUTHORS).data.authors[0].name).toBe("Homer");
@@ -362,7 +364,7 @@ describe("@grafoo/bindings", () => {
     let mutations = {
       createAuthor: {
         query: CREATE_AUTHOR,
-        optimisticUpdate: ({ authors }, variables: Author) => ({
+        optimisticUpdate: ({ authors }, variables) => ({
           authors: [{ ...variables, id: "tempID" }, ...authors]
         }),
         update: ({ authors }, data) => ({
@@ -407,7 +409,7 @@ describe("@grafoo/bindings", () => {
     let {
       data: { createAuthor: author }
     } = await mockQueryRequest<CreateAuthorMutation>({ query, variables: { name: "gustav" } });
-    let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
+    let data = await mockQueryRequest<AuthorsQuery>(AUTHORS);
 
     client.write(AUTHORS, data);
 
@@ -442,7 +444,7 @@ describe("@grafoo/bindings", () => {
       query,
       variables: { name: "sven" }
     });
-    let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
+    let data = await mockQueryRequest<AuthorsQuery>(AUTHORS);
 
     client.write(AUTHORS, data);
 
@@ -471,7 +473,7 @@ describe("@grafoo/bindings", () => {
   });
 
   it("should not update if query objects is not modified", async () => {
-    let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
+    let data = await mockQueryRequest<AuthorsQuery>(AUTHORS);
 
     client.write(AUTHORS, data);
 
@@ -485,7 +487,7 @@ describe("@grafoo/bindings", () => {
   });
 
   it("should accept multiple mutations", async () => {
-    let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
+    let data = await mockQueryRequest<AuthorsQuery>(AUTHORS);
     client.write(AUTHORS, data);
 
     let mutations = {

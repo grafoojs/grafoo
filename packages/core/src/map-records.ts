@@ -1,8 +1,8 @@
-import { GrafooObjectsMap } from ".";
-import { isNotNullObject, idFromProps } from "./util";
+import { GrafooRecords } from ".";
+import { isNotNullObject, idFromBranch } from "./util";
 
-export default function mapObjects<T>(tree: T, idFields: string[]): GrafooObjectsMap {
-  // map in which objects will be stored
+export default function mapRecords<T>(tree: T, idFields: string[]): GrafooRecords {
+  // map in which records will be stored
   // having their extracted ids from props as key
   let map = {};
   let stack = [];
@@ -26,7 +26,7 @@ export default function mapObjects<T>(tree: T, idFields: string[]): GrafooObject
     }
 
     // node identifier
-    let identifier = idFromProps(branch, idFields);
+    let identifier = idFromBranch(branch, idFields);
 
     // if branch is a node, assign the value of filtered branch to it
     if (identifier) map[identifier] = Object.assign({}, map[identifier], filteredBranch);

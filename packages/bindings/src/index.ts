@@ -1,12 +1,12 @@
 import {
   GrafooClient,
-  GrafooObjectsMap,
+  GrafooRecords,
   GraphQlError,
   GraphQlPayload,
-  GrafooObject
+  GrafooQuery
 } from "@grafoo/core";
 
-export type GrafooBoundMutations<T extends Record<string, GrafooObject>> = {
+export type GrafooBoundMutations<T extends Record<string, GrafooQuery>> = {
   [U in keyof T]: (
     variables: T[U]["_variablesType"]
   ) => Promise<GraphQlPayload<T[U]["_queryType"]>>;
@@ -18,58 +18,60 @@ export type GrafooBoundState = {
   errors?: GraphQlError[];
 };
 
-export type GrafooMutation<T extends GrafooObject, U extends GrafooObject> = {
+export type GrafooMutation<T extends GrafooQuery, U extends GrafooQuery> = {
   query: U;
   update?: (props: T["_queryType"], data: U["_queryType"]) => T["_queryType"];
   optimisticUpdate?: (props: T["_queryType"], variables: U["_variablesType"]) => T["_queryType"];
 };
 
-export type GrafooConsumerProps<T extends GrafooObject, U extends Record<string, GrafooObject>> = {
+export type GrafooMutations<T extends GrafooQuery, U extends Record<string, GrafooQuery>> = {
+  [V in keyof U]: GrafooMutation<T, U[V]>;
+};
+
+export type GrafooConsumerProps<T extends GrafooQuery, U extends Record<string, GrafooQuery>> = {
   query?: T;
   variables?: T["_variablesType"];
-  mutations?: {
-    [V in keyof U]: GrafooMutation<T, U[V]>;
-  };
+  mutations?: GrafooMutations<T, U>;
   skip?: boolean;
 };
 
 export default function createBindings<
-  T extends GrafooObject,
-  U extends Record<string, GrafooObject>
+  T extends GrafooQuery,
+  U extends Record<string, GrafooQuery>
 >(client: GrafooClient, updater: () => void, props: GrafooConsumerProps<T, U>) {
   type CP = GrafooConsumerProps<T, U>;
   let { query, variables, mutations, skip } = props;
   let data: CP["query"]["_queryType"];
   let boundMutations = {} as GrafooBoundMutations<U>;
-  let objects: GrafooObjectsMap;
+  let records: GrafooRecords;
   let partial = false;
   let unbind = () => {};
   let lockListenUpdate = false;
   let loaded = false;
 
   if (query) {
-    ({ data, objects, partial } = client.read(query, variables));
+    ({ data, records, partial } = client.read(query, variables));
 
     loaded = !!data && !partial;
 
-    unbind = client.listen((nextObjects) => {
+    unbind = client.listen((nextRecords) => {
       if (lockListenUpdate) return (lockListenUpdate = false);
 
-      objects = objects || {};
+      records = records || {};
 
-      for (let i in nextObjects) {
-        // object has been inserted
-        if (!(i in objects)) return performUpdate();
+      for (let i in nextRecords) {
+        // record has been inserted
+        if (!(i in records)) return performUpdate();
 
-        for (let j in nextObjects[i]) {
-          // object has been updated
-          if (nextObjects[i][j] !== objects[i][j]) return performUpdate();
+        for (let j in nextRecords[i]) {
+          // record has been updated
+          if (nextRecords[i][j] !== records[i][j]) return performUpdate();
         }
       }
 
-      for (let i in objects) {
-        // object has been removed
-        if (!(i in nextObjects)) return performUpdate();
+      for (let i in records) {
+        // record has been removed
+        if (!(i in nextRecords)) return performUpdate();
       }
     });
   }
@@ -82,12 +84,12 @@ export default function createBindings<
 
       boundMutations[key] = (mutationVariables) => {
         if (query && optimisticUpdate) {
-          writeToCache(optimisticUpdate(data, mutationVariables));
+          writeToCache({ data: optimisticUpdate(data, mutationVariables) });
         }
 
         return client.execute(mutationQuery, mutationVariables).then((mutationResponse) => {
           if (query && update && mutationResponse.data) {
-            writeToCache(update(data, mutationResponse.data));
+            writeToCache({ data: update(data, mutationResponse.data) });
           }
 
           return mutationResponse;
@@ -96,12 +98,12 @@ export default function createBindings<
     }
   }
 
-  function writeToCache(dataUpdate: CP["query"]["_queryType"]) {
+  function writeToCache(dataUpdate: { data: CP["query"]["_queryType"] }) {
     client.write(query, variables, dataUpdate);
   }
 
   function performUpdate(boundStateUpdate?: GrafooBoundState) {
-    ({ data, objects } = client.read(query, variables));
+    ({ data, records } = client.read(query, variables));
 
     Object.assign(boundState, boundStateUpdate);
     updater();
@@ -124,7 +126,7 @@ export default function createBindings<
     return client.execute(query, variables).then(({ data, errors }) => {
       if (data) {
         lockListenUpdate = true;
-        writeToCache(data);
+        writeToCache({ data });
       }
 
       performUpdate(Object.assign({ loaded: !!data, loading: false }, errors && { errors }));
