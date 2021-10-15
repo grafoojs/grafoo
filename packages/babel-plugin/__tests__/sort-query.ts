@@ -3,14 +3,14 @@ import sortQuery from "../src/sort-query";
 
 let gql = String.raw;
 
-function print(query, sort = false) {
+function print(query: string, sort = false) {
   return sort ? graphqlPrint(sortQuery(parse(query))) : graphqlPrint(parse(query));
 }
 
 describe("sort-query", () => {
   it("should sort fields, variable declarations and arguments", () => {
     let query = gql`
-      query($f: ID, $e: ID, $d: ID, $c: ID, $b: ID, $a: ID) {
+      query ($f: ID, $e: ID, $d: ID, $c: ID, $b: ID, $a: ID) {
         f
         e
         d
@@ -34,7 +34,7 @@ describe("sort-query", () => {
     `;
 
     let expected = gql`
-      query($a: ID, $b: ID, $c: ID, $d: ID, $e: ID, $f: ID) {
+      query ($a: ID, $b: ID, $c: ID, $d: ID, $e: ID, $f: ID) {
         a(a: $a, b: $b, c: $c, d: $d, e: $e, f: $f) {
           a(a: $a, b: $b, c: $c, d: $d, e: $e, f: $f) {
             b
@@ -148,13 +148,13 @@ describe("sort-query", () => {
 
   it("should sort directives", () => {
     let query = gql`
-      query($c: ID, $b: ID, $a: ID) {
+      query ($c: ID, $b: ID, $a: ID) {
         someField @c(c: $c) @a(a: $a) @b(c: $b)
       }
     `;
 
     let expected = gql`
-      query($a: ID, $b: ID, $c: ID) {
+      query ($a: ID, $b: ID, $c: ID) {
         someField @a(a: $a) @b(c: $b) @c(c: $c)
       }
     `;

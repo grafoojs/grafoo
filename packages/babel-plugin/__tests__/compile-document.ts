@@ -1,11 +1,11 @@
 import * as babel from "@babel/core";
-import plugin from "../src";
+import plugin, { Options } from "../src";
 
-let transform = (program, opts) =>
+let transform = (program: string, opts?: Options) =>
   babel.transform(program, {
     plugins: [
-      [plugin, Object.assign({ schema: "__tests__/schema.graphql", idFields: ["id"] }, opts)],
-    ],
+      [plugin, Object.assign({ schema: "__tests__/schema.graphql", idFields: ["id"] }, opts)]
+    ]
   });
 
 describe("compile document", () => {
@@ -16,18 +16,6 @@ describe("compile document", () => {
     `;
 
     expect(() => transform(program, { schema: "?" })).toThrow();
-  });
-
-  it("should throw if more then one operation is specified", () => {
-    let program = `
-      import gql from "@grafoo/core/tag";
-      let query = gql\`
-        { hello }
-        { goodbye }
-      \`;
-    `;
-
-    expect(() => transform(program)).toThrow();
   });
 
   it("should accept fragments", () => {

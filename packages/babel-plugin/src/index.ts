@@ -1,7 +1,19 @@
-import parseLiteral from "babel-literal-to-ast";
+import type * as BabelCoreNamespace from "@babel/core";
+import type { PluginObj } from "@babel/core";
+import { parseExpression } from "@babel/parser";
+
 import compileDocument from "./compile-document";
 
-export default function transform({ types: t }) {
+type Babel = typeof BabelCoreNamespace;
+
+export type Options = {
+  schema: string;
+  compress?: boolean;
+  generateIds?: boolean;
+  idFields?: string[];
+};
+
+export default function transform({ types: t }: Babel): PluginObj<{ opts: Options }> {
   return {
     visitor: {
       Program(programPath, { opts }) {
@@ -71,19 +83,23 @@ export default function transform({ types: t }) {
 
               if (t.isIdentifier(args[1])) {
                 let name = args[1].name;
+                // @ts-ignore
                 let { init } = path.scope.bindings[name].path.node;
 
                 if (path.scope.hasBinding(name)) {
                   if (t.isObjectExpression(init)) {
+                    // @ts-ignore
                     let idFieldsProp = init.properties.find((arg) => arg.key.name === "idFields");
 
                     if (idFieldsProp) {
+                      // @ts-ignore
                       idFieldsProp.value = idFieldsArrayAst;
                     } else {
                       init.properties.push(clientObjectAst);
                     }
                   } else {
                     throw path.buildCodeFrameError(
+                      // @ts-ignore
                       callee.name +
                         " second argument must be of type object, instead got " +
                         args[1].type +
@@ -92,15 +108,18 @@ export default function transform({ types: t }) {
                   }
                 }
               } else if (t.isObjectExpression(args[1])) {
+                // @ts-ignore
                 let idFieldsProp = args[1].properties.find((arg) => arg.key.name === "idFields");
 
                 if (idFieldsProp) {
+                  // @ts-ignore
                   idFieldsProp.value = idFieldsArrayAst;
                 } else {
                   args[1].properties.push(clientObjectAst);
                 }
               } else {
                 throw path.buildCodeFrameError(
+                  // @ts-ignore
                   callee.name +
                     " second argument must be of type object, instead got " +
                     args[1].type +
@@ -122,7 +141,8 @@ export default function transform({ types: t }) {
 
               try {
                 let source = quasi.node.quasis.reduce((src, q) => src + q.value.raw, "");
-                path.replaceWith(parseLiteral(compileDocument(source, opts)));
+                let document = compileDocument(source, opts);
+                path.replaceWith(parseExpression(document));
               } catch (error) {
                 if (error.code === "ENOENT") {
                   throw new Error(

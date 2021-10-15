@@ -1,28 +1,29 @@
 import fs from "fs";
-import { parse, print } from "graphql";
+import { buildASTSchema, parse, print } from "graphql";
 import path from "path";
 import insertFields from "../src/insert-fields";
 
-let schema = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8");
+let schemaString = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8");
+let schema = buildASTSchema(parse(schemaString));
 
 let cases = [
   {
     should: "should insert a field",
     input: "{ author { name } }",
     expectedOutput: "{ author { name id } }",
-    idFields: ["id"],
+    idFields: ["id"]
   },
   {
     should: "should insert more then a field if specified",
     input: "{ author { name } }",
     expectedOutput: "{ author { name username email id } }",
-    idFields: ["username", "email", "id"],
+    idFields: ["username", "email", "id"]
   },
   {
     should: "should insert `__typename` if specified",
     input: "{ author { name } }",
     expectedOutput: "{ author { name __typename } }",
-    idFields: ["__typename"],
+    idFields: ["__typename"]
   },
   {
     should: "should insert props in queries with fragments",
@@ -56,7 +57,7 @@ let cases = [
         }
       }
     `,
-    idFields: ["id"],
+    idFields: ["id"]
   },
   {
     should: "should insert props in queries with inline fragments",
@@ -88,7 +89,7 @@ let cases = [
         }
       }
     `,
-    idFields: ["id", "__typename"],
+    idFields: ["id", "__typename"]
   },
   {
     should: "should not insert `__typename` inside fragments",
@@ -122,7 +123,7 @@ let cases = [
         }
       }
     `,
-    idFields: ["__typename"],
+    idFields: ["__typename"]
   },
   {
     should: "should not insert `__typename` inside inline fragments",
@@ -152,69 +153,7 @@ let cases = [
         }
       }
     `,
-    idFields: ["__typename"],
-  },
-  {
-    should: "should insert field present on a fragment",
-    input: `
-      {
-        user {
-          ...UserFrag
-        }
-      }
-
-      fragment UserFrag on Author {
-        name
-        posts {
-          title
-        }
-      }
-    `,
-    expectedOutput: `
-      {
-        user {
-          ...UserFrag
-        }
-      }
-
-      fragment UserFrag on Author {
-        name
-        posts {
-          title
-        }
-        bio
-      }
-    `,
-    idFields: ["bio"],
-  },
-  {
-    should: "should insert field present in an inline fragment",
-    input: `
-      {
-        user {
-          name
-          ...on Author {
-            posts {
-              title
-            }
-          }
-        }
-      }
-    `,
-    expectedOutput: `
-      {
-        user {
-          name
-          ...on Author {
-            posts {
-              title
-            }
-            bio
-          }
-        }
-      }
-    `,
-    idFields: ["bio"],
+    idFields: ["__typename"]
   },
   {
     should: "should insert fields in inline fragments while leaving unions",
@@ -244,7 +183,7 @@ let cases = [
         }
       }
     `,
-    idFields: ["id"],
+    idFields: ["id"]
   },
   {
     should: "should not insert `__typename` in an operation definition",
@@ -272,8 +211,8 @@ let cases = [
         }
       }
     `,
-    idFields: ["id", "__typename"],
-  },
+    idFields: ["id", "__typename"]
+  }
 ];
 
 describe("insert-fields", () => {

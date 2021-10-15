@@ -1,4 +1,4 @@
-export let idFromBranch = (branch: { [key: string]: string }, idFields: string | any[]): string => {
+export let idFromBranch = (branch: Record<string, string>, idFields: string[]): string => {
   branch = branch || {};
   let identifier = "";
 
@@ -9,7 +9,7 @@ export let idFromBranch = (branch: { [key: string]: string }, idFields: string |
   return identifier;
 };
 
-export let isNotNullObject = (obj: any): boolean => obj && typeof obj == "object";
+export let isNotNullObject = (obj: any): boolean => typeof obj === "object" && obj;
 
 export let getPathId = (path: string, args: string[], variables?: unknown): string => {
   variables = variables || {};

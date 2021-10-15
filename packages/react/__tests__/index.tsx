@@ -135,10 +135,10 @@ describe("@grafoo/react", () => {
     expect(() => renderHook(() => useGrafoo({}), { wrapper })).not.toThrow();
   });
 
-  it("should not fetch a query if skip prop is set to true", async () => {
+  it("should not fetch a query if lazy prop is set to true", async () => {
     let spy = jest.spyOn(window, "fetch");
 
-    renderHook(() => useGrafoo({ query: AUTHORS, skip: true }), { wrapper });
+    renderHook(() => useGrafoo({ query: AUTHORS, lazy: true }), { wrapper });
 
     expect(spy).not.toHaveBeenCalled();
   });
@@ -148,13 +148,13 @@ describe("@grafoo/react", () => {
 
     let spy = jest.spyOn(client, "listen");
 
-    renderHook(() => useGrafoo({ query: AUTHORS, skip: true }), { wrapper });
+    renderHook(() => useGrafoo({ query: AUTHORS, lazy: true }), { wrapper });
 
     expect(spy).toHaveBeenCalled();
   });
 
   it("should execute render with default render argument", () => {
-    let { result } = renderHook(() => useGrafoo({ query: AUTHORS, skip: true }), { wrapper });
+    let { result } = renderHook(() => useGrafoo({ query: AUTHORS, lazy: true }), { wrapper });
 
     expect(result.current).toEqual({ loading: false, loaded: false });
   });
@@ -170,20 +170,20 @@ describe("@grafoo/react", () => {
     expect(result.current).toEqual({ loading: false, loaded: true, ...data });
   });
 
-  it("should render if skip changed value to false", async () => {
+  it("should render if lazy changed value to false", async () => {
     let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
-    let { result, rerender, waitForNextUpdate } = renderHook<{ skip: boolean }, any>(
-      ({ skip }) => useGrafoo({ query: AUTHORS, skip }),
+    let { result, rerender, waitForNextUpdate } = renderHook<{ lazy: boolean }, any>(
+      ({ lazy }) => useGrafoo({ query: AUTHORS, lazy }),
       {
         wrapper,
         initialProps: {
-          skip: true
+          lazy: true
         }
       }
     );
 
     expect(result.current).toEqual({ loading: false, loaded: false });
-    rerender({ skip: false });
+    rerender({ lazy: false });
     expect(result.current).toEqual({ loading: true, loaded: false });
     await waitForNextUpdate();
     expect(result.current).toEqual({ loading: false, loaded: true, ...data });
@@ -218,14 +218,14 @@ describe("@grafoo/react", () => {
   });
 
   it("should not try to load a query if it's already cached", async () => {
-    let data = await mockQueryRequest<AuthorsQuery>(AUTHORS);
+    let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
     client.write(AUTHORS, data);
     jest.resetAllMocks();
 
     let spy = jest.spyOn(client, "execute");
     let { result } = renderHook(() => useGrafoo({ query: AUTHORS }), { wrapper });
 
-    expect(result.current).toEqual({ loading: false, loaded: true, ...data.data });
+    expect(result.current).toEqual({ loading: false, loaded: true, ...data });
     expect(spy).not.toHaveBeenCalled();
   });
 
@@ -287,27 +287,25 @@ describe("@grafoo/react", () => {
   });
 
   it("should reflect updates that happen outside of the component", async () => {
-    let data = await mockQueryRequest<AuthorsQuery>(AUTHORS);
+    let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
 
     client.write(AUTHORS, data);
 
     let { result } = renderHook(() => useGrafoo({ query: AUTHORS }), { wrapper });
 
-    expect(result.current).toEqual({ loading: false, loaded: true, ...data.data });
+    expect(result.current).toEqual({ loading: false, loaded: true, ...data });
 
     act(() => {
       client.write(AUTHORS, {
-        data: {
-          authors: data.data.authors.map((a, i) => (!i ? { ...a, name: "Lisa" } : a))
-        }
+        authors: data.authors.map((a, i) => (!i ? { ...a, name: "Lisa" } : a))
       });
     });
 
     expect(result.current.authors[0].name).toBe("Lisa");
   });
 
-  it("should not trigger a network request if a query field is cached", async () => {
-    let data = await mockQueryRequest<PostsAndAuthorsQuery>(POSTS_AND_AUTHORS);
+  it("should not try to fetch a query data if it's already cached", async () => {
+    let { data } = await mockQueryRequest<PostsAndAuthorsQuery>(POSTS_AND_AUTHORS);
 
     client.write(POSTS_AND_AUTHORS, data);
 
@@ -315,7 +313,7 @@ describe("@grafoo/react", () => {
 
     let spy = jest.spyOn(client, "execute");
 
-    expect(result.current).toEqual({ authors: data.data.authors, loading: false, loaded: true });
+    expect(result.current).toEqual({ authors: data.authors, loading: false, loaded: true });
     expect(spy).not.toHaveBeenCalled();
   });
 });

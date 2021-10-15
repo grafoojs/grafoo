@@ -155,11 +155,11 @@ describe("@grafoo/core", () => {
   });
 
   it("should write queries to the client", async () => {
-    let data = await client.execute(POSTS_AND_AUTHORS);
+    let { data } = await client.execute(POSTS_AND_AUTHORS);
 
     client.write(POSTS_AND_AUTHORS, data);
 
-    let { authors, posts } = data.data;
+    let { authors, posts } = data;
     let { records, paths } = client.flush();
 
     expect(authors).toEqual(
@@ -181,13 +181,13 @@ describe("@grafoo/core", () => {
   });
 
   it("should read queries from the client", async () => {
-    let data = await client.execute(AUTHORS);
+    let { data } = await client.execute(AUTHORS);
 
     client.write(AUTHORS, data);
 
     let result = client.read(AUTHORS);
 
-    let { authors } = data.data;
+    let { authors } = data;
 
     expect(authors).toEqual(result.data.authors);
     expect(authors.every((author) => Boolean(result.records[author.id]))).toBe(true);
@@ -198,7 +198,7 @@ describe("@grafoo/core", () => {
 
   it("should handle queries with variables", async () => {
     let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    let data = await client.execute(POST, variables);
+    let { data } = await client.execute(POST, variables);
 
     client.write(POST, variables, data);
 
@@ -211,20 +211,20 @@ describe("@grafoo/core", () => {
     let v2 = { postId: "77c483dd-6529-4c72-9bb6-bbfd69f65682" };
 
     let d1 = await client.execute(POST, v1);
-    client.write(POST, v1, d1);
+    client.write(POST, v1, d1.data);
 
     expect(client.read(POST, { postId: "not found" })).toEqual({});
     expect(client.read(POST, v1).data.post.id).toBe(v1.postId);
 
     let d2 = await client.execute(POST, v2);
-    client.write(POST, v2, d2);
+    client.write(POST, v2, d2.data);
 
     expect(client.read(POST, v1).data.post.id).toBe(v1.postId);
     expect(client.read(POST, v2).data.post.id).toBe(v2.postId);
   });
 
   it("should flag if a query result is partial", async () => {
-    let data = await client.execute(POSTS);
+    let { data } = await client.execute(POSTS);
 
     client.write(POSTS, data);
 
@@ -232,20 +232,18 @@ describe("@grafoo/core", () => {
   });
 
   it("should remove unused records from state records", async () => {
-    let data = await client.execute(SIMPLE_AUTHORS);
+    let { data } = await client.execute(SIMPLE_AUTHORS);
 
     client.write(SIMPLE_AUTHORS, data);
 
-    let authorToBeRemoved = data.data.authors[0];
+    let authorToBeRemoved = data.authors[0];
 
     let ids = Object.keys(client.flush().records);
 
     expect(ids.some((id) => id === authorToBeRemoved.id)).toBe(true);
 
     client.write(SIMPLE_AUTHORS, {
-      data: {
-        authors: data.data.authors.filter((author) => author.id !== authorToBeRemoved.id)
-      }
+      authors: data.authors.filter((author) => author.id !== authorToBeRemoved.id)
     });
 
     let nextIds = Object.keys(client.flush().records);
@@ -256,7 +254,7 @@ describe("@grafoo/core", () => {
 
   it("should perform update to client", async () => {
     let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    let data = await client.execute(POST, variables);
+    let { data } = await client.execute(POST, variables);
 
     client.write(POST, variables, data);
 
@@ -266,10 +264,7 @@ describe("@grafoo/core", () => {
 
     expect(post.title).toBe("Quam odit");
 
-    client.write(POST, variables, {
-      data: { post: { ...post, title: "updated title" } }
-    });
-
+    client.write(POST, variables, { post: { ...post, title: "updated title" } });
     expect(client.read(POST, variables).data.post.title).toBe("updated title");
   });
 
@@ -278,14 +273,14 @@ describe("@grafoo/core", () => {
     let postData = await client.execute(POST, variables);
     let postsData = await client.execute(POSTS, variables);
 
-    client.write(POSTS, postsData);
+    client.write(POSTS, postsData.data);
 
     let { posts } = client.read(POSTS).data;
 
     expect(posts.find((p) => p.id === variables.postId).title).toBe("Quam odit");
 
     client.write(POST, variables, {
-      data: { post: { ...postData.data.post, title: "updated title" } }
+      post: { ...postData.data.post, title: "updated title" }
     });
 
     let { posts: updatedPosts } = client.read(POSTS, variables).data;
@@ -295,7 +290,7 @@ describe("@grafoo/core", () => {
 
   it("should merge records in the client when removing or adding properties", async () => {
     let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    let data = await client.execute(POST, variables);
+    let { data } = await client.execute(POST, variables);
 
     client.write(POST, variables, data);
 
@@ -305,7 +300,7 @@ describe("@grafoo/core", () => {
 
     post.foo = "bar";
 
-    client.write(POST, variables, { data: { post } });
+    client.write(POST, variables, { post });
 
     expect(client.read(POST, variables).data.post).toEqual({
       __typename: "Post",
@@ -323,7 +318,7 @@ describe("@grafoo/core", () => {
 
   it("should call client listeners on write with paths records as arguments", async () => {
     let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    let data = await client.execute(POST, variables);
+    let { data } = await client.execute(POST, variables);
 
     let listener = jest.fn();
     let listener2 = jest.fn();
@@ -348,18 +343,18 @@ describe("@grafoo/core", () => {
   });
 
   it("should be able read from the client with a declared initialState", async () => {
-    let data = await client.execute(POSTS_AND_AUTHORS);
+    let { data } = await client.execute(POSTS_AND_AUTHORS);
 
     client.write(POSTS_AND_AUTHORS, data);
 
     client = createClient(mockTransport, { idFields: ["id"], initialState: client.flush() });
 
-    expect(client.read(POSTS_AND_AUTHORS).data).toEqual(data.data);
+    expect(client.read(POSTS_AND_AUTHORS).data).toEqual(data);
   });
 
   it("should allow cache to be cleared using reset()", () => {
     let data: AuthorsQuery = { authors: [{ name: "deleteme" }] };
-    client.write(SIMPLE_AUTHORS, { data });
+    client.write(SIMPLE_AUTHORS, data);
     expect(client.read(SIMPLE_AUTHORS).data).toEqual(data);
     client.reset();
     expect(client.read(SIMPLE_AUTHORS).data).toEqual(undefined);
@@ -368,7 +363,7 @@ describe("@grafoo/core", () => {
 
   it("should accept `idFields` array in options", async () => {
     let client = createClient(mockTransport, { idFields: ["__typename", "id"] });
-    let data = await client.execute(AUTHORS);
+    let { data } = await client.execute(AUTHORS);
 
     client.write(AUTHORS, data);
 

@@ -17,17 +17,21 @@
     "access": "public"
   },
   "scripts": {
-    "build": "babel src --out-dir dist",
+    "build": "tsc",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
   "jest": {
     "transform": {
       "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
-    }
+    },
+    "resolver": "<rootDir>/../../scripts/resolver.js",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(lowdb|steno|node-fetch|fetch-blob)/)"
+    ]
   },
   "dependencies": {
-    "babel-literal-to-ast": "^2.1.0",
+    "@babel/parser": "^7.15.8",
     "crypto-js": "^4.0.0",
     "graphql": "^15.6.1",
     "graphql-query-compress": "^1.0.0"

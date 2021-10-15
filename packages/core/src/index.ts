@@ -37,10 +37,20 @@ export type GrafooInitialState = {
   paths: GrafooPaths;
 };
 
+export type GrafooSelection = {
+  name?: string;
+  args?: string[];
+  scalars?: string[];
+  select?: GrafooSelection[];
+  fragments?: string[];
+};
+
 export type GrafooQuery<T = unknown, U = unknown> = {
   query: string;
   frags?: Record<string, string>;
   paths: Record<string, { name: string; args: string[] }>;
+  selections: GrafooSelection;
+  fragments: GrafooSelection;
   _queryType: T;
   _variablesType: U;
 };
@@ -52,12 +62,8 @@ export type GrafooClient = {
   ) => Promise<GraphQlPayload<T["_queryType"]>>;
   listen: (listener: GrafooListener) => () => void;
   write: {
-    <T extends GrafooQuery>(
-      query: T,
-      variables: T["_variablesType"],
-      payload: { data: T["_queryType"] }
-    ): void;
-    <T extends GrafooQuery>(query: T, payload: { data: T["_queryType"] }): void;
+    <T extends GrafooQuery>(query: T, variables: T["_variablesType"], data: T["_queryType"]): void;
+    <T extends GrafooQuery>(query: T, data: T["_queryType"]): void;
   };
   read: <T extends GrafooQuery>(
     query: T,
@@ -101,31 +107,32 @@ export default function createClient(
   function write<T extends GrafooQuery>(
     query: T,
     variables: T["_variablesType"],
-    payload?: { data: T["_queryType"] }
+    data?: T["_queryType"]
   ) {
-    if (!payload) {
-      payload = variables as { data: T["_queryType"] };
+    if (!data) {
+      data = variables as T["_queryType"];
       variables = undefined;
     }
 
     let queryRecords: GrafooRecords = {};
 
-    for (let i in query.paths) {
-      let { name, args } = query.paths[i];
+    for (let path in query.paths) {
+      let { name, args } = query.paths[path];
       let pathData = {
-        [name]: payload.data[name]
+        [name]: data[name]
       };
+
       let pathRecords = mapRecords(pathData, idFields);
 
       Object.assign(queryRecords, pathRecords);
 
-      paths[getPathId(i, args, variables)] = {
+      paths[getPathId(path, args, variables)] = {
         data: pathData,
         records: Object.keys(pathRecords)
       };
     }
 
-    // assign new values to objects in objectsMap
+    // assign new values to records
     for (let i in queryRecords) {
       records[i] = queryRecords[i] = Object.assign({}, records[i], queryRecords[i]);
     }
@@ -148,9 +155,9 @@ export default function createClient(
     let queryRecords: GrafooRecords = {};
     let partial = false;
 
-    for (let i in query.paths) {
-      let { name, args } = query.paths[i];
-      let currentPath = paths[getPathId(i, args, variables)];
+    for (let path in query.paths) {
+      let { name, args } = query.paths[path];
+      let currentPath = paths[getPathId(path, args, variables)];
 
       if (currentPath) {
         data[name] = currentPath.data[name];

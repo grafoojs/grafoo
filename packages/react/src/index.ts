@@ -1,10 +1,6 @@
 import * as React from "react";
 import { GrafooClient, GrafooQuery } from "@grafoo/core";
-import createBindings, {
-  GrafooConsumerProps,
-  GrafooBoundState,
-  GrafooBoundMutations
-} from "@grafoo/bindings";
+import createBindings, { GrafooConsumerProps, GrafooBoundState } from "@grafoo/bindings";
 
 // @ts-ignore
 export let GrafooContext = React.createContext<GrafooClient>({});
@@ -17,8 +13,8 @@ export let GrafooProvider: React.FC<GrafooProviderProps> = (props) =>
   React.createElement(GrafooContext.Provider, { value: props.client }, props.children);
 
 export function useGrafoo<T extends GrafooQuery, U extends Record<string, GrafooQuery>>(
-  props: GrafooConsumerProps<T, U>
-): GrafooBoundState & T["_queryType"] & GrafooBoundMutations<U> {
+  props: { lazy?: boolean } & GrafooConsumerProps<T, U>
+): GrafooBoundState<T, U> {
   let client = React.useContext(GrafooContext);
   let update = React.useCallback(() => setState(bindings.getState()), []);
   let bindings = React.useMemo(() => createBindings(client, update, props), []);
@@ -26,7 +22,7 @@ export function useGrafoo<T extends GrafooQuery, U extends Record<string, Grafoo
   let variables = React.useRef(props.variables);
 
   React.useEffect(() => {
-    if (!props.skip && props.query && !state.loaded) {
+    if (!props.lazy && props.query && !state.loaded) {
       bindings.load();
     }
 
@@ -37,13 +33,13 @@ export function useGrafoo<T extends GrafooQuery, U extends Record<string, Grafoo
 
   React.useEffect(() => {
     if (
-      (!props.skip && props.query && !state.loaded) ||
+      (!props.lazy && props.query && !state.loaded) ||
       !deepEqual(variables.current, props.variables)
     ) {
       variables.current = props.variables;
       bindings.load(props.variables);
     }
-  }, [props.skip, props.variables]);
+  }, [props.lazy, props.variables]);
 
   return state;
 }
