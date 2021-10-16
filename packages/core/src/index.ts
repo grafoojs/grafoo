@@ -37,12 +37,13 @@ export type GrafooInitialState = {
   paths: GrafooPaths;
 };
 
+export type GrafooShape = { id: string } | { [key: string]: GrafooShape } | GrafooShape[];
+
 export type GrafooSelection = {
-  name?: string;
   args?: string[];
   scalars?: string[];
-  select?: GrafooSelection[];
   fragments?: string[];
+  select?: Record<string, GrafooSelection>;
 };
 
 export type GrafooQuery<T = unknown, U = unknown> = {

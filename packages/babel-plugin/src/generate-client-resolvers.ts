@@ -19,26 +19,24 @@ let getNonNullType = (typeInfo: TypeInfo) => {
 
 let findPath = (clientResolver: GrafooSelection, currentFields: string[]) => {
   let selection = clientResolver;
-  for (let field of currentFields) {
-    selection = selection.select.find((s) => s.name === field);
-  }
+  for (let field of currentFields) selection = selection.select[field];
   return selection;
 };
 
 export default function generateClientResolver(schema: GraphQLSchema, document: ASTNode) {
   let t = new TypeInfo(schema);
-  let clientResolver: GrafooSelection = { select: [] };
+  let clientResolver = { select: {} } as GrafooSelection;
   let currentFields = [];
 
   let incrementClientResolver = (node: FieldNode | FragmentDefinitionNode) => {
     let selection = findPath(clientResolver, currentFields);
     if (!(getNonNullType(t) instanceof GraphQLScalarType)) {
-      let newSelection: GrafooSelection = { name: node.name.value };
+      let newSelection: GrafooSelection = {};
       let args = (node as FieldNode).arguments?.map((a) => a.name.value) ?? [];
       if (args.length) newSelection.args = args;
 
-      selection.select = selection.select ?? [];
-      selection.select.push(newSelection);
+      selection.select = selection.select ?? {};
+      selection.select[node.name.value] = newSelection;
 
       currentFields.push(node.name.value);
     } else {

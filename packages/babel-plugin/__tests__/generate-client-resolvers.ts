@@ -34,29 +34,17 @@ describe("generateClientResolver", () => {
     `;
 
     expect(generateClientResolver(schema, query)).toEqual({
-      select: [
-        {
-          name: "posts",
+      select: {
+        posts: {
           scalars: ["id"],
           fragments: ["PostStuff"],
-          select: [
-            {
-              name: "author",
-              fragments: ["AuthorStuff"]
-            }
-          ]
+          select: { author: { fragments: ["AuthorStuff"] } }
         },
-        {
-          name: "author",
+        author: {
           scalars: ["id", "name"],
-          select: [
-            {
-              name: "posts",
-              scalars: ["id", "title"]
-            }
-          ]
+          select: { posts: { scalars: ["id", "title"] } }
         }
-      ]
+      }
     });
 
     let fragments = graphql`
@@ -75,41 +63,21 @@ describe("generateClientResolver", () => {
     `;
 
     expect(generateClientResolver(schema, fragments)).toEqual({
-      select: [
-        {
-          name: "AuthorStuff",
+      select: {
+        AuthorStuff: {
           scalars: ["id", "name"],
-          select: [
-            {
-              name: "posts",
+          select: {
+            posts: {
               args: ["from", "to"],
               fragments: ["PostStuff"],
               scalars: ["id"]
             }
-          ]
+          }
         },
-        {
-          name: "PostStuff",
+        PostStuff: {
           scalars: ["title"]
         }
-      ]
+      }
     });
   });
 });
-
-// const values = {
-//   posts: [
-//     ["record", { author: "record" }],
-//     ["record", { author: "record" }],
-//     ["record", { author: "record" }],
-//     ["record", { author: "record" }],
-//     ["record", { author: "record" }],
-//     ["record", { author: "record" }],
-//     ["record", { author: "record" }],
-//     ["record", { author: "record" }],
-//   ],
-//   authors: [
-//     ["record", { posts: ["record", "record", "record", "record"] }],
-//     ["record", { posts: ["record", "record", "record", "record"] }],
-//   ]
-// }

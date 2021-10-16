@@ -85,7 +85,13 @@ export default function compileDocument(source: string, opts: Options) {
           // based on compress(print(s))?
           [compress(print(s))]: {
             name: s.name.value,
-            args: s.arguments.map((a) => a.name.value)
+            args: s.arguments.map((a) => {
+              if (a.value?.kind === "Variable") {
+                return a.value.name.value;
+              }
+
+              return a.name.value;
+            })
           }
         }),
       {}

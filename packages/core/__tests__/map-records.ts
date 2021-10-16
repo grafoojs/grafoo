@@ -80,7 +80,7 @@ describe("map-objects", () => {
 
     let records = mapRecords(tree, idFields);
 
-    let expected = ["Post1", "Author2", "Post3", "Author4", "Post5", "Author6"];
+    let expected = ["Post:1", "Author:2", "Post:3", "Author:4", "Post:5", "Author:6"];
 
     expect(Object.keys(records).every((obj) => expected.some((exp) => exp === obj))).toBe(true);
   });
