@@ -29,7 +29,8 @@
     "resolver": "<rootDir>/../../scripts/resolver.js",
     "transformIgnorePatterns": [
       "node_modules/(?!(lowdb|steno|node-fetch|fetch-blob)/)"
-    ]
+    ],
+    "modulePathIgnorePatterns": ["<rootDir>/__tests__/data"]
   },
   "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974"
 }

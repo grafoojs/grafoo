@@ -15,14 +15,16 @@ let Query = {
   author(_, args) {
     return db.data.authors.find((author) => author.id === args.id);
   },
-  authors() {
-    return db.data.authors;
+  authors(_, args) {
+    let { authors } = db.data;
+    return authors.slice(args.from ?? 0, args.to ?? authors.length);
   },
   post(_, args) {
     return db.data.posts.find((post) => post.id === args.id);
   },
-  posts() {
-    return db.data.posts;
+  posts(_, args) {
+    let { posts } = db.data;
+    return posts.slice(args.from ?? 0, args.to ?? posts.length);
   }
 };
 
@@ -87,12 +89,12 @@ let Mutation = {
 };
 
 let Author = {
-  posts(author) {
-    let s = author.posts
+  posts(author, args) {
+    let posts = author.posts
       ? author.posts.map((id) => db.data.posts.find((post) => post.id === id))
       : null;
 
-    return s;
+    return posts.slice(args.from ?? 0, args.to ?? posts.length);
   }
 };
 

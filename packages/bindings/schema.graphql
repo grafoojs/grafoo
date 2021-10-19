@@ -1,8 +1,8 @@
 type Query {
   author(id: ID!): Author!
-  authors: [Author!]!
+  authors(from: Int, to: Int): [Author!]!
   post(id: ID!): Post!
-  posts: [Post!]!
+  posts(from: Int, to: Int): [Post!]!
 }
 
 type Mutation {
@@ -17,7 +17,7 @@ type Mutation {
 type Author {
   id: ID!
   name: String!
-  posts: [Post!]
+  posts(from: Int, to: Int): [Post!]
 }
 
 type Post {

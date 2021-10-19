@@ -1,59 +1,44 @@
 import { GrafooQuery, GrafooRecords, GrafooSelection, GrafooShape } from ".";
-import { idFromBranch, isNotNullObject, getPathId } from "./util";
+import { idFromBranch, getPathId, resolveSelection } from "./util";
 
-export default function storeValues(
-  tree: unknown,
-  idFields: string[],
+export default function storeValues<T>(
+  tree: T,
   { selections, fragments }: GrafooQuery,
+  idFields: string[],
   variables?: Record<string, unknown>
 ) {
-  let shape = {} as GrafooShape;
-  let stack = [] as [string, unknown, GrafooSelection, GrafooShape][];
-  let records = {} as GrafooRecords;
-
-  for (let [k, v] of Object.entries(tree)) {
-    stack.push([k, v, selections, shape]);
-  }
+  let path: GrafooShape = {};
+  let records: GrafooRecords = {};
+  let stack: [string, T, GrafooSelection, GrafooShape][] = [["", tree, selections, path]];
 
   while (stack.length) {
-    let [path, branch, selection, shape] = stack.shift();
+    let [name, branch, select, path] = stack.shift();
+    let isListItem = isNaN(name as any);
+    let currentSelection = resolveSelection(isListItem ? select.select[name] : select, fragments);
+    let pathId = isListItem ? getPathId(name, currentSelection.args, variables) : name;
 
-    if (isNotNullObject(branch)) {
-      let isBrachList = Array.isArray(branch);
-      let currentSelection = isNaN(path as any) ? selection.select[path] : selection;
-      let queryPath = isNaN(path as any) ? path : getPathId(path, currentSelection.args, variables);
+    if (Array.isArray(branch)) {
+      path[pathId] = [];
+    } else {
+      let id = idFromBranch(branch, idFields);
 
-      if (currentSelection.fragments) {
-        for (let f of currentSelection.fragments) {
-          let fragment = fragments.select[f];
-
-          currentSelection = {
-            scalars: currentSelection.scalars?.concat(fragment.scalars),
-            args: currentSelection.args?.concat(fragment.args),
-            select: Object.assign({}, currentSelection.select, fragment.select),
-            fragments: fragment.fragments
-          };
-        }
-      }
-
-      if (isBrachList) {
-        shape[queryPath] = [];
-      } else {
-        let id = idFromBranch(branch, idFields);
-
+      if (id) {
         records[id] = records[id] || {};
-        for (let field of currentSelection.scalars || []) {
+
+        for (let field of currentSelection.scalars) {
           records[id][field] = branch[field];
         }
 
-        shape[queryPath] = { id };
+        path[pathId] = { id };
       }
+    }
 
-      for (let [k, v] of Object.entries(branch)) {
-        stack.unshift([k, v, currentSelection, shape[path]]);
+    for (let [k, v] of Object.entries(branch)) {
+      if (typeof v === "object") {
+        stack.unshift([k, v, currentSelection, path[pathId] || path]);
       }
     }
   }
 
-  return { shape, records };
+  return { path, records };
 }

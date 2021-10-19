@@ -37,7 +37,7 @@ export type GrafooInitialState = {
   paths: GrafooPaths;
 };
 
-export type GrafooShape = { id: string } | { [key: string]: GrafooShape } | GrafooShape[];
+export type GrafooShape = ({ id?: string } | { [key: string]: GrafooShape }) | GrafooShape[];
 
 export type GrafooSelection = {
   args?: string[];
