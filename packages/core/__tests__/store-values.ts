@@ -8,7 +8,7 @@ let idFields = ["id"];
 
 describe("storeValues", () => {
   test("should yield correct path and records to a normal query", () => {
-    let POSTS_AND_AUTHORS = graphql`
+    let query = graphql`
       query {
         posts {
           title
@@ -28,7 +28,7 @@ describe("storeValues", () => {
       }
     `;
 
-    let { path, records } = storeValues(postsAndAuthors.data, POSTS_AND_AUTHORS, idFields);
+    let { path, records } = storeValues(query, {}, postsAndAuthors.data, idFields);
 
     expect(path).toEqual(postsAndAuthors.path);
     expect(records).toEqual(postsAndAuthors.records);
@@ -58,7 +58,7 @@ describe("storeValues", () => {
       }
     `;
 
-    let { path, records } = storeValues(postsWithFragments.data, query, idFields);
+    let { path, records } = storeValues(query, {}, postsWithFragments.data, idFields);
 
     expect(path).toEqual(postsWithFragments.path);
     expect(records).toEqual(postsWithFragments.records);
@@ -82,7 +82,7 @@ describe("storeValues", () => {
       to: 2
     };
 
-    let { path, records } = storeValues(authorWithArguments.data, query, idFields, variables);
+    let { path, records } = storeValues(query, variables, authorWithArguments.data, idFields);
 
     expect(path).toEqual(authorWithArguments.path);
     expect(records).toEqual(authorWithArguments.records);
@@ -110,7 +110,7 @@ describe("storeValues", () => {
       to: 2
     };
 
-    let { path, records } = storeValues(authorWithArguments.data, query, idFields, variables);
+    let { path, records } = storeValues(query, variables, authorWithArguments.data, idFields);
 
     expect(path).toEqual(authorWithArguments.path);
     expect(records).toEqual(authorWithArguments.records);

@@ -1,4 +1,4 @@
-import { GrafooSelection } from ".";
+import { GrafooQuery, GrafooSelection } from "./types";
 
 export let idFromBranch = <T>(branch: T, idFields: string[]) =>
   branch
@@ -10,26 +10,30 @@ export let idFromBranch = <T>(branch: T, idFields: string[]) =>
 
 export let isNotNullObject = (obj: unknown) => obj && typeof obj === "object";
 
-export function getPathId(path: string, args: string[], variables?: unknown) {
+export function getPathId<T extends GrafooQuery>(
+  path: string,
+  args: Record<string, string> = {},
+  variables: T["_variablesType"]
+) {
   variables = variables || {};
-  args = args || [];
+  args = args || {};
 
-  return [path]
-    .concat(
-      args
-        .map(
-          (a) => `${a}:${variables[a] === "object" ? JSON.stringify(variables[a]) : variables[a]}`
-        )
-        .filter(Boolean)
-    )
-    .join(":");
+  let ids = Object.entries(args).map(([name, value]) => {
+    let rgx = /^\$(?<variable>\w+)/i;
+    let { variable } = rgx.exec(value)?.groups ?? {};
+    let finalValue = variable ? variables[variable] : value;
+
+    return `${name}:${finalValue}`;
+  });
+
+  return [path].concat(ids).join(":");
 }
 
 export function resolveSelection(
   selection: GrafooSelection,
   fragments: GrafooSelection
 ): GrafooSelection {
-  let newArgs = selection.args ?? [];
+  let newArgs = selection.args ?? {};
   let newScalars = selection.scalars ?? [];
   let newSelection = selection.select ?? {};
   let newFragments = [];

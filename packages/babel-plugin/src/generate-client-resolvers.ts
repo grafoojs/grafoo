@@ -8,7 +8,8 @@ import {
   GraphQLSchema,
   TypeInfo,
   visit,
-  visitWithTypeInfo
+  visitWithTypeInfo,
+  print
 } from "graphql";
 
 let getNonNullType = (typeInfo: TypeInfo) => {
@@ -32,8 +33,13 @@ export default function generateClientResolver(schema: GraphQLSchema, document: 
     let selection = findPath(clientResolver, currentFields);
     if (!(getNonNullType(t) instanceof GraphQLScalarType)) {
       let newSelection: GrafooSelection = {};
-      let args = (node as FieldNode).arguments?.map((a) => a.name.value) ?? [];
-      if (args.length) newSelection.args = args;
+
+      if (node.kind === "Field" && node.arguments?.length) {
+        newSelection.args = node.arguments.reduce(
+          (args, arg) => ({ ...args, [arg.name.value]: print(arg.value) }),
+          {}
+        );
+      }
 
       selection.select = selection.select ?? {};
       selection.select[node.name.value] = newSelection;

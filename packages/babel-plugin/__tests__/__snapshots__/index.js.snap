@@ -19,18 +19,41 @@ let query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 let query = {
-  query:
+  document:
     "query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}",
-  paths: {
-    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
-      {
-        name: "posts",
-        args: ["offset", "start"]
+  operation: {
+    select: {
+      posts: {
+        args: {
+          offset: "$offset",
+          start: "$start"
+        },
+        select: {
+          authors: {
+            scalars: ["id", "name"],
+            select: {
+              username: {}
+            }
+          },
+          tags: {
+            scalars: ["id", "name"]
+          }
+        },
+        scalars: ["body", "createdAt", "id", "title"]
       },
-    "user(id:$id){id name username}": {
-      name: "user",
-      args: ["id"]
+      user: {
+        args: {
+          id: "$id"
+        },
+        scalars: ["id", "username"],
+        select: {
+          name: {}
+        }
+      }
     }
+  },
+  fragments: {
+    select: {}
   }
 };
 
@@ -56,20 +79,43 @@ let query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 let query = {
-  id: "6e0697df8f2453f2643bbd1e8a39c348",
-  query:
+  document:
     "query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}",
-  paths: {
-    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
-      {
-        name: "posts",
-        args: ["offset", "start"]
+  operation: {
+    select: {
+      posts: {
+        args: {
+          offset: "$offset",
+          start: "$start"
+        },
+        select: {
+          authors: {
+            scalars: ["id", "name"],
+            select: {
+              username: {}
+            }
+          },
+          tags: {
+            scalars: ["id", "name"]
+          }
+        },
+        scalars: ["body", "createdAt", "id", "title"]
       },
-    "user(id:$id){id name username}": {
-      name: "user",
-      args: ["id"]
+      user: {
+        args: {
+          id: "$id"
+        },
+        scalars: ["id", "username"],
+        select: {
+          name: {}
+        }
+      }
     }
-  }
+  },
+  fragments: {
+    select: {}
+  },
+  id: "6e0697df8f2453f2643bbd1e8a39c348"
 };
 
 
@@ -161,18 +207,41 @@ let query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 let query = {
-  query:
+  document:
     "query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}",
-  paths: {
-    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
-      {
-        name: "posts",
-        args: ["offset", "start"]
+  operation: {
+    select: {
+      posts: {
+        args: {
+          offset: "$offset",
+          start: "$start"
+        },
+        select: {
+          authors: {
+            scalars: ["id", "name"],
+            select: {
+              username: {}
+            }
+          },
+          tags: {
+            scalars: ["id", "name"]
+          }
+        },
+        scalars: ["body", "createdAt", "id", "title"]
       },
-    "user(id:$id){id name username}": {
-      name: "user",
-      args: ["id"]
+      user: {
+        args: {
+          id: "$id"
+        },
+        scalars: ["id", "username"],
+        select: {
+          name: {}
+        }
+      }
     }
+  },
+  fragments: {
+    select: {}
   }
 };
 
@@ -225,18 +294,41 @@ let query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 let query = {
-  query:
+  document:
     "query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}",
-  paths: {
-    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
-      {
-        name: "posts",
-        args: ["offset", "start"]
+  operation: {
+    select: {
+      posts: {
+        args: {
+          offset: "$offset",
+          start: "$start"
+        },
+        select: {
+          authors: {
+            scalars: ["id", "name"],
+            select: {
+              username: {}
+            }
+          },
+          tags: {
+            scalars: ["id", "name"]
+          }
+        },
+        scalars: ["body", "createdAt", "id", "title"]
       },
-    "user(id:$id){id name username}": {
-      name: "user",
-      args: ["id"]
+      user: {
+        args: {
+          id: "$id"
+        },
+        scalars: ["id", "username"],
+        select: {
+          name: {}
+        }
+      }
     }
+  },
+  fragments: {
+    select: {}
   }
 };
 

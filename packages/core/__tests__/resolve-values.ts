@@ -26,9 +26,10 @@ describe("resolveValues", () => {
       }
     `;
 
-    expect(resolveValues(query, postsAndAuthors.path, postsAndAuthors.records)).toEqual(
-      postsAndAuthors.data
-    );
+    let { data, records } = resolveValues(query, {}, postsAndAuthors.path, postsAndAuthors.records);
+
+    expect(data).toEqual(postsAndAuthors.data);
+    expect(records).toEqual(postsAndAuthors.records);
   });
 
   it("should resolve the data given a query with fragments, a path and the records", () => {
@@ -55,9 +56,15 @@ describe("resolveValues", () => {
       }
     `;
 
-    expect(resolveValues(query, postsWithFragments.path, postsWithFragments.records)).toEqual(
-      postsWithFragments.data
+    let { data, records } = resolveValues(
+      query,
+      {},
+      postsWithFragments.path,
+      postsWithFragments.records
     );
+
+    expect(data).toEqual(postsWithFragments.data);
+    expect(records).toEqual(postsWithFragments.records);
   });
 
   it("should resolve the data given a query with arguments, a path and the records", () => {
@@ -78,9 +85,15 @@ describe("resolveValues", () => {
       to: 2
     };
 
-    expect(
-      resolveValues(query, authorWithArguments.path, authorWithArguments.records, variables)
-    ).toEqual(authorWithArguments.data);
+    let { data, records } = resolveValues(
+      query,
+      variables,
+      authorWithArguments.path,
+      authorWithArguments.records
+    );
+
+    expect(data).toEqual(authorWithArguments.data);
+    expect(records).toEqual(authorWithArguments.records);
   });
 
   it("should resolve the data given a query with fragments and arguments, a path and the records", () => {
@@ -105,8 +118,14 @@ describe("resolveValues", () => {
       to: 2
     };
 
-    expect(
-      resolveValues(query, authorWithArguments.path, authorWithArguments.records, variables)
-    ).toEqual(authorWithArguments.data);
+    let { data, records } = resolveValues(
+      query,
+      variables,
+      authorWithArguments.path,
+      authorWithArguments.records
+    );
+
+    expect(data).toEqual(authorWithArguments.data);
+    expect(records).toEqual(authorWithArguments.records);
   });
 });

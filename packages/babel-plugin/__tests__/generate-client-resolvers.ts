@@ -68,7 +68,7 @@ describe("generateClientResolver", () => {
           scalars: ["id", "name"],
           select: {
             posts: {
-              args: ["from", "to"],
+              args: { from: "1", to: "10" },
               fragments: ["PostStuff"],
               scalars: ["id"]
             }
@@ -76,6 +76,23 @@ describe("generateClientResolver", () => {
         },
         PostStuff: {
           scalars: ["title"]
+        }
+      }
+    });
+
+    let operationWithVariables = graphql`
+      query ($id: ID) {
+        author(id: $id) {
+          name
+        }
+      }
+    `;
+
+    expect(generateClientResolver(schema, operationWithVariables)).toEqual({
+      select: {
+        author: {
+          args: { id: "$id" },
+          scalars: ["name"]
         }
       }
     });

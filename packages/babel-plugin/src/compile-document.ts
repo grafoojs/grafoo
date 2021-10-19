@@ -1,14 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import {
-  DocumentNode,
-  FieldNode,
-  FragmentDefinitionNode,
-  buildASTSchema,
-  parse,
-  print,
-  getOperationAST
-} from "graphql";
+import { DocumentNode, buildASTSchema, parse, print, getOperationAST } from "graphql";
 import compress from "graphql-query-compress";
 import md5Hash from "crypto-js/md5";
 import { GrafooQuery } from "@grafoo/core";
@@ -52,61 +44,20 @@ export default function compileDocument(source: string, opts: Options) {
   let schemaString = getSchema(opts.schema);
   let schema = buildASTSchema(parse(schemaString));
   let document = sortDocument(insertFields(schema, parse(source), opts.idFields)) as DocumentNode;
-  let frags = document.definitions.filter(
-    (d) => d.kind === "FragmentDefinition"
-  ) as FragmentDefinitionNode[];
-
-  let grafooQuery = {} as GrafooQuery;
-
   let operation = getOperationAST(document);
   let fragments: DocumentNode = {
     ...document,
     definitions: document.definitions.filter((d) => d.kind === "FragmentDefinition")
   };
+  let compressedDocument = compress(print(document));
+  let grafooQuery: GrafooQuery = {
+    document: compressedDocument,
+    operation: generateClientResolver(schema, operation),
+    fragments: generateClientResolver(schema, fragments)
+  };
 
-  if (operation) {
-    let compressedQuery = compress(print(operation));
-
-    // Use compressedQuery version to get same hash even if
-    // query has different whitespaces, newlines, etc
-    // Document is also sorted by "sortDocument" therefore
-    // selections, fields, etc order shouldn't matter either
-    if (opts.generateIds) {
-      // @ts-ignore
-      grafooQuery.id = md5Hash(compressedQuery).toString();
-    }
-
-    grafooQuery.query = compressedQuery;
-
-    grafooQuery.paths = (operation.selectionSet.selections as FieldNode[]).reduce(
-      (acc, s) =>
-        Object.assign(acc, {
-          // TODO: generate hashes as well
-          // based on compress(print(s))?
-          [compress(print(s))]: {
-            name: s.name.value,
-            args: s.arguments.map((a) => {
-              if (a.value?.kind === "Variable") {
-                return a.value.name.value;
-              }
-
-              return a.name.value;
-            })
-          }
-        }),
-      {}
-    );
-  }
-
-  grafooQuery.selections = generateClientResolver(schema, operation);
-  grafooQuery.fragments = generateClientResolver(schema, fragments);
-
-  if (frags.length) {
-    grafooQuery.frags = {};
-
-    for (let frag of frags) {
-      grafooQuery.frags[frag.name.value] = compress(print(frag));
-    }
+  if (opts.generateIds) {
+    grafooQuery.id = md5Hash(compressedDocument).toString();
   }
 
   return JSON.stringify(grafooQuery);
