@@ -196,7 +196,7 @@ describe("@grafoo/react", () => {
     let author1 = authors[0];
     let author2 = authors[1];
 
-    await mockQueryRequest({ ...AUTHOR, variables: { id: author1.id } });
+    await mockQueryRequest(AUTHOR, { id: author1.id });
     let { result, rerender, waitForNextUpdate } = renderHook<{ id: string }, any>(
       ({ id }) => useGrafoo({ query: AUTHOR, variables: { id } }),
       {
@@ -210,7 +210,7 @@ describe("@grafoo/react", () => {
     expect(result.current).toEqual({ loading: true, loaded: false });
     await waitForNextUpdate();
     expect(result.current).toEqual({ loading: false, loaded: true, author: author1 });
-    await mockQueryRequest({ ...AUTHOR, variables: { id: author2.id } });
+    await mockQueryRequest(AUTHOR, { id: author2.id });
     rerender({ id: author2.id });
     expect(result.current).toEqual({ loading: true, loaded: true, author: author1 });
     await waitForNextUpdate();
@@ -232,7 +232,7 @@ describe("@grafoo/react", () => {
   it("should handle mutations", async () => {
     let variables = { name: "Bart" };
 
-    let data = await mockQueryRequest({ ...CREATE_AUTHOR, variables });
+    let data = await mockQueryRequest(CREATE_AUTHOR, variables);
     let { result } = renderHook(
       () => useGrafoo({ mutations: { createAuthor: { query: CREATE_AUTHOR } } }),
       { wrapper }
@@ -271,7 +271,7 @@ describe("@grafoo/react", () => {
     expect(result.current).toMatchObject({ loading: false, loaded: true, ...data });
 
     let variables = { name: "Homer" };
-    await mockQueryRequest({ ...CREATE_AUTHOR, variables });
+    await mockQueryRequest(CREATE_AUTHOR, variables);
     act(() => {
       result.current.createAuthor(variables);
     });
@@ -293,7 +293,7 @@ describe("@grafoo/react", () => {
 
     let { result } = renderHook(() => useGrafoo({ query: AUTHORS }), { wrapper });
 
-    expect(result.current).toEqual({ loading: false, loaded: true, ...data });
+    expect(result.current).toMatchObject({ loading: false, loaded: true, ...data });
 
     act(() => {
       client.write(AUTHORS, {

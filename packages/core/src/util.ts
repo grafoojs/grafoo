@@ -30,7 +30,7 @@ export function getPathId<T extends GrafooQuery>(
 }
 
 export function resolveSelection(
-  selection: GrafooSelection,
+  selection: GrafooSelection = {},
   fragments: GrafooSelection
 ): GrafooSelection {
   let newArgs = selection.args ?? {};

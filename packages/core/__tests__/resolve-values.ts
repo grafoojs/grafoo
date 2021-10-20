@@ -128,4 +128,52 @@ describe("resolveValues", () => {
     expect(data).toEqual(authorWithArguments.data);
     expect(records).toEqual(authorWithArguments.records);
   });
+
+  it("should yield empty objects for data and records if no paths are given", () => {
+    let query = graphql`
+      query {
+        authors {
+          name
+        }
+      }
+    `;
+
+    let { data, records, partial } = resolveValues(query, {}, {}, {});
+
+    expect(data).toEqual({});
+    expect(records).toEqual({});
+    expect(partial).toEqual(true);
+  });
+
+  it("should be able to resolve values partially", () => {
+    let query = graphql`
+      query {
+        posts {
+          title
+          body
+          author {
+            name
+          }
+        }
+
+        authors {
+          name
+          posts {
+            title
+            body
+          }
+        }
+      }
+    `;
+
+    let { data, partial } = resolveValues(
+      query,
+      {},
+      { authors: postsAndAuthors.path.authors },
+      postsAndAuthors.records
+    );
+
+    expect(data).toEqual({ authors: postsAndAuthors.data.authors });
+    expect(partial).toEqual(true);
+  });
 });

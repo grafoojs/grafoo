@@ -169,8 +169,8 @@ describe("@grafoo/core", () => {
 
     client.write(POSTS_AND_AUTHORS, data as any);
 
-    expect(client.read(POSTS).data).toEqual(data);
-    expect(client.read(AUTHORS).data).toEqual({ authors: {} });
+    expect(client.read(POSTS)).toMatchObject({ data, partial: false });
+    expect(client.read(AUTHORS)).toEqual({ data: {}, records: {}, partial: true });
   });
 
   it("should read queries from the client", async () => {
@@ -193,7 +193,7 @@ describe("@grafoo/core", () => {
 
     client.write(POST, variables, data);
 
-    expect(client.read(POST, { postId: "123" }).data).toEqual({ post: {} });
+    expect(client.read(POST, { postId: "123" }).data).toEqual({});
     expect(client.read(POST, variables).data.post.id).toBe(variables.postId);
   });
 
@@ -219,27 +219,6 @@ describe("@grafoo/core", () => {
     client.write(POSTS, data);
 
     expect(client.read(POSTS_AND_AUTHORS).partial).toBe(true);
-  });
-
-  it.skip("should remove unused records from state records", async () => {
-    let { data } = await client.execute(SIMPLE_AUTHORS);
-
-    client.write(SIMPLE_AUTHORS, data);
-
-    let authorToBeRemoved = data.authors[0];
-
-    let ids = Object.keys(client.flush().records);
-
-    expect(ids.some((id) => id === authorToBeRemoved.id)).toBe(true);
-
-    client.write(SIMPLE_AUTHORS, {
-      authors: data.authors.filter((author) => author.id !== authorToBeRemoved.id)
-    });
-
-    let nextIds = Object.keys(client.flush().records);
-
-    expect(nextIds.length).toBe(ids.length - 1);
-    expect(nextIds.some((id) => id === authorToBeRemoved.id)).toBe(false);
   });
 
   it("should perform update to client", async () => {

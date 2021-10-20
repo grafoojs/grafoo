@@ -292,13 +292,13 @@ describe("@grafoo/bindings", () => {
   });
 
   it("should provide errors on bad request", async () => {
-    let FailAuthors = { ...AUTHORS, query: AUTHORS.query.substr(1) };
+    let failedQuery = { ...AUTHORS, document: AUTHORS.document.substr(1) };
 
-    let { errors } = await mockQueryRequest(FailAuthors);
+    let { errors } = await mockQueryRequest(failedQuery);
 
     let renderFn = jest.fn();
 
-    let bindings = createBindings(client, renderFn, { query: FailAuthors });
+    let bindings = createBindings(client, renderFn, { query: failedQuery });
 
     await bindings.load();
 
@@ -317,7 +317,7 @@ describe("@grafoo/bindings", () => {
 
     let variables = { name: "Bart" };
 
-    let { data } = await mockQueryRequest({ query: CREATE_AUTHOR.query, variables });
+    let { data } = await mockQueryRequest(CREATE_AUTHOR, variables);
 
     let { data: mutationData } = await props.createAuthor(variables);
 
@@ -348,10 +348,7 @@ describe("@grafoo/bindings", () => {
 
     let variables = { name: "Homer" };
 
-    let { data } = await mockQueryRequest({
-      query: CREATE_AUTHOR.query,
-      variables
-    });
+    let { data } = await mockQueryRequest(CREATE_AUTHOR, variables);
 
     let { authors } = bindings.getState();
 
@@ -388,10 +385,7 @@ describe("@grafoo/bindings", () => {
 
     let variables = { name: "Peter" };
 
-    let { data } = await mockQueryRequest({
-      query: CREATE_AUTHOR.query,
-      variables
-    });
+    let { data } = await mockQueryRequest(CREATE_AUTHOR, variables);
 
     let { authors } = bindings.getState();
 
@@ -407,10 +401,9 @@ describe("@grafoo/bindings", () => {
   });
 
   it("should update if query objects has less keys then nextObjects", async () => {
-    let { query } = CREATE_AUTHOR;
     let {
       data: { createAuthor: author }
-    } = await mockQueryRequest<CreateAuthorMutation>({ query, variables: { name: "gustav" } });
+    } = await mockQueryRequest<CreateAuthorMutation>(CREATE_AUTHOR, { name: "gustav" });
     let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
 
     client.write(AUTHORS, data);
@@ -439,13 +432,9 @@ describe("@grafoo/bindings", () => {
   });
 
   it("should update if query objects is modified", async () => {
-    let { query } = CREATE_AUTHOR;
     let {
       data: { createAuthor: author }
-    } = await mockQueryRequest<CreateAuthorMutation>({
-      query,
-      variables: { name: "sven" }
-    });
+    } = await mockQueryRequest<CreateAuthorMutation>(CREATE_AUTHOR, { name: "sven" });
     let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
 
     client.write(AUTHORS, data);
@@ -467,7 +456,7 @@ describe("@grafoo/bindings", () => {
 
     let variables = { ...author, name: "johan" };
 
-    await mockQueryRequest({ query: UPDATE_AUTHOR.query, variables });
+    await mockQueryRequest(UPDATE_AUTHOR, variables);
 
     await updateAuthor(variables);
 
@@ -521,21 +510,18 @@ describe("@grafoo/bindings", () => {
     let props = bindings.getState();
 
     let variables = { name: "mikel" };
-    let { data } = await mockQueryRequest<CreateAuthorMutation>({
-      query: CREATE_AUTHOR.query,
-      variables
-    });
-    expect(await mockQueryRequest({ query: CREATE_AUTHOR.query, variables })).toEqual(
+    let { data } = await mockQueryRequest<CreateAuthorMutation>(CREATE_AUTHOR, variables);
+    expect(await mockQueryRequest(CREATE_AUTHOR, variables)).toEqual(
       await props.createAuthor(variables)
     );
 
     variables = { ...data.createAuthor, name: "miguel" };
-    expect(await mockQueryRequest({ query: UPDATE_AUTHOR.query, variables })).toEqual(
+    expect(await mockQueryRequest(UPDATE_AUTHOR, variables)).toEqual(
       await props.updateAuthor(variables)
     );
 
     variables = data.createAuthor;
-    expect(await mockQueryRequest({ query: DELETE_AUTHOR.query, variables })).toEqual(
+    expect(await mockQueryRequest(DELETE_AUTHOR, variables)).toEqual(
       await props.deleteAuthor(data.createAuthor)
     );
   });
@@ -551,12 +537,12 @@ describe("@grafoo/bindings", () => {
 
     let bindings = createBindings(client, () => {}, { query: AUTHOR, variables: author1Variables });
 
-    await mockQueryRequest({ query: AUTHOR.query, variables: author1Variables });
+    await mockQueryRequest(AUTHOR, author1Variables);
     await bindings.load();
     expect(bindings.getState().author).toEqual(author1);
     expect(client.read(AUTHOR, author1Variables).data.author).toEqual(author1);
 
-    await mockQueryRequest({ query: AUTHOR.query, variables: author2Variables });
+    await mockQueryRequest(AUTHOR, author2Variables);
     await bindings.load(author2Variables);
     expect(bindings.getState().author).toEqual(author2);
     expect(client.read(AUTHOR, author2Variables).data.author).toEqual(author2);

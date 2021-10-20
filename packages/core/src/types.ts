@@ -24,7 +24,10 @@ export type GrafooInitialState = {
   paths: GrafooPath;
 };
 
-export type GrafooPath = ({ id?: string } | { [key: string]: GrafooPath }) | GrafooPath[];
+export type GrafooPath<T extends { id: string } = { id: string }> =
+  | { [U in keyof T]: U extends "id" ? string : GrafooPath }
+  | GrafooPath[]
+  | null;
 
 export type GrafooSelection = {
   args?: Record<string, string>;

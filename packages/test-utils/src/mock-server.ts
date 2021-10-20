@@ -17,14 +17,14 @@ let Query = {
   },
   authors(_, args) {
     let { authors } = db.data;
-    return authors.slice(args.from ?? 0, args.to ?? authors.length);
+    return authors?.slice(args.from ?? 0, args.to ?? authors.length) ?? null;
   },
   post(_, args) {
     return db.data.posts.find((post) => post.id === args.id);
   },
   posts(_, args) {
     let { posts } = db.data;
-    return posts.slice(args.from ?? 0, args.to ?? posts.length);
+    return posts?.slice(args.from ?? 0, args.to ?? posts.length) ?? null;
   }
 };
 
@@ -94,7 +94,7 @@ let Author = {
       ? author.posts.map((id) => db.data.posts.find((post) => post.id === id))
       : null;
 
-    return posts.slice(args.from ?? 0, args.to ?? posts.length);
+    return posts?.slice(args.from ?? 0, args.to ?? posts.length) ?? null;
   }
 };
 
@@ -125,11 +125,14 @@ export function executeQuery<T>({ query, variables }: ExecuteQueryArg): Promise<
   return graphql({ schema: schema, source: query, variableValues: variables });
 }
 
-export async function mockQueryRequest<T>(request: ExecuteQueryArg): Promise<GraphQlPayload<T>> {
+export async function mockQueryRequest<T>(
+  query: { document: string },
+  variables?: Record<string, unknown>
+): Promise<GraphQlPayload<T>> {
   fetchMock.reset();
   fetchMock.restore();
 
-  let response = await executeQuery<T>(request);
+  let response = await executeQuery<T>({ query: query.document, variables });
   fetchMock.post("*", response);
 
   return response;

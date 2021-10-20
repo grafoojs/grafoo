@@ -17,28 +17,33 @@ export default function storeValues<T extends GrafooQuery>(
   while (stack.length) {
     let [name, branch, select, path] = stack.shift();
     let isListItem = isNaN(name as any);
-    let resolvedSelection = resolveSelection(isListItem ? select.select[name] : select, fragments);
-    let pathId = isListItem ? getPathId(name, resolvedSelection.args, variables) : name;
+    let currentSelect = resolveSelection(isListItem ? select.select[name] : select, fragments);
+    let pathId = isListItem ? getPathId(name, currentSelect.args, variables) : name;
+
+    if (!branch) {
+      path[pathId] = null;
+      continue;
+    }
 
     if (Array.isArray(branch)) {
       path[pathId] = [];
-    } else {
-      let id = idFromBranch(branch, idFields);
+    }
 
-      if (id) {
-        records[id] = records[id] || {};
+    let id = idFromBranch(branch, idFields);
 
-        for (let field of resolvedSelection.scalars) {
-          records[id][field] = branch[field];
-        }
+    if (id) {
+      records[id] = records[id] || {};
 
-        path[pathId] = { id };
+      for (let field of currentSelect.scalars) {
+        records[id][field] = branch[field];
       }
+
+      path[pathId] = { id };
     }
 
     for (let [k, v] of Object.entries(branch)) {
       if (typeof v === "object") {
-        stack.unshift([k, v, resolvedSelection, path[pathId] || path]);
+        stack.unshift([k, v, currentSelect, path[pathId] || path]);
       }
     }
   }
