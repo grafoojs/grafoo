@@ -30,5 +30,8 @@
       "node_modules/(?!(lowdb|steno|node-fetch|fetch-blob)/)"
     ]
   },
+  "dependencies": {
+    "@grafoo/compiler": "^1.4.1"
+  },
   "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974"
 }
