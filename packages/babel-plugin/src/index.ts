@@ -1,27 +1,52 @@
+import * as fs from "fs";
+import * as path from "path";
 import type * as BabelCoreNamespace from "@babel/core";
 import type { PluginObj } from "@babel/core";
 import { parseExpression } from "@babel/parser";
-
-import compileDocument from "./compile-document";
+import compileDocument, { Options } from "@grafoo/compiler";
 
 type Babel = typeof BabelCoreNamespace;
 
-export type Options = {
-  schema: string;
-  compress?: boolean;
-  generateIds?: boolean;
-  idFields?: string[];
-};
+let schema: string;
+function getSchema(schemaPath: string) {
+  if (schema) return schema;
+
+  let fullPath: string;
+
+  if (!schemaPath) {
+    let schemaJson = path.join(process.cwd(), "schema.json");
+    let schemaGraphql = path.join(process.cwd(), "schema.graphql");
+    let schemaGql = path.join(process.cwd(), "schema.gql");
+
+    fullPath = fs.existsSync(schemaJson)
+      ? schemaJson
+      : fs.existsSync(schemaGraphql)
+      ? schemaGraphql
+      : fs.existsSync(schemaGql)
+      ? schemaGql
+      : undefined;
+  } else {
+    fullPath = path.join(process.cwd(), schemaPath);
+  }
+
+  // @ts-ignore
+  fs.accessSync(fullPath, fs.F_OK);
+
+  schema = fs.readFileSync(fullPath, "utf-8");
+
+  return schema;
+}
 
 export default function transform({ types: t }: Babel): PluginObj<{ opts: Options }> {
   return {
     visitor: {
       Program(programPath, { opts }) {
+        let schemaString = getSchema(opts.schema);
         let tagIdentifiers = [];
         let clientFactoryIdentifiers = [];
 
         if (typeof opts.compress !== "boolean") {
-          opts.compress = process.env.NODE_ENV === "production";
+          opts.compress = true;
         }
 
         if (typeof opts.generateIds !== "boolean") {
@@ -47,8 +72,18 @@ export default function transform({ types: t }: Babel): PluginObj<{ opts: Option
 
             if (source.value === "@grafoo/core") {
               let defaultSpecifier = specifiers.find((s) => t.isImportDefaultSpecifier(s));
+              let gqlTag = specifiers.find((s) => s.local.name === "graphql");
+
               if (defaultSpecifier) {
                 clientFactoryIdentifiers.push(defaultSpecifier.local.name);
+              }
+
+              if (gqlTag) {
+                tagIdentifiers.push(gqlTag.local.name);
+
+                if (specifiers.length === 1) {
+                  path.remove();
+                }
               }
             }
 
@@ -141,8 +176,8 @@ export default function transform({ types: t }: Babel): PluginObj<{ opts: Option
 
               try {
                 let source = quasi.node.quasis.reduce((src, q) => src + q.value.raw, "");
-                let document = compileDocument(source, opts);
-                path.replaceWith(parseExpression(document));
+                let query = compileDocument(source, schemaString, opts);
+                path.replaceWith(parseExpression(query));
               } catch (error) {
                 if (error.code === "ENOENT") {
                   throw new Error(

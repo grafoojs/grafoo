@@ -4,7 +4,7 @@ let { exec } = require("child_process");
 
 let pkgsRoot = join(__dirname, "..", "packages");
 
-let withDeps = ["react"];
+let withDeps = ["react", "core"];
 let noDeps = readdirSync(pkgsRoot).filter((x) => !withDeps.some((y) => y === x));
 
 let command = exec(

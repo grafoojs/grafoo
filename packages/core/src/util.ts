@@ -1,4 +1,4 @@
-import { GrafooQuery, GrafooSelection } from "./types";
+import { GrafooPath, GrafooQuery, GrafooSelection } from "./types";
 
 export let idFromBranch = <T>(branch: T, idFields: string[]) =>
   branch
@@ -7,8 +7,6 @@ export let idFromBranch = <T>(branch: T, idFields: string[]) =>
         .filter(Boolean)
         .join(":")
     : "";
-
-export let isNotNullObject = (obj: unknown) => obj && typeof obj === "object";
 
 export function getPathId<T extends GrafooQuery>(
   path: string,
@@ -53,4 +51,8 @@ export function resolveSelection(
     scalars: [...new Set(newScalars)],
     fragments: [...new Set(newFragments)]
   };
+}
+
+export function getPathType(path: GrafooPath) {
+  return path ? (Array.isArray(path) ? [] : {}) : null;
 }

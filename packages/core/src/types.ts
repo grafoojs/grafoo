@@ -25,7 +25,7 @@ export type GrafooInitialState = {
 };
 
 export type GrafooPath<T extends { id: string } = { id: string }> =
-  | { [U in keyof T]: U extends "id" ? string : GrafooPath }
+  | { [U in keyof T]?: U extends "id" ? string : GrafooPath }
   | GrafooPath[]
   | null;
 

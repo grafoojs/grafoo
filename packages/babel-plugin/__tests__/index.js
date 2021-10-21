@@ -9,10 +9,6 @@ pluginTester({
     idFields: ["id"]
   },
   tests: {
-    "should throw if a import is not default": {
-      code: 'import { gql } from "@grafoo/core/tag";',
-      error: true
-    },
     "should throw if a schema is not present on the root directory": {
       pluginOptions: {
         idFields: ["id"]
@@ -21,6 +17,10 @@ pluginTester({
         import gql from "@grafoo/core/tag";
         let query = gql\`{ hello }\`;
       `,
+      error: true
+    },
+    "should throw if a import is not default": {
+      code: 'import { gql } from "@grafoo/core/tag";',
       error: true
     },
     "should throw if a tagged template string literal has expressions in it": {
@@ -63,6 +63,10 @@ pluginTester({
       error: true
     },
     "should replace a tagged template literal with the compiled grafoo object": {
+      pluginOptions: {
+        schema: "__tests__/schema.graphql",
+        idFields: ["id"]
+      },
       code: `
         import gql from "@grafoo/core/tag";
         let query = gql\`
@@ -80,11 +84,11 @@ pluginTester({
       `,
       snapshot: true
     },
-    "should compress the query string if the option compress is specified": {
+    "should not compress a query if the option compress is specified": {
       pluginOptions: {
         schema: "__tests__/schema.graphql",
         idFields: ["id"],
-        compress: true
+        compress: false
       },
       code: `
         import gql from "@grafoo/core/tag";
@@ -192,6 +196,28 @@ pluginTester({
         let query = createClient(someTransport, {
           headers: () => ({ authorization: "some-token" })
         });
+      `,
+      snapshot: true
+    },
+    "should be able to use named import graphql from @grafoo/core": {
+      pluginOptions: {
+        schema: "__tests__/schema.graphql",
+        idFields: ["id"]
+      },
+      code: `
+        import { graphql } from "@grafoo/core";
+        let query = graphql\`{ authors {name} }\`;
+      `,
+      snapshot: true
+    },
+    "should be able to use named import gql from @grafoo/core": {
+      pluginOptions: {
+        schema: "__tests__/schema.graphql",
+        idFields: ["id"]
+      },
+      code: `
+        import { gql } from "@grafoo/core";
+        let query = gql\`{ authors {name} }\`;
       `,
       snapshot: true
     }

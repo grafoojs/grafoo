@@ -1,5 +1,5 @@
 import { GrafooPath, GrafooQuery, GrafooRecords, GrafooSelection } from "./types";
-import { getPathId, resolveSelection } from "./util";
+import { getPathId, getPathType, resolveSelection } from "./util";
 
 export default function resolveValues<T extends GrafooQuery>(
   { operation, fragments }: T,
@@ -14,12 +14,16 @@ export default function resolveValues<T extends GrafooQuery>(
     [, operation, allPaths, data]
   ];
 
+  // traverse trough operation selection
   while (stack.length) {
     let [name, select, path, data] = stack.shift();
 
     if (Array.isArray(path)) {
+      // if path is a list increment the stack with
+      // the current selection and the path list children
       for (let [k, v] of Object.entries(path)) {
-        data[k] = v !== null ? (Array.isArray(v) ? [] : {}) : null;
+        // assign data type to data key given the path type
+        data[k] = getPathType(v);
         stack.unshift([name, select, v, data[k]]);
       }
     } else {
@@ -30,6 +34,7 @@ export default function resolveValues<T extends GrafooQuery>(
       if (id) {
         records[id] = record;
 
+        // get scalars from client records
         for (let s of currentSelect.scalars) {
           data[s] = record[s];
         }
@@ -39,10 +44,12 @@ export default function resolveValues<T extends GrafooQuery>(
         let pathId = getPathId(k, v.args, variables);
         let newPath = path[pathId];
 
+        // skip selection if path is undefined
         if (newPath === undefined) {
           partial = true;
         } else {
-          data[k] = newPath !== null ? (Array.isArray(path[pathId]) ? [] : {}) : null;
+          // assign data type to data key given the path type
+          data[k] = getPathType(newPath);
           if (newPath) stack.unshift([k, v, newPath, data[k]]);
         }
       }
