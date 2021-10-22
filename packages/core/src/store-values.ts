@@ -10,7 +10,9 @@ export default function storeValues<T extends GrafooQuery>(
   let { operation, fragments } = query;
   let path: GrafooPath = {};
   let records: GrafooRecords = {};
-  let stack: [string, T["_queryType"], GrafooSelection, GrafooPath][] = [[, tree, operation, path]];
+  let stack: [string, T["_queryType"], GrafooSelection, GrafooPath][] = [
+    ["", tree, operation, path]
+  ];
 
   // traverse data tree
   while (stack.length) {

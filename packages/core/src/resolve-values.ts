@@ -10,8 +10,8 @@ export default function resolveValues<T extends GrafooQuery>(
   let data = {} as T["_queryType"];
   let records: GrafooRecords = {};
   let partial = false;
-  let stack: [string, GrafooSelection, GrafooPath, T["_queryType"]][] = [
-    [, operation, allPaths, data]
+  let stack: [string, GrafooSelection, GrafooPath<{ id?: string }>, T["_queryType"]][] = [
+    ["", operation, allPaths, data]
   ];
 
   // traverse trough operation selection
