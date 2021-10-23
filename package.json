@@ -32,9 +32,6 @@
     "trailingComma": "none"
   },
   "eslintConfig": {
-    "extends": [
-      "eslint:recommended"
-    ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
       "sourceType": "module",
