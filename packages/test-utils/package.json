@@ -7,6 +7,6 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc --declaration"
   }
 }
