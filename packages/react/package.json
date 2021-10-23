@@ -35,7 +35,7 @@
     ]
   },
   "peerDependencies": {
-    "react": ">=16.8"
+    "react": ">=17"
   },
   "dependencies": {
     "@grafoo/bindings": "^1.4.3-next.0",
