@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import { GrafooQuery } from "./types";
 
 export declare function graphql<T = unknown, U = unknown>(

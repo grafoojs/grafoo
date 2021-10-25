@@ -3,8 +3,13 @@
   "version": "1.4.3-next.0",
   "description": "grafoo client core",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/core",
+  "source": "./src/index.ts",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "exports": {
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.modern.js"
+  },
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "keywords": [
@@ -18,7 +23,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "grafoo-bundle --input src/index.ts",
+    "build": "microbundle",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
