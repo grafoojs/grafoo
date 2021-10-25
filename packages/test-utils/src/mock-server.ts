@@ -1,4 +1,4 @@
-import { GraphQlPayload } from "@grafoo/types";
+import { GraphQlPayload } from "@grafoo/core";
 import fetchMock from "fetch-mock";
 import fs from "fs";
 import { graphql } from "graphql";
@@ -15,14 +15,16 @@ let Query = {
   author(_, args) {
     return db.data.authors.find((author) => author.id === args.id);
   },
-  authors() {
-    return db.data.authors;
+  authors(_, args) {
+    let { authors } = db.data;
+    return authors?.slice(args.from ?? 0, args.to ?? authors.length) ?? null;
   },
   post(_, args) {
-    return db.data.posts.find((author) => author.id === args.id);
+    return db.data.posts.find((post) => post.id === args.id);
   },
-  posts() {
-    return db.data.posts;
+  posts(_, args) {
+    let { posts } = db.data;
+    return posts?.slice(args.from ?? 0, args.to ?? posts.length) ?? null;
   }
 };
 
@@ -87,12 +89,12 @@ let Mutation = {
 };
 
 let Author = {
-  posts(author) {
-    let s = author.posts
+  posts(author, args) {
+    let posts = author.posts
       ? author.posts.map((id) => db.data.posts.find((post) => post.id === id))
       : null;
 
-    return s;
+    return posts?.slice(args.from ?? 0, args.to ?? posts.length) ?? null;
   }
 };
 
@@ -111,23 +113,26 @@ let resolvers = {
 
 let schema = makeExecutableSchema({ typeDefs: typeDefs, resolvers: resolvers });
 
-interface ExecuteQueryArg {
+type ExecuteQueryArg = {
   query: string;
   variables?: {
     [key: string]: unknown;
   };
-}
+};
 
 export function executeQuery<T>({ query, variables }: ExecuteQueryArg): Promise<GraphQlPayload<T>> {
   // @ts-ignore
   return graphql({ schema: schema, source: query, variableValues: variables });
 }
 
-export async function mockQueryRequest<T>(request: ExecuteQueryArg): Promise<GraphQlPayload<T>> {
+export async function mockQueryRequest<T>(
+  query: { document: string },
+  variables?: Record<string, unknown>
+): Promise<GraphQlPayload<T>> {
   fetchMock.reset();
   fetchMock.restore();
 
-  let response = await executeQuery<T>(request);
+  let response = await executeQuery<T>({ query: query.document, variables });
   fetchMock.post("*", response);
 
   return response;

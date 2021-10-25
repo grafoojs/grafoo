@@ -1,12 +1,12 @@
 {
   "private": true,
   "name": "@grafoo/test-utils",
-  "version": "1.4.1",
+  "version": "1.4.4-next.0",
   "main": "dist/index.js",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc --declaration"
   }
 }

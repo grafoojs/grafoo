@@ -1,29 +1,22 @@
 {
-  "name": "@grafoo/bindings",
-  "version": "1.4.5-next.0",
-  "description": "grafoo client internal helper for building framework bindings",
-  "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/bindings",
-  "source": "./src/index.ts",
+  "name": "@grafoo/compiler",
+  "version": "1.4.2-next.0",
+  "description": "grafoo client babel plugin",
+  "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/babel-plugin",
   "main": "dist/index.js",
-  "module": "dist/index.js",
-  "exports": {
-    "require": "./dist/index.cjs",
-    "default": "./dist/index.modern.js"
-  },
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "keywords": [
-    "babel",
-    "babel-plugin",
     "graphql",
     "graphql-client",
-    "grafoo"
+    "grafoo",
+    "compiler"
   ],
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "build": "microbundle",
+    "build": "tsc --declaration",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
@@ -37,7 +30,9 @@
     ]
   },
   "dependencies": {
-    "@grafoo/core": "^1.4.5-next.0"
+    "crypto-js": "^4.0.0",
+    "graphql": "^15.6.1",
+    "graphql-query-compress": "^1.0.0"
   },
   "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974"
 }

@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-/* eslint-disable no-console */
-
 var mri = require("mri");
 var build = require(".");
 

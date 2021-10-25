@@ -1,36 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`@grafoo/babel-plugin should compress the query string if the option compress is specified: should compress the query string if the option compress is specified 1`] = `
+exports[`@grafoo/babel-plugin should be able to use named import gql from @grafoo/core: should be able to use named import gql from @grafoo/core 1`] = `
 
-import gql from "@grafoo/core/tag";
+import { gql } from "@grafoo/core";
+let query = gql\`{ authors {name} }\`;
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { gql } from "@grafoo/core";
 let query = gql\`
-  query($start: Int!, $offset: Int!, $id: ID!) {
-    posts(start: $start, offset: $offset) {
-      title
-      body
-      createdAt
-      tags { name }
-      authors { name username }
+  {
+    authors {
+      name
     }
-    user(id: $id) { name username }
   }
 \`;
+
+
+`;
+
+exports[`@grafoo/babel-plugin should be able to use named import graphql from @grafoo/core: should be able to use named import graphql from @grafoo/core 1`] = `
+
+import { graphql } from "@grafoo/core";
+let query = graphql\`{ authors {name} }\`;
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
 let query = {
-  query:
-    "query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}",
-  paths: {
-    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
-      {
-        name: "posts",
-        args: ["offset", "start"]
-      },
-    "user(id:$id){id name username}": {
-      name: "user",
-      args: ["id"]
+  document: "{authors{id name}}",
+  operation: {
+    select: {
+      authors: {
+        scalars: ["id", "name"]
+      }
     }
+  },
+  fragments: {
+    select: {}
   }
 };
 
@@ -56,20 +62,43 @@ let query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 let query = {
-  id: "6e0697df8f2453f2643bbd1e8a39c348",
-  query:
-    "query ($id: ID!, $offset: Int!, $start: Int!) {\\n  posts(offset: $offset, start: $start) {\\n    authors {\\n      id\\n      name\\n      username\\n    }\\n    body\\n    createdAt\\n    id\\n    tags {\\n      id\\n      name\\n    }\\n    title\\n  }\\n  user(id: $id) {\\n    id\\n    name\\n    username\\n  }\\n}",
-  paths: {
-    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
-      {
-        name: "posts",
-        args: ["offset", "start"]
+  document:
+    "query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}",
+  operation: {
+    select: {
+      posts: {
+        args: {
+          offset: "$offset",
+          start: "$start"
+        },
+        select: {
+          authors: {
+            scalars: ["id", "name"],
+            select: {
+              username: {}
+            }
+          },
+          tags: {
+            scalars: ["id", "name"]
+          }
+        },
+        scalars: ["body", "createdAt", "id", "title"]
       },
-    "user(id:$id){id name username}": {
-      name: "user",
-      args: ["id"]
+      user: {
+        args: {
+          id: "$id"
+        },
+        scalars: ["id", "username"],
+        select: {
+          name: {}
+        }
+      }
     }
-  }
+  },
+  fragments: {
+    select: {}
+  },
+  id: "6e0697df8f2453f2643bbd1e8a39c348"
 };
 
 
@@ -142,6 +171,66 @@ let query = createClient(someTransport, options);
 
 `;
 
+exports[`@grafoo/babel-plugin should not compress a query if the option compress is specified: should not compress a query if the option compress is specified 1`] = `
+
+import gql from "@grafoo/core/tag";
+let query = gql\`
+  query($start: Int!, $offset: Int!, $id: ID!) {
+    posts(start: $start, offset: $offset) {
+      title
+      body
+      createdAt
+      tags { name }
+      authors { name username }
+    }
+    user(id: $id) { name username }
+  }
+\`;
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+let query = {
+  document:
+    "query ($id: ID!, $offset: Int!, $start: Int!) {\\n  posts(offset: $offset, start: $start) {\\n    authors {\\n      id\\n      name\\n      username\\n    }\\n    body\\n    createdAt\\n    id\\n    tags {\\n      id\\n      name\\n    }\\n    title\\n  }\\n  user(id: $id) {\\n    id\\n    name\\n    username\\n  }\\n}\\n",
+  operation: {
+    select: {
+      posts: {
+        args: {
+          offset: "$offset",
+          start: "$start"
+        },
+        select: {
+          authors: {
+            scalars: ["id", "name"],
+            select: {
+              username: {}
+            }
+          },
+          tags: {
+            scalars: ["id", "name"]
+          }
+        },
+        scalars: ["body", "createdAt", "id", "title"]
+      },
+      user: {
+        args: {
+          id: "$id"
+        },
+        scalars: ["id", "username"],
+        select: {
+          name: {}
+        }
+      }
+    }
+  },
+  fragments: {
+    select: {}
+  }
+};
+
+
+`;
+
 exports[`@grafoo/babel-plugin should not generate md5 hash and add it to object if the option generateIds is falsey: should not generate md5 hash and add it to object if the option generateIds is falsey 1`] = `
 
 import gql from "@grafoo/core/tag";
@@ -161,18 +250,41 @@ let query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 let query = {
-  query:
-    "query ($id: ID!, $offset: Int!, $start: Int!) {\\n  posts(offset: $offset, start: $start) {\\n    authors {\\n      id\\n      name\\n      username\\n    }\\n    body\\n    createdAt\\n    id\\n    tags {\\n      id\\n      name\\n    }\\n    title\\n  }\\n  user(id: $id) {\\n    id\\n    name\\n    username\\n  }\\n}",
-  paths: {
-    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
-      {
-        name: "posts",
-        args: ["offset", "start"]
+  document:
+    "query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}",
+  operation: {
+    select: {
+      posts: {
+        args: {
+          offset: "$offset",
+          start: "$start"
+        },
+        select: {
+          authors: {
+            scalars: ["id", "name"],
+            select: {
+              username: {}
+            }
+          },
+          tags: {
+            scalars: ["id", "name"]
+          }
+        },
+        scalars: ["body", "createdAt", "id", "title"]
       },
-    "user(id:$id){id name username}": {
-      name: "user",
-      args: ["id"]
+      user: {
+        args: {
+          id: "$id"
+        },
+        scalars: ["id", "username"],
+        select: {
+          name: {}
+        }
+      }
     }
+  },
+  fragments: {
+    select: {}
   }
 };
 
@@ -225,18 +337,41 @@ let query = gql\`
       ↓ ↓ ↓ ↓ ↓ ↓
 
 let query = {
-  query:
-    "query ($id: ID!, $offset: Int!, $start: Int!) {\\n  posts(offset: $offset, start: $start) {\\n    authors {\\n      id\\n      name\\n      username\\n    }\\n    body\\n    createdAt\\n    id\\n    tags {\\n      id\\n      name\\n    }\\n    title\\n  }\\n  user(id: $id) {\\n    id\\n    name\\n    username\\n  }\\n}",
-  paths: {
-    "posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}":
-      {
-        name: "posts",
-        args: ["offset", "start"]
+  document:
+    "query($id:ID!,$offset:Int!,$start:Int!){posts(offset:$offset,start:$start){authors{id name username}body createdAt id tags{id name}title}user(id:$id){id name username}}",
+  operation: {
+    select: {
+      posts: {
+        args: {
+          offset: "$offset",
+          start: "$start"
+        },
+        select: {
+          authors: {
+            scalars: ["id", "name"],
+            select: {
+              username: {}
+            }
+          },
+          tags: {
+            scalars: ["id", "name"]
+          }
+        },
+        scalars: ["body", "createdAt", "id", "title"]
       },
-    "user(id:$id){id name username}": {
-      name: "user",
-      args: ["id"]
+      user: {
+        args: {
+          id: "$id"
+        },
+        scalars: ["id", "username"],
+        select: {
+          name: {}
+        }
+      }
     }
+  },
+  fragments: {
+    select: {}
   }
 };
 

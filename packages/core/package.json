@@ -1,10 +1,15 @@
 {
   "name": "@grafoo/core",
-  "version": "1.4.1",
+  "version": "1.4.5-next.0",
   "description": "grafoo client core",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/core",
+  "source": "./src/index.ts",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "exports": {
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.modern.js"
+  },
   "author": "malbernaz<albernazmiguel@gmail.com>",
   "license": "MIT",
   "keywords": [
@@ -18,7 +23,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "grafoo-bundle --input src/index.ts",
+    "build": "microbundle",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
@@ -29,10 +34,10 @@
     "resolver": "<rootDir>/../../scripts/resolver.js",
     "transformIgnorePatterns": [
       "node_modules/(?!(lowdb|steno|node-fetch|fetch-blob)/)"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/__tests__/data"
     ]
-  },
-  "dependencies": {
-    "@grafoo/types": "^1.4.1"
   },
   "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974"
 }
