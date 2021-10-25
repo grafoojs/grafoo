@@ -1,6 +1,6 @@
 {
   "name": "@grafoo/core",
-  "version": "1.4.4-next.0",
+  "version": "1.4.5-next.0",
   "description": "grafoo client core",
   "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/core",
   "source": "./src/index.ts",
