@@ -16,7 +16,7 @@ export function useGrafoo<T extends GrafooQuery, U extends Record<string, Grafoo
   props: { lazy?: boolean } & GrafooConsumerProps<T, U>
 ): GrafooBoundState<T, U> {
   let client = React.useContext(GrafooContext);
-  let update = React.useCallback(() => setState(bindings.getState()), []);
+  let update: (s: GrafooBoundState<T, U>) => void = React.useCallback((s) => setState(s), []);
   let bindings = React.useMemo(() => createBindings(client, update, props), []);
   let [state, setState] = React.useState(() => bindings.getState());
   let variables = React.useRef(props.variables);

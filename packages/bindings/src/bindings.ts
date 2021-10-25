@@ -17,16 +17,13 @@ export default function createBindings<
   let records: GrafooRecords;
   let partial = false;
   let unbind = () => {};
-  let preventListenUpdate = false;
+  let preventListenUpdate = true;
 
   if (query) {
     ({ data, records, partial } = client.read(query, variables));
 
     unbind = client.listen((nextRecords) => {
-      if (preventListenUpdate) {
-        preventListenUpdate = false;
-        return;
-      }
+      if (preventListenUpdate) return;
 
       records = records || {};
 
@@ -80,9 +77,8 @@ export default function createBindings<
   }
 
   function load(nextVariables?: CP["query"]["_variablesType"]) {
-    if (nextVariables) {
-      variables = nextVariables;
-    }
+    preventListenUpdate = true;
+    variables = nextVariables ?? variables;
 
     if (!state.loading) {
       Object.assign(state, { loading: true });
@@ -93,12 +89,12 @@ export default function createBindings<
       ({ data, errors } = res);
 
       if (data) {
-        preventListenUpdate = true;
         client.write(query, variables, data);
       }
 
       Object.assign(state, { loaded: !!data, loading: false }, errors && { errors });
       updater(getState());
+      preventListenUpdate = false;
     });
   }
 

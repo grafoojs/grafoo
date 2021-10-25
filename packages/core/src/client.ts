@@ -25,6 +25,7 @@ export default function createClient(
 
   function listen(listener: GrafooListener) {
     listeners.push(listener);
+
     return () => {
       let index = listeners.indexOf(listener);
       if (index < 0) return;
