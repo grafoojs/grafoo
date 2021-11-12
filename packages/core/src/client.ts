@@ -15,6 +15,7 @@ export default function createClient(
   options?: GrafooClientOptions
 ): GrafooClient {
   let { initialState = { paths: {}, records: {} }, idFields } = options;
+
   let paths: GrafooPath = initialState.paths ?? {};
   let records: GrafooRecords = initialState.records ?? {};
   let listeners: GrafooListener[] = [];
@@ -43,14 +44,7 @@ export default function createClient(
       variables = {};
     }
 
-    let result = storeValues(query, variables, data, idFields);
-    let queryRecords = result.records;
-    Object.assign(paths, result.path);
-
-    // assign new values to records
-    for (let i in queryRecords) {
-      Object.assign(records, { [i]: { ...records[i], ...queryRecords[i] } });
-    }
+    let queryRecords = storeValues(query, variables, data, paths, records, idFields);
 
     // run listeners
     for (let i in listeners) listeners[i](queryRecords);
@@ -60,7 +54,7 @@ export default function createClient(
     return resolveValues(query, variables, paths, records);
   }
 
-  function flush() {
+  function extract() {
     return { records, paths };
   }
 
@@ -69,5 +63,5 @@ export default function createClient(
     records = {};
   }
 
-  return { execute, listen, write, read, flush, reset };
+  return { execute, listen, write, read, extract, reset };
 }

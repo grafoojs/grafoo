@@ -12,7 +12,7 @@ import {
 
 function getType(typeInfo) {
   let currentType = typeInfo.getType();
-  while (currentType.ofType) currentType = currentType.ofType;
+  while (currentType?.ofType) currentType = currentType.ofType;
   return currentType;
 }
 
@@ -46,6 +46,8 @@ export default function insertFields(
       }
 
       let t = getType(typeInfo);
+
+      if (!t) return;
 
       if (t.astNode.kind === "UnionTypeDefinition") {
         unionChildrenTypes.push(

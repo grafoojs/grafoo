@@ -28,6 +28,7 @@ export type GrafooMutations<T extends GrafooQuery, U extends Record<string, Graf
 
 export type GrafooConsumerProps<T extends GrafooQuery, U extends Record<string, GrafooQuery>> = {
   query?: T;
+  skip?: boolean;
   variables?: T["_variablesType"];
   mutations?: GrafooMutations<T, U>;
 };

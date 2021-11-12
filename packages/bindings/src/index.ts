@@ -1,2 +1,2 @@
+export { default, makeGrafooConfig } from "./bindings";
 export * from "./types";
-export { default } from "./bindings";

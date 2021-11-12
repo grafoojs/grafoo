@@ -1,0 +1,28 @@
+{
+  "name": "@grafoo/macro",
+  "version": "1.4.2-next.0",
+  "description": "grafoo client babel macro",
+  "repository": "https://github.com/grafoojs/grafoo/tree/master/packages/macro",
+  "main": "dist/index.js",
+  "author": "malbernaz<albernazmiguel@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "babel",
+    "babel-macro",
+    "graphql",
+    "graphql-client",
+    "grafoo"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc --declaration"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.16.3",
+    "@grafoo/compiler": "^1.4.2-next.0",
+    "babel-plugin-macros": "^3.1.0"
+  },
+  "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974"
+}

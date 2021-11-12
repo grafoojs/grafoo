@@ -28,7 +28,7 @@ export default function compileDocument(source: string, schemaString: string, op
   let grafooQuery: GrafooQuery = {
     document: opts.compress ? compressedDocumentStr : documentStr,
     operation: generateClientResolver(schema, operation),
-    fragments: generateClientResolver(schema, fragments)
+    fragments: fragments.definitions.length ? generateClientResolver(schema, fragments) : undefined
   };
 
   if (opts.generateIds) {

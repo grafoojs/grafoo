@@ -1,47 +1,50 @@
 export let data = {
   author: {
     __typename: "Author",
-    id: "a1d3a2bc-e503-4640-9178-23cbd36b542c",
+    id: "QXV0aG9yOmExZDNhMmJjLWU1MDMtNDY0MC05MTc4LTIzY2JkMzZiNTQyYw==",
     name: "Murphy Abshire",
-    posts: [
-      {
-        __typename: "Post",
-        id: "9c6abd58-0cc5-4341-87a2-ede364685ebd",
-        title: "Quam et qui"
-      },
-      {
-        __typename: "Post",
-        id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85",
-        title: "Quam odit"
-      }
-    ]
-  }
-};
-
-export let path = {
-  "author:id:a1d3a2bc-e503-4640-9178-23cbd36b542c": {
-    id: "a1d3a2bc-e503-4640-9178-23cbd36b542c",
-    "posts:from:0:to:2": [
-      { id: "9c6abd58-0cc5-4341-87a2-ede364685ebd" },
-      { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" }
-    ]
+    posts: {
+      __typename: "PostConnection",
+      edges: [
+        {
+          __typename: "PostEdge",
+          node: {
+            __typename: "Post",
+            id: "UG9zdDo5YzZhYmQ1OC0wY2M1LTQzNDEtODdhMi1lZGUzNjQ2ODVlYmQ=",
+            title: "Quam et qui"
+          }
+        }
+      ]
+    }
   }
 };
 
 export let records = {
-  "a1d3a2bc-e503-4640-9178-23cbd36b542c": {
+  "QXV0aG9yOmExZDNhMmJjLWU1MDMtNDY0MC05MTc4LTIzY2JkMzZiNTQyYw==": {
     __typename: "Author",
-    id: "a1d3a2bc-e503-4640-9178-23cbd36b542c",
+    id: "QXV0aG9yOmExZDNhMmJjLWU1MDMtNDY0MC05MTc4LTIzY2JkMzZiNTQyYw==",
     name: "Murphy Abshire"
   },
-  "2c969ce7-02ae-42b1-a94d-7d0a38804c85": {
+  "UG9zdDo5YzZhYmQ1OC0wY2M1LTQzNDEtODdhMi1lZGUzNjQ2ODVlYmQ=": {
     __typename: "Post",
-    id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85",
-    title: "Quam odit"
-  },
-  "9c6abd58-0cc5-4341-87a2-ede364685ebd": {
-    __typename: "Post",
-    id: "9c6abd58-0cc5-4341-87a2-ede364685ebd",
+    id: "UG9zdDo5YzZhYmQ1OC0wY2M1LTQzNDEtODdhMi1lZGUzNjQ2ODVlYmQ=",
     title: "Quam et qui"
+  }
+};
+
+export let path = {
+  "author:id:QXV0aG9yOmExZDNhMmJjLWU1MDMtNDY0MC05MTc4LTIzY2JkMzZiNTQyYw==": {
+    id: "QXV0aG9yOmExZDNhMmJjLWU1MDMtNDY0MC05MTc4LTIzY2JkMzZiNTQyYw==",
+    "posts:first:1": {
+      __typename: "PostConnection",
+      edges: [
+        {
+          __typename: "PostEdge",
+          node: {
+            id: "UG9zdDo5YzZhYmQ1OC0wY2M1LTQzNDEtODdhMi1lZGUzNjQ2ODVlYmQ="
+          }
+        }
+      ]
+    }
   }
 };

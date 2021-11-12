@@ -10,8 +10,8 @@ export default function resolveValues<T extends GrafooQuery>(
   let data = {} as T["_queryType"];
   let records: GrafooRecords = {};
   let partial = false;
-  let stack: [string, GrafooSelection, GrafooPath<{ id?: string }>, T["_queryType"]][] = [
-    ["", operation, allPaths, data]
+  let stack: [string | void, GrafooSelection, GrafooPath<{ id?: string }>, T["_queryType"]][] = [
+    [undefined, operation, allPaths, data]
   ];
 
   // traverse trough operation selection
@@ -31,14 +31,9 @@ export default function resolveValues<T extends GrafooQuery>(
       let { id } = path;
       let record = allRecords[id];
 
-      if (id) {
-        records[id] = record;
+      if (id) records[id] = record;
 
-        // get scalars from client records
-        for (let s of currentSelect.scalars) {
-          data[s] = record[s];
-        }
-      }
+      for (let s of currentSelect.scalars) data[s] = record?.[s] ?? path?.[s];
 
       for (let [k, v] of Object.entries(currentSelect.select)) {
         let pathId = getPathId(k, v.args, variables);

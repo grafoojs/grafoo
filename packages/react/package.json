@@ -26,6 +26,7 @@
   },
   "scripts": {
     "build": "microbundle",
+    "watch": "microbundle watch",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "tsc": "tsc --noEmit"

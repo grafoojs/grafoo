@@ -4,27 +4,41 @@ import * as postsAndAuthors from "./data/posts-and-authors";
 import * as postsWithFragments from "./data/posts-with-fragments";
 import * as authorWithArguments from "./data/author-with-arguments";
 
-describe("resolveValues", () => {
-  it("should resolve the data given a simple query, a path and the records", () => {
-    let query = graphql`
-      query {
-        posts {
+let POSTS_AND_AUTHORS = graphql`
+  query {
+    posts {
+      edges {
+        node {
           title
           body
           author {
             name
           }
         }
+      }
+    }
 
-        authors {
+    authors {
+      edges {
+        node {
           name
           posts {
-            title
-            body
+            edges {
+              node {
+                body
+                title
+              }
+            }
           }
         }
       }
-    `;
+    }
+  }
+`;
+
+describe("resolveValues", () => {
+  it("should resolve the data given a simple query, a path and the records", () => {
+    let query = POSTS_AND_AUTHORS;
 
     let { data, records } = resolveValues(query, {}, postsAndAuthors.path, postsAndAuthors.records);
 
@@ -36,7 +50,11 @@ describe("resolveValues", () => {
     let query = graphql`
       query {
         posts {
-          ...P
+          edges {
+            node {
+              ...P
+            }
+          }
         }
       }
 
@@ -51,7 +69,11 @@ describe("resolveValues", () => {
       fragment A on Author {
         name
         posts {
-          title
+          edges {
+            node {
+              title
+            }
+          }
         }
       }
     `;
@@ -67,22 +89,25 @@ describe("resolveValues", () => {
     expect(records).toEqual(postsWithFragments.records);
   });
 
-  it("should resolve the data given a query with arguments, a path and the records", () => {
+  it("should resolve the data given a query with arguments, a path and the records", async () => {
     let query = graphql`
-      query ($id: ID!, $from: Int, $to: Int) {
+      query ($id: ID!, $first: Int!) {
         author(id: $id) {
           name
-          posts(from: $from, to: $to) {
-            title
+          posts(first: $first) {
+            edges {
+              node {
+                title
+              }
+            }
           }
         }
       }
     `;
 
     let variables = {
-      id: "a1d3a2bc-e503-4640-9178-23cbd36b542c",
-      from: 0,
-      to: 2
+      id: "QXV0aG9yOmExZDNhMmJjLWU1MDMtNDY0MC05MTc4LTIzY2JkMzZiNTQyYw==",
+      first: 1
     };
 
     let { data, records } = resolveValues(
@@ -98,7 +123,7 @@ describe("resolveValues", () => {
 
   it("should resolve the data given a query with fragments and arguments, a path and the records", () => {
     let query = graphql`
-      query ($id: ID!, $from: Int, $to: Int) {
+      query ($id: ID!, $first: Int) {
         author(id: $id) {
           name
           ...AuthorStuff
@@ -106,16 +131,19 @@ describe("resolveValues", () => {
       }
 
       fragment AuthorStuff on Author {
-        posts(from: $from, to: $to) {
-          title
+        posts(first: $first) {
+          edges {
+            node {
+              title
+            }
+          }
         }
       }
     `;
 
     let variables = {
-      id: "a1d3a2bc-e503-4640-9178-23cbd36b542c",
-      from: 0,
-      to: 2
+      id: "QXV0aG9yOmExZDNhMmJjLWU1MDMtNDY0MC05MTc4LTIzY2JkMzZiNTQyYw==",
+      first: 1
     };
 
     let { data, records } = resolveValues(
@@ -146,25 +174,7 @@ describe("resolveValues", () => {
   });
 
   it("should be able to resolve values partially", () => {
-    let query = graphql`
-      query {
-        posts {
-          title
-          body
-          author {
-            name
-          }
-        }
-
-        authors {
-          name
-          posts {
-            title
-            body
-          }
-        }
-      }
-    `;
+    let query = POSTS_AND_AUTHORS;
 
     let { data, partial } = resolveValues(
       query,

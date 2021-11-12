@@ -14,7 +14,7 @@ import {
 
 let getNonNullType = (typeInfo: TypeInfo) => {
   let currentType = typeInfo.getType();
-  if (currentType instanceof GraphQLNonNull) currentType = currentType.ofType;
+  if (currentType && currentType instanceof GraphQLNonNull) currentType = currentType.ofType;
   return currentType;
 };
 

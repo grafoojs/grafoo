@@ -34,9 +34,6 @@ let query = {
         scalars: ["id", "name"]
       }
     }
-  },
-  fragments: {
-    select: {}
   }
 };
 
@@ -94,9 +91,6 @@ let query = {
         }
       }
     }
-  },
-  fragments: {
-    select: {}
   },
   id: "6e0697df8f2453f2643bbd1e8a39c348"
 };
@@ -222,9 +216,6 @@ let query = {
         }
       }
     }
-  },
-  fragments: {
-    select: {}
   }
 };
 
@@ -282,9 +273,6 @@ let query = {
         }
       }
     }
-  },
-  fragments: {
-    select: {}
   }
 };
 
@@ -369,9 +357,6 @@ let query = {
         }
       }
     }
-  },
-  fragments: {
-    select: {}
   }
 };
 

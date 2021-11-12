@@ -59,7 +59,7 @@ export type GrafooClient = {
     variables?: T["_variablesType"]
   ) => { data?: T["_queryType"]; records?: GrafooRecords; partial?: boolean };
   listen: (listener: GrafooListener) => () => void;
-  flush: () => GrafooInitialState;
+  extract: () => GrafooInitialState;
   reset: () => void;
 };
 

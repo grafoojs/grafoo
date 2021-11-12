@@ -13,8 +13,8 @@ export function getPathId<T extends GrafooQuery>(
   args: Record<string, string> = {},
   variables: T["_variablesType"]
 ) {
-  variables = variables || {};
-  args = args || {};
+  variables = variables ?? {};
+  args = args ?? {};
 
   let ids = Object.entries(args).map(([name, value]) => {
     let rgx = /^\$(?<variable>\w+)/i;

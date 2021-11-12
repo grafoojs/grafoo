@@ -1,6 +1,10 @@
 import * as React from "react";
 import { GrafooClient, GrafooQuery } from "@grafoo/core";
-import createBindings, { GrafooConsumerProps, GrafooBoundState } from "@grafoo/bindings";
+import createBindings, {
+  GrafooConsumerProps,
+  GrafooBoundState,
+  makeGrafooConfig
+} from "@grafoo/bindings";
 
 // @ts-ignore
 export let GrafooContext = React.createContext<GrafooClient>({});
@@ -12,8 +16,10 @@ export type GrafooProviderProps = {
 export let GrafooProvider: React.FC<GrafooProviderProps> = (props) =>
   React.createElement(GrafooContext.Provider, { value: props.client }, props.children);
 
+export { makeGrafooConfig };
+
 export function useGrafoo<T extends GrafooQuery, U extends Record<string, GrafooQuery>>(
-  props: { lazy?: boolean } & GrafooConsumerProps<T, U>
+  props: GrafooConsumerProps<T, U>
 ): GrafooBoundState<T, U> {
   let client = React.useContext(GrafooContext);
   let update: (s: GrafooBoundState<T, U>) => void = React.useCallback((s) => setState(s), []);
@@ -22,24 +28,20 @@ export function useGrafoo<T extends GrafooQuery, U extends Record<string, Grafoo
   let variables = React.useRef(props.variables);
 
   React.useEffect(() => {
-    if (!props.lazy && props.query && !state.loaded) {
-      bindings.load();
-    }
+    if (props.query && !props.skip && !state.loaded) bindings.load();
 
-    return () => {
-      bindings.unbind();
-    };
+    return () => bindings.unbind();
   }, []);
 
   React.useEffect(() => {
     if (
-      (!props.lazy && props.query && !state.loaded) ||
+      (props.query && !props.skip && !state.loaded && !state.loading) ||
       !deepEqual(variables.current, props.variables)
     ) {
       variables.current = props.variables;
       bindings.load(props.variables);
     }
-  }, [props.lazy, props.variables]);
+  }, [props.skip, props.variables]);
 
   return state;
 }

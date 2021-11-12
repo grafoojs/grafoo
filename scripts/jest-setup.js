@@ -4,7 +4,7 @@ let { transform } = require("@babel/core");
 
 let config = Object.assign(
   { sourceMap: "inline", ast: false },
-  JSON.parse(fs.readFileSync(path.join(process.cwd(), ".babelrc"), "utf-8"))
+  require(path.join(process.cwd(), ".babelrc.json"))
 );
 
 module.exports.process = (src, path) =>

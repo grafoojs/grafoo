@@ -9,32 +9,42 @@ type Babel = typeof BabelCoreNamespace;
 
 let schema: string;
 function getSchema(schemaPath: string) {
-  if (schema) return schema;
+  try {
+    if (schema) return schema;
 
-  let fullPath: string;
+    let fullPath: string;
 
-  if (!schemaPath) {
-    let schemaJson = path.join(process.cwd(), "schema.json");
-    let schemaGraphql = path.join(process.cwd(), "schema.graphql");
-    let schemaGql = path.join(process.cwd(), "schema.gql");
+    if (!schemaPath) {
+      let schemaJson = path.join(process.cwd(), "schema.json");
+      let schemaGraphql = path.join(process.cwd(), "schema.graphql");
+      let schemaGql = path.join(process.cwd(), "schema.gql");
 
-    fullPath = fs.existsSync(schemaJson)
-      ? schemaJson
-      : fs.existsSync(schemaGraphql)
-      ? schemaGraphql
-      : fs.existsSync(schemaGql)
-      ? schemaGql
-      : undefined;
-  } else {
-    fullPath = path.join(process.cwd(), schemaPath);
+      fullPath = fs.existsSync(schemaJson)
+        ? schemaJson
+        : fs.existsSync(schemaGraphql)
+        ? schemaGraphql
+        : fs.existsSync(schemaGql)
+        ? schemaGql
+        : undefined;
+    } else {
+      fullPath = path.join(process.cwd(), schemaPath);
+    }
+
+    fs.accessSync(fullPath, fs.constants.F_OK);
+
+    schema = fs.readFileSync(fullPath, "utf-8");
+
+    return schema;
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      throw new Error(
+        "Could not find a schema in the root directory! " +
+          "Please use the `schema` option to specify your schema path"
+      );
+    }
+
+    throw error;
   }
-
-  // @ts-ignore
-  fs.accessSync(fullPath, fs.F_OK);
-
-  schema = fs.readFileSync(fullPath, "utf-8");
-
-  return schema;
 }
 
 export default function transform({ types: t }: Babel): PluginObj<{ opts: Options }> {
@@ -167,9 +177,10 @@ export default function transform({ types: t }: Babel): PluginObj<{ opts: Option
           TaggedTemplateExpression(path) {
             if (tagIdentifiers.some((name) => t.isIdentifier(path.node.tag, { name }))) {
               let quasi = path.get("quasi");
+              let expressions = quasi.get("expressions");
 
-              if (quasi.get("expressions").length) {
-                throw path.buildCodeFrameError(
+              if (expressions.length) {
+                throw expressions[0].buildCodeFrameError(
                   "@grafoo/core/tag: interpolation is not supported in a graphql tagged template literal."
                 );
               }
@@ -179,14 +190,7 @@ export default function transform({ types: t }: Babel): PluginObj<{ opts: Option
                 let query = compileDocument(source, schemaString, opts);
                 path.replaceWith(parseExpression(query));
               } catch (error) {
-                if (error.code === "ENOENT") {
-                  throw new Error(
-                    "Could not find a schema in the root directory! " +
-                      "Please use the `schema` option to specify your schema path"
-                  );
-                }
-
-                throw path.buildCodeFrameError(error);
+                throw quasi.buildCodeFrameError(error);
               }
             }
           }

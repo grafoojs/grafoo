@@ -1,28 +1,267 @@
 type Query {
-  author(id: ID!): Author!
-  authors(from: Int, to: Int): [Author!]!
-  post(id: ID!): Post!
-  posts(from: Int, to: Int): [Post!]!
+  author(id: ID!): Author
+  authors(
+    """
+    Returns the items in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the first n items from the list.
+    """
+    first: Int
+
+    """
+    Returns the items in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the last n items from the list.
+    """
+    last: Int
+  ): AuthorConnection
+  post(id: ID!): Post
+  posts(
+    """
+    Returns the items in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the first n items from the list.
+    """
+    first: Int
+
+    """
+    Returns the items in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the last n items from the list.
+    """
+    last: Int
+  ): PostConnection
+
+  """
+  Fetches an object given its ID
+  """
+  node(
+    """
+    The ID of an object
+    """
+    id: ID!
+  ): Node
 }
 
-type Mutation {
-  createAuthor(name: String!): Author!
-  updateAuthor(id: ID!, name: String): Author!
-  deleteAuthor(id: ID!): Author!
-  createPost(title: String!, body: String!, author: ID!): Post!
-  updatePost(id: ID!, title: String, body: String): Post!
-  deletePost(id: ID!): Post!
-}
-
-type Author {
+type Author implements Node {
+  """
+  The ID of an object
+  """
   id: ID!
   name: String!
-  posts(from: Int, to: Int): [Post!]
+  bio: String
+  posts(
+    """
+    Returns the items in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the first n items from the list.
+    """
+    first: Int
+
+    """
+    Returns the items in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the last n items from the list.
+    """
+    last: Int
+  ): PostConnection
 }
 
-type Post {
+"""
+An object with an ID
+"""
+interface Node {
+  """
+  The id of the object.
+  """
+  id: ID!
+}
+
+"""
+A connection to a list of items.
+"""
+type PostConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [PostEdge]
+}
+
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: String
+
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: String
+}
+
+"""
+An edge in a connection.
+"""
+type PostEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Post
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
+}
+
+type Post implements Node {
+  """
+  The ID of an object
+  """
   id: ID!
   title: String!
   body: String!
   author: Author!
+}
+
+"""
+A connection to a list of items.
+"""
+type AuthorConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [AuthorEdge]
+}
+
+"""
+An edge in a connection.
+"""
+type AuthorEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Author
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
+}
+
+type Mutation {
+  createAuthor(input: CreateAuthorInput!): CreateAuthorPayload
+  updateAuthor(input: UpdateAuthorInput!): UpdateAuthorPayload
+  deleteAuthor(input: DeleteAuthorInput!): DeleteAuthorPayload
+  createPost(input: CreatePostInput!): CreatePostPayload
+  updatePost(input: UpdatePostInput!): UpdatePostPayload
+  deletePost(input: DeletePostInput!): DeletePostPayload
+}
+
+type CreateAuthorPayload {
+  author: Author
+  clientMutationId: String
+}
+
+input CreateAuthorInput {
+  name: String!
+  bio: String
+  clientMutationId: String
+}
+
+type UpdateAuthorPayload {
+  author: Author
+  clientMutationId: String
+}
+
+input UpdateAuthorInput {
+  id: ID
+  name: String
+  bio: String
+  clientMutationId: String
+}
+
+type DeleteAuthorPayload {
+  author: Author
+  clientMutationId: String
+}
+
+input DeleteAuthorInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type CreatePostPayload {
+  post: Post
+  clientMutationId: String
+}
+
+input CreatePostInput {
+  title: String!
+  body: String
+  authorId: ID!
+  clientMutationId: String
+}
+
+type UpdatePostPayload {
+  post: Post
+  clientMutationId: String
+}
+
+input UpdatePostInput {
+  id: ID!
+  title: String
+  body: String
+  clientMutationId: String
+}
+
+type DeletePostPayload {
+  post: Post
+  clientMutationId: String
+}
+
+input DeletePostInput {
+  id: ID!
+  clientMutationId: String
 }

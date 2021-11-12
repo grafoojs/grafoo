@@ -1,34 +1,25 @@
 import graphql from "@grafoo/core/tag";
-import { executeQuery } from "@grafoo/test-utils";
+import { executeQuery, Query, QueryPostArgs } from "@grafoo/test-utils";
 import createClient from "../src";
 import { GrafooClient } from "../src/types";
 
-type Post = {
-  title?: string;
-  content?: string;
-  id?: string;
-  __typename?: string;
-  author?: Author;
-};
-
-type Author = {
-  name?: string;
-  id?: string;
-  __typename?: string;
-  posts?: Array<Post>;
-};
-
-type AuthorsQuery = {
-  authors: Author[];
-};
+type AuthorsQuery = Pick<Query, "authors">;
 
 let AUTHORS = graphql<AuthorsQuery>`
   query {
     authors {
-      name
-      posts {
-        title
-        body
+      edges {
+        node {
+          name
+          posts {
+            edges {
+              node {
+                body
+                title
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -37,47 +28,54 @@ let AUTHORS = graphql<AuthorsQuery>`
 let SIMPLE_AUTHORS = graphql<AuthorsQuery>`
   query {
     authors {
-      name
+      edges {
+        node {
+          name
+        }
+      }
     }
   }
 `;
 
-type PostsAndAuthorsQuery = {
-  authors: Author[];
-  posts: Post[];
-};
+type PostsAndAuthorsQuery = Pick<Query, "authors" | "posts">;
 
 let POSTS_AND_AUTHORS = graphql<PostsAndAuthorsQuery>`
   query {
     posts {
-      title
-      body
-      author {
-        name
+      edges {
+        node {
+          title
+          body
+          author {
+            name
+          }
+        }
       }
     }
 
     authors {
-      name
-      posts {
-        title
-        body
+      edges {
+        node {
+          name
+          posts {
+            edges {
+              node {
+                body
+                title
+              }
+            }
+          }
+        }
       }
     }
   }
 `;
 
-type PostQuery = {
-  post: Post;
-};
+type PostQuery = Pick<Query, "post">;
 
-type PostQueryArgs = {
-  postId: string;
-};
-
-let POST = graphql<PostQuery, PostQueryArgs>`
-  query ($postId: ID!) {
-    post(id: $postId) {
+let POST = graphql<PostQuery, QueryPostArgs>`
+  query ($id: ID!) {
+    post(id: $id) {
       title
       body
       author {
@@ -87,9 +85,9 @@ let POST = graphql<PostQuery, PostQueryArgs>`
   }
 `;
 
-let POST_WITH_FRAGMENT = graphql<PostQuery, PostQueryArgs>`
-  query ($postId: ID!) {
-    post(id: $postId) {
+let POST_WITH_FRAGMENT = graphql<PostQuery, QueryPostArgs>`
+  query ($id: ID!) {
+    post(id: $id) {
       title
       body
       author {
@@ -103,23 +101,25 @@ let POST_WITH_FRAGMENT = graphql<PostQuery, PostQueryArgs>`
   }
 `;
 
-type PostsQuery = {
-  posts: Post[];
-};
+type PostsQuery = Pick<Query, "posts">;
 
 let POSTS = graphql<PostsQuery>`
   query {
     posts {
-      title
-      body
-      author {
-        name
+      edges {
+        node {
+          title
+          body
+          author {
+            name
+          }
+        }
       }
     }
   }
 `;
 
-function mockTransport<T>(query, variables) {
+function mockTransport<T>(query: any, variables: any) {
   return executeQuery<T>({ query, variables });
 }
 
@@ -135,7 +135,7 @@ describe("@grafoo/core", () => {
     expect(typeof client.listen).toBe("function");
     expect(typeof client.write).toBe("function");
     expect(typeof client.read).toBe("function");
-    expect(typeof client.flush).toBe("function");
+    expect(typeof client.extract).toBe("function");
     expect(typeof client.reset).toBe("function");
   });
 
@@ -145,7 +145,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should perform query requests with fragments", async () => {
-    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let variables = { id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
 
     let data = await executeQuery({ query: POST_WITH_FRAGMENT.document, variables });
 
@@ -158,10 +158,10 @@ describe("@grafoo/core", () => {
     client.write(POSTS_AND_AUTHORS, data);
 
     let { authors, posts } = data;
-    let { records } = client.flush();
+    let { records } = client.extract();
 
-    expect(authors.every((author) => Boolean(records[author.id]))).toBe(true);
-    expect(posts.every((post) => Boolean(records[post.id]))).toBe(true);
+    expect(authors.edges.every((a) => Boolean(records[a.node.id]))).toBe(true);
+    expect(posts.edges.every((p) => Boolean(records[p.node.id]))).toBe(true);
   });
 
   it("should write queries partially to the client", async () => {
@@ -183,34 +183,36 @@ describe("@grafoo/core", () => {
     let { authors } = data;
 
     expect(authors).toEqual(result.data.authors);
-    expect(authors.every((author) => Boolean(result.records[author.id]))).toBe(true);
-    expect(authors.every((a) => a.posts.every((post) => !!result.records[post.id]))).toBe(true);
+    expect(authors.edges.every((a) => Boolean(result.records[a.node.id]))).toBe(true);
+    expect(
+      authors.edges.every((a) => a.node.posts.edges.every((p) => !!result.records[p.node.id]))
+    ).toBe(true);
   });
 
   it("should handle queries with variables", async () => {
-    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let variables = { id: "UG9zdDo5YzZhYmQ1OC0wY2M1LTQzNDEtODdhMi1lZGUzNjQ2ODVlYmQ=" };
     let { data } = await client.execute(POST, variables);
 
     client.write(POST, variables, data);
 
-    expect(client.read(POST, { postId: "123" }).data).toEqual({});
-    expect(client.read(POST, variables).data.post.id).toBe(variables.postId);
+    expect(client.read(POST, { id: "123" }).data).toEqual({});
+    expect(client.read(POST, variables).data.post.id).toBe(variables.id);
   });
 
   it("should distinguish between calls to the same query with different variables", async () => {
-    let v1 = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
-    let v2 = { postId: "77c483dd-6529-4c72-9bb6-bbfd69f65682" };
+    let v1 = { id: "UG9zdDo5YzZhYmQ1OC0wY2M1LTQzNDEtODdhMi1lZGUzNjQ2ODVlYmQ=" };
+    let v2 = { id: "UG9zdDoyYzk2OWNlNy0wMmFlLTQyYjEtYTk0ZC03ZDBhMzg4MDRjODU=" };
 
     let d1 = await client.execute(POST, v1);
     client.write(POST, v1, d1.data);
 
-    expect(client.read(POST, v1).data.post.id).toBe(v1.postId);
+    expect(client.read(POST, v1).data.post.id).toBe(v1.id);
 
     let d2 = await client.execute(POST, v2);
     client.write(POST, v2, d2.data);
 
-    expect(client.read(POST, v1).data.post.id).toBe(v1.postId);
-    expect(client.read(POST, v2).data.post.id).toBe(v2.postId);
+    expect(client.read(POST, v1).data.post.id).toBe(v1.id);
+    expect(client.read(POST, v2).data.post.id).toBe(v2.id);
   });
 
   it("should flag if a query result is partial", async () => {
@@ -222,7 +224,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should perform update to client", async () => {
-    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let variables = { id: "UG9zdDoyYzk2OWNlNy0wMmFlLTQyYjEtYTk0ZC03ZDBhMzg4MDRjODU=" };
     let { data } = await client.execute(POST, variables);
 
     client.write(POST, variables, data);
@@ -234,11 +236,12 @@ describe("@grafoo/core", () => {
     expect(post.title).toBe("Quam odit");
 
     client.write(POST, variables, { post: { ...post, title: "updated title" } });
+
     expect(client.read(POST, variables).data.post.title).toBe("updated title");
   });
 
   it("should reflect updates on queries when shared records change", async () => {
-    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let variables = { id: "UG9zdDoyYzk2OWNlNy0wMmFlLTQyYjEtYTk0ZC03ZDBhMzg4MDRjODU=" };
     let postData = await client.execute(POST, variables);
     let postsData = await client.execute(POSTS, variables);
 
@@ -246,7 +249,7 @@ describe("@grafoo/core", () => {
 
     let { posts } = client.read(POSTS).data;
 
-    expect(posts.find((p) => p.id === variables.postId).title).toBe("Quam odit");
+    expect(posts.edges.find((p) => p.node.id === variables.id).node.title).toBe("Quam odit");
 
     client.write(POST, variables, {
       post: { ...postData.data.post, title: "updated title" }
@@ -254,11 +257,13 @@ describe("@grafoo/core", () => {
 
     let { posts: updatedPosts } = client.read(POSTS, variables).data;
 
-    expect(updatedPosts.find((p) => p.id === variables.postId).title).toBe("updated title");
+    expect(updatedPosts.edges.find((p) => p.node.id === variables.id).node.title).toBe(
+      "updated title"
+    );
   });
 
   it("should merge records in the client when removing or adding properties", async () => {
-    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let variables = { id: "UG9zdDoyYzk2OWNlNy0wMmFlLTQyYjEtYTk0ZC03ZDBhMzg4MDRjODU=" };
     let { data } = await client.execute(POST, variables);
 
     client.write(POST, variables, data);
@@ -270,20 +275,13 @@ describe("@grafoo/core", () => {
     client.write(POST, variables, { post });
 
     expect(client.read(POST, variables).data.post).toEqual({
-      __typename: "Post",
-      author: {
-        __typename: "Author",
-        id: "a1d3a2bc-e503-4640-9178-23cbd36b542c",
-        name: "Murphy Abshire"
-      },
-      body: "Ducimus harum delectus consectetur.",
-      id: "2c969ce7-02ae-42b1-a94d-7d0a38804c85",
+      ...data.post,
       title: "updated title"
     });
   });
 
   it("should call client listeners on write with paths records as arguments", async () => {
-    let variables = { postId: "2c969ce7-02ae-42b1-a94d-7d0a38804c85" };
+    let variables = { id: "UG9zdDoyYzk2OWNlNy0wMmFlLTQyYjEtYTk0ZC03ZDBhMzg4MDRjODU=" };
     let { data } = await client.execute(POST, variables);
 
     let listener = jest.fn();
@@ -313,7 +311,7 @@ describe("@grafoo/core", () => {
 
     client.write(POSTS_AND_AUTHORS, data);
 
-    client = createClient(mockTransport, { idFields: ["id"], initialState: client.flush() });
+    client = createClient(mockTransport, { idFields: ["id"], initialState: client.extract() });
 
     expect(client.read(POSTS_AND_AUTHORS).data).toEqual(data);
   });
@@ -323,7 +321,7 @@ describe("@grafoo/core", () => {
     client.write(AUTHORS, data);
     expect(client.read(AUTHORS).data).toEqual(data);
     client.reset();
-    expect(client.flush()).toEqual({ records: {}, paths: {} });
+    expect(client.extract()).toEqual({ records: {}, paths: {} });
   });
 
   it("should accept `idFields` array in options", async () => {
@@ -332,7 +330,7 @@ describe("@grafoo/core", () => {
 
     client.write(AUTHORS, data);
 
-    let cachedIds = Object.keys(client.flush().records);
+    let cachedIds = Object.keys(client.extract().records);
 
     expect(cachedIds.every((key) => /(Post|Author)/.test(key))).toBe(true);
   });
