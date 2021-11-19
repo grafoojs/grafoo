@@ -1,5 +1,9 @@
 import { GraphQlError, GraphQlPayload, GrafooQuery } from "@grafoo/core";
 
+type DeepPartial<T> = {
+  [P in keyof T]?: DeepPartial<T[P]>;
+};
+
 export type GrafooBoundMutations<T extends Record<string, GrafooQuery>> = {
   [U in keyof T]: (
     variables: T[U]["_variablesType"]
@@ -18,8 +22,11 @@ export type GrafooBoundState<
 
 export type GrafooMutation<T extends GrafooQuery, U extends GrafooQuery> = {
   query: U;
-  update?: (props: T["_queryType"], data: U["_queryType"]) => T["_queryType"];
-  optimisticUpdate?: (props: T["_queryType"], variables: U["_variablesType"]) => T["_queryType"];
+  update?: (props: T["_queryType"], data: U["_queryType"]) => DeepPartial<T["_queryType"]>;
+  optimisticUpdate?: (
+    props: T["_queryType"],
+    variables: U["_variablesType"]
+  ) => DeepPartial<T["_queryType"]>;
 };
 
 export type GrafooMutations<T extends GrafooQuery, U extends Record<string, GrafooQuery>> = {

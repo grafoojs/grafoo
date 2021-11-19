@@ -16,11 +16,11 @@ export default function createBindings<
   props: GrafooConsumerProps<T, U>
 ) {
   type CP = GrafooConsumerProps<T, U>;
-  let { query, variables, mutations, skip } = props;
+  let { query, variables, mutations, skip = false } = props;
   let data: CP["query"]["_queryType"];
   let errors: GraphQlError[];
   let boundMutations = {} as GrafooBoundMutations<U>;
-  let records: GrafooRecords;
+  let records: GrafooRecords = {};
   let partial = false;
   let unbind = () => {};
   let preventListenUpdate = true;
@@ -68,11 +68,15 @@ export default function createBindings<
     }
   }
 
-  let state = { loaded: !!data && !partial, loading: !!query || !data || skip };
+  let state = { loaded: hasData(), loading: !!query && !skip && !hasData() };
+
+  function hasData() {
+    return !!Object.keys(data ?? {}).length && !partial;
+  }
 
   function getUpdateFromClient() {
     ({ data, partial } = client.read(query, variables));
-    Object.assign(state, { loaded: !!data && !partial });
+    Object.assign(state, { loaded: hasData() });
     updater(getState());
   }
 

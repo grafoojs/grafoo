@@ -165,7 +165,8 @@ let deleteAuthor = mutationWithClientMutationId({
     }
   },
   mutateAndGetPayload: (args) => {
-    let author = db.data.authors.find(args);
+    let { id } = fromGlobalId(args.id);
+    let author = db.data.authors.find((a) => a.id === id);
     db.data.authors = db.data.authors.filter((a) => a.id !== author.id);
     db.data.posts = db.data.posts.filter((p) => p.author !== author.id);
     db.write();
