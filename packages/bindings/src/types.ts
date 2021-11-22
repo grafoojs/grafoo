@@ -20,6 +20,12 @@ export type GrafooBoundState<
     errors?: GraphQlError[];
   };
 
+export type GrafooBindings<T extends GrafooQuery, U extends Record<string, GrafooQuery>> = {
+  unbind: () => void;
+  getState: () => GrafooBoundState<T, U>;
+  load: (variables?: T["_variablesType"]) => Promise<void>;
+};
+
 export type GrafooMutation<T extends GrafooQuery, U extends GrafooQuery> = {
   query: U;
   update?: (props: T["_queryType"], data: U["_queryType"]) => DeepPartial<T["_queryType"]>;

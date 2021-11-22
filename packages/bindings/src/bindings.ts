@@ -1,5 +1,10 @@
 import { GrafooClient, GraphQlError, GrafooQuery } from "@grafoo/core";
-import { GrafooBoundMutations, GrafooBoundState, GrafooConsumerProps } from "./types";
+import {
+  GrafooBindings,
+  GrafooBoundMutations,
+  GrafooBoundState,
+  GrafooConsumerProps
+} from "./types";
 
 export let makeGrafooConfig = <T extends GrafooQuery, U extends Record<string, GrafooQuery>>(
   init: GrafooConsumerProps<T, U>
@@ -14,7 +19,7 @@ export default function createBindings<
   client: GrafooClient,
   updater: (state: GrafooBoundState<T, U>) => void,
   props: GrafooConsumerProps<T, U>
-) {
+): GrafooBindings<T, U> {
   type CP = GrafooConsumerProps<T, U>;
   let { query, variables, mutations, skip = false } = props;
   let data: CP["query"]["_queryType"];
