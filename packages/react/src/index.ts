@@ -28,8 +28,7 @@ export function useGrafoo<T extends GrafooQuery, U extends Record<string, Grafoo
   let variables = React.useRef(props.variables);
 
   React.useEffect(() => {
-    if (props.query && !props.skip && !state.loaded) bindings.load();
-
+    if (state.loading) bindings.load();
     return () => bindings.unbind();
   }, []);
 

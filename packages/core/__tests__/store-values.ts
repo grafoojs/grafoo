@@ -1,5 +1,4 @@
 import graphql from "@grafoo/core/tag";
-import { GrafooPath, GrafooRecords } from "../src";
 import storeValues from "../src/store-values";
 import * as postsAndAuthors from "./data/posts-and-authors";
 import * as postsWithFragments from "./data/posts-with-fragments";
@@ -42,18 +41,14 @@ let idFields = ["id"];
 describe("storeValues", () => {
   it("should yield correct path and records to a normal query", () => {
     let query = POSTS_AND_AUTHORS;
-    let paths: GrafooPath = {};
-    let records: GrafooRecords = {};
 
-    storeValues(query, {}, postsAndAuthors.data, paths, records, idFields);
+    let { paths, records } = storeValues(query, {}, postsAndAuthors.data, idFields);
 
     expect(paths).toEqual(postsAndAuthors.path);
     expect(records).toEqual(postsAndAuthors.records);
   });
 
   it("should yield correct path and records to queries with fragments", () => {
-    let paths: GrafooPath = {};
-    let records: GrafooRecords = {};
     let query = graphql`
       query {
         posts {
@@ -85,15 +80,13 @@ describe("storeValues", () => {
       }
     `;
 
-    storeValues(query, {}, postsWithFragments.data, paths, records, idFields);
+    let { paths, records } = storeValues(query, {}, postsWithFragments.data, idFields);
 
     expect(paths).toEqual(postsWithFragments.path);
     expect(records).toEqual(postsWithFragments.records);
   });
 
   it("should yield correct path and records to queries with arguments", () => {
-    let paths: GrafooPath = {};
-    let records: GrafooRecords = {};
     let query = graphql`
       query ($id: ID!, $first: Int!) {
         author(id: $id) {
@@ -114,15 +107,13 @@ describe("storeValues", () => {
       first: 1
     };
 
-    storeValues(query, variables, authorWithArguments.data, paths, records, idFields);
+    let { paths, records } = storeValues(query, variables, authorWithArguments.data, idFields);
 
     expect(paths).toEqual(authorWithArguments.path);
     expect(records).toEqual(authorWithArguments.records);
   });
 
   it("should yield correct path and records to queries with arguments and fragments", () => {
-    let paths: GrafooPath = {};
-    let records: GrafooRecords = {};
     let query = graphql`
       query ($id: ID!, $first: Int) {
         author(id: $id) {
@@ -147,15 +138,13 @@ describe("storeValues", () => {
       first: 1
     };
 
-    storeValues(query, variables, authorWithArguments.data, paths, records, idFields);
+    let { paths, records } = storeValues(query, variables, authorWithArguments.data, idFields);
 
     expect(paths).toEqual(authorWithArguments.path);
     expect(records).toEqual(authorWithArguments.records);
   });
 
   it("should deal correctly with null values", () => {
-    let paths: GrafooPath = {};
-    let records: GrafooRecords = {};
     let query = graphql`
       query {
         authors {
@@ -172,7 +161,7 @@ describe("storeValues", () => {
 
     data.authors.edges[0].node.posts = null;
 
-    storeValues(query, {}, data, paths, records, idFields);
+    let { paths } = storeValues(query, {}, data, idFields);
 
     expect(paths).toEqual({
       authors: {

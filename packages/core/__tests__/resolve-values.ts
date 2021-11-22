@@ -40,10 +40,9 @@ describe("resolveValues", () => {
   it("should resolve the data given a simple query, a path and the records", () => {
     let query = POSTS_AND_AUTHORS;
 
-    let { data, records } = resolveValues(query, {}, postsAndAuthors.path, postsAndAuthors.records);
+    let { data } = resolveValues(query, {}, postsAndAuthors.path, postsAndAuthors.records);
 
     expect(data).toEqual(postsAndAuthors.data);
-    expect(records).toEqual(postsAndAuthors.records);
   });
 
   it("should resolve the data given a query with fragments, a path and the records", () => {
@@ -78,15 +77,9 @@ describe("resolveValues", () => {
       }
     `;
 
-    let { data, records } = resolveValues(
-      query,
-      {},
-      postsWithFragments.path,
-      postsWithFragments.records
-    );
+    let { data } = resolveValues(query, {}, postsWithFragments.path, postsWithFragments.records);
 
     expect(data).toEqual(postsWithFragments.data);
-    expect(records).toEqual(postsWithFragments.records);
   });
 
   it("should resolve the data given a query with arguments, a path and the records", async () => {
@@ -110,7 +103,7 @@ describe("resolveValues", () => {
       first: 1
     };
 
-    let { data, records } = resolveValues(
+    let { data } = resolveValues(
       query,
       variables,
       authorWithArguments.path,
@@ -118,7 +111,6 @@ describe("resolveValues", () => {
     );
 
     expect(data).toEqual(authorWithArguments.data);
-    expect(records).toEqual(authorWithArguments.records);
   });
 
   it("should resolve the data given a query with fragments and arguments, a path and the records", () => {
@@ -146,7 +138,7 @@ describe("resolveValues", () => {
       first: 1
     };
 
-    let { data, records } = resolveValues(
+    let { data } = resolveValues(
       query,
       variables,
       authorWithArguments.path,
@@ -154,7 +146,6 @@ describe("resolveValues", () => {
     );
 
     expect(data).toEqual(authorWithArguments.data);
-    expect(records).toEqual(authorWithArguments.records);
   });
 
   it("should yield empty objects for data and records if no paths are given", () => {
@@ -166,10 +157,9 @@ describe("resolveValues", () => {
       }
     `;
 
-    let { data, records, partial } = resolveValues(query, {}, {}, {});
+    let { data, partial } = resolveValues(query, {}, {}, {});
 
     expect(data).toEqual({});
-    expect(records).toEqual({});
     expect(partial).toEqual(true);
   });
 

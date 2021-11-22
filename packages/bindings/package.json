@@ -30,10 +30,13 @@
   },
   "jest": {
     "transform": {
-      "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
+      "^.+\\.(ts|tsx|js)$": "babel-jest"
     },
     "transformIgnorePatterns": [
       "node_modules/(?!(lowdb|steno|node-fetch|fetch-blob|data-uri-to-buffer|formdata-polyfill)/)"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/__tests__/queries.ts"
     ]
   },
   "dependencies": {

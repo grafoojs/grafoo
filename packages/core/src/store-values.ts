@@ -5,13 +5,12 @@ export default function storeValues<T extends GrafooQuery>(
   { operation, fragments }: T,
   variables: T["_variablesType"],
   data: T["_queryType"],
-  allPaths: GrafooPath,
-  allRecords: GrafooRecords,
   idFields: string[]
 ) {
   let records: GrafooRecords = {};
+  let paths: GrafooPath = {};
   let stack: [string | void, T["_queryType"], GrafooSelection, GrafooPath][] = [
-    [undefined, data, operation, allPaths]
+    [undefined, data, operation, paths]
   ];
 
   // traverse data tree
@@ -47,13 +46,10 @@ export default function storeValues<T extends GrafooQuery>(
         if (id) {
           // increment path with id pointing to a record
           path[pathId].id = id;
+          records[id] = records[id] ?? {};
 
-          allRecords[id] = allRecords[id] ?? {};
-
-          // create record with branch scalar values
-          for (let field of currentSelect.scalars) allRecords[id][field] = branch[field];
-
-          records[id] = allRecords[id];
+          // populate record with branch scalar values
+          for (let field of currentSelect.scalars) records[id][field] = branch[field];
         } else {
           // add scalars to the path object if the node doesn't have id fields
           for (let field of currentSelect.scalars) path[pathId][field] = branch[field];
@@ -67,5 +63,5 @@ export default function storeValues<T extends GrafooQuery>(
     }
   }
 
-  return records;
+  return { paths, records };
 }

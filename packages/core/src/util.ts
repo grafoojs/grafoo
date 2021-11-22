@@ -56,3 +56,25 @@ export function resolveSelection(
 export function getPathType(path: GrafooPath) {
   return path ? (Array.isArray(path) ? [] : {}) : null;
 }
+
+export function isObject(item: any) {
+  return typeof item === "object" && !Array.isArray(item);
+}
+
+export function deepMerge(target: any, ...sources: any[]) {
+  if (!sources.length) return target;
+  let source = sources.shift();
+
+  if (isObject(target) && isObject(source)) {
+    for (let key in source) {
+      if (isObject(source[key])) {
+        if (!target[key]) target[key] = {};
+        deepMerge(target[key], source[key]);
+      } else {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return deepMerge(target, ...sources);
+}

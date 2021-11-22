@@ -9,6 +9,7 @@ import {
   GrafooRecords,
   GrafooTransport
 } from "./types";
+import { deepMerge } from "./util";
 
 export default function createClient(
   transport: GrafooTransport,
@@ -44,10 +45,33 @@ export default function createClient(
       variables = {};
     }
 
-    let queryRecords = storeValues(query, variables, data, paths, records, idFields);
+    let result = storeValues(query, variables, data, idFields);
 
     // run listeners
-    for (let i in listeners) listeners[i](queryRecords);
+    for (let i in listeners) listeners[i](shouldUpdate(result.records));
+
+    // update paths and records
+    deepMerge(paths, result.paths);
+    deepMerge(records, result.records);
+  }
+
+  function shouldUpdate(nextRecords: GrafooRecords) {
+    for (let i in nextRecords) {
+      // record has been inserted
+      if (!(i in records)) return true;
+
+      for (let j in nextRecords[i]) {
+        // record has been updated
+        if (nextRecords[i][j] !== records[i][j]) return true;
+      }
+    }
+
+    for (let i in records) {
+      // record has been removed
+      if (!(i in nextRecords)) return true;
+    }
+
+    return false;
   }
 
   function read<T extends GrafooQuery>(query: T, variables?: T["_variablesType"]) {

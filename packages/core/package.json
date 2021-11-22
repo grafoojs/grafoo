@@ -36,7 +36,8 @@
       "node_modules/(?!(lowdb|steno|node-fetch|fetch-blob|data-uri-to-buffer|formdata-polyfill)/)"
     ],
     "modulePathIgnorePatterns": [
-      "<rootDir>/__tests__/data"
+      "<rootDir>/__tests__/data",
+      "<rootDir>/__tests__/queries.ts"
     ]
   },
   "gitHead": "0bc67d8b398884a1f387a1813e485d2c5318b974"

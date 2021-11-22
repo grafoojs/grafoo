@@ -1,123 +1,14 @@
-import graphql from "@grafoo/core/tag";
-import { executeQuery, Query, QueryPostArgs } from "@grafoo/test-utils";
+import { executeQuery } from "@grafoo/test-utils";
 import createClient from "../src";
 import { GrafooClient } from "../src/types";
-
-type AuthorsQuery = Pick<Query, "authors">;
-
-let AUTHORS = graphql<AuthorsQuery>`
-  query {
-    authors {
-      edges {
-        node {
-          name
-          posts {
-            edges {
-              node {
-                body
-                title
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-let SIMPLE_AUTHORS = graphql<AuthorsQuery>`
-  query {
-    authors {
-      edges {
-        node {
-          name
-        }
-      }
-    }
-  }
-`;
-
-type PostsAndAuthorsQuery = Pick<Query, "authors" | "posts">;
-
-let POSTS_AND_AUTHORS = graphql<PostsAndAuthorsQuery>`
-  query {
-    posts {
-      edges {
-        node {
-          title
-          body
-          author {
-            name
-          }
-        }
-      }
-    }
-
-    authors {
-      edges {
-        node {
-          name
-          posts {
-            edges {
-              node {
-                body
-                title
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-type PostQuery = Pick<Query, "post">;
-
-let POST = graphql<PostQuery, QueryPostArgs>`
-  query ($id: ID!) {
-    post(id: $id) {
-      title
-      body
-      author {
-        name
-      }
-    }
-  }
-`;
-
-let POST_WITH_FRAGMENT = graphql<PostQuery, QueryPostArgs>`
-  query ($id: ID!) {
-    post(id: $id) {
-      title
-      body
-      author {
-        ...AuthorInfo
-      }
-    }
-  }
-
-  fragment AuthorInfo on Author {
-    name
-  }
-`;
-
-type PostsQuery = Pick<Query, "posts">;
-
-let POSTS = graphql<PostsQuery>`
-  query {
-    posts {
-      edges {
-        node {
-          title
-          body
-          author {
-            name
-          }
-        }
-      }
-    }
-  }
-`;
+import {
+  AUTHORS,
+  POST,
+  POSTS,
+  POSTS_AND_AUTHORS,
+  POST_WITH_FRAGMENT,
+  SIMPLE_AUTHORS
+} from "./queries";
 
 function mockTransport<T>(query: any, variables: any) {
   return executeQuery<T>({ query, variables });
@@ -170,7 +61,7 @@ describe("@grafoo/core", () => {
     client.write(POSTS_AND_AUTHORS, data as any);
 
     expect(client.read(POSTS)).toMatchObject({ data, partial: false });
-    expect(client.read(AUTHORS)).toEqual({ data: {}, records: {}, partial: true });
+    expect(client.read(AUTHORS)).toEqual({ data: {}, partial: true });
   });
 
   it("should read queries from the client", async () => {
@@ -183,10 +74,6 @@ describe("@grafoo/core", () => {
     let { authors } = data;
 
     expect(authors).toEqual(result.data.authors);
-    expect(authors.edges.every((a) => Boolean(result.records[a.node.id]))).toBe(true);
-    expect(
-      authors.edges.every((a) => a.node.posts.edges.every((p) => !!result.records[p.node.id]))
-    ).toBe(true);
   });
 
   it("should handle queries with variables", async () => {
@@ -280,7 +167,7 @@ describe("@grafoo/core", () => {
     });
   });
 
-  it("should call client listeners on write with paths records as arguments", async () => {
+  it("should call client listeners on write with a boolean shouldUpdate as arguments", async () => {
     let variables = { id: "UG9zdDoyYzk2OWNlNy0wMmFlLTQyYjEtYTk0ZC03ZDBhMzg4MDRjODU=" };
     let { data } = await client.execute(POST, variables);
 
@@ -292,7 +179,7 @@ describe("@grafoo/core", () => {
 
     client.write(POST, variables, data);
 
-    expect(listener).toHaveBeenCalledWith(client.read(POST, variables).records);
+    expect(listener).toHaveBeenCalledWith(true);
 
     unlisten();
     client.write(POST, variables, data);

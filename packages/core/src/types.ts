@@ -17,7 +17,7 @@ export type GrafooTransport = <T>(
 
 export type GrafooRecords = Record<string, Record<string, unknown>>;
 
-export type GrafooListener = (objects: GrafooRecords) => void;
+export type GrafooListener = (shouldUpdate: boolean) => void;
 
 export type GrafooInitialState = {
   records: GrafooRecords;

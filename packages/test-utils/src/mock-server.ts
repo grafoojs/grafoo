@@ -142,8 +142,9 @@ let updateAuthor = mutationWithClientMutationId({
     }
   },
   mutateAndGetPayload: (args) => {
+    let { id } = fromGlobalId(args.id);
     Object.assign(
-      db.data.authors.find((a) => a.id === args.id),
+      db.data.authors.find((a) => a.id === id),
       args
     );
     db.write();
