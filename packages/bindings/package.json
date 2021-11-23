@@ -33,7 +33,7 @@
       "^.+\\.(ts|tsx|js)$": "babel-jest"
     },
     "transformIgnorePatterns": [
-      "node_modules/(?!(lowdb|steno|node-fetch|fetch-blob|data-uri-to-buffer|formdata-polyfill)/)"
+      "node_modules/(?!(lowdb|steno|fetch-mock|node-fetch|fetch-blob|data-uri-to-buffer|formdata-polyfill)/)"
     ],
     "modulePathIgnorePatterns": [
       "<rootDir>/__tests__/queries.ts"
