@@ -82,7 +82,9 @@ export default function transform({ types: t }: Babel): PluginObj<{ opts: Option
 
             if (source.value === "@grafoo/core") {
               let defaultSpecifier = specifiers.find((s) => t.isImportDefaultSpecifier(s));
-              let gqlTag = specifiers.find((s) => s.local.name === "graphql");
+              let gqlTag = specifiers.find(
+                (s) => s.local.name === "graphql" || s.local.name === "gql"
+              );
 
               if (defaultSpecifier) {
                 clientFactoryIdentifiers.push(defaultSpecifier.local.name);

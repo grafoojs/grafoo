@@ -29,6 +29,7 @@
     ]
   },
   "dependencies": {
+    "@types/babel-plugin-macros": "^2.8.5",
     "crypto-js": "^4.0.0",
     "graphql": "^15.6.1",
     "graphql-query-compress": "^1.0.0"

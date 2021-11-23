@@ -7,14 +7,16 @@ let query = gql\`{ authors {name} }\`;
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import { gql } from "@grafoo/core";
-let query = gql\`
-  {
-    authors {
-      name
+let query = {
+  document: "{authors{id name}}",
+  operation: {
+    select: {
+      authors: {
+        scalars: ["id", "name"]
+      }
     }
   }
-\`;
+};
 
 
 `;
