@@ -25,7 +25,7 @@
   "scripts": {
     "build": "microbundle",
     "watch": "microbundle watch",
-    "test": "jest --no-cache",
+    "test": "jest",
     "test:coverage": "jest --coverage"
   },
   "jest": {

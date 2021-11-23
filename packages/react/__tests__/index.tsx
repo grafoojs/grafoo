@@ -4,121 +4,22 @@
 
 import fetch from "node-fetch";
 import * as React from "react";
-import graphql from "@grafoo/core/tag";
 import createClient, { GrafooClient } from "@grafoo/core";
 import { mockQueryRequest, createTransport } from "@grafoo/test-utils";
 import { renderHook, act } from "@testing-library/react-hooks";
 
 import { GrafooProvider, useGrafoo } from "../src";
+import {
+  AuthorsQuery,
+  PostsAndAuthorsQuery,
+  AUTHOR,
+  AUTHORS,
+  CREATE_AUTHOR,
+  POSTS_AND_AUTHORS
+} from "./queries";
 
 // @ts-ignore
 globalThis.fetch = fetch;
-
-type Post = {
-  title: string;
-  content: string;
-  id: string;
-  __typename?: string;
-  author: Author;
-};
-
-type Author = {
-  name: string;
-  id: string;
-  __typename?: string;
-  posts?: Array<Post>;
-};
-
-type AuthorsQuery = {
-  authors: Author[];
-};
-
-let AUTHORS = graphql<AuthorsQuery>`
-  query {
-    authors {
-      name
-      posts {
-        title
-        body
-      }
-    }
-  }
-`;
-
-let SIMPLE_AUTHORS = graphql<AuthorsQuery>`
-  query {
-    authors {
-      name
-    }
-  }
-`;
-
-type AuthorQuery = {
-  author: Author;
-};
-
-type AuthorQueryInput = {
-  id: string;
-};
-
-let AUTHOR = graphql<AuthorQuery, AuthorQueryInput>`
-  query ($id: ID!) {
-    author(id: $id) {
-      name
-    }
-  }
-`;
-
-type PostsQuery = {
-  posts: Post[];
-};
-
-type PostsAndAuthorsQuery = AuthorsQuery & PostsQuery;
-
-let POSTS_AND_AUTHORS = graphql<PostsAndAuthorsQuery>`
-  query {
-    posts {
-      title
-      body
-      author {
-        name
-      }
-    }
-
-    authors {
-      name
-      posts {
-        title
-        body
-      }
-    }
-  }
-`;
-
-type CreateAuthorMutation = {
-  createAuthor: {
-    name: string;
-    id: string;
-    __typename: string;
-    posts?: Array<Post>;
-  };
-};
-
-type CreateAuthorInput = {
-  name: string;
-};
-
-let CREATE_AUTHOR = graphql<CreateAuthorMutation, CreateAuthorInput>`
-  mutation ($name: String!) {
-    createAuthor(name: $name) {
-      name
-      posts {
-        title
-        body
-      }
-    }
-  }
-`;
 
 describe("@grafoo/react", () => {
   let client: GrafooClient;
@@ -135,10 +36,10 @@ describe("@grafoo/react", () => {
     expect(() => renderHook(() => useGrafoo({}), { wrapper })).not.toThrow();
   });
 
-  it("should not fetch a query if lazy prop is set to true", async () => {
+  it("should not fetch a query if skip prop is set to true", async () => {
     let spy = jest.spyOn(window, "fetch");
 
-    renderHook(() => useGrafoo({ query: AUTHORS, lazy: true }), { wrapper });
+    renderHook(() => useGrafoo({ query: AUTHORS, skip: true }), { wrapper });
 
     expect(spy).not.toHaveBeenCalled();
   });
@@ -148,13 +49,13 @@ describe("@grafoo/react", () => {
 
     let spy = jest.spyOn(client, "listen");
 
-    renderHook(() => useGrafoo({ query: AUTHORS, lazy: true }), { wrapper });
+    renderHook(() => useGrafoo({ query: AUTHORS, skip: true }), { wrapper });
 
     expect(spy).toHaveBeenCalled();
   });
 
   it("should execute render with default render argument", () => {
-    let { result } = renderHook(() => useGrafoo({ query: AUTHORS, lazy: true }), { wrapper });
+    let { result } = renderHook(() => useGrafoo({ query: AUTHORS, skip: true }), { wrapper });
 
     expect(result.current).toEqual({ loading: false, loaded: false });
   });
@@ -170,20 +71,20 @@ describe("@grafoo/react", () => {
     expect(result.current).toEqual({ loading: false, loaded: true, ...data });
   });
 
-  it("should render if lazy changed value to false", async () => {
+  it("should render if skip changed value to false", async () => {
     let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
-    let { result, rerender, waitForNextUpdate } = renderHook<{ lazy: boolean }, any>(
-      ({ lazy }) => useGrafoo({ query: AUTHORS, lazy }),
+    let { result, rerender, waitForNextUpdate } = renderHook<{ skip: boolean }, any>(
+      ({ skip }) => useGrafoo({ query: AUTHORS, skip }),
       {
         wrapper,
         initialProps: {
-          lazy: true
+          skip: true
         }
       }
     );
 
     expect(result.current).toEqual({ loading: false, loaded: false });
-    rerender({ lazy: false });
+    rerender({ skip: false });
     expect(result.current).toEqual({ loading: true, loaded: false });
     await waitForNextUpdate();
     expect(result.current).toEqual({ loading: false, loaded: true, ...data });
@@ -192,29 +93,29 @@ describe("@grafoo/react", () => {
   it("should rerender if variables prop has changed", async () => {
     let {
       data: { authors }
-    } = await mockQueryRequest<AuthorsQuery>(SIMPLE_AUTHORS);
-    let author1 = authors[0];
-    let author2 = authors[1];
+    } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
+    let author1 = authors.edges[0];
+    let author2 = authors.edges[1];
 
-    await mockQueryRequest(AUTHOR, { id: author1.id });
+    await mockQueryRequest(AUTHOR, { id: author1.node.id });
     let { result, rerender, waitForNextUpdate } = renderHook<{ id: string }, any>(
       ({ id }) => useGrafoo({ query: AUTHOR, variables: { id } }),
       {
         wrapper,
         initialProps: {
-          id: author1.id
+          id: author1.node.id
         }
       }
     );
 
     expect(result.current).toEqual({ loading: true, loaded: false });
     await waitForNextUpdate();
-    expect(result.current).toEqual({ loading: false, loaded: true, author: author1 });
-    await mockQueryRequest(AUTHOR, { id: author2.id });
-    rerender({ id: author2.id });
-    expect(result.current).toEqual({ loading: true, loaded: true, author: author1 });
+    expect(result.current).toEqual({ loading: false, loaded: true, author: author1.node });
+    await mockQueryRequest(AUTHOR, { id: author2.node.id });
+    rerender({ id: author2.node.id });
+    expect(result.current).toEqual({ loading: true, loaded: true, author: author1.node });
     await waitForNextUpdate();
-    expect(result.current).toEqual({ loading: false, loaded: true, author: author2 });
+    expect(result.current).toEqual({ loading: false, loaded: true, author: author2.node });
   });
 
   it("should not try to load a query if it's already cached", async () => {
@@ -230,7 +131,7 @@ describe("@grafoo/react", () => {
   });
 
   it("should handle mutations", async () => {
-    let variables = { name: "Bart" };
+    let variables = { input: { name: "Bart" } };
 
     let data = await mockQueryRequest(CREATE_AUTHOR, variables);
     let { result } = renderHook(
@@ -252,10 +153,16 @@ describe("@grafoo/react", () => {
             createAuthor: {
               query: CREATE_AUTHOR,
               optimisticUpdate: ({ authors }, variables) => ({
-                authors: [...authors, { ...variables, id: "tempID" }]
+                authors: {
+                  edges: [...authors.edges, { node: { ...variables.input, id: "tempID" } }]
+                }
               }),
               update: ({ authors }, data) => ({
-                authors: authors.map((a) => (a.id === "tempID" ? data.createAuthor : a))
+                authors: {
+                  edges: authors.edges.map((p) =>
+                    p.node.id === "tempID" ? { node: data.createAuthor.author } : p
+                  )
+                }
               })
             }
           }
@@ -270,20 +177,20 @@ describe("@grafoo/react", () => {
 
     expect(result.current).toMatchObject({ loading: false, loaded: true, ...data });
 
-    let variables = { name: "Homer" };
+    let variables = { input: { name: "Homer" } };
     await mockQueryRequest(CREATE_AUTHOR, variables);
     act(() => {
       result.current.createAuthor(variables);
     });
 
-    expect(result.current.authors.length).toBe(data.authors.length + 1);
-    let newAuthor = result.current.authors.find((a) => a.id === "tempID");
-    expect(newAuthor).toEqual({ name: "Homer", id: "tempID" });
+    expect(result.current.authors.edges.length).toBe(data.authors.edges.length + 1);
+    let newAuthor = result.current.authors.edges.find((a) => a.node.id === "tempID");
+    expect(newAuthor).toEqual({ node: { name: "Homer", id: "tempID" } });
 
     await waitForNextUpdate();
 
-    expect(result.current.authors.find((a) => a.id === "tempID")).toBeUndefined();
-    expect(result.current.authors.find((a) => a.name === "Homer")).toBeTruthy();
+    expect(result.current.authors.edges.find((a) => a.node.id === "tempID")).toBeUndefined();
+    expect(result.current.authors.edges.find((a) => a.node.name === "Homer")).toBeTruthy();
   });
 
   it("should reflect updates that happen outside of the component", async () => {
@@ -296,12 +203,15 @@ describe("@grafoo/react", () => {
     expect(result.current).toMatchObject({ loading: false, loaded: true, ...data });
 
     act(() => {
-      client.write(AUTHORS, {
-        authors: data.authors.map((a, i) => (!i ? { ...a, name: "Lisa" } : a))
+      let newAuthors: AuthorsQuery = JSON.parse(JSON.stringify(data));
+      newAuthors.authors.edges.unshift({
+        node: { name: "Lisa", id: "tempID" },
+        cursor: "tempCursor"
       });
+      client.write(AUTHORS, newAuthors);
     });
 
-    expect(result.current.authors[0].name).toBe("Lisa");
+    expect(result.current.authors.edges[0].node.name).toBe("Lisa");
   });
 
   it("should not try to fetch a query data if it's already cached", async () => {

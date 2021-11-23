@@ -23,9 +23,8 @@
   },
   "jest": {
     "transform": {
-      "^.+\\.(ts|tsx|js)$": "<rootDir>/../../scripts/jest-setup.js"
+      "^.+\\.(ts|tsx|js)$": "babel-jest"
     },
-    "resolver": "<rootDir>/../../scripts/resolver.js",
     "transformIgnorePatterns": [
       "node_modules/(?!(lowdb|steno|node-fetch|fetch-blob)/)"
     ]
