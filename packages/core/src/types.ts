@@ -64,6 +64,6 @@ export type GrafooClient = {
 };
 
 export type GrafooClientOptions = {
+  idFields: Array<string>;
   initialState?: GrafooInitialState;
-  idFields?: Array<string>;
 };

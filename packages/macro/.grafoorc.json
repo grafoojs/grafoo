@@ -1,0 +1,5 @@
+{
+  "schema": "schema.graphql",
+  "idFields": ["id", "__typename"],
+  "compress": true
+}

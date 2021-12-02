@@ -1,4 +1,13 @@
-import { DocumentNode, buildASTSchema, parse, print, getOperationAST } from "graphql";
+import * as fs from "fs";
+import * as path from "path";
+import {
+  DocumentNode,
+  GraphQLSchema,
+  buildASTSchema,
+  getOperationAST,
+  parse,
+  print
+} from "graphql";
 import compress from "graphql-query-compress";
 import md5Hash from "crypto-js/md5";
 import { GrafooQuery } from "@grafoo/core";
@@ -9,13 +18,39 @@ import generateClientResolver from "./generate-client-resolvers";
 
 export type Options = {
   schema: string;
+  idFields: string[];
   compress?: boolean;
   generateIds?: boolean;
-  idFields?: string[];
 };
 
-export default function compileDocument(source: string, schemaString: string, opts: Options) {
-  let schema = buildASTSchema(parse(schemaString));
+let cache = new Map();
+
+export default function compileDocument(source: string) {
+  if (!cache.has("opts")) {
+    let opts = getOptions();
+
+    if (!["schema", "idFields"].some((f) => Object.keys(opts).includes(f))) {
+      throw new Error(
+        "The `schema` and `idFields` options are required. Please include then in your .grafoorc."
+      );
+    }
+
+    opts.compress = opts.compress ?? process.env.NODE_ENV === "production";
+    opts.generateIds = opts.generateIds ?? false;
+
+    cache.set("opts", opts);
+  }
+
+  let opts: Options = cache.get("opts");
+  let schemaString = getSchema(opts.schema);
+  let schema: GraphQLSchema;
+  try {
+    schema = buildASTSchema(parse(schemaString));
+  } catch (error) {
+    error.message = `Failed to parse ${path.join(process.cwd(), opts.schema)}.`;
+    throw error;
+  }
+
   let document = sortDocument(insertFields(schema, parse(source), opts.idFields)) as DocumentNode;
   let operation = getOperationAST(document);
   let fragments = {
@@ -36,4 +71,44 @@ export default function compileDocument(source: string, schemaString: string, op
   }
 
   return JSON.stringify(grafooQuery);
+}
+
+export function getOptions(): Options {
+  try {
+    let paths = [".grafoorc.json", ".grafoorc"].map((p) => path.join(process.cwd(), p));
+    let configPath = paths.find((p) => fs.existsSync(p));
+
+    fs.accessSync(configPath);
+
+    let config = fs.readFileSync(configPath, "utf-8");
+
+    return JSON.parse(config);
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      throw new Error("Could not find a .grafoorc or .grafoorc.json in the root directory.");
+    }
+
+    throw error;
+  }
+}
+
+export function getSchema(schemaPath: string) {
+  try {
+    let fullPath = path.join(process.cwd(), schemaPath);
+
+    fs.accessSync(fullPath);
+
+    let schema = fs.readFileSync(fullPath, "utf-8");
+
+    return schema;
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      throw new Error(
+        "Could not find a schema in the root directory. " +
+          "Please specify the `schema` option in your .grafoorc file."
+      );
+    }
+
+    throw error;
+  }
 }

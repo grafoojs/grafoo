@@ -1,4 +1,4 @@
-import graphql from "@grafoo/core/tag";
+import { graphql } from "@grafoo/core";
 import storeValues from "../src/store-values";
 import * as postsAndAuthors from "./data/posts-and-authors";
 import * as postsWithFragments from "./data/posts-with-fragments";

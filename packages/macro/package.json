@@ -17,10 +17,20 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc --declaration"
+    "build": "tsc --declaration",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(ts|tsx|js)$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(lowdb|steno|node-fetch|fetch-blob)/)"
+    ]
   },
   "dependencies": {
-    "@babel/parser": "^7.16.3",
+    "@babel/parser": "^7.16.4",
     "@grafoo/compiler": "^1.4.2-next.0",
     "babel-plugin-macros": "^3.1.0"
   },

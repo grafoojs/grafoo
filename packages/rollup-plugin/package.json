@@ -1,0 +1,37 @@
+{
+  "name": "@grafoo/rollup-plugin",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "scripts": {
+    "build": "tsc --declaration",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(ts|tsx|js)$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(lowdb|steno|node-fetch|fetch-blob)/)"
+    ]
+  },
+  "dependencies": {
+    "@rollup/pluginutils": "^4.1.1",
+    "@types/estree": "^0.0.50",
+    "acorn": "^8.6.0",
+    "estree-walker": "^2.0.1",
+    "magic-string": "^0.25.7",
+    "rollup": "^2.60.2"
+  },
+  "devDependencies": {
+    "@babel/parser": "^7.16.4",
+    "@babel/preset-env": "^7.16.4",
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.11",
+    "@types/react": "^17.0.37",
+    "@types/uuid": "^8.3.3",
+    "@types/ws": "^8.2.1"
+  }
+}

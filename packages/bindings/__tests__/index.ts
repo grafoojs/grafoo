@@ -117,7 +117,7 @@ describe("@grafoo/bindings", () => {
   });
 
   it("should provide errors on bad request", async () => {
-    let failedQuery = { ...AUTHORS, document: AUTHORS.document.substr(1) };
+    let failedQuery = { ...AUTHORS, document: AUTHORS.document.substring(1) };
     let { errors } = await mockQueryRequest(failedQuery);
     let renderFn = jest.fn();
     let bindings = createBindings(client, renderFn, { query: failedQuery });

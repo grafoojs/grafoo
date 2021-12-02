@@ -6,12 +6,7 @@ module.exports = {
   ],
   env: {
     test: {
-      plugins: [
-        [
-          "module:@grafoo/babel-plugin",
-          { schema: "schema.graphql", idFields: ["id", "__typename"] }
-        ]
-      ]
+      plugins: ["module:@grafoo/babel-plugin"]
     }
   }
 };

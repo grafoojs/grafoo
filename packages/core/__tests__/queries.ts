@@ -1,4 +1,4 @@
-import graphql from "@grafoo/core/tag";
+import { graphql } from "@grafoo/core";
 import { Query, QueryPostArgs } from "@grafoo/test-utils";
 
 export type AuthorsQuery = Pick<Query, "authors">;

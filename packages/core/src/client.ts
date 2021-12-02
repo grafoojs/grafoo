@@ -13,12 +13,11 @@ import { deepMerge } from "./util";
 
 export default function createClient(
   transport: GrafooTransport,
-  options?: GrafooClientOptions
+  options: GrafooClientOptions
 ): GrafooClient {
-  let { initialState = { paths: {}, records: {} }, idFields } = options;
-
-  let paths: GrafooPath = initialState.paths ?? {};
-  let records: GrafooRecords = initialState.records ?? {};
+  let { initialState, idFields } = options;
+  let paths: GrafooPath = initialState?.paths ?? {};
+  let records: GrafooRecords = initialState?.records ?? {};
   let listeners: GrafooListener[] = [];
 
   function execute<T extends GrafooQuery>(query: T, variables?: T["_variablesType"]) {

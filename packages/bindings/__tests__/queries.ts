@@ -1,4 +1,4 @@
-import graphql from "@grafoo/core/tag";
+import { graphql } from "@grafoo/core";
 import {
   CreateAuthorInput,
   DeleteAuthorInput,
