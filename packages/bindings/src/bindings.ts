@@ -62,6 +62,8 @@ export default function createBindings<
   let preventListenUpdate = shouldLoad;
   let state = { loaded: hasData(), loading: shouldLoad };
 
+  if (shouldLoad) load();
+
   function hasData() {
     return !!Object.keys(data ?? {}).length && !partial;
   }

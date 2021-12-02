@@ -18,6 +18,8 @@ import {
   UPDATE_AUTHOR
 } from "./queries";
 
+let sleep = (time = 0) => new Promise((resolve) => setTimeout(resolve, time));
+
 describe("@grafoo/bindings", () => {
   let client: GrafooClient;
   beforeEach(() => {
@@ -51,7 +53,7 @@ describe("@grafoo/bindings", () => {
 
     expect(bindings.getState()).toEqual({ loaded: false, loading: true });
 
-    await bindings.load();
+    await sleep();
 
     let results = renderFn.mock.calls.map((c) => c[0]);
 
@@ -63,7 +65,7 @@ describe("@grafoo/bindings", () => {
     let renderFn = jest.fn();
     let bindings = createBindings(client, renderFn, { query: AUTHORS });
 
-    await bindings.load();
+    await sleep();
     await bindings.load();
 
     let results = renderFn.mock.calls.map((c) => c[0]);
@@ -110,7 +112,7 @@ describe("@grafoo/bindings", () => {
     let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
     let bindings = createBindings(client, () => {}, { query: AUTHORS });
 
-    await bindings.load();
+    await sleep();
     bindings.unbind();
 
     let clonedData: AuthorsQuery = JSON.parse(JSON.stringify(data));
@@ -127,7 +129,7 @@ describe("@grafoo/bindings", () => {
     let renderFn = jest.fn();
     let bindings = createBindings(client, renderFn, { query: failedQuery });
 
-    await bindings.load();
+    await sleep();
 
     expect(renderFn).toHaveBeenCalledTimes(1);
     expect(bindings.getState()).toEqual({ loading: false, loaded: false, errors });
@@ -171,7 +173,7 @@ describe("@grafoo/bindings", () => {
 
     expect(typeof props.createAuthor).toBe("function");
 
-    await bindings.load();
+    await sleep();
 
     let variables = { input: { name: "homer" } };
     let { data } = await mockQueryRequest(CREATE_AUTHOR, variables);
@@ -217,7 +219,7 @@ describe("@grafoo/bindings", () => {
 
     expect(typeof props.createAuthor).toBe("function");
 
-    await bindings.load();
+    await sleep();
 
     let variables = { input: { name: "marge" } };
     let { data } = await mockQueryRequest(CREATE_AUTHOR, variables);
@@ -399,10 +401,10 @@ describe("@grafoo/bindings", () => {
     let author1Variables = { id: author1.node.id };
     let author2Variables = { id: author2.node.id };
 
-    let bindings = createBindings(client, () => {}, { query: AUTHOR, variables: author1Variables });
-
     await mockQueryRequest(AUTHOR, author1Variables);
-    await bindings.load();
+    let bindings = createBindings(client, () => {}, { query: AUTHOR, variables: author1Variables });
+    await sleep();
+
     expect(bindings.getState().author).toEqual(author1.node);
     expect(client.read(AUTHOR, author1Variables).data.author).toEqual(author1.node);
 

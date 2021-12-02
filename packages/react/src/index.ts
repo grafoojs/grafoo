@@ -7,7 +7,7 @@ import createBindings, {
 } from "@grafoo/bindings";
 
 // @ts-ignore
-export let GrafooContext = React.createContext<GrafooClient>({});
+export let GrafooContext = React.createContext<GrafooClient>();
 
 export type GrafooProviderProps = {
   client: GrafooClient;
@@ -28,7 +28,6 @@ export function useGrafoo<T extends GrafooQuery, U extends Record<string, Grafoo
   let variables = React.useRef(props.variables);
 
   React.useEffect(() => {
-    if (state.loading) bindings.load();
     return () => bindings.unbind();
   }, []);
 
