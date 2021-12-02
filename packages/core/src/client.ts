@@ -38,29 +38,34 @@ export default function createClient(options: GrafooClientOptions): GrafooClient
     if (!data) (data = variables), (variables = {});
 
     let result = storeData(query, variables, data, idFields);
-    let shouldUpdate = false;
 
-    for (let i in result.records) {
-      // record has been inserted
-      if (!(i in records)) shouldUpdate = true;
-
-      for (let j in result.records[i]) {
-        // record has been updated
-        if (result.records[i][j] !== records[i]?.[j]) shouldUpdate = true;
-      }
-    }
-
-    for (let i in records) {
-      // record has been removed
-      if (!(i in result.records)) shouldUpdate = true;
-    }
+    let updateListener = shouldUpdate(result.records);
 
     // update paths and records
     deepMerge(paths, result.paths);
     deepMerge(records, result.records);
 
     // run listeners
-    for (let i in listeners) listeners[i](shouldUpdate);
+    for (let i in listeners) listeners[i](updateListener);
+  }
+
+  function shouldUpdate(nextRecords: GrafooRecords) {
+    for (let i in nextRecords) {
+      // record has been inserted
+      if (!(i in records)) return true;
+
+      for (let j in nextRecords[i]) {
+        // record has been updated
+        if (nextRecords[i][j] !== records[i]?.[j]) return true;
+      }
+    }
+
+    for (let i in records) {
+      // record has been removed
+      if (!(i in nextRecords)) return true;
+    }
+
+    return false;
   }
 
   function read<T extends GrafooQuery>(query: T, variables?: T["_variablesType"]) {
