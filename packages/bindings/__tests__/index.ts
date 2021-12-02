@@ -1,6 +1,11 @@
 import createBindings, { makeGrafooConfig } from "../src";
 import createClient, { GrafooClient } from "@grafoo/core";
-import { mockQueryRequest, createTransport } from "@grafoo/test-utils";
+import {
+  mockQueryRequest,
+  createTransport,
+  AuthorEdge,
+  AuthorConnection
+} from "@grafoo/test-utils";
 import {
   AUTHOR,
   AUTHORS,
@@ -153,8 +158,8 @@ describe("@grafoo/bindings", () => {
           query: CREATE_AUTHOR,
           update: ({ authors }, data) => ({
             authors: {
-              edges: [{ node: data.createAuthor.author }, ...authors.edges]
-            }
+              edges: [{ node: data.createAuthor.author } as AuthorEdge, ...authors.edges]
+            } as AuthorConnection
           })
         }
       }
@@ -188,15 +193,18 @@ describe("@grafoo/bindings", () => {
           optimisticUpdate: ({ authors }, variables) => ({
             authors: {
               ...authors,
-              edges: [{ node: { ...variables.input, id: "tempID" } }, ...authors.edges]
-            }
+              edges: [
+                { node: { ...variables.input, id: "tempID" } } as AuthorEdge,
+                ...authors.edges
+              ]
+            } as AuthorConnection
           }),
           update: ({ authors }, data) => ({
             authors: {
               edges: authors.edges.map((p) =>
-                p.node.id === "tempID" ? { node: data.createAuthor.author } : p
+                p.node.id === "tempID" ? { node: data.createAuthor.author, ...p } : p
               )
-            }
+            } as AuthorConnection
           })
         }
       }
@@ -245,7 +253,7 @@ describe("@grafoo/bindings", () => {
           optimisticUpdate: ({ authors }, { input: { id } }) => ({
             authors: {
               edges: authors.edges.filter((author) => author.node.id !== id)
-            }
+            } as AuthorConnection
           })
         }
       }
@@ -277,12 +285,12 @@ describe("@grafoo/bindings", () => {
           query: UPDATE_AUTHOR,
           optimisticUpdate: ({ authors }, variables) => ({
             authors: {
-              edges: authors.edges.map((author) =>
-                author.node.id === variables.input.id
-                  ? { node: { ...author.node, ...variables.input } }
-                  : author
+              edges: authors.edges.map((a) =>
+                a.node.id === variables.input.id
+                  ? { ...a, node: { ...a.node, ...variables.input } }
+                  : a
               )
-            }
+            } as AuthorConnection
           })
         }
       }
@@ -324,29 +332,30 @@ describe("@grafoo/bindings", () => {
           query: CREATE_AUTHOR,
           optimisticUpdate: ({ authors }, variables) => ({
             authors: {
-              edges: [{ node: { ...variables.input, id: "tempID" } }, ...authors.edges]
-            }
+              edges: [
+                { node: { ...variables.input, id: "tempID" } } as AuthorEdge,
+                ...authors.edges
+              ]
+            } as AuthorConnection
           }),
           update: ({ authors }, data) => ({
             authors: {
-              edges: authors.edges.map((author) =>
-                author.node.id === "tempID"
-                  ? { node: { ...author.node, ...data.createAuthor.author } }
-                  : author
+              edges: authors.edges.map((a) =>
+                a.node.id === "tempID"
+                  ? { ...a, node: { ...a.node, ...data.createAuthor.author } }
+                  : a
               )
-            }
+            } as AuthorConnection
           })
         },
         updateAuthor: {
           query: UPDATE_AUTHOR,
           optimisticUpdate: ({ authors }, variables) => ({
             authors: {
-              edges: authors.edges.map((author) =>
-                author.node.id === variables.input.id
-                  ? { node: { ...author.node, ...variables.input } }
-                  : author
+              edges: authors.edges.map((a) =>
+                a.node.id === variables.input.id ? { node: { ...a.node, ...variables.input } } : a
               )
-            }
+            } as AuthorConnection
           })
         },
         deleteAuthor: {
@@ -354,7 +363,7 @@ describe("@grafoo/bindings", () => {
           optimisticUpdate: ({ authors }, variables) => ({
             authors: {
               edges: authors.edges.filter((author) => author.node.id !== variables.input.id)
-            }
+            } as AuthorConnection
           })
         }
       }

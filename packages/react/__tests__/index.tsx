@@ -5,7 +5,12 @@
 import fetch from "node-fetch";
 import * as React from "react";
 import createClient, { GrafooClient } from "@grafoo/core";
-import { mockQueryRequest, createTransport } from "@grafoo/test-utils";
+import {
+  mockQueryRequest,
+  createTransport,
+  AuthorEdge,
+  AuthorConnection
+} from "@grafoo/test-utils";
 import { renderHook, act } from "@testing-library/react-hooks";
 
 import { GrafooProvider, useGrafoo } from "../src";
@@ -154,15 +159,18 @@ describe("@grafoo/react", () => {
               query: CREATE_AUTHOR,
               optimisticUpdate: ({ authors }, variables) => ({
                 authors: {
-                  edges: [...authors.edges, { node: { ...variables.input, id: "tempID" } }]
-                }
+                  edges: [
+                    ...authors.edges,
+                    { node: { ...variables.input, id: "tempID" } } as AuthorEdge
+                  ]
+                } as AuthorConnection
               }),
               update: ({ authors }, data) => ({
                 authors: {
                   edges: authors.edges.map((p) =>
-                    p.node.id === "tempID" ? { node: data.createAuthor.author } : p
+                    p.node.id === "tempID" ? { ...p, node: data.createAuthor.author } : p
                   )
-                }
+                } as AuthorConnection
               })
             }
           }
