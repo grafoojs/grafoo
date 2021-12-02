@@ -31,8 +31,12 @@ export default function createBindings<
     ({ data, partial } = client.read(query, variables));
 
     unbind = client.listen((shouldUpdate) => {
-      if (preventListenUpdate) return;
-      if (shouldUpdate) getUpdateFromClient();
+      if (!state.loading && shouldUpdate) {
+        ({ data, partial } = client.read(query, variables));
+
+        state.loaded = !partial;
+        updater(getState());
+      }
     });
   }
 
@@ -47,43 +51,29 @@ export default function createBindings<
           client.write(query, variables, optimisticUpdate(clone(data), mutationVariables));
         }
 
-        return client.execute(mutationQuery, mutationVariables).then((mutationResponse) => {
-          if (query && update && mutationResponse.data) {
-            client.write(query, variables, update(clone(data), mutationResponse.data));
+        return client.execute(mutationQuery, mutationVariables).then((response) => {
+          if (query && update && response.data) {
+            client.write(query, variables, update(clone(data), response.data));
           }
 
-          return mutationResponse;
+          return response;
         });
       };
     }
   }
 
-  let shouldLoad = !!query && !skip && !hasData();
-  let preventListenUpdate = shouldLoad;
-  let state = { loaded: hasData(), loading: shouldLoad };
+  let getState = () => ({ ...state, ...boundMutations, ...(data as {}) });
 
-  if (shouldLoad) load();
+  let loading = !!query && !skip && partial;
+  let state = { loaded: !partial, loading };
 
-  function hasData() {
-    return !!Object.keys(data ?? {}).length && !partial;
-  }
-
-  function getUpdateFromClient() {
-    ({ data, partial } = client.read(query, variables));
-    Object.assign(state, { loaded: hasData() });
-    updater(getState());
-  }
-
-  function getState(): GrafooBoundState<T, U> {
-    return Object.assign({}, state, boundMutations, data);
-  }
+  if (loading) load();
 
   function load(nextVariables?: CP["query"]["_variablesType"]) {
     variables = nextVariables ?? variables;
-    preventListenUpdate = true;
 
     if (!state.loading) {
-      Object.assign(state, { loading: true });
+      state.loading = true;
       updater(getState());
     }
 
@@ -92,9 +82,8 @@ export default function createBindings<
 
       if (data) client.write(query, variables, data);
 
-      Object.assign(state, { loaded: !!data, loading: false }, errors && { errors });
+      state = { loaded: !!data, loading: false, ...(errors && { errors }) };
       updater(getState());
-      preventListenUpdate = false;
     });
   }
 

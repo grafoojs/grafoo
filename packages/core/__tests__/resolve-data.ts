@@ -1,5 +1,5 @@
 import { graphql } from "@grafoo/core";
-import resolveValues from "../src/resolve-values";
+import resolveData from "../src/resolve-data";
 import * as postsAndAuthors from "./data/posts-and-authors";
 import * as postsWithFragments from "./data/posts-with-fragments";
 import * as authorWithArguments from "./data/author-with-arguments";
@@ -40,7 +40,7 @@ describe("resolveValues", () => {
   it("should resolve the data given a simple query, a path and the records", () => {
     let query = POSTS_AND_AUTHORS;
 
-    let { data } = resolveValues(query, {}, postsAndAuthors.path, postsAndAuthors.records);
+    let { data } = resolveData(query, {}, postsAndAuthors.path, postsAndAuthors.records);
 
     expect(data).toEqual(postsAndAuthors.data);
   });
@@ -77,7 +77,7 @@ describe("resolveValues", () => {
       }
     `;
 
-    let { data } = resolveValues(query, {}, postsWithFragments.path, postsWithFragments.records);
+    let { data } = resolveData(query, {}, postsWithFragments.path, postsWithFragments.records);
 
     expect(data).toEqual(postsWithFragments.data);
   });
@@ -103,7 +103,7 @@ describe("resolveValues", () => {
       first: 1
     };
 
-    let { data } = resolveValues(
+    let { data } = resolveData(
       query,
       variables,
       authorWithArguments.path,
@@ -138,7 +138,7 @@ describe("resolveValues", () => {
       first: 1
     };
 
-    let { data } = resolveValues(
+    let { data } = resolveData(
       query,
       variables,
       authorWithArguments.path,
@@ -157,7 +157,7 @@ describe("resolveValues", () => {
       }
     `;
 
-    let { data, partial } = resolveValues(query, {}, {}, {});
+    let { data, partial } = resolveData(query, {}, {}, {});
 
     expect(data).toEqual({});
     expect(partial).toEqual(true);
@@ -166,7 +166,7 @@ describe("resolveValues", () => {
   it("should be able to resolve values partially", () => {
     let query = POSTS_AND_AUTHORS;
 
-    let { data, partial } = resolveValues(
+    let { data, partial } = resolveData(
       query,
       {},
       { authors: postsAndAuthors.path.authors },

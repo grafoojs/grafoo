@@ -1,5 +1,5 @@
-import storeValues from "./store-values";
-import resolveValues from "./resolve-values";
+import storeData from "./store-data";
+import resolveData from "./resolve-data";
 import {
   GrafooClient,
   GrafooClientOptions,
@@ -44,9 +44,9 @@ export default function createClient(
       variables = {};
     }
 
-    let result = storeValues(query, variables, data, idFields);
-
+    let result = storeData(query, variables, data, idFields);
     let shouldUpdate = false;
+
     for (let i in result.records) {
       // record has been inserted
       if (!(i in records)) shouldUpdate = true;
@@ -71,7 +71,7 @@ export default function createClient(
   }
 
   function read<T extends GrafooQuery>(query: T, variables?: T["_variablesType"]) {
-    return resolveValues(query, variables, paths, records);
+    return resolveData(query, variables, paths, records);
   }
 
   function extract() {

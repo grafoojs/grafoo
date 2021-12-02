@@ -1,7 +1,7 @@
 import { GrafooPath, GrafooQuery, GrafooRecords, GrafooSelection } from "./types";
 import { idFromBranch, getPathId, resolveSelection } from "./util";
 
-export default function storeValues<T extends GrafooQuery>(
+export default function storeData<T extends GrafooQuery>(
   { operation, fragments }: T,
   variables: T["_variablesType"],
   data: T["_queryType"],

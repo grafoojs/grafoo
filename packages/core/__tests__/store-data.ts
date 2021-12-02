@@ -1,5 +1,5 @@
 import { graphql } from "@grafoo/core";
-import storeValues from "../src/store-values";
+import storeData from "../src/store-data";
 import * as postsAndAuthors from "./data/posts-and-authors";
 import * as postsWithFragments from "./data/posts-with-fragments";
 import * as authorWithArguments from "./data/author-with-arguments";
@@ -42,7 +42,7 @@ describe("storeValues", () => {
   it("should yield correct path and records to a normal query", () => {
     let query = POSTS_AND_AUTHORS;
 
-    let { paths, records } = storeValues(query, {}, postsAndAuthors.data, idFields);
+    let { paths, records } = storeData(query, {}, postsAndAuthors.data, idFields);
 
     expect(paths).toEqual(postsAndAuthors.path);
     expect(records).toEqual(postsAndAuthors.records);
@@ -80,7 +80,7 @@ describe("storeValues", () => {
       }
     `;
 
-    let { paths, records } = storeValues(query, {}, postsWithFragments.data, idFields);
+    let { paths, records } = storeData(query, {}, postsWithFragments.data, idFields);
 
     expect(paths).toEqual(postsWithFragments.path);
     expect(records).toEqual(postsWithFragments.records);
@@ -107,7 +107,7 @@ describe("storeValues", () => {
       first: 1
     };
 
-    let { paths, records } = storeValues(query, variables, authorWithArguments.data, idFields);
+    let { paths, records } = storeData(query, variables, authorWithArguments.data, idFields);
 
     expect(paths).toEqual(authorWithArguments.path);
     expect(records).toEqual(authorWithArguments.records);
@@ -138,7 +138,7 @@ describe("storeValues", () => {
       first: 1
     };
 
-    let { paths, records } = storeValues(query, variables, authorWithArguments.data, idFields);
+    let { paths, records } = storeData(query, variables, authorWithArguments.data, idFields);
 
     expect(paths).toEqual(authorWithArguments.path);
     expect(records).toEqual(authorWithArguments.records);
@@ -161,7 +161,7 @@ describe("storeValues", () => {
 
     data.authors.edges[0].node.posts = null;
 
-    let { paths } = storeValues(query, {}, data, idFields);
+    let { paths } = storeData(query, {}, data, idFields);
 
     expect(paths).toEqual({
       authors: {

@@ -1,7 +1,7 @@
 import { GrafooPath, GrafooQuery, GrafooRecords, GrafooSelection } from "./types";
 import { getPathId, getPathType, resolveSelection } from "./util";
 
-export default function resolveValues<T extends GrafooQuery>(
+export default function resolveData<T extends GrafooQuery>(
   { operation, fragments }: T,
   variables: T["_variablesType"],
   allPaths: GrafooPath,
