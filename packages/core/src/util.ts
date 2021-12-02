@@ -24,7 +24,7 @@ export function getPathId<T extends GrafooQuery>(
     return `${name}:${finalValue}`;
   });
 
-  return [path].concat(ids).join("|");
+  return [path].concat(ids).join(":");
 }
 
 export function resolveSelection(
