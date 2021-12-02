@@ -10,18 +10,18 @@ import {
   SIMPLE_AUTHORS
 } from "./queries";
 
-function mockTransport<T>(query: any, variables: any) {
+function transport<T>(query: any, variables: any) {
   return executeQuery<T>({ query, variables });
 }
 
 describe("@grafoo/core", () => {
   let client: GrafooClient;
   beforeEach(() => {
-    client = createClient(mockTransport, { idFields: ["id"] });
+    client = createClient({ transport, idFields: ["id"] });
   });
 
   it("should be instantiable", () => {
-    expect(() => createClient(mockTransport, { idFields: ["id"] })).not.toThrow();
+    expect(() => createClient({ transport, idFields: ["id"] })).not.toThrow();
     expect(typeof client.execute).toBe("function");
     expect(typeof client.listen).toBe("function");
     expect(typeof client.write).toBe("function");
@@ -198,7 +198,7 @@ describe("@grafoo/core", () => {
 
     client.write(POSTS_AND_AUTHORS, data);
 
-    client = createClient(mockTransport, { idFields: ["id"], initialState: client.extract() });
+    client = createClient({ transport, idFields: ["id"], initialState: client.extract() });
 
     expect(client.read(POSTS_AND_AUTHORS).data).toEqual(data);
   });
@@ -212,7 +212,7 @@ describe("@grafoo/core", () => {
   });
 
   it("should accept `idFields` array in options", async () => {
-    let client = createClient(mockTransport, { idFields: ["__typename", "id"] });
+    let client = createClient({ transport, idFields: ["__typename", "id"] });
     let { data } = await client.execute(AUTHORS);
 
     client.write(AUTHORS, data);

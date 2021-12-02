@@ -33,7 +33,7 @@ describe("@grafoo/react", () => {
   beforeEach(() => {
     jest.resetAllMocks();
     let transport = createTransport("https://some.graphql.api/");
-    client = createClient(transport, { idFields: ["id"] });
+    client = createClient({ transport, idFields: ["id"] });
     wrapper = (props) => <GrafooProvider client={client}>{props.children}</GrafooProvider>;
   });
 

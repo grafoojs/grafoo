@@ -6,16 +6,12 @@ import {
   GrafooListener,
   GrafooPath,
   GrafooQuery,
-  GrafooRecords,
-  GrafooTransport
+  GrafooRecords
 } from "./types";
 import { deepMerge } from "./util";
 
-export default function createClient(
-  transport: GrafooTransport,
-  options: GrafooClientOptions
-): GrafooClient {
-  let { initialState, idFields } = options;
+export default function createClient(options: GrafooClientOptions): GrafooClient {
+  let { transport, initialState, idFields } = options;
   let paths: GrafooPath = initialState?.paths ?? {};
   let records: GrafooRecords = initialState?.records ?? {};
   let listeners: GrafooListener[] = [];
@@ -39,10 +35,7 @@ export default function createClient(
     variables: T["_variablesType"],
     data?: T["_queryType"]
   ) {
-    if (!data) {
-      data = variables as T["_queryType"];
-      variables = {};
-    }
+    if (!data) (data = variables), (variables = {});
 
     let result = storeData(query, variables, data, idFields);
     let shouldUpdate = false;
