@@ -9,40 +9,37 @@ export default function resolveData<T extends GrafooQuery>(
 ) {
   let data = {} as T["_queryType"];
   let partial = false;
-  let stack: [string | void, GrafooSelection, GrafooPath<{ id?: string }>, T["_queryType"]][] = [
-    [undefined, operation, allPaths, data]
-  ];
+  let stack: [GrafooSelection, GrafooPath<{ id?: string }>, any][] = [[operation, allPaths, data]];
 
-  // traverse trough operation selection
+  // traverse operation selection
   while (stack.length) {
-    let [name, select, path, data] = stack.shift();
+    let [select, path, data] = stack.shift();
 
     if (Array.isArray(path)) {
-      // if path is a list increment the stack with
-      // the current selection and the path list children
-      for (let [k, v] of Object.entries(path)) {
-        // assign data type to data key given the path type
-        data[k] = getPathType(v);
-        stack.unshift([name, select, v, data[k]]);
+      // if path is an array increment the stack with
+      // the current selection and the array children
+      for (let [index, item] of Object.entries(path)) {
+        // assign path type to data key
+        data[index] = getPathType(item);
+        stack.unshift([select, item, data[index]]);
       }
     } else {
       let currentSelect = resolveSelection(select, fragments);
-      let { id } = path;
-      let record = allRecords[id];
+      let record = allRecords[path.id];
 
       for (let s of currentSelect.scalars) data[s] = record?.[s] ?? path?.[s];
 
-      for (let [k, v] of Object.entries(currentSelect.select)) {
-        let pathId = getPathId(k, v.args, variables);
+      for (let [name, value] of Object.entries(currentSelect.select)) {
+        let pathId = getPathId(name, value.args, variables);
         let newPath = path[pathId];
 
         // skip selection if path is undefined
         if (newPath === undefined) {
           partial = true;
         } else {
-          // assign data type to data key given the path type
-          data[k] = getPathType(newPath);
-          if (newPath) stack.unshift([k, v, newPath, data[k]]);
+          // assign path type to data key
+          data[name] = getPathType(newPath);
+          if (newPath) stack.unshift([value, newPath, data[name]]);
         }
       }
     }

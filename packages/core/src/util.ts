@@ -24,7 +24,7 @@ export function getPathId<T extends GrafooQuery>(
     return `${name}:${finalValue}`;
   });
 
-  return [path].concat(ids).join(":");
+  return [path].concat(ids).join("|");
 }
 
 export function resolveSelection(
@@ -57,7 +57,7 @@ export function getPathType(path: GrafooPath) {
   return path ? (Array.isArray(path) ? [] : {}) : null;
 }
 
-export function isObject(item: any) {
+function isObject(item: any) {
   return typeof item === "object" && !Array.isArray(item);
 }
 
