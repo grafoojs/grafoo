@@ -4,7 +4,7 @@
 
 import fetch from "node-fetch";
 import * as React from "react";
-import createClient, { GrafooClient } from "@grafoo/core";
+import { createClient } from "@grafoo/core";
 import {
   mockQueryRequest,
   createTransport,
@@ -27,7 +27,7 @@ import {
 globalThis.fetch = fetch;
 
 describe("@grafoo/react", () => {
-  let client: GrafooClient;
+  let client: ReturnType<typeof createClient>;
   let wrapper: React.FC;
   let load = expect.any(Function);
 

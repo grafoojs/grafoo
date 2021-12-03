@@ -1,5 +1,5 @@
-import createBindings, { makeGrafooConfig } from "../src";
-import createClient, { GrafooClient } from "@grafoo/core";
+import { createBindings, makeGrafooConfig } from "../src";
+import { createClient, GrafooClient } from "@grafoo/core";
 import {
   mockQueryRequest,
   createTransport,
@@ -30,7 +30,7 @@ describe("@grafoo/bindings", () => {
   });
 
   it("should be evocable given the minimal props", () => {
-    let bindings;
+    let bindings: ReturnType<typeof createBindings>;
     expect(() => (bindings = createBindings(client, () => {}, {}))).not.toThrow();
 
     Object.keys(bindings).forEach((fn) => {

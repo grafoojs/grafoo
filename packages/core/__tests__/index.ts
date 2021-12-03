@@ -1,5 +1,5 @@
 import { executeQuery } from "@grafoo/test-utils";
-import createClient from "../src";
+import { createClient } from "../src";
 import { GrafooClient } from "../src/types";
 import {
   AUTHORS,

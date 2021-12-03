@@ -1,9 +1,10 @@
 import * as React from "react";
 import { GrafooClient, GrafooQuery } from "@grafoo/core";
-import createBindings, {
+import {
+  createBindings,
+  makeGrafooConfig,
   GrafooConsumerProps,
-  GrafooBoundState,
-  makeGrafooConfig
+  GrafooBoundState
 } from "@grafoo/bindings";
 
 // @ts-ignore

@@ -10,7 +10,7 @@ import {
 } from "./types";
 import { deepMerge } from "./util";
 
-export default function createClient(options: GrafooClientOptions): GrafooClient {
+export function createClient(options: GrafooClientOptions): GrafooClient {
   let { transport, initialState, idFields } = options;
   let paths: GrafooPath = initialState?.paths ?? {};
   let records: GrafooRecords = initialState?.records ?? {};

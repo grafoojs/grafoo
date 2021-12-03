@@ -36,7 +36,7 @@ export type GrafooSelection = {
   select?: Record<string, GrafooSelection>;
 };
 
-export type GrafooQuery<T = unknown, U = unknown> = {
+export type GrafooQuery<T = {}, U = {}> = {
   document: string;
   id?: string;
   operation?: GrafooSelection;

@@ -12,10 +12,7 @@ export let makeGrafooConfig = <T extends GrafooQuery, U extends Record<string, G
 
 let clone = <T>(data: T) => JSON.parse(JSON.stringify(data));
 
-export default function createBindings<
-  T extends GrafooQuery,
-  U extends Record<string, GrafooQuery>
->(
+export function createBindings<T extends GrafooQuery, U extends Record<string, GrafooQuery>>(
   client: GrafooClient,
   updater: (state: GrafooBoundState<T, U>) => void,
   props: GrafooConsumerProps<T, U>
@@ -65,8 +62,8 @@ export default function createBindings<
   let getState = () => ({
     ...state,
     ...boundMutations,
-    ...(query && { load }),
-    ...(data as {})
+    ...data,
+    ...(query && { load })
   });
 
   let state = {
@@ -84,13 +81,15 @@ export default function createBindings<
       updater(getState());
     }
 
-    client.execute(query, variables).then((res) => {
+    return client.execute(query, variables).then((res) => {
       ({ data, errors } = res);
 
       if (data) client.write(query, variables, data);
 
       state = { loaded: !!data, loading: false, ...(errors && { errors }) };
       updater(getState());
+
+      return res;
     });
   }
 
