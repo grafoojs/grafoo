@@ -29,6 +29,7 @@ globalThis.fetch = fetch;
 describe("@grafoo/react", () => {
   let client: GrafooClient;
   let wrapper: React.FC;
+  let load = expect.any(Function);
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -41,10 +42,10 @@ describe("@grafoo/react", () => {
     expect(() => renderHook(() => useGrafoo({}), { wrapper })).not.toThrow();
   });
 
-  it("should not fetch a query if skip prop is set to true", async () => {
+  it("should not fetch a query if lazy prop is set to true", async () => {
     let spy = jest.spyOn(window, "fetch");
 
-    renderHook(() => useGrafoo({ query: AUTHORS, skip: true }), { wrapper });
+    renderHook(() => useGrafoo({ query: AUTHORS, lazy: true }), { wrapper });
 
     expect(spy).not.toHaveBeenCalled();
   });
@@ -54,15 +55,15 @@ describe("@grafoo/react", () => {
 
     let spy = jest.spyOn(client, "listen");
 
-    renderHook(() => useGrafoo({ query: AUTHORS, skip: true }), { wrapper });
+    renderHook(() => useGrafoo({ query: AUTHORS, lazy: true }), { wrapper });
 
     expect(spy).toHaveBeenCalled();
   });
 
   it("should execute render with default render argument", () => {
-    let { result } = renderHook(() => useGrafoo({ query: AUTHORS, skip: true }), { wrapper });
+    let { result } = renderHook(() => useGrafoo({ query: AUTHORS, lazy: true }), { wrapper });
 
-    expect(result.current).toEqual({ loading: false, loaded: false });
+    expect(result.current).toEqual({ load, loading: false, loaded: false });
   });
 
   it("should execute render with the right data if a query is specified", async () => {
@@ -71,28 +72,28 @@ describe("@grafoo/react", () => {
       wrapper
     });
 
-    expect(result.current).toEqual({ loading: true, loaded: false });
+    expect(result.current).toEqual({ load, loading: true, loaded: false });
     await waitForNextUpdate();
-    expect(result.current).toEqual({ loading: false, loaded: true, ...data });
+    expect(result.current).toEqual({ load, loading: false, loaded: true, ...data });
   });
 
-  it("should render if skip changed value to false", async () => {
+  it("should render if lazy changed value to false", async () => {
     let { data } = await mockQueryRequest<AuthorsQuery>(AUTHORS);
-    let { result, rerender, waitForNextUpdate } = renderHook<{ skip: boolean }, any>(
-      ({ skip }) => useGrafoo({ query: AUTHORS, skip }),
+    let { result, rerender, waitForNextUpdate } = renderHook<{ lazy: boolean }, any>(
+      ({ lazy }) => useGrafoo({ query: AUTHORS, lazy }),
       {
         wrapper,
         initialProps: {
-          skip: true
+          lazy: true
         }
       }
     );
 
-    expect(result.current).toEqual({ loading: false, loaded: false });
-    rerender({ skip: false });
-    expect(result.current).toEqual({ loading: true, loaded: false });
+    expect(result.current).toEqual({ load, loading: false, loaded: false });
+    rerender({ lazy: false });
+    expect(result.current).toEqual({ load, loading: true, loaded: false });
     await waitForNextUpdate();
-    expect(result.current).toEqual({ loading: false, loaded: true, ...data });
+    expect(result.current).toEqual({ load, loading: false, loaded: true, ...data });
   });
 
   it("should rerender if variables prop has changed", async () => {
@@ -113,14 +114,14 @@ describe("@grafoo/react", () => {
       }
     );
 
-    expect(result.current).toEqual({ loading: true, loaded: false });
+    expect(result.current).toEqual({ load, loading: true, loaded: false });
     await waitForNextUpdate();
-    expect(result.current).toEqual({ loading: false, loaded: true, author: author1.node });
+    expect(result.current).toEqual({ load, loading: false, loaded: true, author: author1.node });
     await mockQueryRequest(AUTHOR, { id: author2.node.id });
     rerender({ id: author2.node.id });
-    expect(result.current).toEqual({ loading: true, loaded: true, author: author1.node });
+    expect(result.current).toEqual({ load, loading: true, loaded: true, author: author1.node });
     await waitForNextUpdate();
-    expect(result.current).toEqual({ loading: false, loaded: true, author: author2.node });
+    expect(result.current).toEqual({ load, loading: false, loaded: true, author: author2.node });
   });
 
   it("should not try to load a query if it's already cached", async () => {
@@ -131,7 +132,7 @@ describe("@grafoo/react", () => {
     let spy = jest.spyOn(client, "execute");
     let { result } = renderHook(() => useGrafoo({ query: AUTHORS }), { wrapper });
 
-    expect(result.current).toEqual({ loading: false, loaded: true, ...data });
+    expect(result.current).toEqual({ load, loading: false, loaded: true, ...data });
     expect(spy).not.toHaveBeenCalled();
   });
 
@@ -178,12 +179,12 @@ describe("@grafoo/react", () => {
       { wrapper }
     );
 
-    expect(result.current).toMatchObject({ loading: true, loaded: false });
+    expect(result.current).toMatchObject({ load, loading: true, loaded: false });
     expect(typeof result.current.createAuthor).toBe("function");
 
     await waitForNextUpdate();
 
-    expect(result.current).toMatchObject({ loading: false, loaded: true, ...data });
+    expect(result.current).toMatchObject({ load, loading: false, loaded: true, ...data });
 
     let variables = { input: { name: "Homer" } };
     await mockQueryRequest(CREATE_AUTHOR, variables);
@@ -208,7 +209,7 @@ describe("@grafoo/react", () => {
 
     let { result } = renderHook(() => useGrafoo({ query: AUTHORS }), { wrapper });
 
-    expect(result.current).toMatchObject({ loading: false, loaded: true, ...data });
+    expect(result.current).toMatchObject({ load, loading: false, loaded: true, ...data });
 
     act(() => {
       let newAuthors: AuthorsQuery = JSON.parse(JSON.stringify(data));
@@ -231,7 +232,7 @@ describe("@grafoo/react", () => {
 
     let spy = jest.spyOn(client, "execute");
 
-    expect(result.current).toEqual({ authors: data.authors, loading: false, loaded: true });
+    expect(result.current).toEqual({ authors: data.authors, load, loading: false, loaded: true });
     expect(spy).not.toHaveBeenCalled();
   });
 });

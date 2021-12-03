@@ -33,13 +33,13 @@ export function useGrafoo<T extends GrafooQuery, U extends Record<string, Grafoo
 
   React.useEffect(() => {
     if (
-      (props.query && !props.skip && !state.loaded && !state.loading) ||
+      (props.query && !props.lazy && !state.loaded && !state.loading) ||
       !deepEqual(variables.current, props.variables)
     ) {
       variables.current = props.variables;
       bindings.load(props.variables);
     }
-  }, [props.skip, props.variables]);
+  }, [props.lazy, props.variables]);
 
   return state;
 }

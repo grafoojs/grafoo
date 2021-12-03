@@ -13,13 +13,14 @@ export type GrafooBoundState<
   GrafooBoundMutations<U> & {
     loaded: boolean;
     loading: boolean;
+    load?: (variables?: T["_variablesType"]) => void;
     errors?: GraphQlError[];
   };
 
 export type GrafooBindings<T extends GrafooQuery, U extends Record<string, GrafooQuery>> = {
   unbind: () => void;
   getState: () => GrafooBoundState<T, U>;
-  load: (variables?: T["_variablesType"]) => Promise<void>;
+  load: (variables?: T["_variablesType"]) => void;
 };
 
 export type GrafooMutation<T extends GrafooQuery, U extends GrafooQuery> = {
@@ -34,7 +35,7 @@ export type GrafooMutations<T extends GrafooQuery, U extends Record<string, Graf
 
 export type GrafooConsumerProps<T extends GrafooQuery, U extends Record<string, GrafooQuery>> = {
   query?: T;
-  skip?: boolean;
+  lazy?: boolean;
   variables?: T["_variablesType"];
   mutations?: GrafooMutations<T, U>;
 };

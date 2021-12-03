@@ -21,7 +21,7 @@ export default function createBindings<
   props: GrafooConsumerProps<T, U>
 ): GrafooBindings<T, U> {
   type CP = GrafooConsumerProps<T, U>;
-  let { query, variables, mutations, skip = false } = props;
+  let { query, variables, mutations, lazy = false } = props;
   let data: CP["query"]["_queryType"];
   let errors: GraphQlError[];
   let partial = true;
@@ -51,23 +51,30 @@ export default function createBindings<
           client.write(query, variables, optimisticUpdate(clone(data), mutationVariables));
         }
 
-        return client.execute(mutationQuery, mutationVariables).then((response) => {
-          if (query && update && response.data) {
-            client.write(query, variables, update(clone(data), response.data));
+        return client.execute(mutationQuery, mutationVariables).then((res) => {
+          if (query && update && res.data) {
+            client.write(query, variables, update(clone(data), res.data));
           }
 
-          return response;
+          return res;
         });
       };
     }
   }
 
-  let getState = () => ({ ...state, ...boundMutations, ...(data as {}) });
+  let getState = () => ({
+    ...state,
+    ...boundMutations,
+    ...(query && { load }),
+    ...(data as {})
+  });
 
-  let loading = !!query && !skip && partial;
-  let state = { loaded: !partial, loading };
+  let state = {
+    loaded: !partial,
+    loading: !!query && !lazy && partial
+  };
 
-  if (loading) load();
+  if (state.loading) load();
 
   function load(nextVariables?: CP["query"]["_variablesType"]) {
     variables = nextVariables ?? variables;
@@ -77,7 +84,7 @@ export default function createBindings<
       updater(getState());
     }
 
-    return client.execute(query, variables).then((res) => {
+    client.execute(query, variables).then((res) => {
       ({ data, errors } = res);
 
       if (data) client.write(query, variables, data);

@@ -22,6 +22,7 @@ let sleep = (time = 0) => new Promise((resolve) => setTimeout(resolve, time));
 
 describe("@grafoo/bindings", () => {
   let client: GrafooClient;
+  let load = expect.any(Function);
   beforeEach(() => {
     jest.resetAllMocks();
     let transport = createTransport("https://some.graphql.api/");
@@ -51,13 +52,13 @@ describe("@grafoo/bindings", () => {
     let renderFn = jest.fn();
     let bindings = createBindings(client, renderFn, { query: AUTHORS });
 
-    expect(bindings.getState()).toEqual({ loaded: false, loading: true });
+    expect(bindings.getState()).toEqual({ load, loaded: false, loading: true });
 
     await sleep();
 
     let results = renderFn.mock.calls.map((c) => c[0]);
 
-    expect(results).toEqual([{ ...data, loaded: true, loading: false }]);
+    expect(results).toEqual([{ ...data, load, loaded: true, loading: false }]);
   });
 
   it("should notify a loading state", async () => {
@@ -71,9 +72,9 @@ describe("@grafoo/bindings", () => {
     let results = renderFn.mock.calls.map((c) => c[0]);
 
     expect(results).toEqual([
-      { loaded: true, loading: false, ...data },
-      { loaded: true, loading: true, ...data },
-      { loaded: true, loading: false, ...data }
+      { load, loaded: true, loading: false, ...data },
+      { load, loaded: true, loading: true, ...data },
+      { load, loaded: true, loading: false, ...data }
     ]);
   });
 
@@ -84,7 +85,7 @@ describe("@grafoo/bindings", () => {
 
     let bindings = createBindings(client, () => {}, { query: AUTHORS });
 
-    expect(bindings.getState()).toEqual({ ...data, loaded: true, loading: false });
+    expect(bindings.getState()).toEqual({ ...data, load, loaded: true, loading: false });
   });
 
   it("should provide the data if a query is partialy cached", async () => {
@@ -94,7 +95,7 @@ describe("@grafoo/bindings", () => {
 
     let bindings = createBindings(client, () => {}, { query: POSTS_AND_AUTHORS });
 
-    expect(bindings.getState()).toEqual({ ...data, loaded: false, loading: true });
+    expect(bindings.getState()).toEqual({ ...data, load, loaded: false, loading: true });
   });
 
   it("should provide the state for a cached query", async () => {
@@ -105,7 +106,7 @@ describe("@grafoo/bindings", () => {
     let renderFn = jest.fn();
     let bindings = createBindings(client, renderFn, { query: AUTHORS });
 
-    expect(bindings.getState()).toEqual({ ...data, loaded: true, loading: false });
+    expect(bindings.getState()).toEqual({ ...data, load, loaded: true, loading: false });
   });
 
   it("should stop updating if unbind has been called", async () => {
@@ -132,7 +133,7 @@ describe("@grafoo/bindings", () => {
     await sleep();
 
     expect(renderFn).toHaveBeenCalledTimes(1);
-    expect(bindings.getState()).toEqual({ loading: false, loaded: false, errors });
+    expect(bindings.getState()).toEqual({ load, loading: false, loaded: false, errors });
   });
 
   it("should perform a simple mutation", async () => {

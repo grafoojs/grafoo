@@ -17,7 +17,7 @@ export default function resolveData<T extends GrafooQuery>(
 
     if (Array.isArray(path)) {
       // if path is an array increment the stack with
-      // the current selection and the array children
+      // the current selection and path children
       for (let [index, item] of Object.entries(path)) {
         // assign path type to data key
         data[index] = getPathType(item);
